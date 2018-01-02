@@ -1,6 +1,7 @@
 package com.example.synerzip.snapxeats;
 
 import com.example.synerzip.snapxeats.dagger.AppComponent;
+import com.example.synerzip.snapxeats.dagger.DaggerAppComponent;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DaggerApplication;
