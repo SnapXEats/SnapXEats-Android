@@ -19,6 +19,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
 @Component(modules = {AndroidSupportInjectionModule.class,
         AppModule.class,
         ActivityBuilder.class})
+
 public interface AppComponent extends AndroidInjector<DaggerApplication> {
 
     void inject(SnapXApplication app);
