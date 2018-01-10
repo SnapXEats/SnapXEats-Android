@@ -3,7 +3,6 @@ package com.example.synerzip.snapxeats.ui.preferences;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 
@@ -12,22 +11,25 @@ import android.support.v4.app.ActivityCompat;
  * Created by Snehal Tembare on 3/1/18.
  */
 
-public class PreferencePresenter implements PreferenceContract.PreferencePresenter {
+public class PreferencePresenterImpl implements PreferenceContract.PreferencePresenter {
 
-    PreferenceInteractor interactor;
+    private PreferenceInteractor interactor;
+    private Location location;
 
     @Nullable
     private PreferenceContract.PreferenceView preferenceView;
 
+    private PreferenceContract.PreferenceRouter router;
 
-    public PreferencePresenter(PreferenceInteractor interactor) {
+
+    public PreferencePresenterImpl(PreferenceInteractor interactor, PreferenceRouterImpl router) {
         this.interactor = interactor;
+        this.router = router;
     }
-
 
     @Override
     public void setLocation(Location location) {
-
+        this.location = location;
     }
 
     @Override
@@ -53,6 +55,12 @@ public class PreferencePresenter implements PreferenceContract.PreferencePresent
         return preferenceView.getActivity();
     }
 
+    /**
+     * Update user location
+     *
+     * @param placename
+     */
+
     @Override
     public void updatePlaceName(String placename) {
         preferenceView.updatePlaceName(placename);
@@ -69,10 +77,30 @@ public class PreferencePresenter implements PreferenceContract.PreferencePresent
 
     }
 
+    @Override
+    public void showDenyDialog() {
+        preferenceView.showDenyDialog();
+    }
+
+    @Override
+    public void presentLocationScreen() {
+        router.presentLocationScreen();
+    }
+
+    @Override
+    public void showNetworkErrorDialog() {
+        preferenceView.showNetworkErrorDialog();
+    }
+
+    /**
+     * Set view to Presenter
+     * @param view
+     */
 
     @Override
     public void takeView(PreferenceContract.PreferenceView view) {
         preferenceView = view;
+        router.setView(view);
     }
 
     @Override

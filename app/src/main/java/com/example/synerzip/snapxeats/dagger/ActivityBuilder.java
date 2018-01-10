@@ -2,6 +2,8 @@ package com.example.synerzip.snapxeats.dagger;
 
 import com.example.synerzip.snapxeats.ui.home.HomeActivity;
 import com.example.synerzip.snapxeats.ui.home.HomeModule;
+import com.example.synerzip.snapxeats.ui.location.LocationActivity;
+import com.example.synerzip.snapxeats.ui.location.LocationModule;
 import com.example.synerzip.snapxeats.ui.preferences.PreferenceActivity;
 import com.example.synerzip.snapxeats.ui.preferences.PreferenceModule;
 
@@ -21,4 +23,8 @@ public abstract class ActivityBuilder {
     @ActivityScoped
     @ContributesAndroidInjector(modules = PreferenceModule.class)
     abstract PreferenceActivity bindPreferenceActivity();
+
+    @ActivityScoped
+    @ContributesAndroidInjector(modules = LocationModule.class)
+    abstract LocationActivity bindLocationActivity();
 }

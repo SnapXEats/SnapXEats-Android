@@ -11,9 +11,10 @@ import dagger.Provides;
 public abstract class PreferenceModule {
 
     @Provides
-    static PreferenceContract.PreferencePresenter providePresenter(PreferenceInteractor interactor){
-        PreferenceContract.PreferencePresenter preferencePresenter=new PreferencePresenter(interactor);
+    static PreferenceContract.PreferencePresenter providePresenter(PreferenceInteractor interactor, PreferenceRouterImpl router){
+        PreferenceContract.PreferencePresenter preferencePresenter = new PreferencePresenterImpl(interactor, router);
         interactor.setPreferencePresenter(preferencePresenter);
         return preferencePresenter;
     }
+
 }
