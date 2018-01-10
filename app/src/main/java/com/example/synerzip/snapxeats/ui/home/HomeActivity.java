@@ -1,4 +1,4 @@
-package com.example.synerzip.snapxeats.ui;
+package com.example.synerzip.snapxeats.ui.home;
 
 import android.content.Context;
 import android.content.DialogInterface;

@@ -45,7 +45,6 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
 
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        getSupportActionBar().hide();
         mLoginPresenter.setRouter();
         loginWithFacebook();
     }

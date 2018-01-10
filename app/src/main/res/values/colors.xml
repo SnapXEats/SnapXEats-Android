@@ -4,4 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="view_color">#FFD2D2D9</color>
+    <color name="recent_searches_color">#565656</color>
+
 </resources>

@@ -3,7 +3,8 @@ package com.example.synerzip.snapxeats.ui.login;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.example.synerzip.snapxeats.ui.HomeActivity;
+import com.example.synerzip.snapxeats.ui.home.HomeActivity;
+import com.example.synerzip.snapxeats.ui.preferences.PreferenceActivity;
 
 import javax.inject.Inject;
 
@@ -23,7 +24,7 @@ public class LoginRouter {
     }
 
     public void presentScreen() {
-        Intent intent = new Intent(mActivity, HomeActivity.class);
+        Intent intent = new Intent(mActivity, PreferenceActivity.class);
         mActivity.startActivity(intent);
     }
 }
