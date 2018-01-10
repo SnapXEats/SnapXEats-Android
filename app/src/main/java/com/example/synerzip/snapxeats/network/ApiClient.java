@@ -1,9 +1,7 @@
 package com.example.synerzip.snapxeats.network;
 
 import android.content.Context;
-import android.widget.Toast;
 
-import com.example.synerzip.snapxeats.R;
 import com.example.synerzip.snapxeats.common.constants.SnapXToast;
 import com.example.synerzip.snapxeats.common.constants.WebConstants;
 import com.example.synerzip.snapxeats.common.utilities.NetworkUtility;

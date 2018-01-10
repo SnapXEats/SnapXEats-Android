@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">SnapXEats</string>
+    <string name="facebook_app_id">331735677253165</string>
+    <string name="fb_login_protocol_scheme">fb331735677253165</string>
+    <string name="google_api_key">AIzaSyBE60eBPlcvijgNGHK3X-Odd8zHJ2WksNk</string>
+    <string name="instagram_login">Login with Instagram</string>
+    <string name="facebook_login">Login with Facebook</string>
+    <string name="ok">Ok</string>
+    <string name="check_network">Check you internet connection</string>
+    <string name="fb_login_success">Facebook logged in successfully</string>
+    <string name="btn_skip">Skip</string>
+    <string name="insta_login_success">Instagram logged in successfully</string>
+    <string name="insta_client_id">client_id</string>
+    <string name="insta_https">https</string>
+    <string name="insta_url">api.instagram.com</string>
+    <string name="insta_oauth">oauth</string>
+    <string name="insta_authorize">authorize</string>
+    <string name="insta_redirect_uri">redirect_uri</string>
+    <string name="insta_response_type">response_type</string>
+    <string name="insta_token">token</string>
+
 </resources>

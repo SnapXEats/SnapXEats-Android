@@ -15,5 +15,6 @@ public class SnapXApplication extends DaggerApplication {
         AppComponent appComponent = DaggerAppComponent.builder().application(this).build();
         appComponent.inject(this);
         return appComponent;
-    }}
+    }
+}
 
