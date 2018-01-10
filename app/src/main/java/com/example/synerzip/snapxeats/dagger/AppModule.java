@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.example.synerzip.snapxeats.common.Router;
+import com.example.synerzip.snapxeats.ui.preferences.PreferenceComponent;
 
 import javax.inject.Singleton;
 
@@ -14,7 +15,8 @@ import dagger.Provides;
 /**
  * Created by Prajakta Patil on 28/12/17.
  */
-@Module
+@Module(subcomponents = {
+        PreferenceComponent.class})
 public abstract class AppModule {
 
     @Provides

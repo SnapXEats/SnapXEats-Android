@@ -10,5 +10,6 @@ public class WebConstants {
     public static final String INSTA_CLIENT_SECRET = "b543fe28f894453caa801fd42b0246b6";
     public static final String INSTA_CALLBACK_URL = "http://www.snapx.com";
 
+    public static boolean   isPermissionGranted=false;
 
 }
