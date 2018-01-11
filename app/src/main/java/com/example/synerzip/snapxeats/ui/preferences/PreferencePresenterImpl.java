@@ -38,19 +38,6 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
     }
 
     @Override
-    public void showPermissionDialog() {
-        if (ActivityCompat.checkSelfPermission(preferenceView.getActivity().getApplicationContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(preferenceView.getActivity(),
-                android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(preferenceView.getActivity(),
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PreferenceActivity.PreferenceConstant.ACCESS_FINE_LOCATION);
-        }
-    }
-
-    @Override
     public Activity getActivityInstance() {
         return preferenceView.getActivity();
     }
@@ -67,29 +54,8 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
     }
 
     @Override
-    public void showProgressDialog() {
-        preferenceView.showProgressDialog();
-    }
-
-    @Override
-    public void dismissProgressDialog() {
-        preferenceView.dismissProgressDialog();
-
-    }
-
-    @Override
-    public void showDenyDialog() {
-        preferenceView.showDenyDialog();
-    }
-
-    @Override
     public void presentLocationScreen() {
-        router.presentLocationScreen();
-    }
-
-    @Override
-    public void showNetworkErrorDialog() {
-        preferenceView.showNetworkErrorDialog();
+        router.presentScreen();
     }
 
     /**
@@ -98,7 +64,7 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
      */
 
     @Override
-    public void takeView(PreferenceContract.PreferenceView view) {
+    public void addView(PreferenceContract.PreferenceView view) {
         preferenceView = view;
         router.setView(view);
     }

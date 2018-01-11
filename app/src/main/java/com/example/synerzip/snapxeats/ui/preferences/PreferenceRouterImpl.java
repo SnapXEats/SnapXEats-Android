@@ -22,7 +22,7 @@ public class PreferenceRouterImpl implements PreferenceContract.PreferenceRouter
     }
 
     @Override
-    public void presentLocationScreen() {
+    public void presentScreen() {
         Intent intent = new Intent(activity, LocationActivity.class);
         activity.startActivity(intent);
     }
@@ -34,6 +34,6 @@ public class PreferenceRouterImpl implements PreferenceContract.PreferenceRouter
      */
     @Override
     public void setView(PreferenceContract.PreferenceView view) {
-        this.activity= view.getActivity();
+        this.activity = view.getActivity();
     }
 }
