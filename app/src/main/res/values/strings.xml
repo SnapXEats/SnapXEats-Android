@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">SnapXEats</string>
+    <string name="done">Done</string>
+    <string name="select_cuisines">Select Cuisines</string>
+    <string name="please_wait">Please wait...</string>
+    <string name="select_location">Select Location</string>
+    <string name="detect_my_location">Detect my location</string>
+    <string name="start_typing_your_location">Start typing your location</string>
+    <string name="recent_searches">Recent Searches</string>
+    <string name="location_permission_denied">Location Permission Denied</string>
+    <string name="permission_denied_msg">SnapXEats uses this permission to detect your current location
+        and show you great restaurants around you. It also enables you get turn-by-turn driving directions
+        to restaurants. Are you sure you want to deny this permission?</string>
+    <string name="im_sure">i\'m sure</string>
+    <string name="retry">retry</string>
+    <string name="network_error">Check Internet connection</string>
+    <string name="ok">Ok</string>
+</resources>

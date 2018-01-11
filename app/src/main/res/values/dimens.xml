@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="common_dimens_1">1dp</dimen>
+    <dimen name="common_dimens_2">2dp</dimen>
+    <dimen name="common_dimens_5">5dp</dimen>
+    <dimen name="common_dimens_10">10dp</dimen>
+    <dimen name="common_dimens_15">15dp</dimen>
+    <dimen name="common_dimens_20">20dp</dimen>
+
+    <dimen name="text_size_12">12sp</dimen>
+    <dimen name="text_size_16">16sp</dimen>
+    <dimen name="text_size_14">14sp</dimen>
+
+</resources>
