@@ -76,7 +76,7 @@ public class LocationActivity extends BaseActivity {
                         }
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog not created.");
+                        Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. SnapXDialog not created.");
                         break;
                 }
             }
