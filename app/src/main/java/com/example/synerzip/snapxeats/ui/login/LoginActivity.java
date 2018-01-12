@@ -41,7 +41,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
         super.onCreate(savedInstanceState);
 
         FacebookSdk.sdkInitialize(getApplicationContext());
-        mLoginPresenter.takeView(this);
+        mLoginPresenter.addView(this);
 
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
