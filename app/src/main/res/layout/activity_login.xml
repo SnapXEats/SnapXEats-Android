@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/email_login_form"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_login"
+    android:fontFamily="Roboto-Medium"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="@dimen/dimen_267"
+        android:layout_height="@dimen/dimen_61"
+        android:layout_marginBottom="@dimen/dimen_118"
+        android:src="@drawable/ic_snapx_logo" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/btn_facebook_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/facebook_login"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btn_fb_custom"
+            android:layout_width="@dimen/dimen_241"
+            android:layout_height="@dimen/dimen_44"
+            android:layout_gravity="center"
+            android:background="@drawable/border_login_button"
+            android:drawableLeft="@mipmap/ic_fb_login"
+            android:text="@string/facebook_login"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/txt_size_16" />
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/btn_instagram_login"
+        android:layout_width="@dimen/dimen_241"
+        android:layout_height="@dimen/dimen_44"
+        android:layout_marginTop="@dimen/dimen_25"
+        android:background="@drawable/border_login_button"
+        android:drawableLeft="@mipmap/ic_insta_login"
+        android:text="@string/instagram_login"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/txt_size_16" />
+
+    <TextView
+        android:id="@+id/txt_login_skip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen_151"
+        android:text="@string/btn_skip"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/txt_size_14" />
+
+</LinearLayout>
+

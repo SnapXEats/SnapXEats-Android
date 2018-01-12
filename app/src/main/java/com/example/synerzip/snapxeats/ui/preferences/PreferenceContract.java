@@ -19,13 +19,6 @@ public class PreferenceContract {
 
         void updatePlaceName(String placeName);
 
-        void showProgressDialog();
-
-        void dismissProgressDialog();
-
-        void showDenyDialog();
-
-        void showNetworkErrorDialog();
     }
 
     interface PreferencePresenter extends BasePresenter<PreferenceView> {
@@ -34,26 +27,16 @@ public class PreferenceContract {
 
         void getUserLocation();
 
-        void showPermissionDialog();
-
         Activity getActivityInstance();
 
         void updatePlaceName(String placename);
 
-        void showProgressDialog();
-
-        void dismissProgressDialog();
-
-        void showDenyDialog();
-
         void presentLocationScreen();
-
-        void showNetworkErrorDialog();
 
     }
 
     interface PreferenceRouter {
-        void presentLocationScreen();
+        void presentScreen();
         void  setView(PreferenceView view);
     }
 }

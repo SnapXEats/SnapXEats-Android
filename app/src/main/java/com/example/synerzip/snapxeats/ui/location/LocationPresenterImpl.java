@@ -14,7 +14,7 @@ public class LocationPresenterImpl implements LocationContract.LocationPresenter
     }
 
     @Override
-    public void takeView(LocationContract.LocationView view) {
+    public void addView(LocationContract.LocationView view) {
 
     }
 
