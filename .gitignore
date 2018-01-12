@@ -13,8 +13,6 @@ local.properties
 # Signing files
 .signing/
 
-# User-specific configurations
-build/**
 captures/**
 .idea/libraries/
 .idea/workspace.xml
@@ -32,9 +30,6 @@ app/app.iml
 ChartSpan.iml
 /*.iml
 /.idea
-*.iml
-local.properties
-app/app.iml
 
 # OS-specific files
 ChartSpan/.DS_Store

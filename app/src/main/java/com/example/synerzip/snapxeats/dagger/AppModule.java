@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.example.synerzip.snapxeats.common.Router;
+import com.example.synerzip.snapxeats.common.utilities.SnapXDialog;
 import com.example.synerzip.snapxeats.ui.login.LoginComponent;
 import com.example.synerzip.snapxeats.ui.preferences.PreferenceComponent;
 import com.example.synerzip.snapxeats.ui.preferences.PreferenceComponent;
@@ -30,6 +31,11 @@ public abstract class AppModule {
     @Provides
     static Context provideAppContext(Context context) {
         return context;
+    }
+
+    @Provides
+    static SnapXDialog provideSnapXDialog() {
+        return new SnapXDialog();
     }
 
     @Binds

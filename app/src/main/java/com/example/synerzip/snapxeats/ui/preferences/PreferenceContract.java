@@ -1,6 +1,7 @@
 package com.example.synerzip.snapxeats.ui.preferences;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.location.Location;
 import android.view.View;
 
@@ -13,7 +14,7 @@ import com.example.synerzip.snapxeats.BaseView;
 
 public class PreferenceContract {
 
-    interface PreferenceView extends BaseView<PreferencePresenter> {
+    interface PreferenceView extends BaseView<PreferencePresenter>, DialogView {
 
         Activity getActivity();
 
@@ -25,18 +26,29 @@ public class PreferenceContract {
 
         void setLocation(Location location);
 
-        void getUserLocation();
+        void getLocation(PreferenceContract.PreferenceView preferenceView);
 
-        Activity getActivityInstance();
+        void updatePlace(String placename);
 
-        void updatePlaceName(String placename);
+        void presentScreen();
 
-        void presentLocationScreen();
+    }
+
+    interface DialogView {
+        void showProgressDialog();
+
+        void dismissProgressDialog();
+
+        void showNetworkErrorDialog();
+
+        void showDenyDialog(DialogInterface.OnClickListener positiveClick,
+                            DialogInterface.OnClickListener negativeClick);
 
     }
 
     interface PreferenceRouter {
         void presentScreen();
-        void  setView(PreferenceView view);
+
+        void setView(PreferenceView view);
     }
 }

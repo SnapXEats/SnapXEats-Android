@@ -6,7 +6,6 @@ import android.location.Geocoder;
 import android.location.Location;
 
 import com.example.synerzip.snapxeats.common.utilities.NetworkUtility;
-import com.example.synerzip.snapxeats.common.utilities.SnapXDialog;
 import com.example.synerzip.snapxeats.network.NetworkHelper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -38,49 +37,60 @@ public class PreferenceInteractor {
         this.preferencePresenter = presenter;
     }
 
-    /**
-     * Get user current location
-     */
 
-    public void getUserLocation() {
+    private void locationHelper(PreferenceContract.PreferenceView preferenceView) {
+        preferenceView.showProgressDialog();
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+        if (mFusedLocationProviderClient != null && !NetworkHelper.checkPermission(context)) {
+            //Network check is a duplicate call but it is required for LocationServices
+            // and we need to move it out  in separate method that why in second call it will return true always
+            Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
 
-        SnapXDialog snapXDialog = new SnapXDialog();
-        context = preferencePresenter.getActivityInstance();
-        if (NetworkUtility.isNetworkAvailable(context)) {
-
-            if (NetworkHelper.checkPermission(context)) {
-                NetworkHelper.requestPermission(context);
-            } else {
-                snapXDialog.createProgressDialog(preferencePresenter.getActivityInstance());
-                mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
-                Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
-
+            if (locationResult != null) {
                 locationResult.addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+                    if (task.isSuccessful() && task != null) {
                         mLastKnownLocation = task.getResult();
-                        preferencePresenter.setLocation(mLastKnownLocation);
-                        snapXDialog.dismissProgressSialog();
-                        Geocoder geocoder = new Geocoder(context);
-                        try {
+                        if (mLastKnownLocation != null) {
+                            preferencePresenter.setLocation(mLastKnownLocation);
+                            preferenceView.dismissProgressDialog();
+                            Geocoder geocoder = new Geocoder(context);
+                            try {
 
-                            List<Address> addresses = geocoder.getFromLocation(mLastKnownLocation.getLatitude(),
-                                    mLastKnownLocation.getLongitude(), 1);
+                                List<Address> addresses = geocoder.getFromLocation(mLastKnownLocation.getLatitude(),
+                                        mLastKnownLocation.getLongitude(), 1);
 
-                            if (addresses.get(0).getSubLocality() != null) {
-                                preferencePresenter.updatePlaceName(addresses.get(0).getSubLocality());
-                            } else {
-                                if (addresses.get(0).getThoroughfare() != null) {
-                                    preferencePresenter.updatePlaceName(addresses.get(0).getThoroughfare());
+                                if (addresses.get(0).getSubLocality() != null) {
+                                    preferencePresenter.updatePlace(addresses.get(0).getSubLocality());
+                                } else if (addresses.get(0).getThoroughfare() != null) {
+                                    preferencePresenter.updatePlace(addresses.get(0).getThoroughfare());
+
                                 }
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
                     }
                 });
             }
-        } else {
-            snapXDialog.createNetworkErrorDialog(preferencePresenter.getActivityInstance());
+        }
+
+    }
+
+    /**
+     * Get user current location
+     */
+
+    public void getLocation(PreferenceContract.PreferenceView preferenceView) {
+        context = preferenceView.getActivity();
+        if (context != null &&
+                NetworkUtility.isNetworkAvailable(context)) {
+            if (NetworkHelper.checkPermission(context)) {
+                NetworkHelper.requestPermission(context);
+            } else {
+                locationHelper(preferenceView);
+            }
+        }else {
+            preferenceView.showNetworkErrorDialog();
         }
     }
 

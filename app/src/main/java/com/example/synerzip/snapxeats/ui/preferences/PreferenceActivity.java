@@ -35,7 +35,7 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     @Inject
     PreferenceContract.PreferencePresenter presenter;
 
-    DialogListenerAction denyAction = () -> presenter.presentLocationScreen();
+    DialogListenerAction denyAction = () -> presenter.presentScreen();
     DialogListenerAction allowAction = () -> NetworkHelper.requestPermission(this);
 
     @Override
@@ -49,15 +49,6 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     @Override
     public Activity getActivity() {
         return this;
-    }
-
-    @Override
-    public void showProgressDialog() {
-        super.showProgressDialog();
-        mSnapXDialog = new SnapXDialog();
-        if (mSnapXDialog != null) {
-            mSnapXDialog.createProgressDialog(this);
-        }
     }
 
     /**
@@ -74,12 +65,12 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     @Override
     protected void onResume() {
         super.onResume();
-        presenter.getUserLocation();
+        presenter.getLocation(this);
     }
 
     @OnClick(R.id.txt_place_name)
     public void presentLocationScreen() {
-        presenter.presentLocationScreen();
+        presenter.presentScreen();
     }
 
     @Override
@@ -90,9 +81,9 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
             for (int index = 0, len = permissions.length; index < len; index++) {
                 if (grantResults[index] == PackageManager.PERMISSION_DENIED) {
                     SnapXToast.info("Permissions denied");
-                    /** TODO- Functionality yet to complete*/
+                    /** TODO- Functionality yet to complete
 
-                    showDenyDialog(setAction(denyAction), setAction(allowAction));
+                    showDenyDialog(setAction(denyAction), setAction(allowAction)); */
                 } else {
                     SnapXToast.info("Permissions granted");
                 }
