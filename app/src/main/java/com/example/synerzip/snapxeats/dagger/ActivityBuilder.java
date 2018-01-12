@@ -30,6 +30,7 @@ public abstract class ActivityBuilder {
     @ActivityScoped
     @ContributesAndroidInjector(modules = LocationModule.class)
     abstract LocationActivity bindLocationActivity();
+
     @ContributesAndroidInjector(modules = LoginModule.class)
     abstract LoginActivity bindLoginActivity();
 }

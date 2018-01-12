@@ -74,16 +74,11 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
     }
 
     public void showProgressDialog() {
-        mSnapXDialog = new SnapXDialog();
-        if (mSnapXDialog != null) {
             mSnapXDialog.createProgressDialog(this);
-        }
     }
 
     public void dismissProgressDialog() {
-        if (mSnapXDialog != null) {
             mSnapXDialog.dismissProgressSialog();
-        }
     }
 
     public void showDenyDialog(DialogInterface.OnClickListener positiveClick, DialogInterface.OnClickListener negativeClick) {
