@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+
 import com.example.synerzip.snapxeats.BaseActivity;
+import com.example.synerzip.snapxeats.BuildConfig;
 import com.example.synerzip.snapxeats.R;
 import com.example.synerzip.snapxeats.common.utilities.NetworkUtility;
 import com.facebook.CallbackManager;
@@ -14,7 +17,9 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -36,10 +41,14 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
     @BindView(R.id.btn_fb_custom)
     protected Button mBtnFb;
 
+    @BindView(R.id.txt_version)
+    protected TextView mTxtVersion;
+
+    private String versionName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         FacebookSdk.sdkInitialize(getApplicationContext());
         mLoginPresenter.addView(this);
 
@@ -47,9 +56,18 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
         ButterKnife.bind(this);
         mLoginPresenter.setRouter();
         loginWithFacebook();
+
+        versionName = "V " + BuildConfig.VERSION_NAME + " - Build - " + BuildConfig.VERSION_CODE;
+        if (BuildConfig.BUILD_CAPTION) {
+            mTxtVersion.setVisibility(View.VISIBLE);
+            mTxtVersion.setText(versionName);
+        }else {
+            mTxtVersion.setVisibility(View.GONE);
+
+        }
     }
 
-    public void loginWithFacebook(){
+    public void loginWithFacebook() {
         mCallbackManager = CallbackManager.Factory.create();
         mBtnFbLogin.registerCallback(mCallbackManager,
                 new FacebookCallback<LoginResult>() {
