@@ -15,7 +15,6 @@ import com.example.synerzip.snapxeats.common.constants.WebConstants;
 import com.example.synerzip.snapxeats.common.utilities.NetworkUtility;
 import com.example.synerzip.snapxeats.common.utilities.SnapXResult;
 import com.example.synerzip.snapxeats.dagger.AppContract;
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -32,9 +31,9 @@ import butterknife.OnClick;
 /**
  * Created by Prajakta Patil on 4/1/18.
  */
-public class LoginActivity extends BaseActivity implements LoginContract.LoginView, AppContract.SnapXResponse {
+public class LoginActivity extends BaseActivity implements LoginContract.LoginView, AppContract.SnapXResults {
     @Inject
-    LoginLoginPresenter mLoginPresenter;
+    LoginPresenterImpl mLoginPresenter;
 
     private CallbackManager mCallbackManager;
 

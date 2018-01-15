@@ -10,7 +10,7 @@ import javax.inject.Inject;
  * Created by Prajakta Patil on 4/1/18.
  */
 
-public class LoginLoginPresenter implements LoginContract.LoginPresenter {
+public class LoginPresenterImpl implements LoginContract.LoginPresenter {
 
     private LoginRouter mLoginRouter;
 
@@ -18,7 +18,7 @@ public class LoginLoginPresenter implements LoginContract.LoginPresenter {
     private LoginContract.LoginView mLoginLoginView;
 
     @Inject
-    public LoginLoginPresenter(LoginInteractor loginInteractor, LoginRouter loginRouter) {
+    public LoginPresenterImpl(LoginInteractor loginInteractor, LoginRouter loginRouter) {
         LoginInteractor mLoginInteractor = loginInteractor;
         this.mLoginRouter = loginRouter;
     }

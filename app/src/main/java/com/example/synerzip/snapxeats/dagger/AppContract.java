@@ -27,11 +27,11 @@ public class AppContract {
 
     }
 
-    public interface SnapXResults {
+    public interface SnapXResponse {
         void response(SnapXResult result);
     }
 
-    public interface SnapXResponse {
+    public interface SnapXResults {
         void success();
         void error();
         void noNetwork();

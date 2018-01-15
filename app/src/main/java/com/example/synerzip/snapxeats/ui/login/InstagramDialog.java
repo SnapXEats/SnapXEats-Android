@@ -130,6 +130,9 @@ public class InstagramDialog extends Dialog{
                             .make(mWebView, context.getString(R.string.check_network), Snackbar.LENGTH_INDEFINITE)
                             .setAction(context.getString(R.string.retry), view1 -> mWebView.loadUrl(mUrl));
                     snackbar.setActionTextColor(Color.RED);
+                    Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout)snackbar.getView();
+
+                    layout.setPadding(0, 0, 0, 0);
                     View sbView = snackbar.getView();
 
                     TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);

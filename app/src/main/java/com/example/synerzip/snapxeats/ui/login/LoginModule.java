@@ -11,7 +11,7 @@ public abstract class LoginModule {
 
     @Provides
     static LoginContract.LoginPresenter presenter(LoginInteractor interactor, LoginRouter loginRouter) {
-        LoginContract.LoginPresenter loginPresenter = new LoginLoginPresenter(interactor,loginRouter);
+        LoginContract.LoginPresenter loginPresenter = new LoginPresenterImpl(interactor,loginRouter);
         interactor.setPresenter(loginPresenter);
         return loginPresenter;
     }

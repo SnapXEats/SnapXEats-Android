@@ -1,7 +1,5 @@
 package com.example.synerzip.snapxeats.ui.login;
 
-import android.app.Activity;
-
 import com.example.synerzip.snapxeats.BasePresenter;
 import com.example.synerzip.snapxeats.BaseView;
 import com.example.synerzip.snapxeats.dagger.AppContract;
@@ -11,7 +9,7 @@ import com.example.synerzip.snapxeats.dagger.AppContract;
  */
 public class LoginContract {
 
-    interface LoginView extends BaseView<LoginPresenter>, AppContract.SnapXResponse {
+    interface LoginView extends BaseView<LoginPresenter>, AppContract.SnapXResults {
 
     }
 
