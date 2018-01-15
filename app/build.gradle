@@ -6,7 +6,7 @@ android {
         applicationId "com.example.synerzip.snapxeats"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 1
+        versionCode 101
         versionName "0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -14,6 +14,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField 'boolean', 'BUILD_CAPTION', 'false'
+        }
+
+        debug{
+            buildConfigField 'boolean', 'BUILD_CAPTION', 'true'
         }
     }
     dexOptions {
