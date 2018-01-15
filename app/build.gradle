@@ -15,10 +15,12 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField 'boolean', 'BUILD_CAPTION', 'false'
+            buildConfigField "String", "HOCKEYAPP_APP_ID", HOCKEYAPP_APP_ID
         }
 
         debug{
             buildConfigField 'boolean', 'BUILD_CAPTION', 'true'
+            buildConfigField "String", "HOCKEYAPP_APP_ID", HOCKEYAPP_APP_ID
         }
     }
     dexOptions {
@@ -73,6 +75,10 @@ dependencies {
     // Google play service version dependency on fire base
     implementation 'com.google.firebase:firebase-core:11.8.0'
     implementation 'com.google.firebase:firebase-auth:11.8.0'
+
+    // hockey app
+    implementation 'net.hockeyapp.android:HockeySDK:5.1.0'
+
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     testImplementation 'junit:junit:4.12'
