@@ -5,16 +5,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import android.widget.TextView;
+
 import com.example.synerzip.snapxeats.BaseActivity;
+import com.example.synerzip.snapxeats.BuildConfig;
 import com.example.synerzip.snapxeats.R;
+import com.example.synerzip.snapxeats.common.constants.WebConstants;
 import com.example.synerzip.snapxeats.common.utilities.NetworkUtility;
+import com.example.synerzip.snapxeats.common.utilities.SnapXResult;
+import com.example.synerzip.snapxeats.dagger.AppContract;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -22,11 +31,9 @@ import butterknife.OnClick;
 /**
  * Created by Prajakta Patil on 4/1/18.
  */
-
-public class LoginActivity extends BaseActivity implements LoginContract.View {
-
+public class LoginActivity extends BaseActivity implements LoginContract.LoginView, AppContract.SnapXResults {
     @Inject
-    LoginPresenter mLoginPresenter;
+    LoginPresenterImpl mLoginPresenter;
 
     private CallbackManager mCallbackManager;
 
@@ -36,37 +43,55 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
     @BindView(R.id.btn_fb_custom)
     protected Button mBtnFb;
 
+    private InstagramApp mApp;
+
+    @BindView(R.id.txt_version)
+    protected TextView mTxtVersion;
+
+    private String versionName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        mLoginPresenter.addView(this);
-
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        mLoginPresenter.setRouter();
-        loginWithFacebook();
-    }
+        initView();
 
-    public void loginWithFacebook(){
+    }
+    public void initView() {
+        mLoginPresenter.addView(this);
         mCallbackManager = CallbackManager.Factory.create();
-        mBtnFbLogin.registerCallback(mCallbackManager,
+            loginWithFacebook();
+        //TODO manage instagram session
+        initInstagram();
+        setVersionAndBuildLabel();
+    }
+    private void setVersionAndBuildLabel() {
+        versionName = "V " + BuildConfig.VERSION_NAME + " " + getString(R.string.build)
+                + " " + BuildConfig.VERSION_CODE;
+        if (BuildConfig.BUILD_CAPTION) {
+            mTxtVersion.setVisibility(View.VISIBLE);
+            mTxtVersion.setText(versionName);
+        } else {
+            mTxtVersion.setVisibility(View.GONE);
+        }
+    }
+    private void loginWithFacebook() {
+        LoginManager.getInstance().registerCallback(mCallbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        mLoginPresenter.presentScreen();
-
-                        //facebook access token for future reference
-                        loginResult.getAccessToken().getToken();
+                        mLoginPresenter.response(SnapXResult.SUCCESS);
                     }
 
                     @Override
                     public void onCancel() {
+                        mLoginPresenter.response(SnapXResult.NETWORKERROR);
                     }
 
                     @Override
                     public void onError(FacebookException exception) {
+                        mLoginPresenter.response(SnapXResult.NETWORKERROR);
                     }
                 });
     }
@@ -82,25 +107,40 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
             if (NetworkUtility.isNetworkAvailable(this)) {
                 mBtnFbLogin.performClick();
             } else {
-                mLoginPresenter.showAlertDialog();
+                showNetworkErrorDialog(null);
             }
         }
     }
 
     @OnClick(R.id.btn_instagram_login)
-    public void btnLoginInsta(View view) {
+    public void btnLoginInstagram(View view) {
         if (NetworkUtility.isNetworkAvailable(this)) {
-            mLoginPresenter.loginWithInstagram();
-            mLoginPresenter.presentScreen();
+            mApp.authorize();
         } else {
-            mLoginPresenter.showAlertDialog();
+            showNetworkErrorDialog(null);
         }
+    }
+
+    private void initInstagram() {
+        mApp = new InstagramApp(this, WebConstants.INSTA_CLIENT_ID, WebConstants.INSTA_CLIENT_SECRET,
+                WebConstants.INSTA_CALLBACK_URL);
+        mApp.setListener(new InstagramApp.OAuthAuthenticationListener() {
+
+            @Override
+            public void onSuccess() {
+                mLoginPresenter.response(SnapXResult.SUCCESS);
+            }
+
+            @Override
+            public void onFail(String error) {
+                mLoginPresenter.response(SnapXResult.NETWORKERROR);
+            }
+        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mCallbackManager = CallbackManager.Factory.create();
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -113,6 +153,26 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
     @Override
     public Activity getActivity() {
         return this;
+    }
+
+    @Override
+    public void success() {
+        mLoginPresenter.presentScreen();
+    }
+
+    @Override
+    public void error() {
+
+    }
+
+    @Override
+    public void noNetwork() {
+        showNetworkErrorDialog(null);
+    }
+
+    @Override
+    public void networkError() {
+
     }
 }
 

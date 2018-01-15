@@ -6,6 +6,8 @@ import android.location.Location;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 
+import com.example.synerzip.snapxeats.common.utilities.SnapXResult;
+
 
 /**
  * Created by Snehal Tembare on 3/1/18.
@@ -70,4 +72,8 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
         preferenceView = null;
     }
 
+    @Override
+    public void response(SnapXResult result) {
+
+    }
 }

@@ -1,24 +1,19 @@
 package com.example.synerzip.snapxeats.ui.login;
 
-import android.app.Activity;
-import android.content.Intent;
-
 import com.example.synerzip.snapxeats.BasePresenter;
 import com.example.synerzip.snapxeats.BaseView;
+import com.example.synerzip.snapxeats.dagger.AppContract;
 
 /**
  * Created by Prajakta Patil on 4/1/18.
  */
-public class LoginContract{
+public class LoginContract {
 
-    interface View extends BaseView<Presenter> {
-        Activity getActivity();
+    interface LoginView extends BaseView<LoginPresenter>, AppContract.SnapXResults {
+
     }
 
-    interface Presenter extends BasePresenter<View> {
-        void setRouter();
+    interface LoginPresenter extends BasePresenter<LoginView> {
         void presentScreen();
-        void loginWithInstagram();
-        void showAlertDialog();
     }
 }

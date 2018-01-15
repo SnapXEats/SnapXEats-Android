@@ -68,7 +68,7 @@ public class LocationActivity extends BaseActivity {
                         Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to upgrade location settings ");
 
                         try {
-                            // Show the dialog by calling startResolutionForResult(), and check the result
+                            // Show the dialog by calling startResolutionForResult(), and check the response
                             // in onActivityResult().
                             status.startResolutionForResult(LocationActivity.this, REQUEST_CHECK_SETTINGS);
                         } catch (IntentSender.SendIntentException e) {

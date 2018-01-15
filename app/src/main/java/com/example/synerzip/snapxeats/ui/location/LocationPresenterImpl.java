@@ -1,5 +1,6 @@
 package com.example.synerzip.snapxeats.ui.location;
 
+import com.example.synerzip.snapxeats.common.utilities.SnapXResult;
 import com.example.synerzip.snapxeats.ui.preferences.PreferenceInteractor;
 
 /**
@@ -20,6 +21,11 @@ public class LocationPresenterImpl implements LocationContract.LocationPresenter
 
     @Override
     public void dropView() {
+
+    }
+
+    @Override
+    public void response(SnapXResult result) {
 
     }
 }

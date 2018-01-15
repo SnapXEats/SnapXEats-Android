@@ -32,9 +32,9 @@ public class SnapXDialog {
         mDialog.dismiss();
     }
 
-    public void createNetworkErrorDialog(Context context){
-        mNetworkErrorDialog = new AlertDialog.Builder(new ContextThemeWrapper(context,R.style.CustomAlertDialog));
-        mNetworkErrorDialog .setMessage(context.getString(R.string.network_error));
+    public void createNetworkErrorDialog(Context context) {
+        AlertDialog.Builder mNetworkErrorDialog = new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.CustomAlertDialog));
+        mNetworkErrorDialog.setMessage(context.getString(R.string.network_error));
 
         mNetworkErrorDialog.setPositiveButton(context.getString(R.string.ok),
                 (dialogInterface, i) -> ((Activity)context).finish());

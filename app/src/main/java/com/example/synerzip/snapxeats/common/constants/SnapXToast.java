@@ -22,6 +22,7 @@ public class SnapXToast {
 
     /**
      * show long toast
+     *
      * @param context
      * @param toastMessage
      */
