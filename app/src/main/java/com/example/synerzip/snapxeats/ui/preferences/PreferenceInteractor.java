@@ -6,6 +6,7 @@ import android.location.Geocoder;
 import android.location.Location;
 
 import com.example.synerzip.snapxeats.common.utilities.NetworkUtility;
+import com.example.synerzip.snapxeats.dagger.AppContract;
 import com.example.synerzip.snapxeats.network.NetworkHelper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -25,7 +26,6 @@ public class PreferenceInteractor {
     private PreferenceContract.PreferencePresenter preferencePresenter;
 
     private Activity context;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mLastKnownLocation;
 
     @Inject
@@ -40,7 +40,7 @@ public class PreferenceInteractor {
 
     private void locationHelper(PreferenceContract.PreferenceView preferenceView) {
         preferenceView.showProgressDialog();
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+        FusedLocationProviderClient mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
         if (mFusedLocationProviderClient != null && !NetworkHelper.checkPermission(context)) {
             //Network check is a duplicate call but it is required for LocationServices
             // and we need to move it out  in separate method that why in second call it will return true always
@@ -90,7 +90,9 @@ public class PreferenceInteractor {
                 locationHelper(preferenceView);
             }
         }else {
-            preferenceView.showNetworkErrorDialog();
+
+            AppContract.DialogListenerAction action = ()-> context.finish();
+            preferenceView.showNetworkErrorDialog(preferenceView.setListener(action));
         }
     }
 

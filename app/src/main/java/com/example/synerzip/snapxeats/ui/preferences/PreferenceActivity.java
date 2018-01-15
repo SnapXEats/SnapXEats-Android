@@ -10,6 +10,7 @@ import com.example.synerzip.snapxeats.BaseActivity;
 import com.example.synerzip.snapxeats.R;
 import com.example.synerzip.snapxeats.common.constants.SnapXToast;
 import com.example.synerzip.snapxeats.common.utilities.SnapXDialog;
+import com.example.synerzip.snapxeats.dagger.AppContract;
 import com.example.synerzip.snapxeats.network.NetworkHelper;
 
 import javax.inject.Inject;
@@ -35,8 +36,8 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     @Inject
     PreferenceContract.PreferencePresenter presenter;
 
-    DialogListenerAction denyAction = () -> presenter.presentScreen();
-    DialogListenerAction allowAction = () -> NetworkHelper.requestPermission(this);
+    AppContract.DialogListenerAction denyAction = () -> presenter.presentScreen();
+    AppContract.DialogListenerAction allowAction = () -> NetworkHelper.requestPermission(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,11 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     @Override
     public Activity getActivity() {
         return this;
+    }
+
+    @Override
+    public void initView() {
+
     }
 
     /**
