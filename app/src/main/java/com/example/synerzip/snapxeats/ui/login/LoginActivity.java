@@ -59,13 +59,17 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
         mLoginPresenter.setRouter();
         loginWithFacebook();
 
-        versionName = "V " + BuildConfig.VERSION_NAME + " - Build - " + BuildConfig.VERSION_CODE;
+        setVersionAndBuild();
+    }
+
+    private void setVersionAndBuild() {
+        versionName = "V " + BuildConfig.VERSION_NAME + " " + getString(R.string.build)
+                + " " + BuildConfig.VERSION_CODE;
         if (BuildConfig.BUILD_CAPTION) {
             mTxtVersion.setVisibility(View.VISIBLE);
             mTxtVersion.setText(versionName);
-        }else {
+        } else {
             mTxtVersion.setVisibility(View.GONE);
-
         }
     }
 
