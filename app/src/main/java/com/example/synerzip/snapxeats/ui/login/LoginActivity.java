@@ -18,6 +18,8 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import java.util.Arrays;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
