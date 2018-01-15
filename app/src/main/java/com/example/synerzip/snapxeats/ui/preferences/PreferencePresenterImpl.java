@@ -33,14 +33,10 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
     }
 
     @Override
-    public void getUserLocation() {
-        interactor.getUserLocation();
+    public void getLocation(PreferenceContract.PreferenceView preferenceView) {
+        interactor.getLocation(preferenceView);
     }
 
-    @Override
-    public Activity getActivityInstance() {
-        return preferenceView.getActivity();
-    }
 
     /**
      * Update user location
@@ -49,12 +45,12 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
      */
 
     @Override
-    public void updatePlaceName(String placename) {
+    public void updatePlace(String placename) {
         preferenceView.updatePlaceName(placename);
     }
 
     @Override
-    public void presentLocationScreen() {
+    public void presentScreen() {
         router.presentScreen();
     }
 

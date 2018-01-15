@@ -1,5 +1,7 @@
 package com.example.synerzip.snapxeats.dagger;
 
+import com.example.synerzip.snapxeats.ui.login.LoginActivity;
+import com.example.synerzip.snapxeats.ui.login.LoginModule;
 import com.example.synerzip.snapxeats.ui.home.HomeActivity;
 import com.example.synerzip.snapxeats.ui.home.HomeModule;
 import com.example.synerzip.snapxeats.ui.location.LocationActivity;
@@ -13,6 +15,7 @@ import dagger.android.ContributesAndroidInjector;
 /**
  * Created by Prajakta Patil on 28/12/17.
  */
+
 @Module
 public abstract class ActivityBuilder {
 
@@ -27,4 +30,7 @@ public abstract class ActivityBuilder {
     @ActivityScoped
     @ContributesAndroidInjector(modules = LocationModule.class)
     abstract LocationActivity bindLocationActivity();
+
+    @ContributesAndroidInjector(modules = LoginModule.class)
+    abstract LoginActivity bindLoginActivity();
 }

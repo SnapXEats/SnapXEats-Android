@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="txt_size_14">14sp</dimen>
+    <dimen name="dimen_151">151dp</dimen>
+    <dimen name="txt_size_16">16sp</dimen>
+    <dimen name="dimen_118">118dp</dimen>
+    <dimen name="dimen_44">44dp</dimen>
+    <dimen name="dimen_67">67dp</dimen>
+    <dimen name="dimen_25">25dp</dimen>
+    <dimen name="common_1">1dp</dimen>
+    <dimen name="common_4">4dp</dimen>
+    <dimen name="dimen_267">267dp</dimen>
+    <dimen name="dimen_61">61dp</dimen>
+    <dimen name="dimen_241">241dp</dimen>
     <dimen name="common_dimens_1">1dp</dimen>
     <dimen name="common_dimens_2">2dp</dimen>
     <dimen name="common_dimens_5">5dp</dimen>
