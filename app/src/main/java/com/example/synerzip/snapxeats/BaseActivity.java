@@ -32,7 +32,7 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
     protected AlertDialog.Builder mDenyDialog;
     protected AlertDialog.Builder mNetworkErrorDialog;
 
-
+//private alias SnapXListener  DialogInterface.OnClickListener;
     // public DialogInterface.OnClickListener negativeClick;
 
     @Override
@@ -41,13 +41,8 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
         router.setActivity(this);
     }
 
-    public DialogInterface.OnClickListener setAction(DialogListenerAction button) {
-        return new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                button.action();
-            }
-        };
+    public DialogInterface.OnClickListener setListener(DialogListenerAction button) {
+        return (dialogInterface, i) -> button.action();
     }
 
 

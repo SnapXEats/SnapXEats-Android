@@ -83,7 +83,7 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
                     SnapXToast.info("Permissions denied");
                     /** TODO- Functionality yet to complete
 
-                    showDenyDialog(setAction(denyAction), setAction(allowAction)); */
+                    showDenyDialog(setListener(denyAction), setListener(allowAction)); */
                 } else {
                     SnapXToast.info("Permissions granted");
                 }
