@@ -1,12 +1,11 @@
 package com.example.synerzip.snapxeats.ui.splash;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 import com.example.synerzip.snapxeats.R;
-import com.example.synerzip.snapxeats.ui.location.LocationActivity;
 import com.example.synerzip.snapxeats.ui.login.LoginActivity;
 
 /**

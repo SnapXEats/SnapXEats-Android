@@ -8,6 +8,8 @@ import android.view.ContextThemeWrapper;
 
 import com.example.synerzip.snapxeats.common.Router;
 import com.example.synerzip.snapxeats.common.utilities.SnapXDialog;
+import com.example.synerzip.snapxeats.dagger.AppContract;
+import com.example.synerzip.snapxeats.ui.preferences.PreferenceContract;
 
 import javax.inject.Inject;
 
@@ -32,22 +34,14 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
     protected AlertDialog.Builder mDenyDialog;
     protected AlertDialog.Builder mNetworkErrorDialog;
 
-
-    // public DialogInterface.OnClickListener negativeClick;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         router.setActivity(this);
     }
 
-    public DialogInterface.OnClickListener setAction(DialogListenerAction button) {
-        return new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                button.action();
-            }
-        };
+    public DialogInterface.OnClickListener setListener(AppContract.DialogListenerAction button) {
+        return (dialogInterface, i) -> button.action();
     }
 
 
@@ -92,15 +86,13 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
         mDenyDialog.show();
     }
 
-    public void showNetworkErrorDialog() {
+    public void showNetworkErrorDialog(DialogInterface.OnClickListener click) {
         mNetworkErrorDialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.CustomAlertDialog));
         mNetworkErrorDialog.setMessage(getString(R.string.network_error));
 
-        mNetworkErrorDialog.setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> finish());
+        mNetworkErrorDialog.setPositiveButton(getString(R.string.ok), click);
         mNetworkErrorDialog.show();
     }
 
-    public interface DialogListenerAction {
-        void action();
-    }
+
 }

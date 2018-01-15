@@ -13,7 +13,7 @@ public class NetworkUtility {
      *
      * @return boolean variable indicating the status
      */
-    public static  boolean isNetworkAvailable(Context context) {
+    public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
