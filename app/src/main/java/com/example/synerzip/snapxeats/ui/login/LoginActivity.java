@@ -18,8 +18,6 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
-import java.util.Arrays;
-
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -59,10 +57,10 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
         mLoginPresenter.setRouter();
         loginWithFacebook();
 
-        setVersionAndBuild();
+        setVersionAndBuildLabel();
     }
 
-    private void setVersionAndBuild() {
+    private void setVersionAndBuildLabel() {
         versionName = "V " + BuildConfig.VERSION_NAME + " " + getString(R.string.build)
                 + " " + BuildConfig.VERSION_CODE;
         if (BuildConfig.BUILD_CAPTION) {
