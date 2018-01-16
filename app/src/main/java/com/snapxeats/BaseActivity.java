@@ -43,7 +43,6 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
         return (dialogInterface, i) -> button.action();
     }
 
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -78,20 +77,15 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
         mDenyDialog = new AlertDialog.Builder(this);
         mDenyDialog.setTitle(getString(R.string.location_permission_denied))
                 .setMessage(getString(R.string.permission_denied_msg));
-
         mDenyDialog.setNegativeButton(getString(R.string.im_sure), negativeClick);
-
         mDenyDialog.setPositiveButton(getString(R.string.retry), positiveClick);
         mDenyDialog.show();
     }
 
     public void showNetworkErrorDialog(DialogInterface.OnClickListener click) {
-        mNetworkErrorDialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.CustomAlertDialog));
+        mNetworkErrorDialog = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.CustomAlertDialog));
         mNetworkErrorDialog.setMessage(getString(R.string.network_error));
-
         mNetworkErrorDialog.setPositiveButton(getString(R.string.ok), click);
         mNetworkErrorDialog.show();
     }
-
-
 }
