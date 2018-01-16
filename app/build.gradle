@@ -9,18 +9,17 @@ android {
         versionCode 101
         versionName "0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        resValue "string", "HOCKEYAPP_APP_ID", HOCKEYAPP_APP_key
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField 'boolean', 'BUILD_CAPTION', 'false'
-            buildConfigField "String", "HOCKEYAPP_APP_ID", HOCKEYAPP_APP_ID
         }
 
         debug{
             buildConfigField 'boolean', 'BUILD_CAPTION', 'true'
-            buildConfigField "String", "HOCKEYAPP_APP_ID", HOCKEYAPP_APP_ID
         }
     }
     dexOptions {
