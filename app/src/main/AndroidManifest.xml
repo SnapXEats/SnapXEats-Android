@@ -1,40 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.synerzip.snapxeats">
+    package="com.snapxeats">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <!--  <uses-permission
+     android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+     tools:node="replace"/>   -->
+
     <application
-        android:name="com.example.synerzip.snapxeats.SnapXApplication"
+        android:name="com.snapxeats.SnapXApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_app_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
-
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"/>
         <activity
-            android:name="com.example.synerzip.snapxeats.ui.splash.SplashActivity"
+            android:name="com.snapxeats.ui.splash.SplashActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.synerzip.snapxeats.ui.login.LoginActivity"/>
-        <activity android:name="com.example.synerzip.snapxeats.ui.home.HomeActivity"/>
-        <activity android:name="com.example.synerzip.snapxeats.ui.preferences.PreferenceActivity"/>
-        <activity android:name="com.example.synerzip.snapxeats.ui.location.LocationActivity"/>
+
+        <meta-data
+            android:name="net.hockeyapp.android.appIdentifier"
+            android:value="@string/HOCKEYAPP_APP_ID" />
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"/>
+
+
+        <activity android:name="com.snapxeats.ui.login.LoginActivity"/>
+        <activity android:name="com.snapxeats.ui.home.HomeActivity"/>
+        <activity android:name="com.snapxeats.ui.preferences.PreferenceActivity"/>
+        <activity android:name="com.snapxeats.ui.location.LocationActivity"/>
     </application>
 
 </manifest>

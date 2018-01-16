@@ -3,12 +3,13 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.example.synerzip.snapxeats"
+        applicationId "com.snapxeats"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 101
         versionName "0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        resValue "string", "HOCKEYAPP_APP_ID", HOCKEYAPP_APP_key
     }
     buildTypes {
         release {
@@ -73,6 +74,10 @@ dependencies {
     // Google play service version dependency on fire base
     implementation 'com.google.firebase:firebase-core:11.8.0'
     implementation 'com.google.firebase:firebase-auth:11.8.0'
+
+    // hockey app
+    implementation 'net.hockeyapp.android:HockeySDK:5.1.0'
+
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     testImplementation 'junit:junit:4.12'
