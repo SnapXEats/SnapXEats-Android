@@ -11,4 +11,5 @@
     <style name="CustomAlertDialog" >
         <item name="android:textColor">#00897b</item>
     </style>
+
 </resources>

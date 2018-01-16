@@ -1,10 +1,7 @@
 package com.example.synerzip.snapxeats.ui.preferences;
 
 import com.example.synerzip.snapxeats.dagger.ActivityScoped;
-import com.example.synerzip.snapxeats.dagger.AppComponent;
 
-import dagger.Component;
-import dagger.Provides;
 import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
 

@@ -1,12 +1,9 @@
 package com.example.synerzip.snapxeats.ui.preferences;
 
-import android.app.Activity;
-import android.content.DialogInterface;
 import android.location.Location;
 
 import com.example.synerzip.snapxeats.BasePresenter;
 import com.example.synerzip.snapxeats.BaseView;
-import com.example.synerzip.snapxeats.dagger.AppContract;
 
 /**
  * Created by Snehal Tembare on 3/1/18.

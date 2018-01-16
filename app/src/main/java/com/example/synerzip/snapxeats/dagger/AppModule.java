@@ -7,7 +7,6 @@ import com.example.synerzip.snapxeats.common.Router;
 import com.example.synerzip.snapxeats.common.utilities.SnapXDialog;
 import com.example.synerzip.snapxeats.ui.login.LoginComponent;
 import com.example.synerzip.snapxeats.ui.preferences.PreferenceComponent;
-import com.example.synerzip.snapxeats.ui.preferences.PreferenceComponent;
 
 import javax.inject.Singleton;
 

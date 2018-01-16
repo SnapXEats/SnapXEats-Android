@@ -1,10 +1,7 @@
 package com.example.synerzip.snapxeats.ui.preferences;
 
-import android.app.Activity;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 
 import com.example.synerzip.snapxeats.common.utilities.SnapXResult;
 

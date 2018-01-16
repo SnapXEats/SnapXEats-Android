@@ -7,8 +7,6 @@ import android.support.v4.app.ActivityCompat;
 
 import com.example.synerzip.snapxeats.ui.preferences.PreferenceActivity;
 
-import dagger.Component;
-
 /**
  * Created by Prajakta Patil on 28/12/17.
  */

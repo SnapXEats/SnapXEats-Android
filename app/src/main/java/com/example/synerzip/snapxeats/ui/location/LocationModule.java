@@ -1,9 +1,5 @@
 package com.example.synerzip.snapxeats.ui.location;
 
-import com.example.synerzip.snapxeats.ui.preferences.PreferenceContract;
-import com.example.synerzip.snapxeats.ui.preferences.PreferenceInteractor;
-import com.example.synerzip.snapxeats.ui.preferences.PreferencePresenterImpl;
-
 import dagger.Module;
 import dagger.Provides;
 

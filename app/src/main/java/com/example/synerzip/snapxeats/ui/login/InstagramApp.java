@@ -12,6 +12,7 @@ import com.example.synerzip.snapxeats.ui.preferences.PreferenceActivity;
 /**
  * Created by Prajakta Patil on 11/1/18.
  */
+
 public class InstagramApp {
 
     private InstagramDialog mDialog;
@@ -43,6 +44,7 @@ public class InstagramApp {
 
             @Override
             public void onError(String error) {
+
             }
         };
 
@@ -61,6 +63,7 @@ public class InstagramApp {
 
     public interface OAuthAuthenticationListener {
         void onSuccess();
+
         void onFail(String error);
     }
 }

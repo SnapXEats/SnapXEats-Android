@@ -2,7 +2,6 @@ package com.example.synerzip.snapxeats.ui.preferences;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.view.View;
 
 import com.example.synerzip.snapxeats.ui.location.LocationActivity;
 

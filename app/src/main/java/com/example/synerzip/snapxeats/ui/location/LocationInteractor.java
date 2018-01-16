@@ -1,10 +1,6 @@
 package com.example.synerzip.snapxeats.ui.location;
 
 import android.app.Activity;
-import android.location.Location;
-
-import com.example.synerzip.snapxeats.ui.preferences.PreferenceContract;
-import com.google.android.gms.location.FusedLocationProviderClient;
 
 import javax.inject.Inject;
 

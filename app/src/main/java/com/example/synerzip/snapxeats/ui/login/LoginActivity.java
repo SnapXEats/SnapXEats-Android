@@ -2,10 +2,14 @@ package com.example.synerzip.snapxeats.ui.login;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-
 import android.widget.TextView;
 
 import com.example.synerzip.snapxeats.BaseActivity;
@@ -15,12 +19,16 @@ import com.example.synerzip.snapxeats.common.constants.WebConstants;
 import com.example.synerzip.snapxeats.common.utilities.NetworkUtility;
 import com.example.synerzip.snapxeats.common.utilities.SnapXResult;
 import com.example.synerzip.snapxeats.dagger.AppContract;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import javax.inject.Inject;
 
@@ -32,6 +40,7 @@ import butterknife.OnClick;
  * Created by Prajakta Patil on 4/1/18.
  */
 public class LoginActivity extends BaseActivity implements LoginContract.LoginView, AppContract.SnapXResults {
+    private static final String TAG = "LoginActivity";
     @Inject
     LoginPresenterImpl mLoginPresenter;
 
@@ -48,26 +57,50 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     @BindView(R.id.txt_version)
     protected TextView mTxtVersion;
 
-    private String versionName;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         initView();
-
     }
+
     public void initView() {
         mLoginPresenter.addView(this);
         mCallbackManager = CallbackManager.Factory.create();
-            loginWithFacebook();
+        getFbHashKey(this);
+        loginWithFacebook();
         //TODO manage instagram session
         initInstagram();
         setVersionAndBuildLabel();
     }
+
+    //get facebook hash key for exachanging information between app and Facebook
+    public String getFbHashKey(Activity context) {
+        PackageInfo packageInfo;
+        String key = null;
+        try {
+            String packageName = context.getApplicationContext().getPackageName();
+            packageInfo = context.getPackageManager().getPackageInfo(packageName,
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : packageInfo.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                key = new String(Base64.encode(md.digest(), 0));
+                Log.d("Key Hash=", key);
+            }
+        } catch (PackageManager.NameNotFoundException e1) {
+            Log.d(TAG, e1.toString());
+        } catch (NoSuchAlgorithmException e) {
+            Log.d(TAG, e.toString());
+        } catch (Exception e) {
+            Log.d(TAG, e.toString());
+        }
+        return key;
+    }
+
     private void setVersionAndBuildLabel() {
-        versionName = "V " + BuildConfig.VERSION_NAME + " " + getString(R.string.build)
+        String versionName = "V " + BuildConfig.VERSION_NAME + " " + getString(R.string.build)
                 + " " + BuildConfig.VERSION_CODE;
         if (BuildConfig.BUILD_CAPTION) {
             mTxtVersion.setVisibility(View.VISIBLE);
@@ -76,6 +109,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
             mTxtVersion.setVisibility(View.GONE);
         }
     }
+
     private void loginWithFacebook() {
         LoginManager.getInstance().registerCallback(mCallbackManager,
                 new FacebookCallback<LoginResult>() {
@@ -105,6 +139,8 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     public void btnFacebook(View view) {
         if (view == mBtnFb) {
             if (NetworkUtility.isNetworkAvailable(this)) {
+                //access token kept null for now ; as fb logout functionality will be implemented in later screen
+                AccessToken.setCurrentAccessToken(null);
                 mBtnFbLogin.performClick();
             } else {
                 showNetworkErrorDialog(null);

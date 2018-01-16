@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -23,14 +22,13 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.synerzip.snapxeats.BaseActivity;
 import com.example.synerzip.snapxeats.R;
 import com.example.synerzip.snapxeats.common.utilities.NetworkUtility;
 
 /**
  * Created by Prajakta Patil on 11/1/18.
  */
-public class InstagramDialog extends Dialog{
+public class InstagramDialog extends Dialog {
 
     private static final FrameLayout.LayoutParams FILL = new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -86,7 +84,7 @@ public class InstagramDialog extends Dialog{
         mTitle.setBackgroundColor(Color.BLACK);
         mTitle.setPadding(MARGIN + PADDING, MARGIN, MARGIN, MARGIN);
         mLinearLayout.addView(mTitle);
-        mLinearLayout.setPadding(0,0,0,0);
+        mLinearLayout.setPadding(0, 0, 0, 0);
     }
 
     private void setUpWebView() {
@@ -94,7 +92,6 @@ public class InstagramDialog extends Dialog{
         mWebView.setWebViewClient(new OAuthWebViewClient());
         mWebView.loadUrl(mUrl);
         mWebView.setLayoutParams(FILL);
-        mWebView.setVerticalScrollBarEnabled(false);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mLinearLayout.addView(mWebView);
     }
@@ -125,12 +122,12 @@ public class InstagramDialog extends Dialog{
             } else {
                 AlertDialog optionDialog = new AlertDialog.Builder(context).create();
                 optionDialog.setMessage(context.getString(R.string.check_network));
-                optionDialog.setButton(context.getString(R.string.ok), (dialog, which) ->{
+                optionDialog.setButton(context.getString(R.string.ok), (dialog, which) -> {
                     Snackbar snackbar = Snackbar
                             .make(mWebView, context.getString(R.string.check_network), Snackbar.LENGTH_INDEFINITE)
                             .setAction(context.getString(R.string.retry), view1 -> mWebView.loadUrl(mUrl));
                     snackbar.setActionTextColor(Color.RED);
-                    Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout)snackbar.getView();
+                    Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
 
                     layout.setPadding(0, 0, 0, 0);
                     View sbView = snackbar.getView();
@@ -138,7 +135,7 @@ public class InstagramDialog extends Dialog{
                     TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
                     textView.setTextColor(Color.WHITE);
                     snackbar.show();
-                } );
+                });
                 optionDialog.show();
 
             }

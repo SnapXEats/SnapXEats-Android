@@ -9,7 +9,6 @@ import android.view.ContextThemeWrapper;
 import com.example.synerzip.snapxeats.common.Router;
 import com.example.synerzip.snapxeats.common.utilities.SnapXDialog;
 import com.example.synerzip.snapxeats.dagger.AppContract;
-import com.example.synerzip.snapxeats.ui.preferences.PreferenceContract;
 
 import javax.inject.Inject;
 
@@ -43,7 +42,6 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
     public DialogInterface.OnClickListener setListener(AppContract.DialogListenerAction button) {
         return (dialogInterface, i) -> button.action();
     }
-
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -79,20 +77,15 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
         mDenyDialog = new AlertDialog.Builder(this);
         mDenyDialog.setTitle(getString(R.string.location_permission_denied))
                 .setMessage(getString(R.string.permission_denied_msg));
-
         mDenyDialog.setNegativeButton(getString(R.string.im_sure), negativeClick);
-
         mDenyDialog.setPositiveButton(getString(R.string.retry), positiveClick);
         mDenyDialog.show();
     }
 
     public void showNetworkErrorDialog(DialogInterface.OnClickListener click) {
-        mNetworkErrorDialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.CustomAlertDialog));
+        mNetworkErrorDialog = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.CustomAlertDialog));
         mNetworkErrorDialog.setMessage(getString(R.string.network_error));
-
         mNetworkErrorDialog.setPositiveButton(getString(R.string.ok), click);
         mNetworkErrorDialog.show();
     }
-
-
 }

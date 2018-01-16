@@ -9,7 +9,6 @@ import android.widget.TextView;
 import com.example.synerzip.snapxeats.BaseActivity;
 import com.example.synerzip.snapxeats.R;
 import com.example.synerzip.snapxeats.common.constants.SnapXToast;
-import com.example.synerzip.snapxeats.common.utilities.SnapXDialog;
 import com.example.synerzip.snapxeats.dagger.AppContract;
 import com.example.synerzip.snapxeats.network.NetworkHelper;
 
@@ -22,7 +21,6 @@ import butterknife.OnClick;
 /**
  * Created by Snehal Tembare on 3/1/18.
  */
-
 
 public class PreferenceActivity extends BaseActivity implements PreferenceContract.PreferenceView {
 
@@ -88,7 +86,6 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
                 if (grantResults[index] == PackageManager.PERMISSION_DENIED) {
                     SnapXToast.info("Permissions denied");
                     /** TODO- Functionality yet to complete
-
                     showDenyDialog(setListener(denyAction), setListener(allowAction)); */
                 } else {
                     SnapXToast.info("Permissions granted");

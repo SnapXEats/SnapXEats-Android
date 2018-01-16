@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.synerzip.snapxeats", appContext.getPackageName());
+        assertEquals("com.example.synerzip.com.snapxeats", appContext.getPackageName());
     }
 }
