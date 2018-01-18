@@ -5,11 +5,13 @@ import android.support.annotation.Nullable;
 import com.snapxeats.common.utilities.SnapXResult;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Created by Prajakta Patil on 4/1/18.
  */
 
+@Singleton
 public class LoginPresenterImpl implements LoginContract.LoginPresenter {
 
     private LoginRouter mLoginRouter;

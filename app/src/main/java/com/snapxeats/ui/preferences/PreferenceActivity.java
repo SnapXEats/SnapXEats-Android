@@ -2,6 +2,8 @@ package com.snapxeats.ui.preferences;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.widget.TextView;
@@ -9,6 +11,7 @@ import android.widget.TextView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.NetworkHelper;
 
@@ -26,27 +29,6 @@ import butterknife.OnClick;
 public class PreferenceActivity extends BaseActivity implements PreferenceContract.PreferenceView,
         AppContract.SnapXResults {
 
-    @Override
-    public void success() {
-
-    }
-
-    @Override
-    public void error() {
-
-    }
-
-    @Override
-    public void noNetwork() {
-        //Set action as a finish() to close current activity
-        showNetworkErrorDialog(setListener(() -> finish()));
-    }
-
-    @Override
-    public void networkError() {
-
-    }
-
     public interface PreferenceConstant {
         int ACCESS_FINE_LOCATION = 1;
     }
@@ -57,6 +39,10 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     @Inject
     PreferenceContract.PreferencePresenter presenter;
 
+    @Inject
+    SnapXDialog snapXDialog;
+    private LocationManager mLocationManager;
+
     AppContract.DialogListenerAction denyAction = () -> presenter.presentScreen();
     AppContract.DialogListenerAction allowAction = () -> NetworkHelper.requestPermission(this);
 
@@ -64,9 +50,22 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenter.addView(this);
+        snapXDialog.setContext(this);
         setContentView(R.layout.activity_preference);
         ButterKnife.bind(this);
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
     }
+
+    /**
+     * Check provider is enable or not
+     */
+    private void checkGpsPermission() {
+        if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                !mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            snapXDialog.showGpsPermissionDialog();
+        }
+    }
+
 
     @Override
     public Activity getActivity() {
@@ -75,7 +74,6 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
 
     @Override
     public void initView() {
-
     }
 
     /**
@@ -84,7 +82,7 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
      * @param placeName
      */
     @Override
-    public void updatePlaceName(String placeName) {
+    public void updatePlaceName(String placeName, Location location) {
         dismissProgressDialog();
         mTxtPlaceName.setText(placeName);
     }
@@ -93,13 +91,19 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     @Override
     protected void onResume() {
         super.onResume();
-        presenter.getLocation(this);
+        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) &&
+                mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            presenter.getLocation(this);
+        } else {
+            checkGpsPermission();
+        }
     }
 
     @OnClick(R.id.txt_place_name)
     public void presentLocationScreen() {
         presenter.presentScreen();
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -110,12 +114,30 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
                 if (grantResults[index] == PackageManager.PERMISSION_DENIED) {
                     SnapXToast.info("Permissions denied");
                     /** TODO- Functionality yet to complete
-
                      showDenyDialog(setListener(denyAction), setListener(allowAction)); */
+
                 } else {
                     SnapXToast.info("Permissions granted");
                 }
             }
         }
+    }
+
+    @Override
+    public void success() {
+    }
+
+    @Override
+    public void error() {
+    }
+
+    @Override
+    public void noNetwork() {
+        //Set action as a finish() to close current activity
+        showNetworkErrorDialog(setListener(() -> finish()));
+    }
+
+    @Override
+    public void networkError() {
     }
 }

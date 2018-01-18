@@ -6,18 +6,19 @@ import android.content.Intent;
 import com.snapxeats.ui.location.LocationActivity;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Created by Snehal Tembare on 8/1/18.
  */
 
+@Singleton
 public class PreferenceRouterImpl implements PreferenceContract.PreferenceRouter {
 
     private Activity activity;
 
     @Inject
     public PreferenceRouterImpl() {
-
     }
 
     @Override

@@ -6,10 +6,12 @@ import android.content.Intent;
 import com.snapxeats.ui.preferences.PreferenceActivity;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Created by Prajakta Patil on 8/1/18.
  */
+@Singleton
 public class LoginRouter {
 
     private Activity mActivity;
