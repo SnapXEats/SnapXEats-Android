@@ -29,9 +29,9 @@ import com.snapxeats.common.utilities.NetworkUtility;
 public class InstagramDialog extends Dialog {
 
     private static final FrameLayout.LayoutParams mFrameLayout = new FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     private static final int PADDING = 20;
-    private static final int WEBVIEW_SCALE = 100;
+    private static final int WEBVIEW_SCALE = 210;
     private String mUrl;
     private OAuthDialogListener mListener;
     private ProgressDialog progressDialog;
@@ -126,9 +126,6 @@ public class InstagramDialog extends Dialog {
                             .make(mWebView, mContext.getString(R.string.check_network), Snackbar.LENGTH_INDEFINITE)
                             .setAction(mContext.getString(R.string.retry), view1 -> mWebView.loadUrl(mUrl));
                     snackbar.setActionTextColor(Color.RED);
-                    Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
-
-                    layout.setPadding(0, 0, 0, 0);
                     View sbView = snackbar.getView();
 
                     TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);

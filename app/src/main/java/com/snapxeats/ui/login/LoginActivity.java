@@ -135,8 +135,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
 
                     @Override
                     public void onError(FacebookException exception) {
-                        mLoginPresenter.response(SnapXResult.NETWORKERROR);
-                        SnapXToast.showToast(LoginActivity.this, "FB network error");
+                        mLoginPresenter.response(SnapXResult.ERROR);
                     }
                 });
     }
@@ -150,8 +149,6 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     public void btnFacebook(View view) {
         if (view == mBtnFb) {
             if (NetworkUtility.isNetworkAvailable(this)) {
-                //access token kept null for now ; as fb logout functionality will be implemented in later screen
-                AccessToken.setCurrentAccessToken(null);
                 mBtnFbLogin.performClick();
             } else {
                 showNetworkErrorDialog(null);
@@ -187,7 +184,9 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
