@@ -10,7 +10,7 @@
     <string name="fb_login_success">Facebook logged in successfully</string>
     <string name="btn_skip">Skip</string>
     <string name="insta_login_success">Instagram logged in successfully</string>
-        <string name="insta_https">https</string>
+    <string name="insta_https">https</string>
     <string name="insta_url">api.instagram.com</string>
     <string name="insta_oauth">oauth</string>
     <string name="insta_authorize">authorize</string>
@@ -38,4 +38,7 @@
     <string name="insta_redirect_url"><![CDATA[&redirect_uri=]]></string>
     <string name="insta_client_id">\?client_id=</string>
     <string name="build">- Build -</string>
+    <string name="location_service_not_active">Location Services not Active</string>
+    <string name="enable_gps">Please enable Location Services and GPS</string>
+
 </resources>

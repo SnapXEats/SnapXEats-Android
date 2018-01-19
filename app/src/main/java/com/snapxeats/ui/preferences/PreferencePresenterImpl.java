@@ -5,11 +5,14 @@ import android.support.annotation.Nullable;
 
 import com.snapxeats.common.utilities.SnapXResult;
 
+import javax.inject.Singleton;
+
 
 /**
  * Created by Snehal Tembare on 3/1/18.
  */
 
+@Singleton
 public class PreferencePresenterImpl implements PreferenceContract.PreferencePresenter {
 
     private PreferenceInteractor interactor;
@@ -24,11 +27,6 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
     public PreferencePresenterImpl(PreferenceInteractor interactor, PreferenceRouterImpl router) {
         this.interactor = interactor;
         this.router = router;
-    }
-
-    @Override
-    public void setLocation(Location location) {
-        this.location = location;
     }
 
     @Override
@@ -62,8 +60,8 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
      */
 
     @Override
-    public void updatePlace(String placename) {
-        preferenceView.updatePlaceName(placename);
+    public void updatePlace(String placename,Location location) {
+        preferenceView.updatePlaceName(placename,location);
     }
 
     @Override

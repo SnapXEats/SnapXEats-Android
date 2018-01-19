@@ -3,9 +3,6 @@ package com.snapxeats;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
-import android.view.ContextThemeWrapper;
-
 import com.snapxeats.common.Router;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
@@ -30,12 +27,10 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
     @Inject
     SnapXDialog mSnapXDialog;
 
-    protected AlertDialog.Builder mDenyDialog;
-    protected AlertDialog.Builder mNetworkErrorDialog;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSnapXDialog.setContext(this);
         router.setActivity(this);
     }
 
@@ -66,26 +61,19 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
     }
 
     public void showProgressDialog() {
-            mSnapXDialog.createProgressDialog(this);
+        mSnapXDialog.createProgressDialog();
     }
 
     public void dismissProgressDialog() {
-            mSnapXDialog.dismissProgressSialog();
+        mSnapXDialog.dismissProgressSialog();
     }
 
-    public void showDenyDialog(DialogInterface.OnClickListener positiveClick, DialogInterface.OnClickListener negativeClick) {
-        mDenyDialog = new AlertDialog.Builder(this);
-        mDenyDialog.setTitle(getString(R.string.location_permission_denied))
-                .setMessage(getString(R.string.permission_denied_msg));
-        mDenyDialog.setNegativeButton(getString(R.string.im_sure), negativeClick);
-        mDenyDialog.setPositiveButton(getString(R.string.retry), positiveClick);
-        mDenyDialog.show();
+    public void showDenyDialog(DialogInterface.OnClickListener positiveClick,
+                               DialogInterface.OnClickListener negativeClick) {
+        mSnapXDialog.showDenyDialog(positiveClick, negativeClick);
     }
 
     public void showNetworkErrorDialog(DialogInterface.OnClickListener click) {
-        mNetworkErrorDialog = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.CustomAlertDialog));
-        mNetworkErrorDialog.setMessage(getString(R.string.network_error));
-        mNetworkErrorDialog.setPositiveButton(getString(R.string.ok), click);
-        mNetworkErrorDialog.show();
+        mSnapXDialog.showNetworkErrorDialog(click);
     }
 }

@@ -12,19 +12,16 @@ import com.snapxeats.dagger.AppContract;
 
 public class PreferenceContract {
 
-    interface PreferenceView extends BaseView<PreferencePresenter>,AppContract.SnapXResults {
+    interface PreferenceView extends BaseView<PreferencePresenter>, AppContract.SnapXResults {
 
-        void updatePlaceName(String placeName);
-
+        void updatePlaceName(String placeName, Location location);
     }
 
     interface PreferencePresenter extends BasePresenter<PreferenceView> {
 
-        void setLocation(Location location);
-
         void getLocation(PreferenceContract.PreferenceView preferenceView);
 
-        void updatePlace(String placename);
+        void updatePlace(String placename, Location location);
 
         void presentScreen();
 
@@ -32,6 +29,7 @@ public class PreferenceContract {
 
     interface PreferenceRouter {
         void presentScreen();
+
         void setView(PreferenceView view);
     }
 }

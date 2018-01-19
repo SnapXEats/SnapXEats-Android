@@ -35,4 +35,8 @@ public class SnapXToast {
         Log.i(LOG_TAG, message);
     }
 
+    public static void debug(String message) {
+        Log.i(LOG_TAG, message);
+    }
+
 }
