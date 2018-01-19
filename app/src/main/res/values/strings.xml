@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">SnapXEats</string>
-    <string name="facebook_app_id">331735677253165</string>
+    <string name="facebook_app_id">240700273135016</string>
     <string name="fb_login_protocol_scheme">fb331735677253165</string>
     <string name="google_api_key">AIzaSyBE60eBPlcvijgNGHK3X-Odd8zHJ2WksNk</string>
     <string name="instagram_login">Login with Instagram</string>
@@ -33,11 +33,12 @@
     <string name="retry">retry</string>
     <string name="network_error">Check Internet connection</string>
     <string name="loading">Loading...</string>
-    <string name="instagram">Instagram</string>
+    <string name="instagram">Cancel</string>
     <string name="insta_callback_url"><![CDATA[&response_type=code&display=touch&scope=likes+comments+relationships]]></string>
     <string name="insta_redirect_url"><![CDATA[&redirect_uri=]]></string>
     <string name="insta_client_id">\?client_id=</string>
     <string name="build">- Build -</string>
+    <string name="app_version">vesrion</string>
     <string name="location_service_not_active">Location Services not Active</string>
     <string name="enable_gps">Please enable Location Services and GPS</string>
 
