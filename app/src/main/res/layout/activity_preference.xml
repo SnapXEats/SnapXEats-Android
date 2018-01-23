@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fontFamily="Roboto-Medium"
+    android:id="@+id/layout_parent"
     tools:context="com.snapxeats.ui.preferences.PreferenceActivity">
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"

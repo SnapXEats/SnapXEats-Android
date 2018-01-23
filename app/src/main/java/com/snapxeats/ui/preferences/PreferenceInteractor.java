@@ -19,6 +19,7 @@ import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -50,9 +51,9 @@ public class PreferenceInteractor {
      * Stores parameters for requests to the FusedLocationProviderApi.
      */
     private LocationRequest mLocationRequest;
-   /**
-    *  The desired interval for location updates. Inexact. Updates may be more or less frequent.
-    */
+    /**
+     * The desired interval for location updates. Inexact. Updates may be more or less frequent.
+     */
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
 
     /**
@@ -72,7 +73,6 @@ public class PreferenceInteractor {
     }
 
     private void locationHelper(PreferenceContract.PreferenceView preferenceView) {
-        preferenceView.showProgressDialog();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
 
         createLocationRequest();
@@ -80,10 +80,9 @@ public class PreferenceInteractor {
         createLocationCallback(context);
 
         if (mFusedLocationClient != null && !NetworkHelper.checkPermission(context)) {
-
+            preferenceView.showProgressDialog();
             mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                     mLocationCallback, Looper.myLooper());
-
         }
     }
 
@@ -127,7 +126,7 @@ public class PreferenceInteractor {
                 super.onLocationResult(locationResult);
 
                 mCurrentLocation = locationResult.getLastLocation();
-                Geocoder geocoder = new Geocoder(context);
+                Geocoder geocoder = new Geocoder(context, Locale.getDefault());
 
                 List<Address> addresses = null;
                 try {
@@ -137,11 +136,13 @@ public class PreferenceInteractor {
                     e.printStackTrace();
                 }
                 String place = "";
-                if (addresses.get(0).getSubLocality() != null) {
-                    place = addresses.get(0).getSubLocality();
+                if (addresses != null) {
+                    if (addresses.get(0).getSubLocality() != null) {
+                        place = addresses.get(0).getSubLocality();
 
-                } else if (addresses.get(0).getThoroughfare() != null) {
-                    place = addresses.get(0).getSubLocality();
+                    } else if (addresses.get(0).getThoroughfare() != null) {
+                        place = addresses.get(0).getThoroughfare();
+                    }
                 }
                 preferencePresenter.updatePlace(place, mCurrentLocation);
                 SnapXToast.debug("Address: PreferenceInteractor " + place);
@@ -157,11 +158,8 @@ public class PreferenceInteractor {
         context = preferenceView.getActivity();
         if (context != null &&
                 NetworkUtility.isNetworkAvailable(context)) {
-            if (NetworkHelper.checkPermission(context)) {
-                NetworkHelper.requestPermission(context);
-            } else {
-                locationHelper(preferenceView);
-            }
+            locationHelper(preferenceView);
+
         } else {
             preferencePresenter.response(SnapXResult.NONETWORK);
         }

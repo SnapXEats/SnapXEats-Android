@@ -5,9 +5,8 @@ package com.snapxeats.common.constants;
  */
 public class WebConstants {
     public static final String BASE_URL = "";
-    public static final String INSTA_CLIENT_ID = "e8454500a65241c3a8f833fee63a5043";
-    public static final String INSTA_CLIENT_SECRET = "4464a69c1fce432f9f00dd0f05591f12 ";
-    public static final String INSTA_CALLBACK_URL = "http://www.snapx.com";
+    public static final String INSTA_CLIENT_ID = "739cbd7da5c048fbab575487859602c9";
+    public static final String INSTA_CLIENT_SECRET = "9df371b962c945e69c2e3f5603ab1a32";
+    public static final String INSTA_CALLBACK_URL = "http://www.snapxeats.com";
     public static final String INSTA_AUTH_URL = "https://api.instagram.com/oauth/authorize/";
-
 }

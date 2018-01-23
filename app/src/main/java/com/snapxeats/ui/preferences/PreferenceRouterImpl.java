@@ -3,10 +3,13 @@ package com.snapxeats.ui.preferences;
 import android.app.Activity;
 import android.content.Intent;
 
+import com.snapxeats.common.Router;
 import com.snapxeats.ui.location.LocationActivity;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import static com.snapxeats.common.Router.Screen.LOCATION;
 
 /**
  * Created by Snehal Tembare on 8/1/18.
@@ -16,21 +19,23 @@ import javax.inject.Singleton;
 public class PreferenceRouterImpl implements PreferenceContract.PreferenceRouter {
 
     private Activity activity;
+    private Router router;
 
     @Inject
-    public PreferenceRouterImpl() {
+    public PreferenceRouterImpl(Router router) {
+        this.router = router;
     }
+
 
     @Override
     public void presentScreen() {
-        Intent intent = new Intent(activity, LocationActivity.class);
-        activity.startActivity(intent);
+        router.presentScreen(LOCATION);
     }
 
-   /**
+    /**
      * Set view to Presenter
-     * @param view
      *
+     * @param view
      */
     @Override
     public void setView(PreferenceContract.PreferenceView view) {
