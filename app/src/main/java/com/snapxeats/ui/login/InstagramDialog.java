@@ -1,24 +1,22 @@
 package com.snapxeats.ui.login;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,24 +28,20 @@ import com.snapxeats.common.utilities.NetworkUtility;
  */
 public class InstagramDialog extends Dialog {
 
-    private static final FrameLayout.LayoutParams FILL = new FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT);
-
-    private static final int MARGIN = 4;
-    private static final int PADDING = 4;
+    private static final FrameLayout.LayoutParams mFrameLayout = new FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    private static final int PADDING = 20;
+    private static final int WEBVIEW_SCALE = 210;
     private String mUrl;
     private OAuthDialogListener mListener;
     private ProgressDialog progressDialog;
     private WebView mWebView;
     private LinearLayout mLinearLayout;
-    private TextView mTitle;
-    private Context context;
+    private Context mContext;
 
-    public InstagramDialog(Context context, String url,
-                           OAuthDialogListener listener) {
-        super(context);
-        this.context = context;
+    InstagramDialog(Context mContext, String url, OAuthDialogListener listener) {
+        super(mContext);
+        this.mContext = mContext;
         mUrl = url;
         mListener = listener;
     }
@@ -57,42 +51,44 @@ public class InstagramDialog extends Dialog {
         super.onCreate(savedInstanceState);
 
         progressDialog = new ProgressDialog(getContext());
-        progressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        progressDialog.setMessage(context.getString(R.string.loading));
+        progressDialog.setMessage(mContext.getString(R.string.loading));
 
         mLinearLayout = new LinearLayout(getContext());
         mLinearLayout.setOrientation(LinearLayout.VERTICAL);
-        mLinearLayout.setGravity(Gravity.CENTER_VERTICAL);
-
-        setUpTitle();
-        setUpWebView();
+        mLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
 
         Display display = getWindow().getWindowManager().getDefaultDisplay();
         addContentView(mLinearLayout, new FrameLayout.LayoutParams(display.getWidth(), display.getHeight()));
 
-        CookieSyncManager.createInstance(getContext());
-        CookieManager cookieManager = CookieManager.getInstance();
-        cookieManager.removeAllCookie();
+        setUpTitle();
+        setUpWebView();
     }
 
     private void setUpTitle() {
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mTitle = new TextView(getContext());
-        mTitle.setText(context.getString(R.string.instagram));
-        mTitle.setTextColor(Color.WHITE);
-        mTitle.setTypeface(Typeface.DEFAULT_BOLD);
-        mTitle.setBackgroundColor(Color.BLACK);
-        mTitle.setPadding(MARGIN + PADDING, MARGIN, MARGIN, MARGIN);
+        ImageView mTitle = new ImageView(getContext());
+        mTitle.setImageDrawable(getContext().getDrawable(R.drawable.ic_insta_cancel));
+        mTitle.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        mTitle.setPadding(PADDING, PADDING, PADDING, PADDING);
         mLinearLayout.addView(mTitle);
-        mLinearLayout.setPadding(0, 0, 0, 0);
+        mTitle.setOnClickListener(v -> InstagramDialog.this.dismiss());
     }
 
     private void setUpWebView() {
         mWebView = new WebView(getContext());
         mWebView.setWebViewClient(new OAuthWebViewClient());
         mWebView.loadUrl(mUrl);
-        mWebView.setLayoutParams(FILL);
+        mWebView.setLayoutParams(mFrameLayout);
+        mWebView.setInitialScale(WEBVIEW_SCALE);
         mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+        mWebView.getSettings().setBuiltInZoomControls(true);
+        mWebView.getSettings().setSupportZoom(true);
+        mWebView.getSettings().setDisplayZoomControls(true);
+        mWebView.getSettings().setDefaultZoom(WebSettings.ZoomDensity.FAR);
         mLinearLayout.addView(mWebView);
     }
 
@@ -117,19 +113,19 @@ public class InstagramDialog extends Dialog {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-            if (NetworkUtility.isNetworkAvailable(context)) {
-                progressDialog.show();
-            } else {
-                AlertDialog optionDialog = new AlertDialog.Builder(context).create();
-                optionDialog.setMessage(context.getString(R.string.check_network));
-                optionDialog.setButton(context.getString(R.string.ok), (dialog, which) -> {
-                    Snackbar snackbar = Snackbar
-                            .make(mWebView, context.getString(R.string.check_network), Snackbar.LENGTH_INDEFINITE)
-                            .setAction(context.getString(R.string.retry), view1 -> mWebView.loadUrl(mUrl));
-                    snackbar.setActionTextColor(Color.RED);
-                    Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+            if (NetworkUtility.isNetworkAvailable(mContext)) {
+                if(!((Activity) mContext).isFinishing()) {
+                    progressDialog.show();
+                }
 
-                    layout.setPadding(0, 0, 0, 0);
+            } else {
+                AlertDialog optionDialog = new AlertDialog.Builder(mContext).create();
+                optionDialog.setMessage(mContext.getString(R.string.check_network));
+                optionDialog.setButton(mContext.getString(R.string.ok), (dialog, which) -> {
+                    Snackbar snackbar = Snackbar
+                            .make(mWebView, mContext.getString(R.string.check_network), Snackbar.LENGTH_INDEFINITE)
+                            .setAction(mContext.getString(R.string.retry), view1 -> mWebView.loadUrl(mUrl));
+                    snackbar.setActionTextColor(Color.RED);
                     View sbView = snackbar.getView();
 
                     TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
@@ -137,23 +133,20 @@ public class InstagramDialog extends Dialog {
                     snackbar.show();
                 });
                 optionDialog.show();
-
             }
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            String title = mWebView.getTitle();
-            if (title != null && title.length() > 0) {
-                mTitle.setText(title);
-            }
+
             progressDialog.dismiss();
         }
     }
 
     public interface OAuthDialogListener {
         void onComplete(String accessToken);
+
         void onError(String error);
     }
 }

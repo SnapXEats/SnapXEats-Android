@@ -6,7 +6,7 @@ package com.snapxeats.common.utilities;
 public enum SnapXResult {
 
     SUCCESS("Success"),FAILURE("Failure"), NONETWORK("No network"), NETWORKERROR("Network error"),
-    CANCEL("Cancel");
+    CANCEL("Cancel"), ERROR("Error");
 
     SnapXResult(String result) {
     }

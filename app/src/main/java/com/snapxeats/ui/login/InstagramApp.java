@@ -16,15 +16,11 @@ import com.snapxeats.ui.preferences.PreferenceActivity;
 public class InstagramApp {
 
     private InstagramDialog mDialog;
-    private ProgressDialog mProgress;
     private Context context;
     public static String mCallbackUrl = "";
 
-    public InstagramApp(Context context, String clientId, String clientSecret,
-                        String callbackUrl) {
+    public InstagramApp(Context context, String clientId, String callbackUrl) {
 
-        String mClientId = clientId;
-        String mClientSecret = clientSecret;
         this.context = context;
         mCallbackUrl = callbackUrl;
 
@@ -49,7 +45,7 @@ public class InstagramApp {
         };
 
         mDialog = new InstagramDialog(context, mAuthUrl, listener);
-        mProgress = new ProgressDialog(context);
+        ProgressDialog mProgress = new ProgressDialog(context);
         mProgress.setCancelable(false);
     }
 
