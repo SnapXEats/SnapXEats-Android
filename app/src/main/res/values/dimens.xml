@@ -21,5 +21,19 @@
     <dimen name="text_size_12">12sp</dimen>
     <dimen name="text_size_16">16sp</dimen>
     <dimen name="text_size_14">14sp</dimen>
+    <dimen name="common_dimens_14">14dp</dimen>
+    <dimen name="text_size_18">18sp</dimen>
+    <dimen name="frame_width">320dp</dimen>
+    <dimen name="frame_height">350dp</dimen>
+    <dimen name="common_dimens_30">30dp</dimen>
+    <dimen name="dimens_40dp">40dp</dimen>
+    <dimen name="dimens_7dp">7dp</dimen>
+    <dimen name="dimen_4dp">4dp</dimen>
+    <dimen name="dimens_50dp">50dp</dimen>
+    <dimen name="common_dimens_12">12dp</dimen>
+    <dimen name="dimens_80dp">80dp</dimen>
+    <dimen name="dimens_350dp">350dp</dimen>
+    <dimen name="dimens_425dp">425dp</dimen>
+    <dimen name="text_size_32">32sp</dimen>
 
 </resources>

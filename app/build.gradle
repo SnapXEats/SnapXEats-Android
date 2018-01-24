@@ -30,7 +30,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion '27.0.3'
 }
 
 dependencies {
@@ -75,8 +74,15 @@ dependencies {
     // Google play service version dependency on fire base
     implementation 'com.google.firebase:firebase-core:11.8.0'
     implementation 'com.google.firebase:firebase-auth:11.8.0'
+
     // hockey app
     implementation 'net.hockeyapp.android:HockeySDK:5.1.0'
+
+    //PlaceHolderView
+    compile 'com.mindorks:butterknifelite:0.0.3'
+    compile 'com.mindorks:placeholderview:0.7.2'
+
+
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     testImplementation 'junit:junit:4.12'

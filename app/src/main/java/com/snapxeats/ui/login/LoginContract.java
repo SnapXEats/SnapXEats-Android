@@ -2,6 +2,7 @@ package com.snapxeats.ui.login;
 
 import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
+import com.snapxeats.common.Router;
 import com.snapxeats.dagger.AppContract;
 
 /**
@@ -14,6 +15,6 @@ public class LoginContract {
     }
 
     interface LoginPresenter extends BasePresenter<LoginView> {
-        void presentScreen();
+        void presentScreen(Router.Screen screen);
     }
 }

@@ -4,6 +4,7 @@ import android.location.Location;
 
 import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
+import com.snapxeats.common.Router;
 import com.snapxeats.dagger.AppContract;
 
 /**
@@ -23,12 +24,12 @@ public class PreferenceContract {
 
         void updatePlace(String placename, Location location);
 
-        void presentScreen();
+        void presentScreen(Router.Screen screen);
 
     }
 
     interface PreferenceRouter {
-        void presentScreen();
+        void presentScreen(Router.Screen screen);
 
         void setView(PreferenceView view);
     }

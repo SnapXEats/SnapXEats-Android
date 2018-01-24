@@ -3,6 +3,7 @@ package com.snapxeats.ui.preferences;
 import android.location.Location;
 import android.support.annotation.Nullable;
 
+import com.snapxeats.common.Router;
 import com.snapxeats.common.utilities.SnapXResult;
 
 import javax.inject.Singleton;
@@ -65,8 +66,8 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
     }
 
     @Override
-    public void presentScreen() {
-        router.presentScreen();
+    public void presentScreen(Router.Screen screen) {
+        router.presentScreen(screen);
     }
 
     /**

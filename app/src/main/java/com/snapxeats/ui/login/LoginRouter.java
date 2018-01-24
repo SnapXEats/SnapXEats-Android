@@ -3,6 +3,7 @@ package com.snapxeats.ui.login;
 import android.app.Activity;
 import android.content.Intent;
 
+import com.snapxeats.common.Router;
 import com.snapxeats.ui.preferences.PreferenceActivity;
 
 import javax.inject.Inject;
@@ -15,14 +16,19 @@ import javax.inject.Singleton;
 public class LoginRouter {
 
     private Activity mActivity;
+    private Router router;
 
     @Inject
-    public LoginRouter() {
+    public LoginRouter(Router router) {
+        this.router = router;
     }
 
-    public void presentScreen() {
-        Intent intent = new Intent(mActivity, PreferenceActivity.class);
-        mActivity.startActivity(intent);
+
+    public void presentScreen(Router.Screen screen) {
+     /*   Intent intent = new Intent(mActivity, PreferenceActivity.class);
+        mActivity.startActivity(intent);*/
+
+     router.presentScreen(screen);
     }
 
     public void setView(LoginContract.LoginView loginView) {

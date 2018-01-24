@@ -6,4 +6,7 @@
     <color name="colorWhite">#ffffff</color>
     <color name="view_color">#FFD2D2D9</color>
     <color name="recent_searches_color">#565656</color>
-</resources>
+    <color name="text_color_primary">#4A4A4A</color>
+    <color name="text_color_secondary">#5D5D5D</color>
+    <color name="text_color_tertiary">#AAAAAA</color>
+   </resources>
