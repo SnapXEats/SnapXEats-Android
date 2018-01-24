@@ -1,5 +1,6 @@
 package com.snapxeats.ui.login;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -12,38 +13,42 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.LoggingBehavior;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BuildConfig;
 import com.snapxeats.R;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 
 import net.hockeyapp.android.utils.Base64;
 
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import static com.snapxeats.common.Router.Screen.PREFERENCE;
 
 /**
  * Created by Prajakta Patil on 4/1/18.
  */
+
 public class LoginActivity extends BaseActivity implements LoginContract.LoginView, AppContract.SnapXResults {
+
     private static final String TAG = "LoginActivity";
+
     @Inject
     LoginPresenterImpl mLoginPresenter;
 
@@ -76,12 +81,18 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
         //TODO manage instagram session
         initInstagram();
         setVersionAndBuildLabel();
+
+        //permission for getting token in logs
+        if (BuildConfig.DEBUG) {
+            FacebookSdk.setIsDebugEnabled(true);
+            FacebookSdk.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
+        }
     }
 
     //get facebook hash key for exachanging information between app and Facebook
-    public String getFbHashKey(Activity context) {
+    @SuppressLint("PackageManagerGetSignatures")
+    public void getFbHashKey(Activity context) {
         PackageInfo packageInfo;
-        String key = null;
         try {
             String packageName = context.getApplicationContext().getPackageName();
             packageInfo = context.getPackageManager().getPackageInfo(packageName,
@@ -89,17 +100,12 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
             for (Signature signature : packageInfo.signatures) {
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
-                key = new String(Base64.encode(md.digest(), 0));
-                Log.d("Key Hash=", key);
+                String key = new String(Base64.encode(md.digest(), 0));
+                Log.d(TAG, key);
             }
-        } catch (PackageManager.NameNotFoundException e1) {
-            Log.d(TAG, e1.toString());
-        } catch (NoSuchAlgorithmException e) {
-            Log.d(TAG, e.toString());
         } catch (Exception e) {
             Log.d(TAG, e.toString());
         }
-        return key;
     }
 
     private void setVersionAndBuildLabel() {
@@ -119,6 +125,8 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         mLoginPresenter.response(SnapXResult.SUCCESS);
+                        Log.v(TAG, AccessToken.getCurrentAccessToken() + "");
+                        Log.v(TAG, AccessToken.getCurrentAccessToken().getUserId() + "");
                     }
 
                     @Override
@@ -128,7 +136,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
 
                     @Override
                     public void onError(FacebookException exception) {
-                        mLoginPresenter.response(SnapXResult.NETWORKERROR);
+                        mLoginPresenter.response(SnapXResult.ERROR);
                     }
                 });
     }
@@ -142,8 +150,6 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     public void btnFacebook(View view) {
         if (view == mBtnFb) {
             if (NetworkUtility.isNetworkAvailable(this)) {
-                //access token kept null for now ; as fb logout functionality will be implemented in later screen
-                AccessToken.setCurrentAccessToken(null);
                 mBtnFbLogin.performClick();
             } else {
                 showNetworkErrorDialog(null);
@@ -161,8 +167,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     }
 
     private void initInstagram() {
-        mApp = new InstagramApp(this, WebConstants.INSTA_CLIENT_ID, WebConstants.INSTA_CLIENT_SECRET,
-                WebConstants.INSTA_CALLBACK_URL);
+        mApp = new InstagramApp(this, WebConstants.INSTA_CLIENT_ID, WebConstants.INSTA_CALLBACK_URL);
         mApp.setListener(new InstagramApp.OAuthAuthenticationListener() {
 
             @Override
@@ -180,7 +185,9 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override

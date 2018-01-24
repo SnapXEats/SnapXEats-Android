@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:fontFamily="Roboto-Medium"
     tools:context="com.snapxeats.ui.location.LocationActivity">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

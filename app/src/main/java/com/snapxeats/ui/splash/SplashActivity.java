@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
+import com.facebook.AccessToken;
 import com.snapxeats.R;
 import com.snapxeats.ui.login.LoginActivity;
+import com.snapxeats.ui.preferences.PreferenceActivity;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
@@ -24,13 +26,20 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         new Handler().postDelayed(() -> {
-            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-            finish();
+            //check if facebook user is logged in or not
+            if(AccessToken.getCurrentAccessToken()==null){
+                startActivity(new Intent(this,LoginActivity.class));
+                finish();
+            }else {
+                startActivity(new Intent(this,PreferenceActivity.class));
+            }
         }, TIME_OUT);
 
         checkForUpdates();
+
+
     }
-    
+
 
     @Override
     public void onResume() {
