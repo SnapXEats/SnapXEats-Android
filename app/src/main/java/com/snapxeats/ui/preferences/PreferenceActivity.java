@@ -1,21 +1,15 @@
 package com.snapxeats.ui.preferences;
 
 import android.app.Activity;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
-import android.view.View;
 import android.widget.TextView;
 
 import com.snapxeats.BaseActivity;
@@ -31,6 +25,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.snapxeats.common.Router.Screen.FOODSTACK;
+import static com.snapxeats.common.Router.Screen.LOCATION;
 import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
 
 /**
@@ -56,9 +52,10 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     private LocationManager mLocationManager;
     private Snackbar mSnackBar;
     private AppContract.DialogListenerAction denyAction = () -> NetworkHelper.requestPermission(this);
-    private AppContract.DialogListenerAction allowAction = () -> presenter.presentScreen();
+    private AppContract.DialogListenerAction allowAction = () -> presenter.presentScreen(LOCATION);
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
+    private Location mLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,14 +110,15 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     @Override
     public void updatePlaceName(String placeName, Location location) {
         dismissProgressDialog();
+        mLocation=location;
         if (mSnackBar != null) {
             mSnackBar.dismiss();
         }
         if (placeName.isEmpty()) {
-            mTxtPlaceName.setText(preferences.getString("lastLocation", ""));
+            mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), ""));
         } else {
             mTxtPlaceName.setText(placeName);
-            editor.putString("lastLocation", placeName);
+            editor.putString(getString(R.string.last_location), placeName);
             editor.apply();
         }
     }
@@ -133,7 +131,7 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
                 mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 
             if (NetworkHelper.checkPermission(this) &&
-                    preferences.getBoolean("isLocationPermissionGranted", true)) {
+                    preferences.getBoolean(getString(R.string.isLocationPermissionGranted), true)) {
                 NetworkHelper.requestPermission(this);
             } else {
                 presenter.getLocation(this);
@@ -143,15 +141,21 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
         }
 
         if (NetworkHelper.checkPermission(this) &&
-                preferences.getBoolean("isLocationPermissionDenied", false)) {
+                preferences.getBoolean(getString(R.string.isLocationPermissionDenied), false)) {
             mSnackBar.show();
         }
-        mTxtPlaceName.setText(preferences.getString("lastLocation", ""));
+        mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), ""));
     }
 
     @OnClick(R.id.txt_place_name)
     public void presentLocationScreen() {
-        presenter.presentScreen();
+
+        presenter.presentScreen(LOCATION);
+    }
+
+    @OnClick(R.id.txt_done)
+    public void presentFoodStackScreen() {
+        presenter.presentScreen(FOODSTACK);
     }
 
 
@@ -172,8 +176,8 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             SnapXToast.debug("Permissions granted");
-            editor.putBoolean("isLocationPermissionGranted", true);
-            editor.putBoolean("isLocationPermissionDenied", false);
+            editor.putBoolean(getString(R.string.isLocationPermissionGranted), true);
+            editor.putBoolean(getString(R.string.isLocationPermissionDenied), false);
             editor.apply();
             if (mSnackBar != null) {
                 mSnackBar.dismiss();
@@ -181,8 +185,8 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
 
         } else if (!shouldShowRequestPermissionRationale(permissions[0])) {
             SnapXToast.debug("Permissions denied check never ask again");
-            editor.putBoolean("isLocationPermissionGranted", false);
-            editor.putBoolean("isLocationPermissionDenied", true);
+            editor.putBoolean(getString(R.string.isLocationPermissionGranted), false);
+            editor.putBoolean(getString(R.string.isLocationPermissionDenied), true);
 
             editor.apply();
             if (mSnackBar != null) {
@@ -192,8 +196,8 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
             // User selected the Never Ask Again Option Change settings in app settings manually
             snapXDialog.showChangePermissionDialog();
         } else {
-            editor.putBoolean("isLocationPermissionGranted", false);
-            editor.putBoolean("isLocationPermissionDenied", true);
+            editor.putBoolean(getString(R.string.isLocationPermissionGranted), false);
+            editor.putBoolean(getString(R.string.isLocationPermissionDenied), true);
 
             editor.apply();
             showDenyDialog(setListener(denyAction), setListener(allowAction));

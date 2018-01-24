@@ -28,8 +28,8 @@ public class PreferenceRouterImpl implements PreferenceContract.PreferenceRouter
 
 
     @Override
-    public void presentScreen() {
-        router.presentScreen(LOCATION);
+    public void presentScreen(Router.Screen screen) {
+        router.presentScreen(screen);
     }
 
     /**

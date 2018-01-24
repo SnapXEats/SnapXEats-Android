@@ -47,5 +47,8 @@
     <string name="using_gps">Using GPS</string>
     <string name="home">Home</string>
     <string name="address">4278 Wetster street, Edison, NJ</string>
+    <string name="last_location">lastKnownLocation</string>
+    <string name="isLocationPermissionGranted">isLocationPermissionGranted</string>
+    <string name="isLocationPermissionDenied">isLocationPermissionDenied</string>
 
 </resources>

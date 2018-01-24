@@ -2,6 +2,7 @@ package com.snapxeats.ui.login;
 
 import android.support.annotation.Nullable;
 
+import com.snapxeats.common.Router;
 import com.snapxeats.common.utilities.SnapXResult;
 
 import javax.inject.Inject;
@@ -37,8 +38,8 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
     }
 
     @Override
-    public void presentScreen() {
-        mLoginRouter.presentScreen();
+    public void presentScreen(Router.Screen screen) {
+        mLoginRouter.presentScreen(screen);
     }
 
     @Override

@@ -75,7 +75,7 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
 
         SharedPreferences preferences = getSharedPreferences("SnapXEats", MODE_PRIVATE);
         SharedPreferences.Editor  editor = preferences.edit();
-        editor.putBoolean("isLocationPermissionDenied", false);
+        editor.putBoolean(getString(R.string.isLocationPermissionDenied), false);
         editor.apply();
     }
 

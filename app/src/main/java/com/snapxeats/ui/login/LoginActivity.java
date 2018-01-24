@@ -36,6 +36,9 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.snapxeats.common.Router.Screen.PREFERENCE;
+
 /**
  * Created by Prajakta Patil on 4/1/18.
  */
@@ -131,8 +134,8 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     }
 
     @OnClick(R.id.txt_login_skip)
-    public void txtLoginSkip(View view) {
-        mLoginPresenter.presentScreen();
+    public void txtLoginSkip() {
+        mLoginPresenter.presentScreen(PREFERENCE);
     }
 
     @OnClick(R.id.btn_fb_custom)
@@ -193,7 +196,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
 
     @Override
     public void success() {
-        mLoginPresenter.presentScreen();
+        mLoginPresenter.presentScreen(PREFERENCE);
     }
 
     @Override
