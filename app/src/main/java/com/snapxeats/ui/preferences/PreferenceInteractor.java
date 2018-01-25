@@ -181,26 +181,29 @@ public class PreferenceInteractor {
      * get cuisines list
      */
     public void getCuisineList() {
-
-        ApiHelper apiHelper = ApiClient.getClient(mContext).create(ApiHelper.class);
-        Call<RootCuisine> listCuisineCall = apiHelper.getCuisineList();
-        listCuisineCall.enqueue(new Callback<RootCuisine>() {
-            @Override
-            public void onResponse(Call<RootCuisine> call, Response<RootCuisine> response) {
-                if(response.isSuccessful()) {
-                    if(response.body()!=null) {
-                     RootCuisine rootCuisine=response.body();
-                     preferencePresenter.setCuisineList(rootCuisine);
+        if (NetworkUtility.isNetworkAvailable(mContext)) {
+            ApiHelper apiHelper = ApiClient.getClient(mContext).create(ApiHelper.class);
+            Call<RootCuisine> listCuisineCall = apiHelper.getCuisineList();
+            listCuisineCall.enqueue(new Callback<RootCuisine>() {
+                @Override
+                public void onResponse(Call<RootCuisine> call, Response<RootCuisine> response) {
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            RootCuisine rootCuisine = response.body();
+                            preferencePresenter.setCuisineList(rootCuisine);
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<RootCuisine> call, Throwable t) {
-                preferencePresenter.response(SnapXResult.ERROR);
+                @Override
+                public void onFailure(Call<RootCuisine> call, Throwable t) {
+                    preferencePresenter.response(SnapXResult.ERROR);
 
-            }
-        });
+                }
+            });
+        }else {
+            preferencePresenter.response(SnapXResult.NONETWORK);
+
+        }
     }
-
 }
