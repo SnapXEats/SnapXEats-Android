@@ -32,7 +32,7 @@ public class ApiClient {
 
             if (null == retrofit) {
                 retrofit = new Retrofit.Builder()
-                        .baseUrl(WebConstants.BASE_URL)
+                        .baseUrl(WebConstants.CUISINE_LIST)
                         .client(client)
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();

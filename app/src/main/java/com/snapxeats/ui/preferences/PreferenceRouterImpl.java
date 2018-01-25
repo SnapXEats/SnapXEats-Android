@@ -23,19 +23,18 @@ public class PreferenceRouterImpl implements PreferenceContract.PreferenceRouter
 
     @Inject
     public PreferenceRouterImpl(Router router) {
-        this.router = router;
+        this.router=router;
     }
 
 
-    @Override
     public void presentScreen(Router.Screen screen) {
         router.presentScreen(screen);
     }
 
-    /**
+   /**
      * Set view to Presenter
-     *
      * @param view
+     *
      */
     @Override
     public void setView(PreferenceContract.PreferenceView view) {

@@ -4,6 +4,7 @@ import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.preferences.PreferenceContract;
 
 /**
  * Created by Prajakta Patil on 4/1/18.
@@ -17,4 +18,10 @@ public class LoginContract {
     interface LoginPresenter extends BasePresenter<LoginView> {
         void presentScreen(Router.Screen screen);
     }
+
+    public interface LoginRouter {
+        void presentScreen(Router.Screen screen);
+        void setView(LoginContract.LoginView view);
+    }
+
 }

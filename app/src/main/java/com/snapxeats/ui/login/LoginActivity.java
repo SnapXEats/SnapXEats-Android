@@ -24,11 +24,11 @@ import com.facebook.login.widget.LoginButton;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BuildConfig;
 import com.snapxeats.R;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.preferences.PreferenceActivity;
 
 import net.hockeyapp.android.utils.Base64;
 
@@ -39,6 +39,8 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import static com.snapxeats.common.Router.Screen.PREFERENCE;
+
 import static com.snapxeats.common.Router.Screen.PREFERENCE;
 
 /**
@@ -124,9 +126,11 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        mLoginPresenter.response(SnapXResult.SUCCESS);
-                        Log.v(TAG, AccessToken.getCurrentAccessToken() + "");
-                        Log.v(TAG, AccessToken.getCurrentAccessToken().getUserId() + "");
+                        if(loginResult!=null) {
+                            mLoginPresenter.response(SnapXResult.SUCCESS);
+                            Log.v(TAG, AccessToken.getCurrentAccessToken() + "");
+                            Log.v(TAG, AccessToken.getCurrentAccessToken().getUserId() + "");
+                        }
                     }
 
                     @Override
@@ -205,6 +209,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     public void success() {
         mLoginPresenter.presentScreen(PREFERENCE);
     }
+
 
     @Override
     public void error() {

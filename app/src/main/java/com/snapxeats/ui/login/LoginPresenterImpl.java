@@ -15,13 +15,13 @@ import javax.inject.Singleton;
 @Singleton
 public class LoginPresenterImpl implements LoginContract.LoginPresenter {
 
-    private LoginRouter mLoginRouter;
+    private LoginRouterImpl mLoginRouter;
 
     @Nullable
     private LoginContract.LoginView mLoginLoginView;
 
     @Inject
-    public LoginPresenterImpl(LoginInteractor loginInteractor, LoginRouter loginRouter) {
+    public LoginPresenterImpl(LoginInteractor loginInteractor, LoginRouterImpl loginRouter) {
         LoginInteractor mLoginInteractor = loginInteractor;
         this.mLoginRouter = loginRouter;
     }
@@ -40,11 +40,12 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
     @Override
     public void presentScreen(Router.Screen screen) {
         mLoginRouter.presentScreen(screen);
+
     }
 
     @Override
     public void response(SnapXResult result) {
-        switch(result) {
+        switch (result) {
             case SUCCESS:
                 mLoginLoginView.success();
                 break;

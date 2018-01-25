@@ -1,5 +1,8 @@
 package com.snapxeats.ui.login;
 
+import com.snapxeats.common.Router;
+import com.snapxeats.ui.preferences.PreferenceRouterImpl;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -10,9 +13,14 @@ import dagger.Provides;
 public abstract class LoginModule {
 
     @Provides
-    static LoginContract.LoginPresenter presenter(LoginInteractor interactor, LoginRouter loginRouter) {
+    static LoginContract.LoginPresenter presenter(LoginInteractor interactor, LoginRouterImpl loginRouter) {
         LoginContract.LoginPresenter loginPresenter = new LoginPresenterImpl(interactor,loginRouter);
         interactor.setPresenter(loginPresenter);
         return loginPresenter;
+    }
+    @Provides
+    static LoginRouterImpl provideLoginRouter(Router router) {
+        LoginRouterImpl loginRouter = new LoginRouterImpl(router);
+        return loginRouter;
     }
 }
