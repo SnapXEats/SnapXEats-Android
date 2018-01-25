@@ -38,7 +38,6 @@ import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant
  * Created by Snehal Tembare on 3/1/18.
  */
 
-
 public class PreferenceActivity extends BaseActivity implements PreferenceContract.PreferenceView,
         AppContract.SnapXResults {
 
@@ -176,7 +175,7 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
         mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), ""));
     }
 
-    @OnClick(R.id.txt_place_name)
+    @OnClick(R.id.layout_location)
     public void presentLocationScreen() {
         presenter.presentScreen(LOCATION);
     }
@@ -258,6 +257,5 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
-        System.exit(0);
     }
 }

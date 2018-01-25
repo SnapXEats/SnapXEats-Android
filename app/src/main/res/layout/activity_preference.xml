@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout_parent"
     android:layout_width="match_parent"
@@ -19,21 +20,28 @@
             android:padding="@dimen/common_dimens_20"
             android:weightSum="1">
 
-            <ImageView
-                android:layout_width="@dimen/common_dimens_0"
-                android:layout_height="@dimen/common_dimens_20"
-                android:layout_weight="0.1"
-                android:src="@drawable/ic_cuisine_marker" />
-
-            <TextView
-                android:id="@+id/txt_place_name"
-                android:layout_width="@dimen/common_dimens_0"
+            <LinearLayout
+                android:id="@+id/layout_location"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.45"
-                android:text="@string/select_location"
-                android:textColor="@color/colorCuisine"
-                android:textSize="@dimen/text_size_16"
-                android:textStyle="bold" />
+                android:layout_weight="0.5">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/common_dimens_20"
+                    android:src="@drawable/ic_cuisine_marker" />
+
+                <TextView
+                    android:id="@+id/txt_place_name"
+                    android:layout_width="@dimen/common_dimens_0"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/common_dimens_10"
+                    android:layout_weight="0.45"
+                    android:text="@string/select_location"
+                    android:textColor="@color/colorCuisine"
+                    android:textSize="@dimen/text_size_16"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/btn_cuisine_done"

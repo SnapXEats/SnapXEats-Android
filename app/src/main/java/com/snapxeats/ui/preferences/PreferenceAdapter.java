@@ -16,6 +16,7 @@ import com.snapxeats.common.model.RootCuisine;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Prajakta Patil on 19/1/18.
@@ -23,14 +24,14 @@ import java.util.ArrayList;
 public class PreferenceAdapter extends RecyclerView.Adapter<PreferenceAdapter.ViewHolder> {
 
     public RootCuisine rootCuisine;
-    public ArrayList<Cuisines> cuisineArrayList;
+    public List<Cuisines> cuisineArrayList;
     private Context mContext;
     private int selectedCardPos;
     private OnCardItemClickListener mOnCardItemClickListener;
     private double UNSELECT_OPACITY = 1.0;
     private double SELECT_OPACITY = 0.4;
 
-    public PreferenceAdapter(Context mContext, int selectedCardPos, ArrayList<Cuisines> cuisineArrayList,
+    public PreferenceAdapter(Context mContext, int selectedCardPos, List<Cuisines> cuisineArrayList,
                              RootCuisine rootCuisine, OnCardItemClickListener mOnCardItemClickListener) {
         this.mContext = mContext;
         this.selectedCardPos = selectedCardPos;

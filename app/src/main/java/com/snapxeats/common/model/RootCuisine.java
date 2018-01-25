@@ -3,7 +3,7 @@ package com.snapxeats.common.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RootCuisine implements Parcelable {
-    private ArrayList<Cuisines> cuisineList;
+    private List<Cuisines> cuisineList;
 
     @Override
     public int describeContents() {
