@@ -29,10 +29,10 @@ import com.snapxeats.common.utilities.NetworkUtility;
 public class InstagramDialog extends Dialog {
 
     private static final FrameLayout.LayoutParams mFrameLayout = new FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     private static final int PADDING = 20;
     private static final int WEBVIEW_SCALE = 210;
-    private String mUrl;
+    private String mInstaUrl;
     private OAuthDialogListener mListener;
     private ProgressDialog progressDialog;
     private WebView mWebView;
@@ -42,7 +42,7 @@ public class InstagramDialog extends Dialog {
     InstagramDialog(Context mContext, String url, OAuthDialogListener listener) {
         super(mContext);
         this.mContext = mContext;
-        mUrl = url;
+        mInstaUrl = url;
         mListener = listener;
     }
 
@@ -61,7 +61,6 @@ public class InstagramDialog extends Dialog {
 
         Display display = getWindow().getWindowManager().getDefaultDisplay();
         addContentView(mLinearLayout, new FrameLayout.LayoutParams(display.getWidth(), display.getHeight()));
-
         setUpTitle();
         setUpWebView();
     }
@@ -74,22 +73,35 @@ public class InstagramDialog extends Dialog {
                 ViewGroup.LayoutParams.WRAP_CONTENT));
         mTitle.setPadding(PADDING, PADDING, PADDING, PADDING);
         mLinearLayout.addView(mTitle);
-        mTitle.setOnClickListener(v -> InstagramDialog.this.dismiss());
+
+        mTitle.setOnClickListener(v -> {
+            if (mWebView.canGoBack()) {
+                mWebView.goBack();
+            }
+            InstagramDialog.this.dismiss();
+        });
     }
 
     private void setUpWebView() {
         mWebView = new WebView(getContext());
         mWebView.setWebViewClient(new OAuthWebViewClient());
-        mWebView.loadUrl(mUrl);
+        mWebView.loadUrl(mInstaUrl);
         mWebView.setLayoutParams(mFrameLayout);
         mWebView.setInitialScale(WEBVIEW_SCALE);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        mWebView.getSettings().setBuiltInZoomControls(true);
         mWebView.getSettings().setSupportZoom(true);
-        mWebView.getSettings().setDisplayZoomControls(true);
         mWebView.getSettings().setDefaultZoom(WebSettings.ZoomDensity.FAR);
         mLinearLayout.addView(mWebView);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mWebView.canGoBack()) {
+            mWebView.goBack();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private class OAuthWebViewClient extends WebViewClient {
@@ -114,7 +126,7 @@ public class InstagramDialog extends Dialog {
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
             if (NetworkUtility.isNetworkAvailable(mContext)) {
-                if(!((Activity) mContext).isFinishing()) {
+                if (!((Activity) mContext).isFinishing()) {
                     progressDialog.show();
                 }
 
@@ -124,7 +136,7 @@ public class InstagramDialog extends Dialog {
                 optionDialog.setButton(mContext.getString(R.string.ok), (dialog, which) -> {
                     Snackbar snackbar = Snackbar
                             .make(mWebView, mContext.getString(R.string.check_network), Snackbar.LENGTH_INDEFINITE)
-                            .setAction(mContext.getString(R.string.retry), view1 -> mWebView.loadUrl(mUrl));
+                            .setAction(mContext.getString(R.string.retry), view1 -> mWebView.loadUrl(mInstaUrl));
                     snackbar.setActionTextColor(Color.RED);
                     View sbView = snackbar.getView();
 
@@ -139,7 +151,6 @@ public class InstagramDialog extends Dialog {
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-
             progressDialog.dismiss();
         }
     }

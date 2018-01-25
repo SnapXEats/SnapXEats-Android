@@ -4,6 +4,8 @@ import android.location.Location;
 import android.support.annotation.Nullable;
 
 import com.snapxeats.common.Router;
+import com.snapxeats.common.Router;
+import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.common.utilities.SnapXResult;
 
 import javax.inject.Singleton;
@@ -60,14 +62,24 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
      * @param placename
      */
 
-    @Override
-    public void updatePlace(String placename,Location location) {
-        preferenceView.updatePlaceName(placename,location);
+    public void updatePlace(String placename, Location location) {
+        preferenceView.updatePlaceName(placename, location);
     }
 
     @Override
     public void presentScreen(Router.Screen screen) {
         router.presentScreen(screen);
+    }
+
+    @Override
+    public void getCuisineList() {
+        interactor.getCuisineList();
+    }
+
+
+    @Override
+    public void setCuisineList(RootCuisine rootCuisine) {
+        preferenceView.getCuisineInfo(rootCuisine);
     }
 
     /**

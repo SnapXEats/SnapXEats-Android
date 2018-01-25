@@ -27,11 +27,11 @@ public class SplashActivity extends AppCompatActivity {
 
         new Handler().postDelayed(() -> {
             //check if facebook user is logged in or not
-            if(AccessToken.getCurrentAccessToken()==null){
-                startActivity(new Intent(this,LoginActivity.class));
+            if (AccessToken.getCurrentAccessToken() == null) {
+                startActivity(new Intent(this, LoginActivity.class));
                 finish();
-            }else {
-                startActivity(new Intent(this,PreferenceActivity.class));
+            } else {
+                startActivity(new Intent(this, PreferenceActivity.class));
             }
         }, TIME_OUT);
 
@@ -44,7 +44,6 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        // ... your own onResume implementation
         checkForCrashes();
     }
 

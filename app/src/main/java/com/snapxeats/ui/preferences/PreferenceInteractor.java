@@ -6,16 +6,22 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Looper;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
+import com.snapxeats.network.ApiClient;
+import com.snapxeats.network.ApiHelper;
 import com.snapxeats.network.NetworkHelper;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,6 +29,10 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Snehal Tembare on 3/1/18.
@@ -32,7 +42,7 @@ import javax.inject.Singleton;
 public class PreferenceInteractor {
 
     private PreferenceContract.PreferencePresenter preferencePresenter;
-    private Activity context;
+    private Activity mContext;
 
     /**
      * Represents a geographical location.
@@ -51,9 +61,9 @@ public class PreferenceInteractor {
      * Stores parameters for requests to the FusedLocationProviderApi.
      */
     private LocationRequest mLocationRequest;
-    /**
-     * The desired interval for location updates. Inexact. Updates may be more or less frequent.
-     */
+   /**
+    *  The desired interval for location updates. Inexact. Updates may be more or less frequent.
+    */
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
 
     /**
@@ -73,16 +83,17 @@ public class PreferenceInteractor {
     }
 
     private void locationHelper(PreferenceContract.PreferenceView preferenceView) {
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext);
 
         createLocationRequest();
 
-        createLocationCallback(context);
+        createLocationCallback(mContext);
 
-        if (mFusedLocationClient != null && !NetworkHelper.checkPermission(context)) {
+        if (mFusedLocationClient != null && !NetworkHelper.checkPermission(mContext)) {
             preferenceView.showProgressDialog();
             mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                     mLocationCallback, Looper.myLooper());
+
         }
     }
 
@@ -145,6 +156,7 @@ public class PreferenceInteractor {
                     }
                 }
                 preferencePresenter.updatePlace(place, mCurrentLocation);
+
                 SnapXToast.debug("Address: PreferenceInteractor " + place);
             }
         };
@@ -155,13 +167,43 @@ public class PreferenceInteractor {
      */
 
     public void getLocation(PreferenceContract.PreferenceView preferenceView) {
-        context = preferenceView.getActivity();
-        if (context != null &&
-                NetworkUtility.isNetworkAvailable(context)) {
+        mContext = preferenceView.getActivity();
+        if (mContext != null &&
+                NetworkUtility.isNetworkAvailable(mContext)) {
             locationHelper(preferenceView);
 
         } else {
             preferencePresenter.response(SnapXResult.NONETWORK);
+        }
+    }
+
+    /**
+     * get cuisines list
+     */
+    public void getCuisineList() {
+        if (NetworkUtility.isNetworkAvailable(mContext)) {
+            ApiHelper apiHelper = ApiClient.getClient(mContext).create(ApiHelper.class);
+            Call<RootCuisine> listCuisineCall = apiHelper.getCuisineList();
+            listCuisineCall.enqueue(new Callback<RootCuisine>() {
+                @Override
+                public void onResponse(Call<RootCuisine> call, Response<RootCuisine> response) {
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            RootCuisine rootCuisine = response.body();
+                            preferencePresenter.setCuisineList(rootCuisine);
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<RootCuisine> call, Throwable t) {
+                    preferencePresenter.response(SnapXResult.ERROR);
+
+                }
+            });
+        }else {
+            preferencePresenter.response(SnapXResult.NONETWORK);
+
         }
     }
 }
