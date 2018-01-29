@@ -198,7 +198,6 @@ public class PreferenceInteractor {
                 @Override
                 public void onFailure(Call<RootCuisine> call, Throwable t) {
                     preferencePresenter.response(SnapXResult.ERROR);
-
                 }
             });
         }else {

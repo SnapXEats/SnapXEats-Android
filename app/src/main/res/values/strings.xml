@@ -27,7 +27,7 @@
     <string name="saved_addresses">SAVED ADDRESSES</string>
     <string name="location_permission_denied">Location Permission Denied</string>
     <string name="permission_denied_msg">SnapXEats uses this permission to detect your current location
-        and show you great restaurants around you. Are you sure you want to deny this permission?</string>
+        and shows you great restaurants around you. Are you sure you want to deny this permission?</string>
     <string name="yes">YES</string>
     <string name="retry">retry</string>
     <string name="network_error">Check Internet connection</string>
@@ -51,5 +51,12 @@
     <string name="last_location">lastKnownLocation</string>
     <string name="isLocationPermissionGranted">isLocationPermissionGranted</string>
     <string name="isLocationPermissionDenied">isLocationPermissionDenied</string>
+    <string name="title_activity_food_card">FoodCardActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
 
 </resources>
