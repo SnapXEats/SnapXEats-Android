@@ -16,6 +16,7 @@ import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipeDirectionalView;
 import com.mindorks.placeholderview.Utils;
 import com.snapxeats.R;
+import com.snapxeats.common.constants.SnapXToast;
 
 public class FoodStackActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -23,16 +24,23 @@ public class FoodStackActivity extends AppCompatActivity
     @BindView(R.id.swipe_view)
     protected SwipeDirectionalView mSwipeView;
 
+    private DrawerLayout drawer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_stack);
         ButterKnifeLite.bind(this);
+
+        initView();
+    }
+
+    private void initView() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -51,10 +59,6 @@ public class FoodStackActivity extends AppCompatActivity
                         .setRelativeScale(0.01f)
                         .setSwipeInMsgLayoutId(R.layout.tinder_swipe_in_msg_view)
                         .setSwipeOutMsgLayoutId(R.layout.tinder_swipe_out_msg_view));
-        initView();
-    }
-
-    private void initView() {
 
         mSwipeView.addView(new TinderDirectionalCard(this))
                 .addView(new TinderDirectionalCard(this))
@@ -65,7 +69,7 @@ public class FoodStackActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -94,21 +98,26 @@ public class FoodStackActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
 
-        if (id == R.id.nav_wishlist) {
-            // Handle the camera action
-        } else if (id == R.id.nav_preferences) {
-
-        } else if (id == R.id.nav_food_journey) {
-
-        } else if (id == R.id.nav_rewards) {
-
-        } else if (id == R.id.nav_logout) {
-
+        switch (item.getItemId()) {
+            case R.id.nav_wishlist:
+                SnapXToast.debug("WishList");
+                break;
+            case R.id.nav_preferences:
+                SnapXToast.debug("Preferences");
+                break;
+            case R.id.nav_food_journey:
+                SnapXToast.debug("Food Journey");
+                break;
+            case R.id.nav_rewards:
+                SnapXToast.debug("Rewards");
+                break;
+            case R.id.nav_logout:
+                SnapXToast.debug("Logout");
+                break;
         }
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
