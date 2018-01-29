@@ -126,7 +126,7 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
             mSnackBar.dismiss();
         }
         if (placeName.isEmpty()) {
-            mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), ""));
+            mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), getString(R.string.select_location)));
         } else {
             mTxtPlaceName.setText(placeName);
             editor.putString(getString(R.string.last_location), placeName);
@@ -163,7 +163,6 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
             } else {
                 presenter.getLocation(this);
                 presenter.getCuisineList();
-
             }
         } else {
             checkGpsPermission();
@@ -173,7 +172,7 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
                 preferences.getBoolean(getString(R.string.isLocationPermissionDenied), false)) {
             mSnackBar.show();
         }
-        mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), ""));
+        mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), getString(R.string.select_location)));
     }
 
     @OnClick(R.id.layout_location)

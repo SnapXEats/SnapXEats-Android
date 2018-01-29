@@ -6,7 +6,7 @@ android {
         applicationId "com.snapxeats"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 203
+        versionCode 204
         versionName "0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         resValue "string", "HOCKEYAPP_APP_ID", HOCKEYAPP_APP_key
