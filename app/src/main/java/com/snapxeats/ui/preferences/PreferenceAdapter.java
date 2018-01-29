@@ -1,6 +1,7 @@
 package com.snapxeats.ui.preferences;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -30,6 +31,8 @@ public class PreferenceAdapter extends RecyclerView.Adapter<PreferenceAdapter.Vi
     private OnCardItemClickListener mOnCardItemClickListener;
     private double UNSELECT_OPACITY = 1.0;
     private double SELECT_OPACITY = 0.4;
+    long mLastClickTime=0;
+
 
     public PreferenceAdapter(Context mContext, int selectedCardPos, List<Cuisines> cuisineArrayList,
                              RootCuisine rootCuisine, OnCardItemClickListener mOnCardItemClickListener) {
@@ -57,6 +60,12 @@ public class PreferenceAdapter extends RecyclerView.Adapter<PreferenceAdapter.Vi
                 .placeholder(R.drawable.ic_cuisine_placeholder).into(viewHolder.imgCuisine);
 
         viewHolder.cardView.setOnClickListener(v -> {
+
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 500) {
+                return;
+            }
+            mLastClickTime = SystemClock.elapsedRealtime();
+
             Cuisines cuisines = cuisineArrayList.get(position);
             cuisines.setSelected(!cuisines.isSelected());
             if (cuisines.isSelected()) {

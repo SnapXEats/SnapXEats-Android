@@ -20,6 +20,7 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.RootCuisine;
+import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.NetworkHelper;
@@ -177,14 +178,25 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
 
     @OnClick(R.id.layout_location)
     public void presentLocationScreen() {
-        presenter.presentScreen(LOCATION);
+        if (NetworkUtility.isNetworkAvailable(this)) {
+            presenter.presentScreen(LOCATION);
+        } else {
+            showNetworkErrorDialog((dialog, which) -> {
+            });
+        }
     }
 
     @OnClick(R.id.btn_cuisine_done)
-    public void btnCisineDone() {
-        presenter.presentScreen(FOODSTACK);
+    public void btnCuisineDone() {
+        //TODO for future reference network check
+      //  if (NetworkUtility.isNetworkAvailable(this)) {
+            presenter.presentScreen(FOODSTACK);
+/*
+        } else {
+            showNetworkErrorDialog((dialog, which) -> {
+            });
+        }*/
     }
-
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -209,7 +221,6 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
             if (mSnackBar != null) {
                 mSnackBar.dismiss();
             }
-
         } else if (!shouldShowRequestPermissionRationale(permissions[0])) {
             SnapXToast.debug("Permissions denied check never ask again");
             editor.putBoolean(getString(R.string.isLocationPermissionGranted), false);
@@ -242,7 +253,8 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     @Override
     public void noNetwork() {
         //Set action as a finish() to close current activity
-        showNetworkErrorDialog(setListener(() -> finish()));
+        showNetworkErrorDialog((dialog, which) -> {
+        });
     }
 
     @Override

@@ -172,9 +172,9 @@ public class PreferenceInteractor {
                 NetworkUtility.isNetworkAvailable(mContext)) {
             locationHelper(preferenceView);
 
-        } else {
+        } /*else {
             preferencePresenter.response(SnapXResult.NONETWORK);
-        }
+        }*/
     }
 
     /**
