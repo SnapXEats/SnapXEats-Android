@@ -9,6 +9,8 @@ import com.snapxeats.common.Router;
 import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.dagger.AppContract;
 
+import java.util.ArrayList;
+
 /**
  * Created by Snehal Tembare on 3/1/18.
  */
@@ -38,6 +40,7 @@ public class PreferenceContract {
 
     interface PreferenceRouter {
         void presentScreen(Router.Screen screen);
+
         void setView(PreferenceView view);
     }
 }

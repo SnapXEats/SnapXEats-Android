@@ -4,7 +4,6 @@ import android.location.Location;
 import android.support.annotation.Nullable;
 
 import com.snapxeats.common.Router;
-import com.snapxeats.common.Router;
 import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.common.utilities.SnapXResult;
 
@@ -18,43 +17,40 @@ import javax.inject.Singleton;
 @Singleton
 public class PreferencePresenterImpl implements PreferenceContract.PreferencePresenter {
 
-    private PreferenceInteractor interactor;
-    private Location location;
+    private PreferenceInteractor mPreferenceInteractor;
 
     @Nullable
-    private PreferenceContract.PreferenceView preferenceView;
+    private PreferenceContract.PreferenceView mPreferenceView;
 
-    private PreferenceContract.PreferenceRouter router;
+    private PreferenceContract.PreferenceRouter mPreferenceRouter;
 
-
-    public PreferencePresenterImpl(PreferenceInteractor interactor, PreferenceRouterImpl router) {
-        this.interactor = interactor;
-        this.router = router;
+    PreferencePresenterImpl(PreferenceInteractor mPreferenceInteractor, PreferenceRouterImpl router) {
+        this.mPreferenceInteractor = mPreferenceInteractor;
+        this.mPreferenceRouter = router;
     }
 
     @Override
     public void getLocation(PreferenceContract.PreferenceView preferenceView) {
-        interactor.getLocation(preferenceView);
+        mPreferenceInteractor.getLocation(preferenceView);
     }
 
     @Override
     public void response(SnapXResult result) {
         switch(result) {
             case SUCCESS:
-                preferenceView.success();
+                mPreferenceView.success();
                 break;
             case FAILURE:
-                preferenceView.error();
+                mPreferenceView.error();
                 break;
             case NONETWORK:
-                preferenceView.noNetwork();
+                mPreferenceView.noNetwork();
                 break;
             case NETWORKERROR:
-                preferenceView.networkError();
+                mPreferenceView.networkError();
                 break;
         }
     }
-
 
     /**
      * Update user location
@@ -63,23 +59,24 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
      */
 
     public void updatePlace(String placename, Location location) {
-        preferenceView.updatePlaceName(placename, location);
+        if (mPreferenceView != null) {
+            mPreferenceView.updatePlaceName(placename, location);
+        }
     }
 
     @Override
     public void presentScreen(Router.Screen screen) {
-        router.presentScreen(screen);
+        mPreferenceRouter.presentScreen(screen);
     }
 
     @Override
     public void getCuisineList() {
-        interactor.getCuisineList();
+        mPreferenceInteractor.getCuisineList();
     }
-
 
     @Override
     public void setCuisineList(RootCuisine rootCuisine) {
-        preferenceView.getCuisineInfo(rootCuisine);
+        mPreferenceView.getCuisineInfo(rootCuisine);
     }
 
     /**
@@ -89,13 +86,13 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
 
     @Override
     public void addView(PreferenceContract.PreferenceView view) {
-        preferenceView = view;
-        router.setView(view);
+        mPreferenceView = view;
+        mPreferenceRouter.setView(view);
     }
 
     @Override
     public void dropView() {
-        preferenceView = null;
+        mPreferenceView = null;
     }
 
 }

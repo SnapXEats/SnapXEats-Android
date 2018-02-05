@@ -19,11 +19,17 @@ import android.widget.TextView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.model.Cuisines;
+import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
+import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.NetworkHelper;
+import com.snapxeats.ui.foodstack.FoodStackActivity;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -31,7 +37,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.snapxeats.common.Router.Screen.FOODSTACK;
 import static com.snapxeats.common.Router.Screen.LOCATION;
 import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
 
@@ -40,7 +45,7 @@ import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant
  */
 
 public class PreferenceActivity extends BaseActivity implements PreferenceContract.PreferenceView,
-        AppContract.SnapXResults {
+        AppContract.SnapXResults, PreferenceAdapter.RecyclerViewClickListener {
 
     public interface PreferenceConstant {
         int ACCESS_FINE_LOCATION = 1;
@@ -54,30 +59,36 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
 
     @Inject
     SnapXDialog snapXDialog;
+
     private LocationManager mLocationManager;
 
     private Snackbar mSnackBar;
+
     private AppContract.DialogListenerAction denyAction = () -> NetworkHelper.requestPermission(this);
     private AppContract.DialogListenerAction allowAction = () -> presenter.presentScreen(LOCATION);
+
     private SharedPreferences preferences;
+
     private SharedPreferences.Editor editor;
+
     private Location mLocation;
 
     private PreferenceAdapter mPreferenceAdapter;
-    private int selectedCardPos = 0;
+
     @BindView(R.id.recycler_view)
     protected RecyclerView mRecyclerView;
+
+    @BindView(R.id.btn_cuisine_done)
+    protected TextView mTxtCuisineDone;
+
+    private SelectedCuisineList selectedCuisineList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter.addView(this);
-        snapXDialog.setContext(this);
         setContentView(R.layout.activity_preference);
         ButterKnife.bind(this);
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         initView();
-        mRecyclerView.setNestedScrollingEnabled(false);
     }
 
     /**
@@ -97,9 +108,13 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
 
     @Override
     public void initView() {
+        presenter.addView(this);
+        snapXDialog.setContext(this);
+        mRecyclerView.setNestedScrollingEnabled(false);
         preferences = getSharedPreferences("SnapXEats", MODE_PRIVATE);
         editor = preferences.edit();
-
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        selectedCuisineList = new SelectedCuisineList();
         initSnackBar();
     }
 
@@ -108,7 +123,8 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
      */
     private void initSnackBar() {
         //Snackbar to show location permission error
-        mSnackBar = Snackbar.make(findViewById(R.id.layout_parent), getString(R.string.location_permission_needed),
+        mSnackBar = Snackbar.make(findViewById(R.id.layout_parent),
+                getString(R.string.location_permission_needed),
                 Snackbar.LENGTH_INDEFINITE).setAction(getString(R.string.retry),
                 v -> NetworkHelper.requestPermission(PreferenceActivity.this));
     }
@@ -122,6 +138,13 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     public void updatePlaceName(String placeName, Location location) {
         dismissProgressDialog();
         mLocation = location;
+
+        //set latitude and longitude
+        LocationCuisine locationCuisine = new LocationCuisine();
+        locationCuisine.setLatitude(location.getLatitude());
+        locationCuisine.setLongitude(location.getLongitude());
+        selectedCuisineList.setLocation(locationCuisine);
+
         if (mSnackBar != null) {
             mSnackBar.dismiss();
         }
@@ -135,25 +158,12 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     }
 
     @Override
-    public void getCuisineInfo(RootCuisine rootCuisine) {
-        if (rootCuisine != null) {
-            mPreferenceAdapter = new PreferenceAdapter(PreferenceActivity.this,
-                    selectedCardPos,
-                    rootCuisine.getCuisineList(),
-                    rootCuisine,
-                    (position, rootCuisineObject) -> {
-
-                    });
-        }
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(PreferenceActivity.this, 2);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.setAdapter(mPreferenceAdapter);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
+        //disable 'done' button till cuisines not selected
+        mTxtCuisineDone.setAlpha((float) 0.4);
+        mTxtCuisineDone.setClickable(false);
+
         if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) &&
                 mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 
@@ -185,16 +195,47 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
         }
     }
 
+    /**
+     * Get cuisine tiles images
+     *
+     * @param rootCuisine
+     */
+    @Override
+    public void getCuisineInfo(RootCuisine rootCuisine) {
+        List<Cuisines> selectableItems = rootCuisine.getCuisineList();
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(PreferenceActivity.this, 2);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        mPreferenceAdapter = new PreferenceAdapter(PreferenceActivity.this,
+                selectableItems,
+                rootCuisine, selectedCuisineList -> {
+            if (selectedCuisineList.size() >= 0) {
+                mTxtCuisineDone.setClickable(true);
+                mTxtCuisineDone.setAlpha((float) 1.0);
+            }
+        });
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setAdapter(mPreferenceAdapter);
+
+    }
+
     @OnClick(R.id.btn_cuisine_done)
     public void btnCuisineDone() {
         //TODO for future reference network check
-      //  if (NetworkUtility.isNetworkAvailable(this)) {
-            presenter.presentScreen(FOODSTACK);
-/*
-        } else {
-            showNetworkErrorDialog((dialog, which) -> {
-            });
-        }*/
+        if (mPreferenceAdapter.getSelectedItems().size() != 0) {
+            if (mLocation != null) {
+                //set selected cuisines
+                selectedCuisineList.setSelectedCuisineList(mPreferenceAdapter.getSelectedItems());
+                //TODO pass object as ENUM
+                Intent intent = new Intent(this, FoodStackActivity.class);
+                intent.putExtra("key", selectedCuisineList);
+                startActivity(intent);
+
+            } else {
+                showSetLocationDialog((dialog, which) -> {
+                });
+            }
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -260,6 +301,14 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     public void networkError() {
     }
 
+    @Override
+    public void recyclerViewListClicked(List<String> selectedCuisineList) {
+
+    }
+
+    /**
+     * on back pressed action
+     */
     @Override
     public void onBackPressed() {
         super.onBackPressed();

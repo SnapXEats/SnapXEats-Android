@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import com.snapxeats.R;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
 
@@ -19,6 +20,7 @@ import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant
  * Created by Snehal Tembare on 11/1/18.
  */
 
+@Singleton
 public class SnapXDialog {
     private ProgressDialog mDialog;
     private AlertDialog.Builder mNetworkErrorDialog;
@@ -62,6 +64,14 @@ public class SnapXDialog {
         mNetworkErrorDialog.setPositiveButton(context.getString(R.string.ok), click);
         mNetworkErrorDialog.show();
     }
+    public void showSetLocationDialog(DialogInterface.OnClickListener click) {
+        mNetworkErrorDialog = new AlertDialog.Builder(context);
+        mNetworkErrorDialog.setMessage(context.getString(R.string.set_location));
+
+        mNetworkErrorDialog.setPositiveButton(context.getString(R.string.ok), click);
+        mNetworkErrorDialog.show();
+    }
+
 
     /**
      * Show dialog when user deny Location permission very first time
