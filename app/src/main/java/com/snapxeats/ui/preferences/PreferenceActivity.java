@@ -20,6 +20,7 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.RootCuisine;
+import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
@@ -54,11 +55,14 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
 
     @Inject
     SnapXDialog snapXDialog;
+
+    @Inject
+    AppUtility utility;
+
     private LocationManager mLocationManager;
 
     private Snackbar mSnackBar;
-    private AppContract.DialogListenerAction denyAction = () -> NetworkHelper.requestPermission(this);
-    private AppContract.DialogListenerAction allowAction = () -> presenter.presentScreen(LOCATION);
+
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
     private Location mLocation;
@@ -71,21 +75,16 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter.addView(this);
-        snapXDialog.setContext(this);
         setContentView(R.layout.activity_preference);
         ButterKnife.bind(this);
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         initView();
-        mRecyclerView.setNestedScrollingEnabled(false);
     }
 
     /**
      * Check provider is enable or not
      */
     private void checkGpsPermission() {
-        if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                !mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+        if (!NetworkHelper.isGpsEnabled(this)) {
             snapXDialog.showGpsPermissionDialog();
         }
     }
@@ -97,20 +96,38 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
 
     @Override
     public void initView() {
-        preferences = getSharedPreferences("SnapXEats", MODE_PRIVATE);
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        presenter.addView(this);
+        snapXDialog.setContext(this);
+        utility.setmContext(this);
+        mRecyclerView.setNestedScrollingEnabled(false);
+        preferences = utility.getSharedPreferences();
         editor = preferences.edit();
+        mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), getString(R.string.select_location)));
 
-        initSnackBar();
+        checkPermissions();
     }
 
-    /**
-     * Initialize Snackbar
-     */
-    private void initSnackBar() {
-        //Snackbar to show location permission error
-        mSnackBar = Snackbar.make(findViewById(R.id.layout_parent), getString(R.string.location_permission_needed),
-                Snackbar.LENGTH_INDEFINITE).setAction(getString(R.string.retry),
-                v -> NetworkHelper.requestPermission(PreferenceActivity.this));
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    private void checkPermissions() {
+        //Check device level location permission
+        if (NetworkHelper.isGpsEnabled(this)) {
+            if (NetworkHelper.checkPermission(this)) {
+                NetworkHelper.requestPermission(this);
+            } else if (NetworkUtility.isNetworkAvailable(this)) {
+                presenter.getLocation(this);
+                presenter.getCuisineList();
+            } else {
+                showNetworkErrorDialog((dialog, which) -> {
+                });
+            }
+        } else {
+            checkGpsPermission();
+        }
     }
 
     /**
@@ -151,50 +168,14 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
         mRecyclerView.setAdapter(mPreferenceAdapter);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) &&
-                mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-
-            if (NetworkHelper.checkPermission(this) &&
-                    preferences.getBoolean(getString(R.string.isLocationPermissionGranted), true)) {
-                NetworkHelper.requestPermission(this);
-            } else {
-                presenter.getLocation(this);
-                presenter.getCuisineList();
-            }
-        } else {
-            checkGpsPermission();
-        }
-
-        if (NetworkHelper.checkPermission(this) &&
-                preferences.getBoolean(getString(R.string.isLocationPermissionDenied), false)) {
-            mSnackBar.show();
-        }
-        mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), getString(R.string.select_location)));
-    }
-
     @OnClick(R.id.layout_location)
     public void presentLocationScreen() {
-        if (NetworkUtility.isNetworkAvailable(this)) {
-            presenter.presentScreen(LOCATION);
-        } else {
-            showNetworkErrorDialog((dialog, which) -> {
-            });
-        }
+        presenter.presentScreen(LOCATION);
     }
 
     @OnClick(R.id.btn_cuisine_done)
     public void btnCuisineDone() {
-        //TODO for future reference network check
-      //  if (NetworkUtility.isNetworkAvailable(this)) {
-            presenter.presentScreen(FOODSTACK);
-/*
-        } else {
-            showNetworkErrorDialog((dialog, which) -> {
-            });
-        }*/
+        presenter.presentScreen(FOODSTACK);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -210,34 +191,27 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
         }
     }
 
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             SnapXToast.debug("Permissions granted");
-            editor.putBoolean(getString(R.string.isLocationPermissionGranted), true);
-            editor.putBoolean(getString(R.string.isLocationPermissionDenied), false);
-            editor.apply();
-            if (mSnackBar != null) {
-                mSnackBar.dismiss();
-            }
+            checkPermissions();
+            //To add data in preferences
         } else if (!shouldShowRequestPermissionRationale(permissions[0])) {
             SnapXToast.debug("Permissions denied check never ask again");
-            editor.putBoolean(getString(R.string.isLocationPermissionGranted), false);
-            editor.putBoolean(getString(R.string.isLocationPermissionDenied), true);
-
-            editor.apply();
-            if (mSnackBar != null) {
-                mSnackBar.dismiss();
-            }
-
-            // User selected the Never Ask Again Option Change settings in app settings manually
             snapXDialog.showChangePermissionDialog();
         } else {
-            editor.putBoolean(getString(R.string.isLocationPermissionGranted), false);
-            editor.putBoolean(getString(R.string.isLocationPermissionDenied), true);
+            presenter.presentScreen(LOCATION);
+        }
+    }
 
-            editor.apply();
-            showDenyDialog(setListener(denyAction), setListener(allowAction));
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == ACCESS_FINE_LOCATION) {
+            checkPermissions();
         }
     }
 

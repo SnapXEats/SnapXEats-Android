@@ -22,7 +22,7 @@ public class PreferenceContract {
         void getCuisineInfo(RootCuisine rootCuisine);
     }
 
-    interface PreferencePresenter extends BasePresenter<PreferenceView> {
+    public interface PreferencePresenter extends BasePresenter<PreferenceView> {
 
         void getLocation(PreferenceContract.PreferenceView preferenceView);
 

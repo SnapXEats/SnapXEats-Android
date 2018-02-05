@@ -34,6 +34,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.snapxeats.common.constants.WebConstants.BASE_URL;
+
 /**
  * Created by Snehal Tembare on 3/1/18.
  */
@@ -75,8 +77,10 @@ public class PreferenceInteractor {
 
     @Inject
     public PreferenceInteractor() {
-
     }
+
+    @Inject
+    ApiClient apiClient;
 
     public void setPreferencePresenter(PreferenceContract.PreferencePresenter presenter) {
         this.preferencePresenter = presenter;
@@ -182,7 +186,7 @@ public class PreferenceInteractor {
      */
     public void getCuisineList() {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
-            ApiHelper apiHelper = ApiClient.getClient(mContext).create(ApiHelper.class);
+            ApiHelper apiHelper = apiClient.getClient(mContext,BASE_URL).create(ApiHelper.class);
             Call<RootCuisine> listCuisineCall = apiHelper.getCuisineList();
             listCuisineCall.enqueue(new Callback<RootCuisine>() {
                 @Override
@@ -202,7 +206,6 @@ public class PreferenceInteractor {
             });
         }else {
             preferencePresenter.response(SnapXResult.NONETWORK);
-
         }
     }
 }

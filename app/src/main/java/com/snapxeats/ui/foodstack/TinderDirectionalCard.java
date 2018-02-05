@@ -16,7 +16,6 @@ import com.mindorks.placeholderview.annotations.swipe.SwipeOutDirectional;
 import com.mindorks.placeholderview.annotations.swipe.SwipeTouch;
 import com.mindorks.placeholderview.annotations.swipe.SwipingDirection;
 import com.snapxeats.R;
-import com.snapxeats.common.utilities.SnapXDialog;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -27,14 +26,15 @@ import com.squareup.picasso.Picasso;
 @Layout(R.layout.tinder_card_view)
 public class TinderDirectionalCard {
 
-
+    private String url;
     @View(R.id.image_view)
     private ImageView mImageView;
 
     private Context mContext;
 
-    public TinderDirectionalCard(Context context) {
+    public TinderDirectionalCard(Context context, String s) {
         this.mContext = context;
+        this.url=s;
     }
 
     @Click(R.id.image_view)
@@ -44,7 +44,7 @@ public class TinderDirectionalCard {
 
     @Resolve
     private void onResolve() {
-        Picasso.with(mContext).load("https://s3.us-east-2.amazonaws.com/snapxeats/english.jpg").into(mImageView);
+        Picasso.with(mContext).load(url).into(mImageView);
 
     }
 

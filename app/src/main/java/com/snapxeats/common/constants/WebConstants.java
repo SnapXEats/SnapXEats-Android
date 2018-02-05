@@ -11,4 +11,8 @@ public class WebConstants {
     public static final String INSTA_CALLBACK_URL = "http://www.snapxeats.com";
     public static final String INSTA_AUTH_URL = "https://api.instagram.com/oauth/authorize/";
     public static final String CUISINE_LIST = "/api/v1/cuisine/";
+    public static final String PREDICTION_LIST = "/maps/api/place/autocomplete/json?sortby=distance&radius=1609&types=address&components=country:in&key=AIzaSyBE60eBPlcvijgNGHK3X-Odd8zHJ2WksNk";
+    public static final String PLACE_DETAILS = "/maps/api/place/details/json?key=AIzaSyBE60eBPlcvijgNGHK3X-Odd8zHJ2WksNk";
+    public static final String GOOGLE_BASE_URL = "https://maps.googleapis.com";
+
 }

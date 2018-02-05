@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import com.snapxeats.R;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
 
@@ -19,6 +20,7 @@ import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant
  * Created by Snehal Tembare on 11/1/18.
  */
 
+@Singleton
 public class SnapXDialog {
     private ProgressDialog mDialog;
     private AlertDialog.Builder mNetworkErrorDialog;
@@ -85,10 +87,15 @@ public class SnapXDialog {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(context.getString(R.string.location_service_not_active));
         builder.setMessage(context.getString(R.string.enable_gps));
-        builder.setPositiveButton(context.getString(R.string.ok), (dialogInterface, i) -> {
+        builder.setPositiveButton(context.getString(R.string.action_settings), (dialogInterface, i) -> {
             // Show location settings when the user acknowledges the alert dialog
-            context.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            context.startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),ACCESS_FINE_LOCATION);
         });
+
+        builder.setNegativeButton(context.getString(R.string.cancel), (dialog, which) -> {
+            dialog.cancel();
+        });
+
         Dialog alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();

@@ -60,11 +60,11 @@ public class FoodStackActivity extends AppCompatActivity
                         .setSwipeInMsgLayoutId(R.layout.tinder_swipe_in_msg_view)
                         .setSwipeOutMsgLayoutId(R.layout.tinder_swipe_out_msg_view));
 
-        mSwipeView.addView(new TinderDirectionalCard(this))
-                .addView(new TinderDirectionalCard(this))
-                .addView(new TinderDirectionalCard(this))
-                .addView(new TinderDirectionalCard(this))
-                .addView(new TinderDirectionalCard(this));
+        mSwipeView.addView(new TinderDirectionalCard(this,"https://s3.us-east-2.amazonaws.com/snapxeats/english.jpg"))
+                .addView(new TinderDirectionalCard(this, "https://s3.us-east-2.amazonaws.com/snapxeats/english.jpg"))
+                .addView(new TinderDirectionalCard(this, "https://s3.us-east-2.amazonaws.com/snapxeats/english.jpg"))
+                .addView(new TinderDirectionalCard(this, "https://s3.us-east-2.amazonaws.com/snapxeats/english.jpg"))
+                .addView(new TinderDirectionalCard(this, "https://s3.us-east-2.amazonaws.com/snapxeats/english.jpg"));
     }
 
     @Override

@@ -12,7 +12,7 @@
             android:title="Preferences" />
         <item
             android:id="@+id/nav_food_journey"
-            android:title="Food Journey" />
+            android:title="Food Journeys" />
         <item
             android:id="@+id/nav_rewards"
             android:title="Rewards" />

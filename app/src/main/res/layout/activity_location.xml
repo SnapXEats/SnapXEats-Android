@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fontFamily="Roboto-Medium"
-    tools:context="com.snapxeats.ui.location.LocationActivity">
+    android:windowSoftInputMode="adjustPan|adjustResize"
+    tools:mContext="com.snapxeats.ui.location.LocationActivity">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -32,11 +35,12 @@
                 android:padding="@dimen/common_dimens_20"
                 android:text="@string/select_location"
                 android:textColor="@color/text_color_primary"
-                android:textStyle="bold"
-                android:textSize="@dimen/text_size_18" />
+                android:textSize="@dimen/text_size_18"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layout_current_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FFEDECEC"
@@ -75,33 +79,53 @@
 
         </LinearLayout>
 
-        <!--<View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/common_dimens_1"
-            android:layout_marginTop="@dimen/common_dimens_15"
-            android:background="@color/view_color" />-->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <AutoCompleteTextView
-                android:id="@+id/search_location"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:drawableLeft="@android:drawable/ic_menu_search"
-                android:drawablePadding="@dimen/common_dimens_10"
-                android:hint="@string/start_typing_your_location"
-                android:padding="@dimen/common_dimens_10"
-                android:textColor="#FFCECCCC"
-                android:textSize="@dimen/text_size_14" />
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.1"
+                    android:padding="@dimen/common_dimens_5"
+                    android:src="@android:drawable/ic_menu_search" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/search_location"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.9"
+                    android:background="@android:color/transparent"
+                    android:drawablePadding="@dimen/common_dimens_20"
+                    android:dropDownHeight="120dp"
+                    android:hint="@string/start_typing_your_location"
+                    android:padding="@dimen/common_dimens_10"
+                    android:textColor="#FFCECCCC"
+                    android:textSize="@dimen/text_size_14" />
+                <ImageView
+                    android:id="@+id/img_delete_input"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/common_dimens_5"
+                    android:padding="@dimen/common_dimens_10"
+                    android:src="@drawable/close" />
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/listview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
-        <!--  <View
-              android:layout_width="match_parent"
-              android:layout_height="@dimen/common_dimens_1"
-              android:background="@color/view_color" />-->
-        <LinearLayout
+
+        <!--<LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#FFEDECEC"
@@ -160,6 +184,6 @@
                 android:layout_height="match_parent"
                 android:visibility="gone"
                 android:layout_marginLeft="@dimen/common_dimens_20" />
-        </LinearLayout>
+        </LinearLayout>-->
     </LinearLayout>
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

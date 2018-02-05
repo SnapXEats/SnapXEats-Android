@@ -8,6 +8,8 @@ import com.snapxeats.ui.location.LocationActivity;
 import com.snapxeats.ui.location.LocationModule;
 import com.snapxeats.ui.preferences.PreferenceActivity;
 import com.snapxeats.ui.preferences.PreferenceModule;
+import com.snapxeats.ui.splash.SplashActivity;
+import com.snapxeats.ui.splash.SplashModule;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -33,4 +35,7 @@ public abstract class ActivityBuilder {
 
     @ContributesAndroidInjector(modules = LoginModule.class)
     abstract LoginActivity bindLoginActivity();
+
+    @ContributesAndroidInjector(modules = SplashModule.class)
+    abstract SplashActivity bindSplashActivity();
 }
