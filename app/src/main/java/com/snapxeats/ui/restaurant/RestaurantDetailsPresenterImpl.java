@@ -45,7 +45,7 @@ public class RestaurantDetailsPresenterImpl implements RestaurantDetailsContract
     public void response(SnapXResult result) {
         switch (result) {
             case SUCCESS:
-                mRestaurantDetailsView.success();
+                mRestaurantDetailsView.success(SnapXResult.SUCCESS.getValue());
                 break;
             case FAILURE:
                 mRestaurantDetailsView.error();

@@ -22,7 +22,6 @@ import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.DishesInfo;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SelectedCuisineList;
-import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
 
 import java.util.ArrayList;
@@ -143,8 +142,8 @@ public class FoodStackActivity extends BaseActivity
     }
 
     @Override
-    public void success() {
-        RootCuisinePhotos rootCuisinePhotos = (RootCuisinePhotos) SnapXResult.SUCCESS.getValue();
+    public void success(Object o) {
+        RootCuisinePhotos rootCuisinePhotos = (RootCuisinePhotos)o;
         dismissProgressDialog();
         int INDEX_DISH_INFO, INDEX_REST_DISH;
         List<DishesInfo> dishInfo = rootCuisinePhotos.getDishesInfo();

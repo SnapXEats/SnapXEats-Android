@@ -3,7 +3,6 @@ package com.snapxeats.ui.foodstack;
 import android.support.annotation.Nullable;
 
 import com.snapxeats.common.Router;
-import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.utilities.SnapXResult;
 
@@ -48,7 +47,7 @@ public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPresen
 
     @Override
     public void getCuisinePhotos(FoodStackContract.FoodStackView foodStackView, SelectedCuisineList selectedCuisineList) {
-        mFoodStackInteractor.getCuisinePhotos(foodStackView,selectedCuisineList);
+        mFoodStackInteractor.getCuisinePhotos(foodStackView, selectedCuisineList);
 
     }
 
@@ -56,7 +55,7 @@ public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPresen
     public void response(SnapXResult result) {
         switch (result) {
             case SUCCESS:
-                mFoodStackView.success();
+                mFoodStackView.success(SnapXResult.SUCCESS.getValue());
                 break;
             case FAILURE:
                 mFoodStackView.error();

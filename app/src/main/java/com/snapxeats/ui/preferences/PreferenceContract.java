@@ -6,6 +6,7 @@ import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
 import com.snapxeats.common.Router;
+import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.dagger.AppContract;
 
@@ -30,7 +31,7 @@ public class PreferenceContract {
 
         void presentScreen(Router.Screen screen);
 
-        void getCuisineList();
+        void getCuisineList(LocationCuisine locationCuisine);
 
     }
 

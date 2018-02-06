@@ -1,6 +1,7 @@
 package com.snapxeats.network;
 
 import com.snapxeats.common.constants.WebConstants;
+import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.common.model.RootCuisinePhotos;
 
@@ -21,7 +22,8 @@ public interface ApiHelper {
      * @return
      */
     @GET(WebConstants.CUISINE_LIST)
-    Call<RootCuisine> getCuisineList();
+    Call<RootCuisine> getCuisineList(@Query("latitude") double latitude,
+                                     @Query("longitude") double longitude);
 
     /**
      * get cuisine photos

@@ -57,7 +57,6 @@ public class FoodStackInteractor {
                 public void onResponse(Call<RootCuisinePhotos> call, Response<RootCuisinePhotos> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         RootCuisinePhotos rootCuisine = response.body();
-//                        mFoodStackPreseneter.setCuisinePhotos(rootCuisine);
                         SnapXResult.SUCCESS.setValue(rootCuisine);
                         mFoodStackPreseneter.response(SnapXResult.SUCCESS);
                     }

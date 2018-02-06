@@ -14,7 +14,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.snapxeats.BaseActivity;
@@ -26,7 +25,6 @@ import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
-import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.NetworkHelper;
 import com.snapxeats.ui.foodstack.FoodStackActivity;
@@ -85,6 +83,8 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
 
     private SelectedCuisineList selectedCuisineList;
 
+    private LocationCuisine mLocationCuisine;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,10 +142,10 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
         mLocation = location;
 
         //set latitude and longitude
-        LocationCuisine locationCuisine = new LocationCuisine();
-        locationCuisine.setLatitude(location.getLatitude());
-        locationCuisine.setLongitude(location.getLongitude());
-        selectedCuisineList.setLocation(locationCuisine);
+        mLocationCuisine = new LocationCuisine();
+        mLocationCuisine.setLatitude(location.getLatitude());
+        mLocationCuisine.setLongitude(location.getLongitude());
+        selectedCuisineList.setLocation(mLocationCuisine);
 
         if (mSnackBar != null) {
             mSnackBar.dismiss();
@@ -174,7 +174,8 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
                 NetworkHelper.requestPermission(this);
             } else {
                 presenter.getLocation(this);
-                presenter.getCuisineList();
+
+                presenter.getCuisineList(mLocationCuisine);
             }
         } else {
             checkGpsPermission();
@@ -261,8 +262,8 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     }
 
     @Override
-    public void success() {
-        RootCuisine rootCuisine=(RootCuisine)SnapXResult.SUCCESS.getValue();
+    public void success(Object o) {
+        RootCuisine rootCuisine = (RootCuisine) o;
         List<Cuisines> selectableItems = rootCuisine.getCuisineList();
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(PreferenceActivity.this, 2);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());

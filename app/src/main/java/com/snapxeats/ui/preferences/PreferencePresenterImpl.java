@@ -4,7 +4,7 @@ import android.location.Location;
 import android.support.annotation.Nullable;
 
 import com.snapxeats.common.Router;
-import com.snapxeats.common.model.RootCuisine;
+import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.utilities.SnapXResult;
 
 import javax.inject.Singleton;
@@ -36,9 +36,9 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
 
     @Override
     public void response(SnapXResult result) {
-        switch(result) {
+        switch (result) {
             case SUCCESS:
-                mPreferenceView.success();
+                mPreferenceView.success(SnapXResult.SUCCESS.getValue());
                 break;
             case FAILURE:
                 mPreferenceView.error();
@@ -69,13 +69,16 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
         mPreferenceRouter.presentScreen(screen);
     }
 
-  @Override
-    public void getCuisineList() {
-        mPreferenceInteractor.getCuisineList();
+    @Override
+    public void getCuisineList(LocationCuisine locationCuisine) {
+
+        mPreferenceInteractor.getCuisineList(locationCuisine);
+
     }
 
     /**
      * Set view to Presenter
+     *
      * @param view
      */
 

@@ -13,6 +13,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
@@ -142,10 +143,15 @@ public class PreferenceInteractor {
     /**
      * get cuisines list
      */
-    void getCuisineList() {
+    void getCuisineList(LocationCuisine locationCuisine) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext).create(ApiHelper.class);
-            Call<RootCuisine> listCuisineCall = apiHelper.getCuisineList();
+            //TODO latlng are hardcoded for now
+//        double lat = locationCuisine.getLatitude();
+//        double lng =locationCuisine.getLongitude();
+            double lat = 40.4862157;
+            double lng = -74.4518188;
+            Call<RootCuisine> listCuisineCall = apiHelper.getCuisineList(lat, lng);
             listCuisineCall.enqueue(new Callback<RootCuisine>() {
                 @Override
                 public void onResponse(Call<RootCuisine> call, Response<RootCuisine> response) {
