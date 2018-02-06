@@ -25,11 +25,15 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.Location;
+import com.snapxeats.common.model.Prediction;
+import com.snapxeats.common.model.Result;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
+import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.NetworkHelper;
+import com.snapxeats.ui.preferences.PreferenceContract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +45,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.snapxeats.common.Router.Screen.LOCATION;
+import static com.snapxeats.common.Router.Screen.PREFERENCE;
+import static com.snapxeats.common.utilities.SnapXResult.SUCCESS;
 import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
+import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.CUSTOM_LOCATION;
 
 /**
  * Created by Snehal Tembare on 5/1/18.
@@ -57,6 +64,7 @@ public class LocationActivity extends BaseActivity implements LocationContract.L
     private List<String> predictionList;
     private HandlerThread mHandlerThread;
     private Handler mThreadHandler;
+    private Location selectedLocation;
 
     @Inject
     LocationContract.LocationPresenter locationPresenter;
@@ -79,6 +87,8 @@ public class LocationActivity extends BaseActivity implements LocationContract.L
     @Inject
     SnapXDialog snapXDialog;
 
+    PlaceAPI placeAPI;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +107,8 @@ public class LocationActivity extends BaseActivity implements LocationContract.L
         utility.setmContext(this);
         snapXDialog.setContext(this);
         predictionList = new ArrayList<>();
-
+        placeAPI = new PlaceAPI(this);
+        mAutoCompleteTextView.setSingleLine();
         mAdapter = new LocationAdapter(LocationActivity.this,
                 R.layout.item_prediction_layout);
         mListView.setAdapter(mAdapter);
@@ -136,12 +147,14 @@ public class LocationActivity extends BaseActivity implements LocationContract.L
         mListView.setOnItemClickListener((parent, view, position, id) -> {
             String address = (String) parent.getItemAtPosition(position);
             Log.i("Address" + address, "Id" + parent.getItemAtPosition(position));
-           /*TODO-Place details
 
-           List<Prediction> predictionList = placeAPI.getPredictionList();
+
+            List<Prediction> predictionList = mAdapter.predictionList;
+            Log.i("Address" + address, "Id" + predictionList.get(position).getPlace_id());
+
             if (predictionList != null) {
                 locationPresenter.getPlaceDetails(predictionList.get(position).getPlace_id());
-            }*/
+            }
         });
     }
 
@@ -225,6 +238,7 @@ public class LocationActivity extends BaseActivity implements LocationContract.L
                 break;
         }
     }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -250,7 +264,22 @@ public class LocationActivity extends BaseActivity implements LocationContract.L
 
     @Override
     public void success() {
+        Result o = (Result) SUCCESS.getValue();
+        Log.i("Success", "Name" + o.getName());
+        Log.i("Success", "Lat" + o.getGeometry().getLocation().getLat());
+        Log.i("Success", "Lng" + o.getGeometry().getLocation().getLng());
 
+        selectedLocation = new Location(o.getGeometry().getLocation().getLat(),
+                o.getGeometry().getLocation().getLng(),
+                o.getName());
+
+        //Send selected location to preferences screen
+        if (selectedLocation != null) {
+            Intent intent = new Intent();
+            intent.putExtra(getString(R.string.selected_location), selectedLocation);
+            setResult(CUSTOM_LOCATION, intent);
+            finish();
+        }
     }
 
     @Override
@@ -267,16 +296,4 @@ public class LocationActivity extends BaseActivity implements LocationContract.L
     public void networkError() {
 
     }
-
-    @Override
-    public void getPredictionList(List<String> predictionList) {
-        this.predictionList = predictionList;
-    }
-
-    @Override
-    public void setLatLng(double lat, double lng) {
-
-    }
-
-
 }

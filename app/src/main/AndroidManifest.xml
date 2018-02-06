@@ -46,7 +46,7 @@
         <activity android:name=".ui.preferences.PreferenceActivity" />
         <activity android:name=".ui.location.LocationActivity" />
         <activity android:name=".ui.foodstack.FoodStackActivity" />
-        <activity android:name=".ui.preference1.NavPreferenceActivity"></activity>
+
     </application>
 
 </manifest>

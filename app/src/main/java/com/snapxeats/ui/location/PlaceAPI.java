@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.ListView;
 
 import com.snapxeats.R;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.Prediction;
 
@@ -42,7 +43,7 @@ public class PlaceAPI {
         mDialog.setCanceledOnTouchOutside(false);
     }
 
-    public List<String> autocomplete(String input) {
+    public List<Prediction> autocomplete(String input) {
         List<String> resultList = null;
         HttpURLConnection conn = null;
         StringBuilder jsonResults = new StringBuilder();
@@ -53,6 +54,7 @@ public class PlaceAPI {
             sb.append("&input=" + URLEncoder.encode(input, "utf8"));
 
             URL url = new URL(sb.toString());
+            SnapXToast.debug("Prediction url:"+url);
             conn = (HttpURLConnection) url.openConnection();
             InputStreamReader in = new InputStreamReader(conn.getInputStream());
 
@@ -64,10 +66,12 @@ public class PlaceAPI {
             }
         } catch (MalformedURLException e) {
             Log.e(TAG, "Error processing Places API URL", e);
-            return resultList;
+//            return resultList;
+            return predictionList;
         } catch (IOException e) {
             Log.e(TAG, "Nw Error connecting to Places API", e);
-            return resultList;
+//            return resultList;
+            return predictionList;
         } finally {
             if (conn != null) {
                 conn.disconnect();
@@ -96,7 +100,8 @@ public class PlaceAPI {
             Log.e(TAG, "Cannot process JSON results", e);
         }
 
-        return resultList;
+//        return resultList;
+        return predictionList;
     }
 
     public List<Prediction> getPredictionList() {

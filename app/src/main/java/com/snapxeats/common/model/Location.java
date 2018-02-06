@@ -16,9 +16,12 @@ public class Location implements Parcelable {
     private double lat;
     private double lng;
 
+    private String name;
+
     protected Location(Parcel in) {
         lat = in.readDouble();
         lng = in.readDouble();
+        name = in.readString();
     }
 
     public static final Creator<Location> CREATOR = new Creator<Location>() {
@@ -33,6 +36,12 @@ public class Location implements Parcelable {
         }
     };
 
+    public Location(double lat, double lng, String name) {
+        this.lat = lat;
+        this.lng = lng;
+        this.name = name;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -42,5 +51,6 @@ public class Location implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeDouble(lat);
         dest.writeDouble(lng);
+        dest.writeString(name);
     }
 }

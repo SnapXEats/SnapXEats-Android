@@ -2,10 +2,12 @@ package com.snapxeats.ui.preferences;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,6 +28,9 @@ import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.NetworkHelper;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -35,6 +40,7 @@ import butterknife.OnClick;
 import static com.snapxeats.common.Router.Screen.FOODSTACK;
 import static com.snapxeats.common.Router.Screen.LOCATION;
 import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
+import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.CUSTOM_LOCATION;
 
 /**
  * Created by Snehal Tembare on 3/1/18.
@@ -45,6 +51,7 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
 
     public interface PreferenceConstant {
         int ACCESS_FINE_LOCATION = 1;
+        int CUSTOM_LOCATION = 2;
     }
 
     @BindView(R.id.txt_place_name)
@@ -103,8 +110,7 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
         mRecyclerView.setNestedScrollingEnabled(false);
         preferences = utility.getSharedPreferences();
         editor = preferences.edit();
-        mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), getString(R.string.select_location)));
-
+//        mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), getString(R.string.select_location)));
         checkPermissions();
     }
 
@@ -143,10 +149,10 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
             mSnackBar.dismiss();
         }
         if (placeName.isEmpty()) {
-            mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), getString(R.string.select_location)));
+//            mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), getString(R.string.select_location)));
         } else {
             mTxtPlaceName.setText(placeName);
-            editor.putString(getString(R.string.last_location), placeName);
+//            editor.putString(getString(R.string.last_location), placeName);
             editor.apply();
         }
     }
@@ -210,8 +216,18 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == ACCESS_FINE_LOCATION) {
-            checkPermissions();
+        switch (requestCode) {
+            case ACCESS_FINE_LOCATION:
+                checkPermissions();
+                break;
+
+            case CUSTOM_LOCATION:
+                    com.snapxeats.common.model.Location location =
+                            data.getParcelableExtra(getString(R.string.selected_location));
+                    if (location != null) {
+                        mTxtPlaceName.setText(location.getName());
+                    }
+                break;
         }
     }
 

@@ -72,5 +72,6 @@
     <string name="cuisines">Cuisines</string>
     <string name="food">Food</string>
     <string name="apply_filters">applt filters</string>
+    <string name="selected_location">selected_location</string>
 
 </resources>

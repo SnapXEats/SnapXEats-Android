@@ -10,6 +10,8 @@ import com.snapxeats.ui.preferences.PreferenceActivity;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.CUSTOM_LOCATION;
+
 /**
  * Created by Prajakta Patil on 28/12/17.
  */
@@ -55,7 +57,7 @@ public class Router {
     }
 
     private void presentLocationScreen() {
-        mActivity.startActivity(new Intent(mActivity, LocationActivity.class));
+        mActivity.startActivityForResult(new Intent(mActivity, LocationActivity.class),CUSTOM_LOCATION);
     }
 
     private void presentFoodStackScreen() {

@@ -15,10 +15,6 @@ import lombok.Setter;
 public class Geometry implements Parcelable {
     private Location location;
 
-    public Geometry() {
-        super();
-    }
-
     protected Geometry(Parcel in) {
         location = in.readParcelable(Location.class.getClassLoader());
     }

@@ -7,6 +7,7 @@ import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.PlaceDetail;
 import com.snapxeats.common.model.PlacesAutoCompleteData;
 import com.snapxeats.common.model.Prediction;
+import com.snapxeats.common.model.Result;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
@@ -71,7 +72,10 @@ public class LocationInteractor {
                         if (response.body().getResult() != null) {
                             double lat = response.body().getResult().getGeometry().getLocation().getLat();
                             double lng = response.body().getResult().getGeometry().getLocation().getLng();
-                            locationPresenter.setLatLng(lat, lng);
+                            /* Result result = new Result(response.body().getResult().getGeometry(),
+                                    response.body().getResult().getName());*/
+                            SnapXResult.SUCCESS.setValue(response.body().getResult());
+                            locationPresenter.response(SnapXResult.SUCCESS);
                         }
                     }
                 }

@@ -15,9 +15,11 @@ import lombok.Setter;
 
 public class Result implements Parcelable{
     private Geometry geometry;
+    private String name;
 
     protected Result(Parcel in) {
         geometry = in.readParcelable(Geometry.class.getClassLoader());
+        name=in.readString();
     }
 
     public static final Creator<Result> CREATOR = new Creator<Result>() {
@@ -32,6 +34,11 @@ public class Result implements Parcelable{
         }
     };
 
+    public Result(Geometry geometry, String name) {
+        this.geometry = geometry;
+        this.name = name;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -40,5 +47,6 @@ public class Result implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(geometry, flags);
+        dest.writeString(name);
     }
 }

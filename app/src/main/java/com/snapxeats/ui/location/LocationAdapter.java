@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.snapxeats.R;
+import com.snapxeats.common.model.Prediction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class LocationAdapter extends ArrayAdapter<String> {
 
     private Context mContext;
     public List<String> resultList;
+    public List<Prediction> predictionList;
     private PlaceAPI placeAPI;
 
     LocationAdapter(@NonNull Context context,
@@ -37,6 +39,7 @@ public class LocationAdapter extends ArrayAdapter<String> {
         super(context, resource);
         mContext = context;
         placeAPI = new PlaceAPI(context);
+        resultList = new ArrayList<>();
     }
 
     @Override
@@ -58,11 +61,15 @@ public class LocationAdapter extends ArrayAdapter<String> {
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults filterResults = new FilterResults();
                 if (constraint != null) {
-                    resultList = placeAPI.autocomplete(constraint.toString());
+                    predictionList = placeAPI.autocomplete(constraint.toString());
+                    for (int index = 0; index < predictionList.size(); index++) {
+                        resultList.add(predictionList.get(index).getDescription());
+                    }
                     if (resultList != null) {
                         filterResults.values = resultList;
                         filterResults.count = resultList.size();
                     }
+
                 }
                 return filterResults;
             }
@@ -94,7 +101,7 @@ public class LocationAdapter extends ArrayAdapter<String> {
         viewHolder = new ViewHolder(view);
 
         if (resultList != null) {
-                viewHolder.mTextView.setText(resultList.get(position));
+            viewHolder.mTextView.setText(resultList.get(position));
         }
         return view;
     }

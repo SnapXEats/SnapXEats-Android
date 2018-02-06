@@ -1,5 +1,6 @@
 package com.snapxeats.ui.location;
 
+import com.snapxeats.common.Router;
 import com.snapxeats.common.utilities.SnapXResult;
 
 import java.util.List;
@@ -12,9 +13,12 @@ public class LocationPresenterImpl implements LocationContract.LocationPresenter
     private LocationInteractor interactor;
     private LocationContract.LocationView locationView;
     public static List<String> arryalist;
+    private LocationRouterImpl router;
 
-    public LocationPresenterImpl(LocationInteractor interactor) {
+    public LocationPresenterImpl(LocationInteractor interactor,
+                                 LocationRouterImpl router) {
         this.interactor = interactor;
+        this.router = router;
     }
 
     @Override
@@ -30,6 +34,20 @@ public class LocationPresenterImpl implements LocationContract.LocationPresenter
     @Override
     public void response(SnapXResult result) {
 
+        switch (result) {
+            case SUCCESS:
+                locationView.success();
+                break;
+            case FAILURE:
+                locationView.error();
+                break;
+            case NONETWORK:
+                locationView.noNetwork();
+                break;
+            case NETWORKERROR:
+                locationView.networkError();
+                break;
+        }
     }
 
     @Override
@@ -44,8 +62,8 @@ public class LocationPresenterImpl implements LocationContract.LocationPresenter
     }
 
     @Override
-    public void setLatLng(double lat, double lng) {
-        locationView.setLatLng(lat,lng);
+    public void presentScreen(Router.Screen screen) {
+        router.presentScreen(screen);
     }
 
 }
