@@ -47,7 +47,7 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
     public void response(SnapXResult result) {
         switch (result) {
             case SUCCESS:
-                mLoginLoginView.success();
+                mLoginLoginView.success(SnapXResult.SUCCESS.getValue());
                 break;
             case FAILURE:
                 mLoginLoginView.error();

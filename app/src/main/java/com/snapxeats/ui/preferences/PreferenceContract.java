@@ -6,8 +6,11 @@ import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
 import com.snapxeats.common.Router;
+import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.dagger.AppContract;
+
+import java.util.ArrayList;
 
 /**
  * Created by Snehal Tembare on 3/1/18.
@@ -18,8 +21,6 @@ public class PreferenceContract {
     interface PreferenceView extends BaseView<PreferencePresenter>, AppContract.SnapXResults {
 
         void updatePlaceName(String placeName, Location location);
-
-        void getCuisineInfo(RootCuisine rootCuisine);
     }
 
     interface PreferencePresenter extends BasePresenter<PreferenceView> {
@@ -30,14 +31,13 @@ public class PreferenceContract {
 
         void presentScreen(Router.Screen screen);
 
-        void getCuisineList();
-
-        void setCuisineList(RootCuisine rootCuisine);
+        void getCuisineList(LocationCuisine locationCuisine);
 
     }
 
     interface PreferenceRouter {
         void presentScreen(Router.Screen screen);
+
         void setView(PreferenceView view);
     }
 }

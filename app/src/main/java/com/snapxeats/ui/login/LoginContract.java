@@ -23,5 +23,4 @@ public class LoginContract {
         void presentScreen(Router.Screen screen);
         void setView(LoginContract.LoginView view);
     }
-
 }

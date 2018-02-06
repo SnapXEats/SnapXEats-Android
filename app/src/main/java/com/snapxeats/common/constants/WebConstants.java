@@ -1,5 +1,6 @@
 package com.snapxeats.common.constants;
 
+
 /**
  * Created by Prajakta Patil on 28/12/17.
  */
@@ -11,4 +12,5 @@ public class WebConstants {
     public static final String INSTA_CALLBACK_URL = "http://www.snapxeats.com";
     public static final String INSTA_AUTH_URL = "https://api.instagram.com/oauth/authorize/";
     public static final String CUISINE_LIST = "/api/v1/cuisine/";
+    public static final String CUISINE_PHOTOS = "/api/v1/Dishes";
 }

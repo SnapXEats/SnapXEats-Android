@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.snapxeats.ui.foodstack.FoodStackActivity">
+    android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -15,8 +12,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
+
             <ImageView
-                android:layout_width="250dp"
+                android:layout_width="@dimen/dimen_250"
                 android:layout_height="@dimen/dimens_40dp"
                 android:layout_marginTop="@dimen/common_dimens_10"
                 android:src="@drawable/ic_toolbar" />
@@ -27,46 +25,48 @@
                 android:layout_marginTop="@dimen/common_dimens_15"
                 android:src="@drawable/places_ic_search" />
         </android.support.v7.widget.Toolbar>
-         </android.support.design.widget.AppBarLayout>
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <include layout="@layout/content_main" />
+    </android.support.design.widget.AppBarLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="@dimen/common_dimens_10">
+        android:layout_height="match_parent">
 
-        <ImageButton
-            android:id="@+id/btn_undo"
-            android:layout_width="@dimen/dimens_50dp"
-            android:layout_height="@dimen/dimens_50dp"
-            android:background="@drawable/ic_undo" />
+        <include layout="@layout/content_main" />
 
-        <ImageButton
-            android:id="@+id/btn_reject"
-            android:layout_width="@dimen/dimens_80dp"
-            android:layout_height="@dimen/dimens_80dp"
-            android:layout_marginLeft="@dimen/common_dimens_12"
-            android:background="@drawable/ic_nope" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/common_dimens_10">
 
-        <ImageButton
-            android:id="@+id/btn_like"
-            android:layout_width="@dimen/dimens_80dp"
-            android:layout_height="@dimen/dimens_80dp"
-            android:layout_marginLeft="@dimen/common_dimens_12"
-            android:background="@drawable/ic_like" />
+            <ImageButton
+                android:id="@+id/img_cuisine_undo"
+                android:layout_width="@dimen/dimens_50dp"
+                android:layout_height="@dimen/dimens_50dp"
+                android:background="@drawable/ic_undo" />
 
-        <ImageButton
-            android:id="@+id/btn_wish"
-            android:layout_width="@dimen/dimens_50dp"
-            android:layout_height="@dimen/dimens_50dp"
-            android:layout_marginLeft="@dimen/common_dimens_12"
-            android:background="@drawable/ic_wish" />
-    </LinearLayout>
-</FrameLayout>
+            <ImageButton
+                android:id="@+id/img_cuisine_reject"
+                android:layout_width="@dimen/dimens_80dp"
+                android:layout_height="@dimen/dimens_80dp"
+                android:layout_marginLeft="@dimen/common_dimens_12"
+                android:background="@drawable/ic_nope" />
+
+            <ImageButton
+                android:id="@+id/img_cuisine_like"
+                android:layout_width="@dimen/dimens_80dp"
+                android:layout_height="@dimen/dimens_80dp"
+                android:layout_marginLeft="@dimen/common_dimens_12"
+                android:background="@drawable/ic_like" />
+
+            <ImageButton
+                android:id="@+id/img_cuisine_wishlist"
+                android:layout_width="@dimen/dimens_50dp"
+                android:layout_height="@dimen/dimens_50dp"
+                android:layout_marginLeft="@dimen/common_dimens_12"
+                android:background="@drawable/ic_wish" />
+        </LinearLayout>
+    </FrameLayout>
 </android.support.design.widget.CoordinatorLayout>

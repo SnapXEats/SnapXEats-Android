@@ -25,9 +25,6 @@ public class LoginRouter {
 
 
     public void presentScreen(Router.Screen screen) {
-     /*   Intent intent = new Intent(mActivity, PreferenceActivity.class);
-        mActivity.startActivity(intent);*/
-
      router.presentScreen(screen);
     }
 

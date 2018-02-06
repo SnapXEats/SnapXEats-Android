@@ -28,7 +28,6 @@ import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
-import com.snapxeats.ui.preferences.PreferenceActivity;
 
 import net.hockeyapp.android.utils.Base64;
 
@@ -39,7 +38,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import static com.snapxeats.common.Router.Screen.PREFERENCE;
 
 import static com.snapxeats.common.Router.Screen.PREFERENCE;
 
@@ -126,7 +124,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        if(loginResult!=null) {
+                        if (loginResult != null) {
                             mLoginPresenter.response(SnapXResult.SUCCESS);
                             Log.v(TAG, AccessToken.getCurrentAccessToken() + "");
                             Log.v(TAG, AccessToken.getCurrentAccessToken().getUserId() + "");
@@ -206,7 +204,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     }
 
     @Override
-    public void success() {
+    public void success(Object o) {
         mLoginPresenter.presentScreen(PREFERENCE);
     }
 
