@@ -23,8 +23,6 @@ import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
 import com.snapxeats.ui.restaurantInfo.RestaurantInfoActivity;
 import com.squareup.picasso.Picasso;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,14 +39,14 @@ public class TinderDirectionalCard {
 
     private Context mContext;
 
-    private HashMap<String, List<String>> listHashMap;
+    private Map<String, List<String>> listHashMap;
 
     @View(R.id.txtRestaurantName)
     private TextView mTxtDishName;
 
     private SwipePlaceHolderView mSwipeView;
 
-    public TinderDirectionalCard(Context context, HashMap<String, List<String>> listHashMap,
+    public TinderDirectionalCard(Context context, Map<String, List<String>> listHashMap,
                                  SwipePlaceHolderView mSwipeView) {
         this.mContext = context;
         this.listHashMap = listHashMap;

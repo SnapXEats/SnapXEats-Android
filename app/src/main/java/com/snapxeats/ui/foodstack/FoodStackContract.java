@@ -14,16 +14,12 @@ import com.snapxeats.dagger.AppContract;
 public class FoodStackContract {
 
     interface FoodStackView extends BaseView<FoodStackPreseneter>, AppContract.SnapXResults {
-
-        void getCuisinePhotoInfo(RootCuisinePhotos rootCuisinePhotos);
     }
 
 
     interface FoodStackPreseneter extends BasePresenter<FoodStackView> {
 
         void presentScreen(Router.Screen screen);
-
-        void setCuisinePhotos(RootCuisinePhotos cuisinePhotos);
 
         void getCuisinePhotos(FoodStackContract.FoodStackView foodStackView, SelectedCuisineList selectedCuisineList);
     }

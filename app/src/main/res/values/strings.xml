@@ -60,5 +60,6 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="snapxeats_email">snapxeats.test@synerzip.com</string>
     <string name="set_location">Location permission not set for this app</string>
+    <string name="data_selectedCuisineList">selectedCuisineList</string>
 
 </resources>

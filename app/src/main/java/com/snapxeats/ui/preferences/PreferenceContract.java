@@ -20,8 +20,6 @@ public class PreferenceContract {
     interface PreferenceView extends BaseView<PreferencePresenter>, AppContract.SnapXResults {
 
         void updatePlaceName(String placeName, Location location);
-
-        void getCuisineInfo(RootCuisine rootCuisine);
     }
 
     interface PreferencePresenter extends BasePresenter<PreferenceView> {
@@ -33,8 +31,6 @@ public class PreferenceContract {
         void presentScreen(Router.Screen screen);
 
         void getCuisineList();
-
-        void setCuisineList(RootCuisine rootCuisine);
 
     }
 

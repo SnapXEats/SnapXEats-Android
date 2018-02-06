@@ -149,11 +149,10 @@ public class PreferenceInteractor {
             listCuisineCall.enqueue(new Callback<RootCuisine>() {
                 @Override
                 public void onResponse(Call<RootCuisine> call, Response<RootCuisine> response) {
-                    if (response.isSuccessful()) {
-                        if (response.body() != null) {
-                            RootCuisine rootCuisine = response.body();
-                            preferencePresenter.setCuisineList(rootCuisine);
-                        }
+                    if (response.isSuccessful() && response.body() != null) {
+                        RootCuisine rootCuisine = response.body();
+                        SnapXResult.SUCCESS.setValue(rootCuisine);
+                        preferencePresenter.response(SnapXResult.SUCCESS);
                     }
                 }
 

@@ -22,11 +22,13 @@ import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.DishesInfo;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SelectedCuisineList;
+import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -63,10 +65,8 @@ public class FoodStackActivity extends BaseActivity
     public void initView() {
         mFoodStackPreseneter.addView(this);
         SelectedCuisineList selectedCuisineList;
-        selectedCuisineList = getIntent().getExtras().getParcelable("key");
-
-        //get cuisine photos
-        mFoodStackPreseneter.getCuisinePhotos(this, selectedCuisineList);
+        selectedCuisineList = getIntent().getExtras().getParcelable(getString(R.string.data_selectedCuisineList));
+        mFoodStackPreseneter.getCuisinePhotos(this,selectedCuisineList);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -92,7 +92,6 @@ public class FoodStackActivity extends BaseActivity
                         .setSwipeOutMsgLayoutId(R.layout.tinder_swipe_out_msg_view));
 
         mSwipeView.addItemRemoveListener(count -> {
-            SnapXToast.showToast(this, "count--->" + count);
             //TODO load more images from server when count is zero
         });
     }
@@ -145,7 +144,21 @@ public class FoodStackActivity extends BaseActivity
 
     @Override
     public void success() {
+        RootCuisinePhotos rootCuisinePhotos = (RootCuisinePhotos) SnapXResult.SUCCESS.getValue();
+        dismissProgressDialog();
+        int INDEX_DISH_INFO, INDEX_REST_DISH;
+        List<DishesInfo> dishInfo = rootCuisinePhotos.getDishesInfo();
+        Map<String, List<String>> listHashMap = new HashMap<>();
+        List<String> strings = new ArrayList<>();
+        for (INDEX_DISH_INFO = 0; INDEX_DISH_INFO < dishInfo.size(); INDEX_DISH_INFO++) {
+            for (INDEX_REST_DISH = 0; INDEX_REST_DISH < dishInfo.get(INDEX_DISH_INFO).getRestaurantDishes().size(); INDEX_REST_DISH++) {
+                strings.add(dishInfo.get(INDEX_DISH_INFO).getRestaurantDishes().get(INDEX_REST_DISH).getDish_image_url());
+            }
+            listHashMap.put(dishInfo.get(INDEX_DISH_INFO).getRestaurant_name(), strings);
+            //set dishname and image in swipeview
+            mSwipeView.addView(new TinderDirectionalCard(this, listHashMap, mSwipeView));
 
+        }
     }
 
     @Override
@@ -161,28 +174,6 @@ public class FoodStackActivity extends BaseActivity
     @Override
     public void networkError() {
 
-    }
-
-    /**
-     * get foodstack photos
-     *
-     * @param rootCuisinePhotos
-     */
-    @Override
-    public void getCuisinePhotoInfo(RootCuisinePhotos rootCuisinePhotos) {
-        dismissProgressDialog();
-        int INDEX_DISH_INFO, INDEX_REST_DISH;
-        List<DishesInfo> dishInfo = rootCuisinePhotos.getDishesInfo();
-        HashMap<String, List<String>> listHashMap = new HashMap<>();
-        List<String> strings = new ArrayList<>();
-        for (INDEX_DISH_INFO = 0; INDEX_DISH_INFO < dishInfo.size(); INDEX_DISH_INFO++) {
-            for (INDEX_REST_DISH = 0; INDEX_REST_DISH < dishInfo.get(INDEX_DISH_INFO).getRestaurantDishes().size(); INDEX_REST_DISH++) {
-                strings.add(dishInfo.get(INDEX_DISH_INFO).getRestaurantDishes().get(INDEX_REST_DISH).getDish_image_url());
-            }
-            listHashMap.put(dishInfo.get(INDEX_DISH_INFO).getRestaurant_name(), strings);
-            //set dishname and image in swipeview
-            mSwipeView.addView(new TinderDirectionalCard(this, listHashMap, mSwipeView));
-        }
     }
 
     @OnClick(R.id.img_cuisine_like)
@@ -208,5 +199,4 @@ public class FoodStackActivity extends BaseActivity
         mSwipeView.undoLastSwipe();
         SnapXToast.showToast(this, "Undo");
     }
-
 }

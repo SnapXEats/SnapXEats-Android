@@ -47,13 +47,6 @@ public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPresen
     }
 
     @Override
-    public void setCuisinePhotos(RootCuisinePhotos cuisinePhotos) {
-        if (mFoodStackView != null) {
-            mFoodStackView.getCuisinePhotoInfo(cuisinePhotos);
-        }
-    }
-
-    @Override
     public void getCuisinePhotos(FoodStackContract.FoodStackView foodStackView, SelectedCuisineList selectedCuisineList) {
         mFoodStackInteractor.getCuisinePhotos(foodStackView,selectedCuisineList);
 

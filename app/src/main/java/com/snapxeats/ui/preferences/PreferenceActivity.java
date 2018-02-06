@@ -14,6 +14,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.snapxeats.BaseActivity;
@@ -25,6 +26,7 @@ import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
+import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.NetworkHelper;
 import com.snapxeats.ui.foodstack.FoodStackActivity;
@@ -195,30 +197,6 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
         }
     }
 
-    /**
-     * Get cuisine tiles images
-     *
-     * @param rootCuisine
-     */
-    @Override
-    public void getCuisineInfo(RootCuisine rootCuisine) {
-        List<Cuisines> selectableItems = rootCuisine.getCuisineList();
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(PreferenceActivity.this, 2);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        mPreferenceAdapter = new PreferenceAdapter(PreferenceActivity.this,
-                selectableItems,
-                rootCuisine, selectedCuisineList -> {
-            if (selectedCuisineList.size() >= 0) {
-                mTxtCuisineDone.setClickable(true);
-                mTxtCuisineDone.setAlpha((float) 1.0);
-            }
-        });
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setAdapter(mPreferenceAdapter);
-
-    }
-
     @OnClick(R.id.btn_cuisine_done)
     public void btnCuisineDone() {
         //TODO for future reference network check
@@ -228,7 +206,7 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
                 selectedCuisineList.setSelectedCuisineList(mPreferenceAdapter.getSelectedItems());
                 //TODO pass object as ENUM
                 Intent intent = new Intent(this, FoodStackActivity.class);
-                intent.putExtra("key", selectedCuisineList);
+                intent.putExtra(getString(R.string.data_selectedCuisineList), selectedCuisineList);
                 startActivity(intent);
 
             } else {
@@ -284,6 +262,21 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
 
     @Override
     public void success() {
+        RootCuisine rootCuisine=(RootCuisine)SnapXResult.SUCCESS.getValue();
+        List<Cuisines> selectableItems = rootCuisine.getCuisineList();
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(PreferenceActivity.this, 2);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        mPreferenceAdapter = new PreferenceAdapter(PreferenceActivity.this,
+                selectableItems,
+                rootCuisine, selectedCuisineList -> {
+            if (selectedCuisineList.size() >= 0) {
+                mTxtCuisineDone.setClickable(true);
+                mTxtCuisineDone.setAlpha((float) 1.0);
+            }
+        });
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setAdapter(mPreferenceAdapter);
     }
 
     @Override

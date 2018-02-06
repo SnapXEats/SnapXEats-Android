@@ -69,14 +69,9 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
         mPreferenceRouter.presentScreen(screen);
     }
 
-    @Override
+  @Override
     public void getCuisineList() {
         mPreferenceInteractor.getCuisineList();
-    }
-
-    @Override
-    public void setCuisineList(RootCuisine rootCuisine) {
-        mPreferenceView.getCuisineInfo(rootCuisine);
     }
 
     /**

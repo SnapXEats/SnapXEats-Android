@@ -5,9 +5,19 @@ package com.snapxeats.common.utilities;
  */
 public enum SnapXResult {
 
-    SUCCESS("Success"),FAILURE("Failure"), NONETWORK("No network"), NETWORKERROR("Network error"),
+    SUCCESS("Success"), FAILURE("Failure"), NONETWORK("No network"), NETWORKERROR("Network error"),
     CANCEL("Cancel"), ERROR("Error");
 
+    private Object value;
+
     SnapXResult(String result) {
+    }
+
+    public Object setValue(Object object) {
+        return value = object;
+    }
+
+    public Object getValue() {
+        return value;
     }
 }
