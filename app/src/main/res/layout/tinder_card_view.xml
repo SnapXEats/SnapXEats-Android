@@ -35,10 +35,9 @@
                 android:paddingLeft="@dimen/common_dimens_20">
 
                 <TextView
-                    android:id="@+id/nameAgeTxt"
+                    android:id="@+id/txtRestaurantName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Azalea"
                     android:textColor="@color/text_color_primary"
                     android:textSize="@dimen/text_size_18"
                     android:textStyle="bold" />

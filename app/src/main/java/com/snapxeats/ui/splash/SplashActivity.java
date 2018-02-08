@@ -46,7 +46,7 @@ public class SplashActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         snapXDialog.setContext(this);
-        utility.setmContext(this);
+        utility.setContext(this);
 
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);

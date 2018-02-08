@@ -1,13 +1,9 @@
 package com.snapxeats.ui.preferences;
 
-import android.location.Location;
 import android.support.annotation.Nullable;
-
 import com.snapxeats.common.Router;
-import com.snapxeats.common.Router;
-import com.snapxeats.common.model.RootCuisine;
+import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.utilities.SnapXResult;
-
 import javax.inject.Singleton;
 
 
@@ -18,84 +14,64 @@ import javax.inject.Singleton;
 @Singleton
 public class PreferencePresenterImpl implements PreferenceContract.PreferencePresenter {
 
-    private PreferenceInteractor interactor;
-    private Location location;
+    private PreferenceInteractor mPreferenceInteractor;
 
     @Nullable
-    private PreferenceContract.PreferenceView preferenceView;
+    private PreferenceContract.PreferenceView mPreferenceView;
 
-    private PreferenceContract.PreferenceRouter router;
+    private PreferenceContract.PreferenceRouter mPreferenceRouter;
 
-
-    public PreferencePresenterImpl(PreferenceInteractor interactor, PreferenceRouterImpl router) {
-        this.interactor = interactor;
-        this.router = router;
+    PreferencePresenterImpl(PreferenceInteractor mPreferenceInteractor, PreferenceRouterImpl router) {
+        this.mPreferenceInteractor = mPreferenceInteractor;
+        this.mPreferenceRouter = router;
     }
 
     @Override
-    public void getLocation(PreferenceContract.PreferenceView preferenceView) {
-        interactor.getLocation(preferenceView);
-    }
-
-    @Override
-    public void response(SnapXResult result) {
-        switch(result) {
+    public void response(SnapXResult result,Object value) {
+        switch (result) {
             case SUCCESS:
-                preferenceView.success();
+                mPreferenceView.success(value);
                 break;
             case FAILURE:
-                preferenceView.error();
+                mPreferenceView.error();
                 break;
             case NONETWORK:
-                preferenceView.noNetwork();
+                mPreferenceView.noNetwork(value);
                 break;
             case NETWORKERROR:
-                preferenceView.networkError();
+                mPreferenceView.networkError();
                 break;
         }
     }
 
-
-    /**
-     * Update user location
-     *
-     * @param placename
-     */
-
-    public void updatePlace(String placename, Location location) {
-        preferenceView.updatePlaceName(placename, location);
-    }
-
     @Override
     public void presentScreen(Router.Screen screen) {
-        router.presentScreen(screen);
+        mPreferenceRouter.presentScreen(screen);
     }
 
     @Override
-    public void getCuisineList() {
-        interactor.getCuisineList();
-    }
+    public void getCuisineList(PreferenceContract.PreferenceView mPreferenceView,
+                               LocationCuisine locationCuisine) {
 
+        mPreferenceInteractor.getCuisineList(mPreferenceView,locationCuisine);
 
-    @Override
-    public void setCuisineList(RootCuisine rootCuisine) {
-        preferenceView.getCuisineInfo(rootCuisine);
     }
 
     /**
      * Set view to Presenter
+     *
      * @param view
      */
 
     @Override
     public void addView(PreferenceContract.PreferenceView view) {
-        preferenceView = view;
-        router.setView(view);
+        mPreferenceView = view;
+        mPreferenceRouter.setView(view);
     }
 
     @Override
     public void dropView() {
-        preferenceView = null;
+        mPreferenceView = null;
     }
 
 }

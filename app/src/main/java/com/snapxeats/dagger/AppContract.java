@@ -28,13 +28,13 @@ public class AppContract {
     }
 
     public interface SnapXResponse {
-        void response(SnapXResult result);
+        void response(SnapXResult result,Object value);
     }
 
     public interface SnapXResults {
-        void success();
+        void success(Object value);
         void error();
-        void noNetwork();
+        void noNetwork(Object value);
         void networkError();
     }
 }

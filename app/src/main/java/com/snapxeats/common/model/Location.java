@@ -15,7 +15,6 @@ import lombok.Setter;
 public class Location implements Parcelable {
     private double lat;
     private double lng;
-
     private String name;
 
     protected Location(Parcel in) {

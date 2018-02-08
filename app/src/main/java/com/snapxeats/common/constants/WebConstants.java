@@ -1,5 +1,6 @@
 package com.snapxeats.common.constants;
 
+
 /**
  * Created by Prajakta Patil on 28/12/17.
  */
@@ -15,4 +16,5 @@ public class WebConstants {
     public static final String PLACE_DETAILS = "/maps/api/place/details/json?key=AIzaSyBE60eBPlcvijgNGHK3X-Odd8zHJ2WksNk";
     public static final String GOOGLE_BASE_URL = "https://maps.googleapis.com";
 
+    public static final String CUISINE_PHOTOS = "/api/v1/Dishes";
 }

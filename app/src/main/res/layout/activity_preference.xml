@@ -50,6 +50,7 @@
                 android:layout_weight="0.45"
                 android:gravity="end"
                 android:text="@string/done"
+                android:textStyle="bold"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/text_size_16" />
 

@@ -3,11 +3,8 @@ package com.snapxeats.ui.location;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -21,21 +18,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.snapxeats.BaseActivity;
+import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.Location;
 import com.snapxeats.common.model.Prediction;
 import com.snapxeats.common.model.Result;
 import com.snapxeats.common.utilities.AppUtility;
-import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
-import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
-import com.snapxeats.network.NetworkHelper;
-import com.snapxeats.ui.preferences.PreferenceContract;
+import com.snapxeats.network.LocationHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -44,26 +37,20 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.snapxeats.common.Router.Screen.LOCATION;
-import static com.snapxeats.common.Router.Screen.PREFERENCE;
-import static com.snapxeats.common.utilities.SnapXResult.SUCCESS;
 import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
 import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.CUSTOM_LOCATION;
+
 
 /**
  * Created by Snehal Tembare on 5/1/18.
  */
 
-public class LocationActivity extends BaseActivity implements LocationContract.LocationView,
+public class LocationActivity extends LocationBaseActivity implements LocationContract.LocationView,
         AppContract.SnapXResults {
 
     private static final String TAG = "LocationActivity";
-    private SharedPreferences preferences;
-    private SharedPreferences.Editor editor;
     private LocationAdapter mAdapter;
-    private List<String> predictionList;
-    private HandlerThread mHandlerThread;
-    private Handler mThreadHandler;
+
     private Location selectedLocation;
 
     @Inject
@@ -80,6 +67,7 @@ public class LocationActivity extends BaseActivity implements LocationContract.L
 
     @Inject
     public AppUtility utility;
+    LocationHelper locationHelper;
 
     @BindView(R.id.listview)
     protected ListView mListView;
@@ -90,7 +78,7 @@ public class LocationActivity extends BaseActivity implements LocationContract.L
     PlaceAPI placeAPI;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
         ButterKnife.bind(this);
@@ -103,12 +91,14 @@ public class LocationActivity extends BaseActivity implements LocationContract.L
     }
 
     public void initView() {
+        buildGoogleAPIClient();
         locationPresenter.addView(this);
-        utility.setmContext(this);
+        utility.setContext(this);
         snapXDialog.setContext(this);
-        predictionList = new ArrayList<>();
         placeAPI = new PlaceAPI(this);
+        locationHelper = new LocationHelper(this);
         mAutoCompleteTextView.setSingleLine();
+
         mAdapter = new LocationAdapter(LocationActivity.this,
                 R.layout.item_prediction_layout);
         mListView.setAdapter(mAdapter);
@@ -163,12 +153,6 @@ public class LocationActivity extends BaseActivity implements LocationContract.L
         super.onStart();
     }
 
-    private void checkGpsPermission() {
-        if (!NetworkHelper.isGpsEnabled(this)) {
-            snapXDialog.showGpsPermissionDialog();
-        }
-    }
-
     @OnClick(R.id.img_delete_input)
     public void clearText() {
         mAutoCompleteTextView.setText("");
@@ -203,26 +187,19 @@ public class LocationActivity extends BaseActivity implements LocationContract.L
      */
     @OnClick(R.id.layout_current_location)
     public void detectLocation() {
-        checkPermissions();
+        if (checkPermissions()) {
+            getData();
+        }
     }
 
-    private void checkPermissions() {
-        //Check device level location permission
-        if (NetworkHelper.isGpsEnabled(this)) {
-            if (NetworkHelper.checkPermission(this)) {
-                NetworkHelper.requestPermission(this);
-            } else if (NetworkUtility.isNetworkAvailable(this)) {
-                android.location.Location location = utility.getLocation();
-                if (location != null) {
-                    SnapXToast.showToast(this,
-                            "LocationActivity:Detected location" + utility.getPlaceName(location));
-                }
-            } else {
-                showNetworkErrorDialog((dialog, which) -> {
-                });
+    public void getData() {
+        android.location.Location location = getLocation();
+        if (location != null) {
+            selectedLocation = new Location(location.getLatitude(),
+                    location.getLongitude(), getPlaceName(location));
+            if (selectedLocation != null) {
+                putData(selectedLocation);
             }
-        } else {
-            checkGpsPermission();
         }
     }
 
@@ -243,7 +220,9 @@ public class LocationActivity extends BaseActivity implements LocationContract.L
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             SnapXToast.debug("Permissions granted");
-            checkPermissions();
+            if (checkPermissions()) {
+                getData();
+            }
             //To add data in preferences
         } else if (!shouldShowRequestPermissionRationale(permissions[0])) {
             SnapXToast.debug("Permissions denied check never ask again");
@@ -254,7 +233,9 @@ public class LocationActivity extends BaseActivity implements LocationContract.L
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        checkPermissions();
+        if (checkPermissions()) {
+            getData();
+        }
     }
 
     @OnClick(R.id.img_close)
@@ -263,20 +244,23 @@ public class LocationActivity extends BaseActivity implements LocationContract.L
     }
 
     @Override
-    public void success() {
-        Result o = (Result) SUCCESS.getValue();
-        Log.i("Success", "Name" + o.getName());
-        Log.i("Success", "Lat" + o.getGeometry().getLocation().getLat());
-        Log.i("Success", "Lng" + o.getGeometry().getLocation().getLng());
+    public void success(Object value) {
+        Result location = (Result) value;
+        Log.i("Success", "Name" + location.getName());
 
-        selectedLocation = new Location(o.getGeometry().getLocation().getLat(),
-                o.getGeometry().getLocation().getLng(),
-                o.getName());
+        selectedLocation = new Location(location.getGeometry().getLocation().getLat(),
+                location.getGeometry().getLocation().getLng(),
+                location.getName());
 
         //Send selected location to preferences screen
-        if (selectedLocation != null) {
+        putData(selectedLocation);
+    }
+
+    public void putData(Location location) {
+
+        if (location != null) {
             Intent intent = new Intent();
-            intent.putExtra(getString(R.string.selected_location), selectedLocation);
+            intent.putExtra(getString(R.string.selected_location), location);
             setResult(CUSTOM_LOCATION, intent);
             finish();
         }
@@ -288,8 +272,10 @@ public class LocationActivity extends BaseActivity implements LocationContract.L
     }
 
     @Override
-    public void noNetwork() {
+    public void noNetwork(Object value) {
+        showNetworkErrorDialog((dialog, which) -> {
 
+        });
     }
 
     @Override

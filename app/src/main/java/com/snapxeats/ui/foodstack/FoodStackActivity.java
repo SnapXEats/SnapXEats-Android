@@ -1,57 +1,88 @@
 package com.snapxeats.ui.foodstack;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.mindorks.butterknifelite.ButterKnifeLite;
 import com.mindorks.butterknifelite.annotations.BindView;
+import com.mindorks.butterknifelite.annotations.OnClick;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipeDirectionalView;
 import com.mindorks.placeholderview.Utils;
+import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.model.DishesInfo;
+import com.snapxeats.common.model.RootCuisinePhotos;
+import com.snapxeats.common.model.SelectedCuisineList;
+import com.snapxeats.dagger.AppContract;
 
-public class FoodStackActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import static com.snapxeats.common.Router.Screen.RESTAURANT_DETAILS;
+
+/**
+ * Created by Prajakta Patil on 30/1/18.
+ */
+public class FoodStackActivity extends BaseActivity
+        implements NavigationView.OnNavigationItemSelectedListener, FoodStackContract.FoodStackView,
+        AppContract.SnapXResults {
 
     @BindView(R.id.swipe_view)
     protected SwipeDirectionalView mSwipeView;
 
-    private DrawerLayout drawer;
+    private DrawerLayout mDrawerLayout;
+
+    @Inject
+    FoodStackContract.FoodStackPreseneter mFoodStackPreseneter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_stack);
         ButterKnifeLite.bind(this);
-
         initView();
     }
 
-    private void initView() {
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    public void initView() {
+        mFoodStackPreseneter.addView(this);
+        SelectedCuisineList selectedCuisineList;
+        selectedCuisineList = getIntent().getExtras().getParcelable(getString(R.string.data_selectedCuisineList));
+        mFoodStackPreseneter.getCuisinePhotos(this, selectedCuisineList);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        drawer = findViewById(R.id.drawer_layout);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+                this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         mSwipeView.getBuilder()
-                .setDisplayViewCount(3)
                 .setIsUndoEnabled(true)
+                .setDisplayViewCount(20)//stack will have max 10 images
                 .setSwipeVerticalThreshold(Utils.dpToPx(50))
                 .setSwipeHorizontalThreshold(Utils.dpToPx(50))
                 .setSwipeDecor(new SwipeDecor()
@@ -60,18 +91,16 @@ public class FoodStackActivity extends AppCompatActivity
                         .setSwipeInMsgLayoutId(R.layout.tinder_swipe_in_msg_view)
                         .setSwipeOutMsgLayoutId(R.layout.tinder_swipe_out_msg_view));
 
-        mSwipeView.addView(new TinderDirectionalCard(this,"https://s3.us-east-2.amazonaws.com/snapxeats/english.jpg"))
-                .addView(new TinderDirectionalCard(this, "https://s3.us-east-2.amazonaws.com/snapxeats/english.jpg"))
-                .addView(new TinderDirectionalCard(this, "https://s3.us-east-2.amazonaws.com/snapxeats/english.jpg"))
-                .addView(new TinderDirectionalCard(this, "https://s3.us-east-2.amazonaws.com/snapxeats/english.jpg"))
-                .addView(new TinderDirectionalCard(this, "https://s3.us-east-2.amazonaws.com/snapxeats/english.jpg"));
+        mSwipeView.addItemRemoveListener(count -> {
+            //TODO load more images from server when count is zero
+        });
     }
 
     @Override
     public void onBackPressed() {
-        drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -79,26 +108,17 @@ public class FoodStackActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         return false;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-
         switch (item.getItemId()) {
             case R.id.nav_wishlist:
                 SnapXToast.debug("WishList");
@@ -117,8 +137,68 @@ public class FoodStackActivity extends AppCompatActivity
                 break;
         }
 
-        drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void success(Object o) {
+        RootCuisinePhotos rootCuisinePhotos = (RootCuisinePhotos) o;
+        dismissProgressDialog();
+        int INDEX_DISH_INFO, INDEX_REST_DISH;
+        List<DishesInfo> dishInfo = rootCuisinePhotos.getDishesInfo();
+        Map<String, List<String>> listHashMap = new HashMap<>();
+        List<String> strings = new ArrayList<>();
+        for (INDEX_DISH_INFO = 0; INDEX_DISH_INFO < dishInfo.size(); INDEX_DISH_INFO++) {
+            for (INDEX_REST_DISH = 0; INDEX_REST_DISH < dishInfo.get(INDEX_DISH_INFO).getRestaurantDishes().size(); INDEX_REST_DISH++) {
+                strings.add(dishInfo.get(INDEX_DISH_INFO).getRestaurantDishes().get(INDEX_REST_DISH).getDish_image_url());
+            }
+            listHashMap.put(dishInfo.get(INDEX_DISH_INFO).getRestaurant_name(), strings);
+            //set dishname and image in swipeview
+            mSwipeView.addView(new TinderDirectionalCard(this, listHashMap, mSwipeView));
+
+        }
+    }
+
+    @Override
+    public void error() {
+
+    }
+
+    @Override
+    public void noNetwork(Object value) {
+        showNetworkErrorDialog((dialog, which) -> {
+
+        });
+    }
+
+    @Override
+    public void networkError() {
+
+    }
+
+    @OnClick(R.id.img_cuisine_like)
+    public void imgCuisineLike() {
+        mSwipeView.doSwipe(true);
+        mFoodStackPreseneter.presentScreen(RESTAURANT_DETAILS);
+    }
+
+    @OnClick(R.id.img_cuisine_reject)
+    public void imgCuisineReject() {
+        mSwipeView.doSwipe(false);
+    }
+
+    @OnClick(R.id.img_cuisine_wishlist)
+    public void imgCuisineWishlist() {
+        //TODO favourite items to save
+        SnapXToast.showToast(this, "Wishlist");
+    }
+
+    @OnClick(R.id.img_cuisine_undo)
+    public void imgCuisineUndo() {
+        //TODO reload image after undo action
+        mSwipeView.undoLastSwipe();
+        SnapXToast.showToast(this, "Undo");
     }
 }

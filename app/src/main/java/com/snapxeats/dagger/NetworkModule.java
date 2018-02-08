@@ -1,7 +1,7 @@
 package com.snapxeats.dagger;
 
 import com.snapxeats.common.constants.WebConstants;
-import com.snapxeats.network.NetworkHelper;
+import com.snapxeats.network.LocationHelper;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -42,7 +42,7 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    NetworkHelper provideNetworkApi(Retrofit retrofit) {
-        return retrofit.create(NetworkHelper.class);
+    LocationHelper provideNetworkApi(Retrofit retrofit) {
+        return retrofit.create(LocationHelper.class);
     }
 }

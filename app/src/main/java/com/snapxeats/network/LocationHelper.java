@@ -4,21 +4,29 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 
-import com.snapxeats.common.utilities.SnapXDialog;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.snapxeats.ui.preferences.PreferenceActivity;
-
-import javax.inject.Inject;
 
 import static android.content.Context.LOCATION_SERVICE;
 
 /**
  * Created by Prajakta Patil on 28/12/17.
  */
-public class NetworkHelper {
+public class LocationHelper {
     private static LocationManager mLocationManager;
+     private Context mContext;
+     private static Location mLastLocation;
+    private GoogleApiClient mGoogleApiClient;
+
+    public LocationHelper(Context mContext) {
+        this.mContext = mContext;
+    }
+
 
     public static boolean checkPermission(Context context) {
 

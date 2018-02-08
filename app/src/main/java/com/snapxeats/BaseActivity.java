@@ -82,4 +82,7 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
     public void showNetworkErrorDialog(DialogInterface.OnClickListener click) {
         mSnapXDialog.showNetworkErrorDialog(click);
     }
+    public void showSetLocationDialog(DialogInterface.OnClickListener click) {
+        mSnapXDialog.showSetLocationDialog(click);
+    }
 }

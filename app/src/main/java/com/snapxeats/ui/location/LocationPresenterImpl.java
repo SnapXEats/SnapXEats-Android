@@ -2,7 +2,6 @@ package com.snapxeats.ui.location;
 
 import com.snapxeats.common.Router;
 import com.snapxeats.common.utilities.SnapXResult;
-
 import java.util.List;
 
 /**
@@ -32,28 +31,22 @@ public class LocationPresenterImpl implements LocationContract.LocationPresenter
     }
 
     @Override
-    public void response(SnapXResult result) {
+    public void response(SnapXResult result, Object value) {
 
         switch (result) {
             case SUCCESS:
-                locationView.success();
+                locationView.success(value);
                 break;
             case FAILURE:
                 locationView.error();
                 break;
             case NONETWORK:
-                locationView.noNetwork();
+                locationView.noNetwork(value);
                 break;
             case NETWORKERROR:
                 locationView.networkError();
                 break;
         }
-    }
-
-    @Override
-    public List<String> getPredictionList(LocationContract.LocationView locationView, String input) {
-        arryalist = interactor.getPredictionList(locationView, input);
-        return arryalist;
     }
 
     @Override

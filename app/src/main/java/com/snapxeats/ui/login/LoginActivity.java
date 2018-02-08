@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -28,19 +27,12 @@ import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
-import com.snapxeats.ui.preferences.PreferenceActivity;
-
 import net.hockeyapp.android.utils.Base64;
-
 import java.security.MessageDigest;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import static com.snapxeats.common.Router.Screen.PREFERENCE;
-
 import static com.snapxeats.common.Router.Screen.PREFERENCE;
 
 /**
@@ -126,8 +118,8 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        if(loginResult!=null) {
-                            mLoginPresenter.response(SnapXResult.SUCCESS);
+                        if (loginResult != null) {
+                            mLoginPresenter.response(SnapXResult.SUCCESS,loginResult);
                             Log.v(TAG, AccessToken.getCurrentAccessToken() + "");
                             Log.v(TAG, AccessToken.getCurrentAccessToken().getUserId() + "");
                         }
@@ -135,12 +127,12 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
 
                     @Override
                     public void onCancel() {
-                        mLoginPresenter.response(SnapXResult.NETWORKERROR);
+                        mLoginPresenter.response(SnapXResult.NETWORKERROR,null);
                     }
 
                     @Override
                     public void onError(FacebookException exception) {
-                        mLoginPresenter.response(SnapXResult.ERROR);
+                        mLoginPresenter.response(SnapXResult.ERROR,null);
                     }
                 });
     }
@@ -176,12 +168,12 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
 
             @Override
             public void onSuccess() {
-                mLoginPresenter.response(SnapXResult.SUCCESS);
+                mLoginPresenter.response(SnapXResult.SUCCESS,null);
             }
 
             @Override
             public void onFail(String error) {
-                mLoginPresenter.response(SnapXResult.NETWORKERROR);
+                mLoginPresenter.response(SnapXResult.NETWORKERROR,null);
             }
         });
     }
@@ -206,7 +198,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     }
 
     @Override
-    public void success() {
+    public void success(Object o) {
         mLoginPresenter.presentScreen(PREFERENCE);
     }
 
@@ -217,8 +209,9 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     }
 
     @Override
-    public void noNetwork() {
-        showNetworkErrorDialog(null);
+    public void noNetwork(Object value) {
+        showNetworkErrorDialog((dialog, which) -> {
+        });
     }
 
     @Override
