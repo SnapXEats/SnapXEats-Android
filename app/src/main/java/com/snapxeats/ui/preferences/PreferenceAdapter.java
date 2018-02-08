@@ -10,12 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.snapxeats.R;
 import com.snapxeats.common.model.Cuisines;
 import com.snapxeats.common.model.RootCuisine;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.List;
 

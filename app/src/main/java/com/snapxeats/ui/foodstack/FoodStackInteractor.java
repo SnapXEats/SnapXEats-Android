@@ -18,6 +18,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.snapxeats.common.constants.WebConstants.BASE_URL;
+
 /**
  * Created by Prajakta Patil on 30/1/18.
  */
@@ -50,25 +52,24 @@ public class FoodStackInteractor {
             double lng = -74.4518188;
             List<String> list = selectedCuisineList.getSelectedCuisineList();
 
-            ApiHelper apiHelper = ApiClient.getClient(mContext).create(ApiHelper.class);
+            ApiHelper apiHelper = ApiClient.getClient(mContext,BASE_URL).create(ApiHelper.class);
             Call<RootCuisinePhotos> listCuisineCall = apiHelper.getCuisinePhotos(lat, lng, list);
             listCuisineCall.enqueue(new Callback<RootCuisinePhotos>() {
                 @Override
                 public void onResponse(Call<RootCuisinePhotos> call, Response<RootCuisinePhotos> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         RootCuisinePhotos rootCuisine = response.body();
-                        SnapXResult.SUCCESS.setValue(rootCuisine);
-                        mFoodStackPreseneter.response(SnapXResult.SUCCESS);
+                        mFoodStackPreseneter.response(SnapXResult.SUCCESS,rootCuisine);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<RootCuisinePhotos> call, Throwable t) {
-                    mFoodStackPreseneter.response(SnapXResult.ERROR);
+                    mFoodStackPreseneter.response(SnapXResult.ERROR,null);
                 }
             });
         } else {
-            mFoodStackPreseneter.response(SnapXResult.NONETWORK);
+            mFoodStackPreseneter.response(SnapXResult.NONETWORK,null);
         }
     }
 }

@@ -42,16 +42,16 @@ public class RestaurantDetailsPresenterImpl implements RestaurantDetailsContract
     }
 
     @Override
-    public void response(SnapXResult result) {
+    public void response(SnapXResult result,Object value) {
         switch (result) {
             case SUCCESS:
-                mRestaurantDetailsView.success(SnapXResult.SUCCESS.getValue());
+                mRestaurantDetailsView.success(value);
                 break;
             case FAILURE:
                 mRestaurantDetailsView.error();
                 break;
             case NONETWORK:
-                mRestaurantDetailsView.noNetwork();
+                mRestaurantDetailsView.noNetwork(value);
                 break;
             case NETWORKERROR:
                 mRestaurantDetailsView.networkError();

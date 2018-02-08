@@ -12,12 +12,4 @@ public enum SnapXResult {
 
     SnapXResult(String result) {
     }
-
-    public Object setValue(Object object) {
-        return value = object;
-    }
-
-    public Object getValue() {
-        return value;
-    }
 }

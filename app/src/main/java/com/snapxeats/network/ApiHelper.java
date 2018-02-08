@@ -2,6 +2,10 @@ package com.snapxeats.network;
 
 import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.LocationCuisine;
+import com.snapxeats.common.model.Cuisines;
+import com.snapxeats.common.model.PlaceDetail;
+import com.snapxeats.common.model.PlacesAutoCompleteData;
+import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.common.model.RootCuisinePhotos;
 
@@ -34,4 +38,23 @@ public interface ApiHelper {
     Call<RootCuisinePhotos> getCuisinePhotos(@Query("latitude") double latitude,
                                              @Query("longitude") double longitude,
                                              @Query("cuisineArray") List<String> cuisineList);
-}
+
+
+    /**
+     * Get predection list
+     *
+     * @param input-to search place according to input
+     * @return
+     */
+    @GET(WebConstants.PREDICTION_LIST)
+    Call<PlacesAutoCompleteData> getPredictionList(@Query("input") String input);
+
+    /**
+     * Get place details
+     *
+     * @param placeId- to search place details
+     * @return
+     */
+    @GET(WebConstants.PLACE_DETAILS)
+    Call<PlaceDetail> getPlaceDetails(@Query("placeid") String placeId);
+   }

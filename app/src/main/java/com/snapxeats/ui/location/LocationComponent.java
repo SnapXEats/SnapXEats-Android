@@ -11,6 +11,7 @@ import dagger.android.AndroidInjector;
 
 @ActivityScoped
 @Subcomponent(modules = LocationModule.class)
+
 public interface LocationComponent extends AndroidInjector<LocationActivity>{
     @Subcomponent.Builder
     abstract class Builder extends AndroidInjector.Builder<LocationActivity>{}

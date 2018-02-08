@@ -5,28 +5,28 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
-import com.snapxeats.BaseActivity;
+import com.google.gson.Gson;
+import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.Cuisines;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
+import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
-import com.snapxeats.network.NetworkHelper;
+import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.foodstack.FoodStackActivity;
 
 import java.util.List;
@@ -39,16 +39,18 @@ import butterknife.OnClick;
 
 import static com.snapxeats.common.Router.Screen.LOCATION;
 import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
+import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.CUSTOM_LOCATION;
 
 /**
  * Created by Snehal Tembare on 3/1/18.
  */
 
-public class PreferenceActivity extends BaseActivity implements PreferenceContract.PreferenceView,
+public class PreferenceActivity extends LocationBaseActivity implements PreferenceContract.PreferenceView,
         AppContract.SnapXResults, PreferenceAdapter.RecyclerViewClickListener {
 
     public interface PreferenceConstant {
         int ACCESS_FINE_LOCATION = 1;
+        int CUSTOM_LOCATION = 2;
     }
 
     @BindView(R.id.txt_place_name)
@@ -60,18 +62,20 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     @Inject
     SnapXDialog snapXDialog;
 
-    private LocationManager mLocationManager;
-
-    private Snackbar mSnackBar;
-
-    private AppContract.DialogListenerAction denyAction = () -> NetworkHelper.requestPermission(this);
-    private AppContract.DialogListenerAction allowAction = () -> presenter.presentScreen(LOCATION);
+    @Inject
+    AppUtility utility;
 
     private SharedPreferences preferences;
 
     private SharedPreferences.Editor editor;
 
-    private Location mLocation;
+    //Location provided by google
+    private Location mCurrentLocation;
+
+    //Selected Location
+    private com.snapxeats.common.model.Location mSelectedLocation;
+
+    private String mPlacename;
 
     private PreferenceAdapter mPreferenceAdapter;
 
@@ -86,20 +90,36 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     private LocationCuisine mLocationCuisine;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        presenter.addView(this);
+        snapXDialog.setContext(this);
         setContentView(R.layout.activity_preference);
         ButterKnife.bind(this);
         initView();
+        mRecyclerView.setNestedScrollingEnabled(false);
     }
 
-    /**
-     * Check provider is enable or not
-     */
-    private void checkGpsPermission() {
-        if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                !mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-            snapXDialog.showGpsPermissionDialog();
+    @Override
+    public void initView() {
+        buildGoogleAPIClient();
+
+        presenter.addView(this);
+        snapXDialog.setContext(this);
+        utility.setContext(this);
+        mRecyclerView.setNestedScrollingEnabled(false);
+        preferences = utility.getSharedPreferences();
+        editor = preferences.edit();
+
+        selectedCuisineList = new SelectedCuisineList();
+        mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), getString(R.string.select_location)));
+
+        if (checkPermissions()) {
+            mSelectedLocation = getSelectedLocation();
+        } else {
+            Gson gson = new Gson();
+            String json = preferences.getString(getString(R.string.selected_location), "");
+            mSelectedLocation = gson.fromJson(json, com.snapxeats.common.model.Location.class);
         }
     }
 
@@ -108,56 +128,6 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
         return this;
     }
 
-    @Override
-    public void initView() {
-        presenter.addView(this);
-        snapXDialog.setContext(this);
-        mRecyclerView.setNestedScrollingEnabled(false);
-        preferences = getSharedPreferences("SnapXEats", MODE_PRIVATE);
-        editor = preferences.edit();
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        selectedCuisineList = new SelectedCuisineList();
-        initSnackBar();
-    }
-
-    /**
-     * Initialize Snackbar
-     */
-    private void initSnackBar() {
-        //Snackbar to show location permission error
-        mSnackBar = Snackbar.make(findViewById(R.id.layout_parent),
-                getString(R.string.location_permission_needed),
-                Snackbar.LENGTH_INDEFINITE).setAction(getString(R.string.retry),
-                v -> NetworkHelper.requestPermission(PreferenceActivity.this));
-    }
-
-    /**
-     * Update user location
-     *
-     * @param placeName
-     */
-    @Override
-    public void updatePlaceName(String placeName, Location location) {
-        dismissProgressDialog();
-        mLocation = location;
-
-        //set latitude and longitude
-        mLocationCuisine = new LocationCuisine();
-        mLocationCuisine.setLatitude(location.getLatitude());
-        mLocationCuisine.setLongitude(location.getLongitude());
-        selectedCuisineList.setLocation(mLocationCuisine);
-
-        if (mSnackBar != null) {
-            mSnackBar.dismiss();
-        }
-        if (placeName.isEmpty()) {
-            mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), getString(R.string.select_location)));
-        } else {
-            mTxtPlaceName.setText(placeName);
-            editor.putString(getString(R.string.last_location), placeName);
-            editor.apply();
-        }
-    }
 
     @Override
     protected void onResume() {
@@ -166,26 +136,21 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
         mTxtCuisineDone.setAlpha((float) 0.4);
         mTxtCuisineDone.setClickable(false);
 
-        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) &&
-                mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 
-            if (NetworkHelper.checkPermission(this) &&
-                    preferences.getBoolean(getString(R.string.isLocationPermissionGranted), true)) {
-                NetworkHelper.requestPermission(this);
-            } else {
-                presenter.getLocation(this);
+        if (mSelectedLocation != null) {
 
-                presenter.getCuisineList(mLocationCuisine);
-            }
-        } else {
-            checkGpsPermission();
+            /**TODO set latitude and longitude*/
+            mLocationCuisine = new LocationCuisine();
+            mLocationCuisine.setLatitude(mSelectedLocation.getLat());
+            mLocationCuisine.setLongitude(mSelectedLocation.getLng());
+            selectedCuisineList.setLocation(mLocationCuisine);
+
+            //Save data in shared preferences
+            utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
+
+            mTxtPlaceName.setText(mSelectedLocation.getName());
+            presenter.getCuisineList(this, mLocationCuisine);
         }
-
-        if (NetworkHelper.checkPermission(this) &&
-                preferences.getBoolean(getString(R.string.isLocationPermissionDenied), false)) {
-            mSnackBar.show();
-        }
-        mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), getString(R.string.select_location)));
     }
 
     @OnClick(R.id.layout_location)
@@ -202,17 +167,13 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     public void btnCuisineDone() {
         //TODO for future reference network check
         if (mPreferenceAdapter.getSelectedItems().size() != 0) {
-            if (mLocation != null) {
+            if (mSelectedLocation != null) {
                 //set selected cuisines
                 selectedCuisineList.setSelectedCuisineList(mPreferenceAdapter.getSelectedItems());
                 //TODO pass object as ENUM
                 Intent intent = new Intent(this, FoodStackActivity.class);
                 intent.putExtra(getString(R.string.data_selectedCuisineList), selectedCuisineList);
                 startActivity(intent);
-
-            } else {
-                showSetLocationDialog((dialog, which) -> {
-                });
             }
         }
     }
@@ -230,40 +191,90 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
         }
     }
 
+    private com.snapxeats.common.model.Location getSelectedLocation() {
+
+        mCurrentLocation = getLocation();
+
+        if (mCurrentLocation != null) {
+
+            mPlacename = getPlaceName(mCurrentLocation);
+            mSelectedLocation = new com.snapxeats.common.model.Location(
+                    mCurrentLocation.getLatitude(),
+                    mCurrentLocation.getLongitude(),
+                    mPlacename);
+        }
+        return mSelectedLocation != null ? mSelectedLocation : null;
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            SnapXToast.debug("Permissions granted");
-            editor.putBoolean(getString(R.string.isLocationPermissionGranted), true);
-            editor.putBoolean(getString(R.string.isLocationPermissionDenied), false);
-            editor.apply();
-            if (mSnackBar != null) {
-                mSnackBar.dismiss();
-            }
-        } else if (!shouldShowRequestPermissionRationale(permissions[0])) {
-            SnapXToast.debug("Permissions denied check never ask again");
-            editor.putBoolean(getString(R.string.isLocationPermissionGranted), false);
-            editor.putBoolean(getString(R.string.isLocationPermissionDenied), true);
 
-            editor.apply();
-            if (mSnackBar != null) {
-                mSnackBar.dismiss();
-            }
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                SnapXToast.debug("Permissions granted");
 
-            // User selected the Never Ask Again Option Change settings in app settings manually
-            snapXDialog.showChangePermissionDialog();
+                if (checkPermissions()) {
+                    mSelectedLocation = getSelectedLocation();
+                }
+
+            } else if (!shouldShowRequestPermissionRationale(permissions[0])) {
+                SnapXToast.debug("Permissions denied check never ask again");
+                snapXDialog.showChangePermissionDialog();
+            } else {
+                presenter.presentScreen(LOCATION);
+                    }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case ACCESS_FINE_LOCATION:
+                checkLocalPermissions();
+                break;
+
+            case CUSTOM_LOCATION:
+                if (data != null) {
+                    com.snapxeats.common.model.Location location =
+                            data.getParcelableExtra(getString(R.string.selected_location));
+                    if (location != null) {
+                        mSelectedLocation = location;
+                        utility.saveObjectInPref(location, getString(R.string.selected_location));
+                    }
+                }
+                break;
+        }
+    }
+
+    private void checkLocalPermissions() {
+        //Check device level location permission
+        if (LocationHelper.isGpsEnabled(this)) {
+            if (LocationHelper.checkPermission(this)) {
+                LocationHelper.requestPermission(this);
+            } else if (NetworkUtility.isNetworkAvailable(this)) {
+                mCurrentLocation = getLocation();
+                if (mCurrentLocation != null) {
+
+                    mPlacename = getPlaceName(mCurrentLocation);
+                    mSelectedLocation =
+                            new com.snapxeats.common.model.Location(mCurrentLocation.getLatitude(),
+                                    mCurrentLocation.getLongitude(),
+                                    mPlacename);
+
+                    mTxtPlaceName.setText(mPlacename);
+                    presenter.getCuisineList(this, mLocationCuisine);
+                }
+            } else {
+                showNetworkErrorDialog((dialog, which) -> {
+                });
+            }
         } else {
-            editor.putBoolean(getString(R.string.isLocationPermissionGranted), false);
-            editor.putBoolean(getString(R.string.isLocationPermissionDenied), true);
-
-            editor.apply();
-            showDenyDialog(setListener(denyAction), setListener(allowAction));
+            checkGpsPermission();
         }
     }
 
     @Override
-    public void success(Object o) {
-        RootCuisine rootCuisine = (RootCuisine) o;
+    public void success(Object value) {
+        RootCuisine rootCuisine = (RootCuisine) value;
         List<Cuisines> selectableItems = rootCuisine.getCuisineList();
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(PreferenceActivity.this, 2);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -285,7 +296,7 @@ public class PreferenceActivity extends BaseActivity implements PreferenceContra
     }
 
     @Override
-    public void noNetwork() {
+    public void noNetwork(Object value) {
         //Set action as a finish() to close current activity
         showNetworkErrorDialog((dialog, which) -> {
         });

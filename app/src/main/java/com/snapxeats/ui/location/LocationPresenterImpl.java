@@ -1,21 +1,28 @@
 package com.snapxeats.ui.location;
 
+import com.snapxeats.common.Router;
 import com.snapxeats.common.utilities.SnapXResult;
+import java.util.List;
 
 /**
  * Created by Snehal Tembare on 5/1/18.
  */
 
 public class LocationPresenterImpl implements LocationContract.LocationPresenter {
-    LocationInteractor interactor;
+    private LocationInteractor interactor;
+    private LocationContract.LocationView locationView;
+    public static List<String> arryalist;
+    private LocationRouterImpl router;
 
-    public LocationPresenterImpl(LocationInteractor interactor) {
+    public LocationPresenterImpl(LocationInteractor interactor,
+                                 LocationRouterImpl router) {
         this.interactor = interactor;
+        this.router = router;
     }
 
     @Override
     public void addView(LocationContract.LocationView view) {
-
+        this.locationView = view;
     }
 
     @Override
@@ -24,7 +31,32 @@ public class LocationPresenterImpl implements LocationContract.LocationPresenter
     }
 
     @Override
-    public void response(SnapXResult result) {
+    public void response(SnapXResult result, Object value) {
 
+        switch (result) {
+            case SUCCESS:
+                locationView.success(value);
+                break;
+            case FAILURE:
+                locationView.error();
+                break;
+            case NONETWORK:
+                locationView.noNetwork(value);
+                break;
+            case NETWORKERROR:
+                locationView.networkError();
+                break;
+        }
     }
+
+    @Override
+    public void getPlaceDetails(String placeId) {
+        interactor.getPlaceDetails(locationView, placeId);
+    }
+
+    @Override
+    public void presentScreen(Router.Screen screen) {
+        router.presentScreen(screen);
+    }
+
 }

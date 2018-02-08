@@ -64,16 +64,13 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
     implementation 'com.squareup:android-times-square:1.6.5@aar'
     //Google API's
-    implementation 'com.google.android.gms:play-services-maps:11.8.0'
-    implementation 'com.google.android.gms:play-services-places:11.8.0'
-    implementation 'com.google.android.gms:play-services-location:11.8.0'
+    implementation 'com.google.android.gms:play-services-maps:10.2.4'
+    implementation 'com.google.android.gms:play-services-places:10.2.4'
+    implementation 'com.google.android.gms:play-services-location:10.2.4'
     //facebook sdk
     implementation 'com.facebook.android:facebook-android-sdk:4.29.0'
     //Multidex
     implementation 'com.android.support:multidex:1.0.2'
-    // Google play service version dependency on fire base
-    implementation 'com.google.firebase:firebase-core:11.8.0'
-    implementation 'com.google.firebase:firebase-auth:11.8.0'
 
     // hockey app
     implementation 'net.hockeyapp.android:HockeySDK:5.1.0'
@@ -81,6 +78,8 @@ dependencies {
     //PlaceHolderView
     compile 'com.mindorks:butterknifelite:0.0.3'
     compile 'com.mindorks:placeholderview:0.7.2'
+
+    compile 'com.google.code.gson:gson:2.8.1'
 
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'

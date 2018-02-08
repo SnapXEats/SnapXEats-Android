@@ -1,6 +1,7 @@
 package com.snapxeats.ui.foodstack;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -65,7 +66,7 @@ public class FoodStackActivity extends BaseActivity
         mFoodStackPreseneter.addView(this);
         SelectedCuisineList selectedCuisineList;
         selectedCuisineList = getIntent().getExtras().getParcelable(getString(R.string.data_selectedCuisineList));
-        mFoodStackPreseneter.getCuisinePhotos(this,selectedCuisineList);
+        mFoodStackPreseneter.getCuisinePhotos(this, selectedCuisineList);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -143,7 +144,7 @@ public class FoodStackActivity extends BaseActivity
 
     @Override
     public void success(Object o) {
-        RootCuisinePhotos rootCuisinePhotos = (RootCuisinePhotos)o;
+        RootCuisinePhotos rootCuisinePhotos = (RootCuisinePhotos) o;
         dismissProgressDialog();
         int INDEX_DISH_INFO, INDEX_REST_DISH;
         List<DishesInfo> dishInfo = rootCuisinePhotos.getDishesInfo();
@@ -166,8 +167,10 @@ public class FoodStackActivity extends BaseActivity
     }
 
     @Override
-    public void noNetwork() {
+    public void noNetwork(Object value) {
+        showNetworkErrorDialog((dialog, which) -> {
 
+        });
     }
 
     @Override

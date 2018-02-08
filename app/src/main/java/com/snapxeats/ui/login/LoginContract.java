@@ -4,7 +4,6 @@ import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
 import com.snapxeats.dagger.AppContract;
-import com.snapxeats.ui.preferences.PreferenceContract;
 
 /**
  * Created by Prajakta Patil on 4/1/18.

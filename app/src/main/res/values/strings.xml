@@ -40,7 +40,7 @@
     <string name="app_version">vesrion</string>
     <string name="location_service_not_active">Location Services not Active</string>
     <string name="enable_gps">Please enable Location Services and GPS</string>
-    <string name="location_permission_needed">Location permission needed for core functionality</string>
+    <string name="location_permission_needed">Location permission needs to access this feature</string>
     <string name="permission_denied_permantantly">It looks like you have turned off permissions required
         for this feature. It can be enabled under Phone Settings >Apps >SnapXEats >Permissions</string>
     <string name="go_to_settings">Go to Settings</string>
@@ -59,7 +59,22 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="snapxeats_email">snapxeats.test@synerzip.com</string>
+    <string name="preference_name">SnapXEats.txt</string>
+    <string name="cancel">Cancel</string>
+    <string name="location">location</string>
+    <string name="ratings">Ratings</string>
+    <string name="three_stars">3 Stars</string>
+    <string name="four_stars">4 Stars</string>
+    <string name="five_stars">5 Stars</string>
+    <string name="sort_by">Sort by</string>
+    <string name="distance">Distance</string>
+    <string name="set_preferences">Set preferences</string>
+    <string name="cuisines">Cuisines</string>
+    <string name="food">Food</string>
+    <string name="apply_filters">applt filters</string>
+    <string name="selected_location">selected_location</string>
     <string name="set_location">Location permission not set for this app</string>
     <string name="data_selectedCuisineList">selectedCuisineList</string>
+    <string name="user_current_location">userCurrentLocation</string>
 
 </resources>

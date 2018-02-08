@@ -1,11 +1,7 @@
 package com.snapxeats.ui.login;
 
 import android.app.Activity;
-import android.content.Intent;
-
 import com.snapxeats.common.Router;
-import com.snapxeats.ui.preferences.PreferenceActivity;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 

@@ -52,16 +52,16 @@ public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPresen
     }
 
     @Override
-    public void response(SnapXResult result) {
+    public void response(SnapXResult result, Object value) {
         switch (result) {
             case SUCCESS:
-                mFoodStackView.success(SnapXResult.SUCCESS.getValue());
+                mFoodStackView.success(value);
                 break;
             case FAILURE:
                 mFoodStackView.error();
                 break;
             case NONETWORK:
-                mFoodStackView.noNetwork();
+                mFoodStackView.noNetwork(value);
                 break;
             case NETWORKERROR:
                 mFoodStackView.networkError();

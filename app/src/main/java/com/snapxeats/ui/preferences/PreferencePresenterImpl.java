@@ -1,12 +1,9 @@
 package com.snapxeats.ui.preferences;
 
-import android.location.Location;
 import android.support.annotation.Nullable;
-
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.utilities.SnapXResult;
-
 import javax.inject.Singleton;
 
 
@@ -30,37 +27,20 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
     }
 
     @Override
-    public void getLocation(PreferenceContract.PreferenceView preferenceView) {
-        mPreferenceInteractor.getLocation(preferenceView);
-    }
-
-    @Override
-    public void response(SnapXResult result) {
+    public void response(SnapXResult result,Object value) {
         switch (result) {
             case SUCCESS:
-                mPreferenceView.success(SnapXResult.SUCCESS.getValue());
+                mPreferenceView.success(value);
                 break;
             case FAILURE:
                 mPreferenceView.error();
                 break;
             case NONETWORK:
-                mPreferenceView.noNetwork();
+                mPreferenceView.noNetwork(value);
                 break;
             case NETWORKERROR:
                 mPreferenceView.networkError();
                 break;
-        }
-    }
-
-    /**
-     * Update user location
-     *
-     * @param placename
-     */
-
-    public void updatePlace(String placename, Location location) {
-        if (mPreferenceView != null) {
-            mPreferenceView.updatePlaceName(placename, location);
         }
     }
 
@@ -70,9 +50,10 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
     }
 
     @Override
-    public void getCuisineList(LocationCuisine locationCuisine) {
+    public void getCuisineList(PreferenceContract.PreferenceView mPreferenceView,
+                               LocationCuisine locationCuisine) {
 
-        mPreferenceInteractor.getCuisineList(locationCuisine);
+        mPreferenceInteractor.getCuisineList(mPreferenceView,locationCuisine);
 
     }
 
