@@ -12,6 +12,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.gson.Gson;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.network.LocationHelper;
@@ -47,9 +48,13 @@ public class AppUtility {
         return preferences;
     }
 
-    public SharedPreferences.Editor getEditor() {
+    public void saveObjectInPref(com.snapxeats.common.model.Location location, String key) {
         editor = preferences.edit();
-        return editor;
+        Gson gson = new Gson();
+        String json = gson.toJson(location);
+        editor.putString(key, json);
+        editor.apply();
     }
+
 
 }

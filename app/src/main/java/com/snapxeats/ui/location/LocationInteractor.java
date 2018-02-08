@@ -2,14 +2,13 @@ package com.snapxeats.ui.location;
 
 
 import android.content.Context;
+
 import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.PlaceDetail;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
-import java.util.ArrayList;
-import java.util.List;
 import javax.inject.Inject;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,9 +21,7 @@ import retrofit2.Response;
 public class LocationInteractor {
     private LocationContract.LocationPresenter locationPresenter;
     private Context mContext;
-
     private LocationContract.LocationView locationView;
-    public static List<String> predictionArrayList = new ArrayList<>();
 
     @Inject
     public LocationInteractor() {
@@ -61,10 +58,9 @@ public class LocationInteractor {
             call.enqueue(new Callback<PlaceDetail>() {
                 @Override
                 public void onResponse(Call<PlaceDetail> call, Response<PlaceDetail> response) {
-                    if (response.isSuccessful() && response != null) {
-                        if (response.body().getResult() != null) {
-                            locationPresenter.response(SnapXResult.SUCCESS, response.body().getResult());
-                        }
+                    if (response.isSuccessful() && response != null
+                            && response.body().getResult() != null) {
+                        locationPresenter.response(SnapXResult.SUCCESS, response.body().getResult());
                     }
                 }
 
@@ -77,6 +73,5 @@ public class LocationInteractor {
         } else {
             locationPresenter.response(SnapXResult.NONETWORK, null);
         }
-
     }
 }

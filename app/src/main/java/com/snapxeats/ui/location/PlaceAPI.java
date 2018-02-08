@@ -35,54 +35,26 @@ public class PlaceAPI {
             WebConstants.PREDICTION_LIST;
 
     List<Prediction> predictionList = null;
-    ProgressDialog mDialog;
-
-    public PlaceAPI(Context context) {
-        mDialog = new ProgressDialog(context);
-        mDialog.setMessage(context.getString(R.string.please_wait));
-        mDialog.setCanceledOnTouchOutside(false);
-    }
+    HttpURLConnection conn = null;
+    StringBuilder jsonResults = new StringBuilder();
 
     public List<Prediction> autocomplete(String input) {
-        List<String> resultList = null;
-        HttpURLConnection conn = null;
-        StringBuilder jsonResults = new StringBuilder();
 
-
-        try {
-            StringBuilder sb = new StringBuilder(PLACES_API_BASE);
-            sb.append("&input=" + URLEncoder.encode(input, "utf8"));
-
-            URL url = new URL(sb.toString());
-            SnapXToast.debug("Prediction url:"+url);
-            conn = (HttpURLConnection) url.openConnection();
-            InputStreamReader in = new InputStreamReader(conn.getInputStream());
-
-            // Load the results into a StringBuilder
-            int read;
-            char[] buff = new char[1024];
-            while ((read = in.read(buff)) != -1) {
-                jsonResults.append(buff, 0, read);
-            }
-        } catch (MalformedURLException e) {
-            Log.e(TAG, "Error processing Places API URL", e);
-//            return resultList;
-            return predictionList;
-        } catch (IOException e) {
-            Log.e(TAG, "Nw Error connecting to Places API", e);
-//            return resultList;
-            return predictionList;
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
+        StringBuilder result = getData(input);
+        if (result != null) {
+            predictionList = parseData(result);
         }
+        return predictionList;
+    }
 
+
+    /**
+     * Create a JSON object hierarchy from the results
+     */
+    private List<Prediction> parseData(StringBuilder result) {
+        List<String> resultList = null;
         try {
-            // Log.d(TAG, jsonResults.toString());
-
-            // Create a JSON object hierarchy from the results
-            JSONObject jsonObj = new JSONObject(jsonResults.toString());
+            JSONObject jsonObj = new JSONObject(result.toString());
             JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
 
             // Extract the Place descriptions from the results
@@ -95,16 +67,43 @@ public class PlaceAPI {
                 resultList.add(predsJsonArray.getJSONObject(i).getString("description"));
                 predictionList.add(prediction);
             }
-            mDialog.dismiss();
         } catch (JSONException e) {
             Log.e(TAG, "Cannot process JSON results", e);
         }
-
-//        return resultList;
         return predictionList;
     }
 
-    public List<Prediction> getPredictionList() {
-        return predictionList;
+    /**
+     * Call place Prediction API
+     */
+
+    StringBuilder getData(String input) {
+        try {
+            StringBuilder sb = new StringBuilder(PLACES_API_BASE);
+            sb.append("&input=" + URLEncoder.encode(input, "utf8"));
+
+            URL url = new URL(sb.toString());
+            SnapXToast.debug("Prediction url:" + url);
+            conn = (HttpURLConnection) url.openConnection();
+            InputStreamReader in = new InputStreamReader(conn.getInputStream());
+
+            // Load the results into a StringBuilder
+            int read;
+            char[] buff = new char[1024];
+            while ((read = in.read(buff)) != -1) {
+                jsonResults.append(buff, 0, read);
+            }
+        } catch (MalformedURLException e) {
+            Log.e(TAG, "Error processing Places API URL", e);
+
+        } catch (IOException e) {
+            Log.e(TAG, "Nw Error connecting to Places API", e);
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+
+        return jsonResults;
     }
 }

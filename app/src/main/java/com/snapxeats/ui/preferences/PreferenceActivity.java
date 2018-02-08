@@ -13,6 +13,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
 import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
@@ -26,8 +28,11 @@ import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.foodstack.FoodStackActivity;
+
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -111,6 +116,10 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
 
         if (checkPermissions()) {
             mSelectedLocation = getSelectedLocation();
+        } else {
+            Gson gson = new Gson();
+            String json = preferences.getString(getString(R.string.selected_location), "");
+            mSelectedLocation = gson.fromJson(json, com.snapxeats.common.model.Location.class);
         }
     }
 
@@ -135,6 +144,9 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
             mLocationCuisine.setLatitude(mSelectedLocation.getLat());
             mLocationCuisine.setLongitude(mSelectedLocation.getLng());
             selectedCuisineList.setLocation(mLocationCuisine);
+
+            //Save data in shared preferences
+            utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
 
             mTxtPlaceName.setText(mSelectedLocation.getName());
             presenter.getCuisineList(this, mLocationCuisine);
@@ -196,21 +208,21 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            SnapXToast.debug("Permissions granted");
 
-            if (checkPermissions()) {
-                mSelectedLocation = getSelectedLocation();
-            }
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                SnapXToast.debug("Permissions granted");
 
-        } else if (!shouldShowRequestPermissionRationale(permissions[0])) {
-            SnapXToast.debug("Permissions denied check never ask again");
-            snapXDialog.showChangePermissionDialog();
-        } else {
-            presenter.presentScreen(LOCATION);
-        }
+                if (checkPermissions()) {
+                    mSelectedLocation = getSelectedLocation();
+                }
+
+            } else if (!shouldShowRequestPermissionRationale(permissions[0])) {
+                SnapXToast.debug("Permissions denied check never ask again");
+                snapXDialog.showChangePermissionDialog();
+            } else {
+                presenter.presentScreen(LOCATION);
+                    }
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -226,6 +238,7 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
                             data.getParcelableExtra(getString(R.string.selected_location));
                     if (location != null) {
                         mSelectedLocation = location;
+                        utility.saveObjectInPref(location, getString(R.string.selected_location));
                     }
                 }
                 break;
@@ -244,8 +257,8 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
                     mPlacename = getPlaceName(mCurrentLocation);
                     mSelectedLocation =
                             new com.snapxeats.common.model.Location(mCurrentLocation.getLatitude(),
-                            mCurrentLocation.getLongitude(),
-                            mPlacename);
+                                    mCurrentLocation.getLongitude(),
+                                    mPlacename);
 
                     mTxtPlaceName.setText(mPlacename);
                     presenter.getCuisineList(this, mLocationCuisine);
@@ -291,7 +304,7 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
 
     @Override
     public void networkError() {
-        }
+    }
 
     @Override
     public void recyclerViewListClicked(List<String> selectedCuisineList) {

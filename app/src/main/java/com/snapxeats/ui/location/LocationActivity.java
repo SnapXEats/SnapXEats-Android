@@ -10,14 +10,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-
 import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
@@ -25,18 +23,15 @@ import com.snapxeats.common.model.Location;
 import com.snapxeats.common.model.Prediction;
 import com.snapxeats.common.model.Result;
 import com.snapxeats.common.utilities.AppUtility;
+import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.LocationHelper;
-
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
 import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.CUSTOM_LOCATION;
 
@@ -95,7 +90,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
         locationPresenter.addView(this);
         utility.setContext(this);
         snapXDialog.setContext(this);
-        placeAPI = new PlaceAPI(this);
+        placeAPI = new PlaceAPI();
         locationHelper = new LocationHelper(this);
         mAutoCompleteTextView.setSingleLine();
 
@@ -107,24 +102,29 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
         mAutoCompleteTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                Log.e("beforeTextChanged", "LocationActivity");
+                SnapXToast.debug("beforeTextChanged LocationActivity");
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.e("onTextChanged", "LocationActivity");
+                SnapXToast.debug("onTextChanged LocationActivity");
 
                 setClearIcon(s);
 
                 if (s.length() > 2) {
+                    if (NetworkUtility.isNetworkAvailable(LocationActivity.this)){
                     mListView.setVisibility(View.VISIBLE);
-                    mAdapter.getFilter().filter(s);
+                    mAdapter.getFilter().filter(s);}else {
+                        showNetworkErrorDialog((dialog, which) -> {
+
+                        });
+                    }
                 }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                Log.e("afterTextChanged", "LocationActivity");
+                SnapXToast.debug("afterTextChanged LocationActivity");
                 if (s.length() == 0)
                     if (mAdapter.resultList != null && mAdapter != null) {
                         mAdapter.resultList.clear();
@@ -136,11 +136,10 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
 
         mListView.setOnItemClickListener((parent, view, position, id) -> {
             String address = (String) parent.getItemAtPosition(position);
-            Log.i("Address" + address, "Id" + parent.getItemAtPosition(position));
+            SnapXToast.debug("Address" + address+ "Id" + parent.getItemAtPosition(position));
 
 
             List<Prediction> predictionList = mAdapter.predictionList;
-            Log.i("Address" + address, "Id" + predictionList.get(position).getPlace_id());
 
             if (predictionList != null) {
                 locationPresenter.getPlaceDetails(predictionList.get(position).getPlace_id());
@@ -246,7 +245,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     @Override
     public void success(Object value) {
         Result location = (Result) value;
-        Log.i("Success", "Name" + location.getName());
+        SnapXToast.debug("Success Name" + location.getName());
 
         selectedLocation = new Location(location.getGeometry().getLocation().getLat(),
                 location.getGeometry().getLocation().getLng(),

@@ -31,7 +31,9 @@ import javax.inject.Inject;
  * Created by Snehal Tembare on 7/2/18.
  */
 
-public class LocationBaseActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class LocationBaseActivity extends BaseActivity implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "LocationBaseActivity";
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
@@ -145,7 +147,7 @@ public class LocationBaseActivity extends BaseActivity implements GoogleApiClien
         } catch (SecurityException e) {
             e.printStackTrace();
         }
-        return mLastLocation;
+        return mLastLocation != null ? mLastLocation : null;
     }
 
     public String getPlaceName(Location location) {

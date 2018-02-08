@@ -30,7 +30,7 @@ public class LocationAdapter extends ArrayAdapter<String> {
                     int resource) {
         super(context, resource);
         mContext = context;
-        placeAPI = new PlaceAPI(context);
+        placeAPI = new PlaceAPI();
         resultList = new ArrayList<>();
     }
 
