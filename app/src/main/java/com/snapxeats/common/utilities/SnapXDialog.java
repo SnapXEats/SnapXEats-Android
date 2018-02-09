@@ -64,14 +64,6 @@ public class SnapXDialog {
         mNetworkErrorDialog.setPositiveButton(context.getString(R.string.ok), click);
         mNetworkErrorDialog.show();
     }
-    public void showSetLocationDialog(DialogInterface.OnClickListener click) {
-        mNetworkErrorDialog = new AlertDialog.Builder(context);
-        mNetworkErrorDialog.setMessage(context.getString(R.string.set_location));
-
-        mNetworkErrorDialog.setPositiveButton(context.getString(R.string.ok), click);
-        mNetworkErrorDialog.show();
-    }
-
 
     /**
      * Show dialog when user deny Location permission very first time

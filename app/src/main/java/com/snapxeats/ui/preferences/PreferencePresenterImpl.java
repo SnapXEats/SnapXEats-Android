@@ -1,9 +1,12 @@
 package com.snapxeats.ui.preferences;
 
 import android.support.annotation.Nullable;
+
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.LocationCuisine;
+import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.utilities.SnapXResult;
+
 import javax.inject.Singleton;
 
 
@@ -27,19 +30,27 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
     }
 
     @Override
-    public void response(SnapXResult result,Object value) {
+    public void response(SnapXResult result, Object value) {
         switch (result) {
             case SUCCESS:
-                mPreferenceView.success(value);
+                if (mPreferenceView != null) {
+                    mPreferenceView.success(value);
+                }
                 break;
             case FAILURE:
-                mPreferenceView.error();
+                if (mPreferenceView != null) {
+                    mPreferenceView.error();
+                }
                 break;
             case NONETWORK:
-                mPreferenceView.noNetwork(value);
+                if (mPreferenceView != null) {
+                    mPreferenceView.noNetwork(value);
+                }
                 break;
             case NETWORKERROR:
-                mPreferenceView.networkError();
+                if (mPreferenceView != null) {
+                    mPreferenceView.networkError();
+                }
                 break;
         }
     }
@@ -53,8 +64,12 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
     public void getCuisineList(PreferenceContract.PreferenceView mPreferenceView,
                                LocationCuisine locationCuisine) {
 
-        mPreferenceInteractor.getCuisineList(mPreferenceView,locationCuisine);
+        mPreferenceInteractor.getCuisineList(mPreferenceView, locationCuisine);
+    }
 
+    @Override
+    public void getUserData(PreferenceContract.PreferenceView view, SnapXUserRequest snapXUserRequest) {
+        mPreferenceInteractor.getUserData(view, snapXUserRequest);
     }
 
     /**
@@ -73,5 +88,4 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
     public void dropView() {
         mPreferenceView = null;
     }
-
 }

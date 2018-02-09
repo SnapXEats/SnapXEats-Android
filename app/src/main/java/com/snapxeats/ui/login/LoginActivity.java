@@ -2,6 +2,7 @@ package com.snapxeats.ui.login;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -27,12 +29,17 @@ import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
+
 import net.hockeyapp.android.utils.Base64;
+
 import java.security.MessageDigest;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static com.snapxeats.common.Router.Screen.PREFERENCE;
 
 /**
@@ -168,6 +175,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
 
             @Override
             public void onSuccess() {
+                //TODO data passed null for now
                 mLoginPresenter.response(SnapXResult.SUCCESS,null);
             }
 

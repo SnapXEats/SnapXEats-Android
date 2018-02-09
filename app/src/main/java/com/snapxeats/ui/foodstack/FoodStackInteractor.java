@@ -59,17 +59,17 @@ public class FoodStackInteractor {
                 public void onResponse(Call<RootCuisinePhotos> call, Response<RootCuisinePhotos> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         RootCuisinePhotos rootCuisine = response.body();
-                        mFoodStackPreseneter.response(SnapXResult.SUCCESS,rootCuisine);
+                        mFoodStackPreseneter.response(SnapXResult.SUCCESS, rootCuisine);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<RootCuisinePhotos> call, Throwable t) {
-                    mFoodStackPreseneter.response(SnapXResult.ERROR,null);
+                    mFoodStackPreseneter.response(SnapXResult.ERROR, null);
                 }
             });
         } else {
-            mFoodStackPreseneter.response(SnapXResult.NONETWORK,null);
+            mFoodStackPreseneter.response(SnapXResult.NONETWORK, null);
         }
     }
 }

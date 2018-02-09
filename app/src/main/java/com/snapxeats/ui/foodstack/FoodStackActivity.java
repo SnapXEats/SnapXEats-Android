@@ -8,6 +8,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -23,7 +24,10 @@ import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.DishesInfo;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SelectedCuisineList;
+import com.snapxeats.common.model.SnapXUser;
+import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.preferences.PreferenceInteractor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +41,7 @@ import static com.snapxeats.common.Router.Screen.RESTAURANT_DETAILS;
 /**
  * Created by Prajakta Patil on 30/1/18.
  */
+
 public class FoodStackActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, FoodStackContract.FoodStackView,
         AppContract.SnapXResults {
@@ -66,8 +71,13 @@ public class FoodStackActivity extends BaseActivity
         mFoodStackPreseneter.addView(this);
         SelectedCuisineList selectedCuisineList;
         selectedCuisineList = getIntent().getExtras().getParcelable(getString(R.string.data_selectedCuisineList));
-        mFoodStackPreseneter.getCuisinePhotos(this, selectedCuisineList);
 
+        if (NetworkUtility.isNetworkAvailable(this)) {
+            mFoodStackPreseneter.getCuisinePhotos(this, selectedCuisineList);
+        }else {
+            showNetworkErrorDialog((dialog, which) -> {
+            });
+        }
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -82,7 +92,7 @@ public class FoodStackActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
         mSwipeView.getBuilder()
                 .setIsUndoEnabled(true)
-                .setDisplayViewCount(20)//stack will have max 10 images
+                .setDisplayViewCount(10)//stack will show max 10 images
                 .setSwipeVerticalThreshold(Utils.dpToPx(50))
                 .setSwipeHorizontalThreshold(Utils.dpToPx(50))
                 .setSwipeDecor(new SwipeDecor()
@@ -98,11 +108,10 @@ public class FoodStackActivity extends BaseActivity
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         mDrawerLayout = findViewById(R.id.drawer_layout);
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
         }
     }
 
@@ -142,9 +151,13 @@ public class FoodStackActivity extends BaseActivity
         return true;
     }
 
+    /**
+     * get dishes info
+     * @param value
+     */
     @Override
-    public void success(Object o) {
-        RootCuisinePhotos rootCuisinePhotos = (RootCuisinePhotos) o;
+    public void success(Object value) {
+        RootCuisinePhotos rootCuisinePhotos = (RootCuisinePhotos) value;
         dismissProgressDialog();
         int INDEX_DISH_INFO, INDEX_REST_DISH;
         List<DishesInfo> dishInfo = rootCuisinePhotos.getDishesInfo();
@@ -157,7 +170,6 @@ public class FoodStackActivity extends BaseActivity
             listHashMap.put(dishInfo.get(INDEX_DISH_INFO).getRestaurant_name(), strings);
             //set dishname and image in swipeview
             mSwipeView.addView(new TinderDirectionalCard(this, listHashMap, mSwipeView));
-
         }
     }
 
@@ -169,7 +181,6 @@ public class FoodStackActivity extends BaseActivity
     @Override
     public void noNetwork(Object value) {
         showNetworkErrorDialog((dialog, which) -> {
-
         });
     }
 

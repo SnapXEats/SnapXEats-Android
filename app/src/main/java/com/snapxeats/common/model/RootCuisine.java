@@ -15,6 +15,7 @@ import lombok.Setter;
 @Setter
 public class RootCuisine implements Parcelable {
     private List<Cuisines> cuisineList;
+    private List<String> userPreSelectedCuisines;
 
     @Override
     public int describeContents() {
@@ -24,6 +25,7 @@ public class RootCuisine implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeTypedList(this.cuisineList);
+        dest.writeStringList(this.userPreSelectedCuisines);
     }
 
     public RootCuisine() {
@@ -31,6 +33,7 @@ public class RootCuisine implements Parcelable {
 
     protected RootCuisine(Parcel in) {
         this.cuisineList = in.createTypedArrayList(Cuisines.CREATOR);
+        this.userPreSelectedCuisines = in.createStringArrayList();
     }
 
     public static final Parcelable.Creator<RootCuisine> CREATOR = new Parcelable.Creator<RootCuisine>() {

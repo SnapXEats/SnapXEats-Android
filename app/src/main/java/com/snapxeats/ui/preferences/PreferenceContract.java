@@ -4,8 +4,8 @@ import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.LocationCuisine;
+import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.dagger.AppContract;
-
 
 /**
  * Created by Snehal Tembare on 3/1/18.
@@ -23,6 +23,8 @@ public class PreferenceContract {
 
         void getCuisineList(PreferenceContract.PreferenceView preferenceView,
                             LocationCuisine locationCuisine);
+
+        void getUserData(PreferenceContract.PreferenceView preferenceView,SnapXUserRequest snapXUserRequest);
 
     }
 

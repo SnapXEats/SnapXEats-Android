@@ -1,11 +1,7 @@
 package com.snapxeats.ui.location;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.util.Log;
-import android.widget.ListView;
 
-import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.Prediction;

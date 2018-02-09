@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+
 import com.snapxeats.common.Router;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
@@ -15,7 +16,6 @@ import dagger.android.support.DaggerAppCompatActivity;
 /**
  * Created by Prajakta Patil on 28/12/17.
  */
-
 
 public abstract class BaseActivity extends DaggerAppCompatActivity {
 
@@ -74,15 +74,12 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
         mSnapXDialog.showDenyDialog(positiveClick, negativeClick);
 
         SharedPreferences preferences = getSharedPreferences("SnapXEats", MODE_PRIVATE);
-        SharedPreferences.Editor  editor = preferences.edit();
+        SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(getString(R.string.isLocationPermissionDenied), false);
         editor.apply();
     }
 
     public void showNetworkErrorDialog(DialogInterface.OnClickListener click) {
         mSnapXDialog.showNetworkErrorDialog(click);
-    }
-    public void showSetLocationDialog(DialogInterface.OnClickListener click) {
-        mSnapXDialog.showSetLocationDialog(click);
     }
 }

@@ -1,18 +1,19 @@
 package com.snapxeats.network;
 
 import com.snapxeats.common.constants.WebConstants;
-import com.snapxeats.common.model.LocationCuisine;
-import com.snapxeats.common.model.Cuisines;
 import com.snapxeats.common.model.PlaceDetail;
 import com.snapxeats.common.model.PlacesAutoCompleteData;
-import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.common.model.RootCuisinePhotos;
+import com.snapxeats.common.model.SnapXUserRequest;
+import com.snapxeats.common.model.SnapXUserResponse;
 
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 /**
@@ -39,6 +40,14 @@ public interface ApiHelper {
                                              @Query("longitude") double longitude,
                                              @Query("cuisineArray") List<String> cuisineList);
 
+    /**
+     * get user info
+     *
+     * @param snapXUserRequest
+     * @return
+     */
+    @POST(WebConstants.SNAPX_TOKEN)
+    Call<SnapXUserResponse> getUserToken(@Body SnapXUserRequest snapXUserRequest);
 
     /**
      * Get predection list
@@ -57,4 +66,4 @@ public interface ApiHelper {
      */
     @GET(WebConstants.PLACE_DETAILS)
     Call<PlaceDetail> getPlaceDetails(@Query("placeid") String placeId);
-   }
+}

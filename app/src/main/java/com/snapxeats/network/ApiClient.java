@@ -5,7 +5,6 @@ import android.content.Context;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.utilities.NetworkUtility;
-import com.snapxeats.dagger.AppContract;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +28,7 @@ public class ApiClient {
     }
 
     private static Retrofit retrofitBaseURL = null;
-    static Retrofit retrofitGOOGLEURL = null;
+    private static Retrofit retrofitGOOGLEURL = null;
 
     public static Retrofit getClient(Context context, String base_url) {
 
@@ -47,7 +46,7 @@ public class ApiClient {
                         .client(client)
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
-            } else if (null == retrofitGOOGLEURL && base_url.equals(WebConstants.GOOGLE_BASE_URL)){
+            } else if (null == retrofitGOOGLEURL && base_url.equals(WebConstants.GOOGLE_BASE_URL)) {
                 retrofitGOOGLEURL = new Retrofit.Builder()
                         .baseUrl(base_url)
                         .client(client)

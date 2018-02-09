@@ -14,6 +14,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
 import com.google.gson.Gson;
 import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
@@ -21,6 +22,7 @@ import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.Cuisines;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
+import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.utilities.NetworkUtility;
@@ -89,6 +91,8 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
 
     private LocationCuisine mLocationCuisine;
 
+    private SnapXUserRequest mSnapXUserRequest;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,16 +101,29 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
         setContentView(R.layout.activity_preference);
         ButterKnife.bind(this);
         initView();
-        mRecyclerView.setNestedScrollingEnabled(false);
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
     }
 
     @Override
     public void initView() {
-        buildGoogleAPIClient();
-
         presenter.addView(this);
+        buildGoogleAPIClient();
         snapXDialog.setContext(this);
         utility.setContext(this);
+        mRecyclerView.setNestedScrollingEnabled(false);
+
+        //get user token
+        if(mSnapXUserRequest!=null) {
+            mSnapXUserRequest = new SnapXUserRequest(AccessToken.getCurrentAccessToken().toString(),
+                    getString(R.string.platform_facebook),
+                    AccessToken.getCurrentAccessToken().getUserId());
+        }
+        presenter.getUserData(this, mSnapXUserRequest);
+
         mRecyclerView.setNestedScrollingEnabled(false);
         preferences = utility.getSharedPreferences();
         editor = preferences.edit();
@@ -116,18 +133,11 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
 
         if (checkPermissions()) {
             mSelectedLocation = getSelectedLocation();
-        } else {
-            Gson gson = new Gson();
-            String json = preferences.getString(getString(R.string.selected_location), "");
-            mSelectedLocation = gson.fromJson(json, com.snapxeats.common.model.Location.class);
         }
+        Gson gson = new Gson();
+        String json = preferences.getString(getString(R.string.selected_location), "");
+        mSelectedLocation = gson.fromJson(json, com.snapxeats.common.model.Location.class);
     }
-
-    @Override
-    public Activity getActivity() {
-        return this;
-    }
-
 
     @Override
     protected void onResume() {
@@ -135,7 +145,6 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
         //disable 'done' button till cuisines not selected
         mTxtCuisineDone.setAlpha((float) 0.4);
         mTxtCuisineDone.setClickable(false);
-
 
         if (mSelectedLocation != null) {
 
@@ -192,9 +201,7 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
     }
 
     private com.snapxeats.common.model.Location getSelectedLocation() {
-
         mCurrentLocation = getLocation();
-
         if (mCurrentLocation != null) {
 
             mPlacename = getPlaceName(mCurrentLocation);
@@ -272,6 +279,10 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
         }
     }
 
+    /**
+     * get food images
+     * @param value
+     */
     @Override
     public void success(Object value) {
         RootCuisine rootCuisine = (RootCuisine) value;
@@ -282,7 +293,8 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
         mPreferenceAdapter = new PreferenceAdapter(PreferenceActivity.this,
                 selectableItems,
                 rootCuisine, selectedCuisineList -> {
-            if (selectedCuisineList.size() >= 0) {
+
+            if (selectedCuisineList.size() >=0) {
                 mTxtCuisineDone.setClickable(true);
                 mTxtCuisineDone.setAlpha((float) 1.0);
             }
@@ -297,9 +309,6 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
 
     @Override
     public void noNetwork(Object value) {
-        //Set action as a finish() to close current activity
-        showNetworkErrorDialog((dialog, which) -> {
-        });
     }
 
     @Override

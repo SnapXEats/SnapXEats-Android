@@ -75,6 +75,7 @@
     <string name="selected_location">selected_location</string>
     <string name="set_location">Location permission not set for this app</string>
     <string name="data_selectedCuisineList">selectedCuisineList</string>
+    <string name="platform_facebook">facebook</string>
     <string name="user_current_location">userCurrentLocation</string>
 
 </resources>
