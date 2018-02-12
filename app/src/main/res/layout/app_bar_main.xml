@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
     android:layout_height="match_parent"
-    tools:mContext="com.snapxeats.ui.foodstack.FoodStackActivity">
+    android:fontFamily="Roboto-Medium"
+    android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -15,60 +17,60 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
 
-            <ImageView
-                android:layout_width="@dimen/dimen_250"
-                android:layout_height="@dimen/dimens_40dp"
-                android:layout_marginTop="@dimen/common_dimens_10"
-                android:src="@drawable/ic_toolbar" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/common_dimens_15"
-                android:src="@drawable/places_ic_search" />
+                <TextView
+                    android:id="@+id/txt_place_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="@dimen/dimens_80"
+                    android:drawableEnd="@drawable/ic_location_arrow"
+                    android:drawablePadding="@dimen/common_dimens_10"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:text="@string/select_location"
+                    android:textColor="@color/colorCuisine"
+                    android:textSize="@dimen/text_size_16"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/btn_cuisine_done"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginEnd="@dimen/common_dimens_20"
+                    android:layout_marginTop="@dimen/common_dimens_20"
+                    android:gravity="end"
+                    android:text="@string/done"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/text_size_18"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <FrameLayout
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/common_dimens_5"
+        android:padding="@dimen/common_dimens_10"
+        android:text="@string/select_cuisines"
+        android:textColor="@color/colorCuisine"
+        android:textSize="@dimen/text_size_16"
+        android:textStyle="bold" />
 
-        <include layout="@layout/content_main" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="@dimen/common_dimens_10">
-
-            <ImageButton
-                android:id="@+id/img_cuisine_undo"
-                android:layout_width="@dimen/dimens_50dp"
-                android:layout_height="@dimen/dimens_50dp"
-                android:background="@drawable/ic_undo" />
-
-            <ImageButton
-                android:id="@+id/img_cuisine_reject"
-                android:layout_width="@dimen/dimens_80dp"
-                android:layout_height="@dimen/dimens_80dp"
-                android:layout_marginLeft="@dimen/common_dimens_12"
-                android:background="@drawable/ic_nope" />
-
-            <ImageButton
-                android:id="@+id/img_cuisine_like"
-                android:layout_width="@dimen/dimens_80dp"
-                android:layout_height="@dimen/dimens_80dp"
-                android:layout_marginLeft="@dimen/common_dimens_12"
-                android:background="@drawable/ic_like" />
-
-            <ImageButton
-                android:id="@+id/img_cuisine_wishlist"
-                android:layout_width="@dimen/dimens_50dp"
-                android:layout_height="@dimen/dimens_50dp"
-                android:layout_marginLeft="@dimen/common_dimens_12"
-                android:background="@drawable/ic_wish" />
-        </LinearLayout>
-    </FrameLayout>
-</android.support.design.widget.CoordinatorLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/common_dimens_10"
+        android:layout_marginLeft="@dimen/common_dimens_10"
+        android:layout_marginRight="@dimen/common_dimens_10"
+        android:scrollbars="vertical" />
+</LinearLayout>

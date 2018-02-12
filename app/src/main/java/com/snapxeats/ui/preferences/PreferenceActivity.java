@@ -9,9 +9,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
@@ -48,7 +54,8 @@ import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant
  */
 
 public class PreferenceActivity extends LocationBaseActivity implements PreferenceContract.PreferenceView,
-        AppContract.SnapXResults, PreferenceAdapter.RecyclerViewClickListener {
+        AppContract.SnapXResults, PreferenceAdapter.RecyclerViewClickListener,
+        NavigationView.OnNavigationItemSelectedListener{
 
     public interface PreferenceConstant {
         int ACCESS_FINE_LOCATION = 1;
@@ -66,10 +73,6 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
 
     @Inject
     AppUtility utility;
-
-    private SharedPreferences preferences;
-
-    private SharedPreferences.Editor editor;
 
     //Location provided by google
     private Location mCurrentLocation;
@@ -93,6 +96,8 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
 
     private SnapXUserRequest mSnapXUserRequest;
 
+    private DrawerLayout mDrawerLayout;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +119,20 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
         buildGoogleAPIClient();
         snapXDialog.setContext(this);
         utility.setContext(this);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
         mRecyclerView.setNestedScrollingEnabled(false);
 
         //get user token
@@ -125,8 +144,8 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
         presenter.getUserData(this, mSnapXUserRequest);
 
         mRecyclerView.setNestedScrollingEnabled(false);
-        preferences = utility.getSharedPreferences();
-        editor = preferences.edit();
+        SharedPreferences preferences = utility.getSharedPreferences();
+        SharedPreferences.Editor editor = preferences.edit();
 
         selectedCuisineList = new SelectedCuisineList();
         mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), getString(R.string.select_location)));
@@ -148,7 +167,7 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
 
         if (mSelectedLocation != null) {
 
-            /**TODO set latitude and longitude*/
+            //set latitude and longitude for selected cuisines
             mLocationCuisine = new LocationCuisine();
             mLocationCuisine.setLatitude(mSelectedLocation.getLat());
             mLocationCuisine.setLongitude(mSelectedLocation.getLng());
@@ -162,7 +181,7 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
         }
     }
 
-    @OnClick(R.id.layout_location)
+    @OnClick(R.id.txt_place_name)
     public void presentLocationScreen() {
         if (NetworkUtility.isNetworkAvailable(this)) {
             presenter.presentScreen(LOCATION);
@@ -210,7 +229,7 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
                     mCurrentLocation.getLongitude(),
                     mPlacename);
         }
-        return mSelectedLocation != null ? mSelectedLocation : null;
+        return mSelectedLocation;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -319,13 +338,43 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
     public void recyclerViewListClicked(List<String> selectedCuisineList) {
 
     }
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_wishlist:
+                SnapXToast.debug("WishList");
+                break;
+            case R.id.nav_preferences:
+                SnapXToast.debug("Preferences");
+                break;
+            case R.id.nav_food_journey:
+                SnapXToast.debug("Food Journey");
+                break;
+            case R.id.nav_rewards:
+                SnapXToast.debug("Rewards");
+                break;
+            case R.id.nav_logout:
+                SnapXToast.debug("Logout");
+                break;
+        }
 
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
     /**
      * on back pressed action
      */
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        }
+
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
