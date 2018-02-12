@@ -45,16 +45,24 @@ public class RestaurantDetailsPresenterImpl implements RestaurantDetailsContract
     public void response(SnapXResult result,Object value) {
         switch (result) {
             case SUCCESS:
-                mRestaurantDetailsView.success(value);
+                if (mRestaurantDetailsView != null) {
+                    mRestaurantDetailsView.success(value);
+                }
                 break;
             case FAILURE:
-                mRestaurantDetailsView.error();
+                if (mRestaurantDetailsView != null) {
+                    mRestaurantDetailsView.error(value);
+                }
                 break;
             case NONETWORK:
-                mRestaurantDetailsView.noNetwork(value);
+                if (mRestaurantDetailsView != null) {
+                    mRestaurantDetailsView.noNetwork(value);
+                }
                 break;
             case NETWORKERROR:
-                mRestaurantDetailsView.networkError();
+                if (mRestaurantDetailsView != null) {
+                    mRestaurantDetailsView.networkError(value);
+                }
                 break;
         }
     }

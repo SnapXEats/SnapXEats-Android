@@ -3,6 +3,10 @@ package com.snapxeats.ui.preferences;
 import android.app.Activity;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
+import com.snapxeats.common.model.SnapXUser;
+import com.snapxeats.common.model.SnapXUserInfo;
+import com.snapxeats.common.model.SnapXUserRequest;
+import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
@@ -59,7 +63,7 @@ public class PreferenceInteractor {
                     preferenceView.dismissProgressDialog();
                     if (response.isSuccessful() && response.body() != null) {
                         RootCuisine rootCuisine = response.body();
-                        preferencePresenter.response(SnapXResult.SUCCESS, rootCuisine);
+                        preferencePresenter.response(SnapXResult.SUCCESS,rootCuisine);
                     }
                 }
 
@@ -70,6 +74,35 @@ public class PreferenceInteractor {
             });
         } else {
             preferencePresenter.response(SnapXResult.NONETWORK, null);
+        }
+    }
+
+    /**
+     * get user info
+     * @param preferenceView
+     * @param snapXUserRequest
+     */
+    void getUserData(PreferenceContract.PreferenceView preferenceView,SnapXUserRequest snapXUserRequest){
+        mContext=preferenceView.getActivity();
+        if(NetworkUtility.isNetworkAvailable(mContext)){
+            ApiHelper apiHelper=ApiClient.getClient(mContext,BASE_URL).create(ApiHelper.class);
+            Call<SnapXUserResponse> snapXUserCall=apiHelper.getUserToken(snapXUserRequest);
+            snapXUserCall.enqueue(new Callback<SnapXUserResponse>() {
+                @Override
+                public void onResponse(Call<SnapXUserResponse> call, Response<SnapXUserResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        SnapXUserInfo snapXUserInfo=response.body().getUserInfo();
+                        SnapXUser.mUserToken =snapXUserInfo.getToken();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<SnapXUserResponse> call, Throwable t) {
+                    preferencePresenter.response(SnapXResult.FAILURE,null);
+                }
+            });
+        }else {
+            preferencePresenter.response(SnapXResult.NONETWORK,null);
         }
     }
 }

@@ -8,8 +8,6 @@ public enum SnapXResult {
     SUCCESS("Success"), FAILURE("Failure"), NONETWORK("No network"), NETWORKERROR("Network error"),
     CANCEL("Cancel"), ERROR("Error");
 
-    private Object value;
-
     SnapXResult(String result) {
     }
 }

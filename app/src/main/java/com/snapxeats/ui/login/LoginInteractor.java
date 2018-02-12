@@ -23,7 +23,6 @@ public class LoginInteractor {
     public void setPresenter(LoginContract.LoginPresenter loginPresenter) {
         LoginContract.LoginPresenter mLoginLoginPresenter = loginPresenter;
     }
-
 }
 
 

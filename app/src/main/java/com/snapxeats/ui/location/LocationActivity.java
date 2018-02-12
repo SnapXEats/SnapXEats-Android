@@ -43,7 +43,6 @@ import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant
 public class LocationActivity extends LocationBaseActivity implements LocationContract.LocationView,
         AppContract.SnapXResults {
 
-    private static final String TAG = "LocationActivity";
     private LocationAdapter mAdapter;
 
     private Location selectedLocation;
@@ -165,9 +164,8 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     public void onBackPressed() {
         super.onBackPressed();
         InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (in != null) {
+        if (in != null)
             in.hideSoftInputFromInputMethod(getCurrentFocus().getApplicationWindowToken(), 0);
-        }
     }
 
     /**
@@ -266,7 +264,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     }
 
     @Override
-    public void error() {
+    public void error(Object value) {
 
     }
 
@@ -278,7 +276,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     }
 
     @Override
-    public void networkError() {
+    public void networkError(Object value) {
 
     }
 }

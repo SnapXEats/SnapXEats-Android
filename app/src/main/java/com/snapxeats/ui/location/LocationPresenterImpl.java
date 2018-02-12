@@ -38,13 +38,13 @@ public class LocationPresenterImpl implements LocationContract.LocationPresenter
                 locationView.success(value);
                 break;
             case FAILURE:
-                locationView.error();
+                locationView.error(value);
                 break;
             case NONETWORK:
                 locationView.noNetwork(value);
                 break;
             case NETWORKERROR:
-                locationView.networkError();
+                locationView.networkError(value);
                 break;
         }
     }

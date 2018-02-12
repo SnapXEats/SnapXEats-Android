@@ -49,7 +49,7 @@
         <activity android:name=".ui.foodstack.FoodStackActivity" />
         <activity android:name=".ui.restaurant.RestaurantDetailsActivity" />
         <activity android:name=".ui.restaurantInfo.RestaurantInfoActivity" />
-        <activity android:name=".ui.navpreference.NavPreferenceActivity"></activity>
+        <activity android:name=".ui.navpreference.NavPreferenceActivity"/>
     </application>
 
 </manifest>

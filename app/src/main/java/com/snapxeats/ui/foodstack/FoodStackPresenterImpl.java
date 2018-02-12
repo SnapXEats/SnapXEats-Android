@@ -48,23 +48,30 @@ public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPresen
     @Override
     public void getCuisinePhotos(FoodStackContract.FoodStackView foodStackView, SelectedCuisineList selectedCuisineList) {
         mFoodStackInteractor.getCuisinePhotos(foodStackView, selectedCuisineList);
-
     }
 
     @Override
     public void response(SnapXResult result, Object value) {
         switch (result) {
             case SUCCESS:
-                mFoodStackView.success(value);
+                if (mFoodStackView != null) {
+                    mFoodStackView.success(value);
+                }
                 break;
             case FAILURE:
-                mFoodStackView.error();
+                if (mFoodStackView != null) {
+                    mFoodStackView.error(value);
+                }
                 break;
             case NONETWORK:
-                mFoodStackView.noNetwork(value);
+                if (mFoodStackView != null) {
+                    mFoodStackView.noNetwork(value);
+                }
                 break;
             case NETWORKERROR:
-                mFoodStackView.networkError();
+                if (mFoodStackView != null) {
+                    mFoodStackView.networkError(value);
+                }
                 break;
         }
     }

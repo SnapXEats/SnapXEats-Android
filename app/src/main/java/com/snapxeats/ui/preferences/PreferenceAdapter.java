@@ -73,7 +73,6 @@ public class PreferenceAdapter extends RecyclerView.Adapter<PreferenceAdapter.Vi
                 viewHolder.linearLayoutCuisine.setAlpha((float) UNSELECT_OPACITY);
                 selectedCuisineList.remove(cuisines.getCuisine_name());
             }
-
         });
     }
 
@@ -88,7 +87,7 @@ public class PreferenceAdapter extends RecyclerView.Adapter<PreferenceAdapter.Vi
         private LinearLayout linearLayoutCuisine;
         private RecyclerViewClickListener mListener;
 
-        public ViewHolder(View view, RecyclerViewClickListener listener) {
+        public ViewHolder(View view,RecyclerViewClickListener listener) {
             super(view);
             mListener = listener;
             view.setOnClickListener(this);
@@ -97,7 +96,6 @@ public class PreferenceAdapter extends RecyclerView.Adapter<PreferenceAdapter.Vi
             cardView = view.findViewById(R.id.cardview_cuisine);
             imgCuisineSelected = view.findViewById(R.id.img_cuisine_selected);
             linearLayoutCuisine = view.findViewById(R.id.layout_cuisine_cardview);
-
         }
 
         @Override

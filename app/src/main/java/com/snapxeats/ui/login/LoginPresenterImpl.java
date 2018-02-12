@@ -1,8 +1,10 @@
 package com.snapxeats.ui.login;
 
 import android.support.annotation.Nullable;
+
 import com.snapxeats.common.Router;
 import com.snapxeats.common.utilities.SnapXResult;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -45,16 +47,24 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
     public void response(SnapXResult result,Object value) {
         switch (result) {
             case SUCCESS:
-                mLoginLoginView.success(value);
+                if (mLoginLoginView != null) {
+                    mLoginLoginView.success(value);
+                }
                 break;
             case FAILURE:
-                mLoginLoginView.error();
+                if (mLoginLoginView != null) {
+                    mLoginLoginView.error(value);
+                }
                 break;
             case NONETWORK:
-                mLoginLoginView.noNetwork(value);
+                if (mLoginLoginView != null) {
+                    mLoginLoginView.noNetwork(value);
+                }
                 break;
             case NETWORKERROR:
-                mLoginLoginView.networkError();
+                if (mLoginLoginView != null) {
+                    mLoginLoginView.networkError(value);
+                }
                 break;
         }
     }
