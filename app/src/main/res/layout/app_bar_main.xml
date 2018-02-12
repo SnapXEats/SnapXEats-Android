@@ -27,7 +27,7 @@
                     android:layout_height="match_parent"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
-                    android:layout_marginStart="@dimen/dimens_80"
+                    android:layout_marginStart="@dimen/dimens_40dp"
                     android:drawableEnd="@drawable/ic_location_arrow"
                     android:drawablePadding="@dimen/common_dimens_10"
                     android:ellipsize="end"

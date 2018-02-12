@@ -36,6 +36,7 @@ import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.foodstack.FoodStackActivity;
+import com.snapxeats.ui.navpreference.NavPreferenceActivity;
 
 import java.util.List;
 
@@ -55,7 +56,7 @@ import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant
 
 public class PreferenceActivity extends LocationBaseActivity implements PreferenceContract.PreferenceView,
         AppContract.SnapXResults, PreferenceAdapter.RecyclerViewClickListener,
-        NavigationView.OnNavigationItemSelectedListener{
+        NavigationView.OnNavigationItemSelectedListener {
 
     public interface PreferenceConstant {
         int ACCESS_FINE_LOCATION = 1;
@@ -136,7 +137,7 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
         mRecyclerView.setNestedScrollingEnabled(false);
 
         //get user token
-        if(mSnapXUserRequest!=null) {
+        if (mSnapXUserRequest != null) {
             mSnapXUserRequest = new SnapXUserRequest(AccessToken.getCurrentAccessToken().toString(),
                     getString(R.string.platform_facebook),
                     AccessToken.getCurrentAccessToken().getUserId());
@@ -235,6 +236,7 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
 
+        if (grantResults != null) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 SnapXToast.debug("Permissions granted");
 
@@ -247,7 +249,8 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
                 snapXDialog.showChangePermissionDialog();
             } else {
                 presenter.presentScreen(LOCATION);
-                    }
+            }
+        }
     }
 
     @Override
@@ -300,6 +303,7 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
 
     /**
      * get food images
+     *
      * @param value
      */
     @Override
@@ -313,7 +317,7 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
                 selectableItems,
                 rootCuisine, selectedCuisineList -> {
 
-            if (selectedCuisineList.size() >=0) {
+            if (selectedCuisineList.size() >= 0) {
                 mTxtCuisineDone.setClickable(true);
                 mTxtCuisineDone.setAlpha((float) 1.0);
             }
@@ -338,6 +342,7 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
     public void recyclerViewListClicked(List<String> selectedCuisineList) {
 
     }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -347,6 +352,7 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
                 break;
             case R.id.nav_preferences:
                 SnapXToast.debug("Preferences");
+                startActivity(new Intent(this, NavPreferenceActivity.class));
                 break;
             case R.id.nav_food_journey:
                 SnapXToast.debug("Food Journey");
@@ -363,6 +369,7 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
+
     /**
      * on back pressed action
      */

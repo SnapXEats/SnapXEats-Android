@@ -9,8 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
+
 import com.snapxeats.R;
 import com.snapxeats.common.model.Prediction;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,16 +24,13 @@ import java.util.List;
 public class LocationAdapter extends ArrayAdapter<String> {
 
     private Context mContext;
-    public List<String> resultList;
-    public List<Prediction> predictionList;
-    private PlaceAPI placeAPI;
+    private List<String> resultList;
 
     LocationAdapter(@NonNull Context context,
-                    int resource) {
+                    int resource, List<String> resultList) {
         super(context, resource);
         mContext = context;
-        placeAPI = new PlaceAPI();
-        resultList = new ArrayList<>();
+        this.resultList = resultList;
     }
 
     @Override
@@ -43,39 +42,6 @@ public class LocationAdapter extends ArrayAdapter<String> {
     @Override
     public String getItem(int position) {
         return resultList.get(position);
-    }
-
-    @NonNull
-    @Override
-    public Filter getFilter() {
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                FilterResults filterResults = new FilterResults();
-                if (constraint != null) {
-                    predictionList = placeAPI.autocomplete(constraint.toString());
-                    for (int index = 0; index < predictionList.size(); index++) {
-                        resultList.add(predictionList.get(index).getDescription());
-                    }
-                    if (resultList != null) {
-                        filterResults.values = resultList;
-                        filterResults.count = resultList.size();
-                    }
-
-                }
-                return filterResults;
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-                if (results != null && results.count > 0) {
-                    notifyDataSetChanged();
-                } else {
-                    notifyDataSetInvalidated();
-                }
-
-            }
-        };
     }
 
     @NonNull

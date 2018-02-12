@@ -9,6 +9,7 @@ import com.snapxeats.ui.foodstack.FoodStackComponent;
 import com.snapxeats.ui.location.LocationComponent;
 import com.snapxeats.ui.foodstack.FoodStackComponent;
 import com.snapxeats.ui.login.LoginComponent;
+import com.snapxeats.ui.navpreference.NavPrefComponent;
 import com.snapxeats.ui.preferences.PreferenceComponent;
 import com.snapxeats.ui.restaurant.RestaurantDetailsComponent;
 
@@ -26,7 +27,8 @@ import dagger.Provides;
         PreferenceComponent.class,
         FoodStackComponent.class,
         LocationComponent.class,
-        RestaurantDetailsComponent.class})
+        RestaurantDetailsComponent.class,
+        NavPrefComponent.class})
 
 public abstract class AppModule {
 

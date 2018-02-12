@@ -77,7 +77,7 @@ public class FoodStackActivity extends BaseActivity
         }
         mSwipeView.getBuilder()
                 .setIsUndoEnabled(true)
-                .setDisplayViewCount(10)//stack will show max 10 images
+                .setDisplayViewCount(5)//stack will show max 10 images
                 .setSwipeVerticalThreshold(Utils.dpToPx(50))
                 .setSwipeHorizontalThreshold(Utils.dpToPx(50))
                 .setSwipeDecor(new SwipeDecor()

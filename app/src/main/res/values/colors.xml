@@ -10,6 +10,10 @@
     <color name="text_color_secondary">#5D5D5D</color>
     <color name="text_color_tertiary">#AAAAAA</color>
     <color name="colorCuisine">#4A4A4A</color>
+    <color name="pref_slider_background">#FFEDDC</color>
+    <color name="pref_slider_foreground">#E67607</color>
+    <color name="pref_txt_color">#FF9D9DA3</color>
+    <color name="pref_txt_selected_color">#FF565656</color>
 
 </resources>
 
