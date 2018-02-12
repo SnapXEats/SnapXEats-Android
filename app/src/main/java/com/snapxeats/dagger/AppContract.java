@@ -33,8 +33,8 @@ public class AppContract {
 
     public interface SnapXResults {
         void success(Object value);
-        void error();
+        void error(Object value);
         void noNetwork(Object value);
-        void networkError();
+        void networkError(Object value);
     }
 }

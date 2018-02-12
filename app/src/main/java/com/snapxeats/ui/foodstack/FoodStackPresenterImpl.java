@@ -60,7 +60,7 @@ public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPresen
                 break;
             case FAILURE:
                 if (mFoodStackView != null) {
-                    mFoodStackView.error();
+                    mFoodStackView.error(value);
                 }
                 break;
             case NONETWORK:
@@ -70,7 +70,7 @@ public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPresen
                 break;
             case NETWORKERROR:
                 if (mFoodStackView != null) {
-                    mFoodStackView.networkError();
+                    mFoodStackView.networkError(value);
                 }
                 break;
         }

@@ -39,7 +39,7 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
                 break;
             case FAILURE:
                 if (mPreferenceView != null) {
-                    mPreferenceView.error();
+                    mPreferenceView.error(value);
                 }
                 break;
             case NONETWORK:
@@ -49,7 +49,7 @@ public class PreferencePresenterImpl implements PreferenceContract.PreferencePre
                 break;
             case NETWORKERROR:
                 if (mPreferenceView != null) {
-                    mPreferenceView.networkError();
+                    mPreferenceView.networkError(value);
                 }
                 break;
         }

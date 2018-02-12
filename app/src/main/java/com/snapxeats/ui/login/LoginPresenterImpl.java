@@ -53,7 +53,7 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
                 break;
             case FAILURE:
                 if (mLoginLoginView != null) {
-                    mLoginLoginView.error();
+                    mLoginLoginView.error(value);
                 }
                 break;
             case NONETWORK:
@@ -63,7 +63,7 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
                 break;
             case NETWORKERROR:
                 if (mLoginLoginView != null) {
-                    mLoginLoginView.networkError();
+                    mLoginLoginView.networkError(value);
                 }
                 break;
         }

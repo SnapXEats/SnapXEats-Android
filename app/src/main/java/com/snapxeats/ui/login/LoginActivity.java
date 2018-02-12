@@ -212,7 +212,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
 
 
     @Override
-    public void error() {
+    public void error(Object value) {
 
     }
 
@@ -223,7 +223,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     }
 
     @Override
-    public void networkError() {
+    public void networkError(Object value) {
 
     }
 }

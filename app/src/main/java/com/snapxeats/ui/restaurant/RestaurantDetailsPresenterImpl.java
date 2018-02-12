@@ -51,7 +51,7 @@ public class RestaurantDetailsPresenterImpl implements RestaurantDetailsContract
                 break;
             case FAILURE:
                 if (mRestaurantDetailsView != null) {
-                    mRestaurantDetailsView.error();
+                    mRestaurantDetailsView.error(value);
                 }
                 break;
             case NONETWORK:
@@ -61,7 +61,7 @@ public class RestaurantDetailsPresenterImpl implements RestaurantDetailsContract
                 break;
             case NETWORKERROR:
                 if (mRestaurantDetailsView != null) {
-                    mRestaurantDetailsView.networkError();
+                    mRestaurantDetailsView.networkError(value);
                 }
                 break;
         }

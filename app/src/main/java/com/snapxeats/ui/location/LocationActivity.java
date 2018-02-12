@@ -264,7 +264,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     }
 
     @Override
-    public void error() {
+    public void error(Object value) {
 
     }
 
@@ -276,7 +276,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     }
 
     @Override
-    public void networkError() {
+    public void networkError(Object value) {
 
     }
 }

@@ -128,7 +128,7 @@ public class FoodStackActivity extends BaseActivity
     }
 
     @Override
-    public void error() {
+    public void error(Object value) {
 
     }
 
@@ -139,7 +139,7 @@ public class FoodStackActivity extends BaseActivity
     }
 
     @Override
-    public void networkError() {
+    public void networkError(Object value) {
 
     }
 

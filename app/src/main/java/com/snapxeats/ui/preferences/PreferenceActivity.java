@@ -323,7 +323,7 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
     }
 
     @Override
-    public void error() {
+    public void error(Object value) {
     }
 
     @Override
@@ -331,7 +331,7 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
     }
 
     @Override
-    public void networkError() {
+    public void networkError(Object value) {
     }
 
     @Override
