@@ -120,7 +120,7 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
         buildGoogleAPIClient();
         snapXDialog.setContext(this);
         utility.setContext(this);
-
+        mTxtPlaceName.setSingleLine();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -149,11 +149,12 @@ public class PreferenceActivity extends LocationBaseActivity implements Preferen
         SharedPreferences.Editor editor = preferences.edit();
 
         selectedCuisineList = new SelectedCuisineList();
-        mTxtPlaceName.setText(preferences.getString(getString(R.string.last_location), getString(R.string.select_location)));
+        mTxtPlaceName.setText(getString(R.string.select_location));
 
         if (checkPermissions()) {
             mSelectedLocation = getSelectedLocation();
         }
+
         Gson gson = new Gson();
         String json = preferences.getString(getString(R.string.selected_location), "");
         mSelectedLocation = gson.fromJson(json, com.snapxeats.common.model.Location.class);

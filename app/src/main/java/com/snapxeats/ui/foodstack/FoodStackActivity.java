@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.mindorks.butterknifelite.ButterKnifeLite;
 import com.mindorks.butterknifelite.annotations.BindView;
@@ -42,6 +44,9 @@ public class FoodStackActivity extends BaseActivity
 
     @BindView(R.id.toolbar)
     protected Toolbar mToolbar;
+
+    @BindView(R.id.img_foodstack_placeholder)
+    protected ImageView mImgFoodStackPlaceholder;
 
     @Inject
     FoodStackContract.FoodStackPreseneter mFoodStackPreseneter;
@@ -110,6 +115,7 @@ public class FoodStackActivity extends BaseActivity
      * @param value
      */
     public void success(Object value) {
+        mImgFoodStackPlaceholder.setVisibility(View.GONE);
         RootCuisinePhotos rootCuisinePhotos = (RootCuisinePhotos) value;
         dismissProgressDialog();
         int INDEX_DISH_INFO, INDEX_REST_DISH;
