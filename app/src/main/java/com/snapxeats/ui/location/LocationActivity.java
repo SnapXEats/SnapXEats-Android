@@ -4,21 +4,26 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
 import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.Location;
 import com.snapxeats.common.model.Prediction;
 import com.snapxeats.common.model.Result;
@@ -27,11 +32,26 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.LocationHelper;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
 import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.CUSTOM_LOCATION;
 
@@ -41,7 +61,8 @@ import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant
  */
 
 public class LocationActivity extends LocationBaseActivity implements LocationContract.LocationView,
-        AppContract.SnapXResults {
+        AppContract.SnapXResults,
+        OnTaskCompleted {
 
     private LocationAdapter mAdapter;
 
@@ -66,10 +87,14 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     @BindView(R.id.listview)
     protected ListView mListView;
 
+    @BindView(R.id.img_loader)
+    protected ImageView mImgLoader;
+
     @Inject
     SnapXDialog snapXDialog;
 
-    PlaceAPI placeAPI;
+    private List<String> resultList;
+    private List<Prediction> predictionList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,13 +114,9 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
         locationPresenter.addView(this);
         utility.setContext(this);
         snapXDialog.setContext(this);
-        placeAPI = new PlaceAPI();
+        resultList = new ArrayList<>();
         locationHelper = new LocationHelper(this);
         mAutoCompleteTextView.setSingleLine();
-
-        mAdapter = new LocationAdapter(LocationActivity.this,
-                R.layout.item_prediction_layout);
-        mListView.setAdapter(mAdapter);
         mListView.setTextFilterEnabled(true);
 
         mAutoCompleteTextView.addTextChangedListener(new TextWatcher() {
@@ -111,9 +132,14 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
                 setClearIcon(s);
 
                 if (s.length() > 2) {
-                    if (NetworkUtility.isNetworkAvailable(LocationActivity.this)){
-                    mListView.setVisibility(View.VISIBLE);
-                    mAdapter.getFilter().filter(s);}else {
+                    if (NetworkUtility.isNetworkAvailable(LocationActivity.this)) {
+                        mListView.setVisibility(View.VISIBLE);
+                        mAutoCompleteTextView.setTextColor(ContextCompat.getColor(LocationActivity.this
+                                , R.color.text_color_primary));
+
+                        mImgLoader.setVisibility(View.VISIBLE);
+                        new GetPredictionTask(LocationActivity.this).execute(s.toString());
+                    } else {
                         showNetworkErrorDialog((dialog, which) -> {
 
                         });
@@ -125,8 +151,9 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
             public void afterTextChanged(Editable s) {
                 SnapXToast.debug("afterTextChanged LocationActivity");
                 if (s.length() == 0)
-                    if (mAdapter.resultList != null && mAdapter != null) {
-                        mAdapter.resultList.clear();
+                    if (resultList != null && mAdapter != null) {
+                        resultList.clear();
+                        predictionList.clear();
                         mAdapter.notifyDataSetChanged();
                         mListView.setVisibility(View.GONE);
                     }
@@ -135,10 +162,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
 
         mListView.setOnItemClickListener((parent, view, position, id) -> {
             String address = (String) parent.getItemAtPosition(position);
-            SnapXToast.debug("Address" + address+ "Id" + parent.getItemAtPosition(position));
-
-
-            List<Prediction> predictionList = mAdapter.predictionList;
+            SnapXToast.debug("Address" + address + "Id" + parent.getItemAtPosition(position));
 
             if (predictionList != null) {
                 locationPresenter.getPlaceDetails(predictionList.get(position).getPlace_id());
@@ -155,7 +179,9 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     public void clearText() {
         mAutoCompleteTextView.setText("");
         if (mAdapter != null) {
-            mAdapter.resultList.clear();
+            mListView.setVisibility(View.GONE);
+            resultList.clear();
+            predictionList.clear();
             mAdapter.notifyDataSetChanged();
         }
     }
@@ -265,7 +291,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
 
     @Override
     public void error(Object value) {
-
+        SnapXToast.showToast(this, getString(R.string.something_went_wrong));
     }
 
     @Override
@@ -278,5 +304,19 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     @Override
     public void networkError(Object value) {
 
+    }
+
+    @Override
+    public void onTaskCompleted(List<Prediction> predictionList) {
+        this.predictionList = predictionList;
+        if (predictionList != null) {
+            mImgLoader.setVisibility(View.GONE);
+            for (int index = 0; index < predictionList.size(); index++) {
+                resultList.add(predictionList.get(index).getDescription());
+            }
+        }
+        mAdapter = new LocationAdapter(LocationActivity.this,
+                R.layout.item_prediction_layout, resultList);
+        mListView.setAdapter(mAdapter);
     }
 }

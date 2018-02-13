@@ -1,7 +1,9 @@
 package com.snapxeats.ui.location;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
+import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.Prediction;
@@ -20,35 +22,48 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Snehal Tembare on 31/1/18.
+ * Created by Snehal Tembare on 12/2/18.
  */
 
-public class PlaceAPI {
+public class GetPredictionTask extends AsyncTask<String, Void, List<Prediction>> {
 
-    private static final String TAG = PlaceAPI.class.getSimpleName();
+    private static final String TAG = "RetriveDataTask";
 
     private static final String PLACES_API_BASE = WebConstants.GOOGLE_BASE_URL +
             WebConstants.PREDICTION_LIST;
 
-    List<Prediction> predictionList = null;
     HttpURLConnection conn = null;
     StringBuilder jsonResults = new StringBuilder();
+    private List<Prediction> predictionList;
+    private OnTaskCompleted onTaskCompleted;
 
-    public List<Prediction> autocomplete(String input) {
+    public GetPredictionTask(OnTaskCompleted onTaskCompleted) {
+        this.onTaskCompleted = onTaskCompleted;
+    }
 
-        StringBuilder result = getData(input);
+    @Override
+    protected List<Prediction> doInBackground(String... strings) {
+        StringBuilder result = getData(strings[0]);
         if (result != null) {
             predictionList = parseData(result);
         }
         return predictionList;
     }
 
+    @Override
+    protected void onPostExecute(List<Prediction> predictions) {
+        super.onPostExecute(predictions);
+        if (predictionList != null) {
+            onTaskCompleted.onTaskCompleted(predictions);
+        }
+    }
 
     /**
      * Create a JSON object hierarchy from the results
      */
     private List<Prediction> parseData(StringBuilder result) {
         List<String> resultList = null;
+        List<Prediction> predictionList = null;
         try {
             JSONObject jsonObj = new JSONObject(result.toString());
             JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");

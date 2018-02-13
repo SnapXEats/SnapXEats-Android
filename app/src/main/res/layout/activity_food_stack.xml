@@ -15,6 +15,13 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <ImageView
+            android:layout_gravity="center"
+            android:id="@+id/img_foodstack_placeholder"
+            android:layout_width="@dimen/frame_width"
+            android:layout_height="@dimen/frame_height"
+            android:src="@drawable/foodstack_placeholder" />
+
         <com.mindorks.placeholderview.SwipeDirectionalView
             android:id="@+id/swipe_view"
             android:layout_width="match_parent"
@@ -26,7 +33,7 @@
             android:layout_gravity="bottom"
             android:gravity="center"
             android:orientation="horizontal"
-            android:padding="@dimen/common_dimens_20">
+            android:padding="@dimen/common_dimens_10">
 
             <ImageButton
                 android:id="@+id/img_cuisine_undo"

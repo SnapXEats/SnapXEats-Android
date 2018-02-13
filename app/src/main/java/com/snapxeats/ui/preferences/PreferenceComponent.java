@@ -12,8 +12,9 @@ import dagger.android.AndroidInjector;
 @ActivityScoped
 @Subcomponent(modules = PreferenceModule.class)
 
-public interface PreferenceComponent extends AndroidInjector<PreferenceActivity>{
+public interface PreferenceComponent extends AndroidInjector<PreferenceActivity> {
     @Subcomponent.Builder
-    abstract class Builder extends AndroidInjector.Builder<PreferenceActivity>{}
+    abstract class Builder extends AndroidInjector.Builder<PreferenceActivity> {
+    }
 }
 

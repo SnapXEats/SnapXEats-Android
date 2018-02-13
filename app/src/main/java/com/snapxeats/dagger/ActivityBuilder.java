@@ -8,6 +8,8 @@ import com.snapxeats.ui.home.HomeActivity;
 import com.snapxeats.ui.home.HomeModule;
 import com.snapxeats.ui.location.LocationActivity;
 import com.snapxeats.ui.location.LocationModule;
+import com.snapxeats.ui.navpreference.NavPrefModule;
+import com.snapxeats.ui.navpreference.NavPreferenceActivity;
 import com.snapxeats.ui.preferences.PreferenceActivity;
 import com.snapxeats.ui.preferences.PreferenceModule;
 import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
@@ -50,4 +52,7 @@ public abstract class ActivityBuilder {
 
     @ContributesAndroidInjector(modules = SplashModule.class)
     abstract SplashActivity bindSplashActivity();
+
+    @ContributesAndroidInjector(modules = NavPrefModule.class)
+    abstract NavPreferenceActivity bindNavPrefActivity();
 }

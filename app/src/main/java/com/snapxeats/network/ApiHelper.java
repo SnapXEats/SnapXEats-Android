@@ -7,9 +7,8 @@ import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
-
+import com.snapxeats.common.model.UserObject;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -66,4 +65,15 @@ public interface ApiHelper {
      */
     @GET(WebConstants.PLACE_DETAILS)
     Call<PlaceDetail> getPlaceDetails(@Query("placeid") String placeId);
+
+
+    /**
+     * Set user preferences
+     *
+     * @param object- Set user preferences
+     * @return
+     */
+    @POST(WebConstants.USER_PREFERENCES)
+    Call<UserObject> setUserPreferences(@Body UserObject object);
+
 }

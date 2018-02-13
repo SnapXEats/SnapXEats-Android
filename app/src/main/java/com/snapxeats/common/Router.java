@@ -2,15 +2,12 @@ package com.snapxeats.common;
 
 import android.app.Activity;
 import android.content.Intent;
-
 import com.snapxeats.ui.foodstack.FoodStackActivity;
 import com.snapxeats.ui.location.LocationActivity;
 import com.snapxeats.ui.preferences.PreferenceActivity;
 import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.CUSTOM_LOCATION;
 
 /**
