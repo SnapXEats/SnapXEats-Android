@@ -20,4 +20,6 @@ public class WebConstants {
             "/maps/api/place/details/json?key=AIzaSyBE60eBPlcvijgNGHK3X-Odd8zHJ2WksNk";
     public static final String GOOGLE_BASE_URL = "https://maps.googleapis.com";
     public static final String USER_PREFERENCES = "/api/v1/userPreferences";
+    public static final String USER_FOOD_PREF = "/api/v1/foodTypes";
+
 }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,8 +11,8 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
@@ -23,7 +22,6 @@ import android.widget.ListView;
 import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
-import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.Location;
 import com.snapxeats.common.model.Prediction;
 import com.snapxeats.common.model.Result;
@@ -33,16 +31,6 @@ import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.LocationHelper;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,8 +40,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
-import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.CUSTOM_LOCATION;
+import static com.snapxeats.ui.home.HomeActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
+import static com.snapxeats.ui.home.HomeActivity.PreferenceConstant.DEVICE_LOCATION;
 
 
 /**
@@ -110,7 +98,9 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     }
 
     public void initView() {
+
         buildGoogleAPIClient();
+
         locationPresenter.addView(this);
         utility.setContext(this);
         snapXDialog.setContext(this);
@@ -164,7 +154,11 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
             String address = (String) parent.getItemAtPosition(position);
             SnapXToast.debug("Address" + address + "Id" + parent.getItemAtPosition(position));
 
-            if (predictionList != null) {
+            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (in != null)
+                in.hideSoftInputFromInputMethod(getCurrentFocus().getApplicationWindowToken(), 0);
+
+            if (predictionList != null && predictionList.size() != 0) {
                 locationPresenter.getPlaceDetails(predictionList.get(position).getPlace_id());
             }
         });
@@ -256,8 +250,12 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (checkPermissions()) {
-            getData();
+        switch (requestCode) {
+            case DEVICE_LOCATION:
+                if (checkPermissions()) {
+                    getData();
+                }
+                break;
         }
     }
 
@@ -273,9 +271,9 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
 
         selectedLocation = new Location(location.getGeometry().getLocation().getLat(),
                 location.getGeometry().getLocation().getLng(),
-                location.getName());
+                location.getVicinity());
 
-        //Send selected location to preferences screen
+        //Send selected location to home fragment
         putData(selectedLocation);
     }
 
@@ -283,9 +281,10 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
 
         if (location != null) {
             Intent intent = new Intent();
+            intent.setAction("GET_DATA");
             intent.putExtra(getString(R.string.selected_location), location);
-            setResult(CUSTOM_LOCATION, intent);
-            finish();
+            this.sendBroadcast(intent);
+            this.finish();
         }
     }
 
@@ -308,8 +307,10 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
 
     @Override
     public void onTaskCompleted(List<Prediction> predictionList) {
+        resultList.clear();
         this.predictionList = predictionList;
-        if (predictionList != null) {
+        if (predictionList != null
+                && predictionList.size() != 0) {
             mImgLoader.setVisibility(View.GONE);
             for (int index = 0; index < predictionList.size(); index++) {
                 resultList.add(predictionList.get(index).getDescription());
@@ -318,5 +319,6 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
         mAdapter = new LocationAdapter(LocationActivity.this,
                 R.layout.item_prediction_layout, resultList);
         mListView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
     }
 }

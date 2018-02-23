@@ -3,6 +3,7 @@ package com.snapxeats;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,6 +18,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.maps.model.LatLng;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.network.LocationHelper;
@@ -41,11 +44,14 @@ public class LocationBaseActivity extends BaseActivity implements
 
     @Inject
     SnapXDialog snapXDialog;
+    Geocoder geocoder;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         snapXDialog.setContext(this);
+        geocoder = new Geocoder(this, Locale.getDefault());
+
     }
 
     public void buildGoogleAPIClient() {
@@ -132,7 +138,7 @@ public class LocationBaseActivity extends BaseActivity implements
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = "
+        SnapXToast.debug("Connection failed: ConnectionResult.getErrorCode() = "
                 + connectionResult.getErrorCode());
     }
 
@@ -153,6 +159,7 @@ public class LocationBaseActivity extends BaseActivity implements
     public String getPlaceName(Location location) {
         String placeName = "";
         Address locationAddress = getAddress(location.getLatitude(), location.getLongitude());
+//        Address locationAddress = getAddress(location.getLatitude(), location.getLongitude());
 
         if (locationAddress != null) {
 
@@ -172,17 +179,16 @@ public class LocationBaseActivity extends BaseActivity implements
         Geocoder geocoder;
         List<Address> addresses;
         geocoder = new Geocoder(this, Locale.getDefault());
-
+        SnapXToast.debug("Geocoder available:" + Geocoder.isPresent());
         try {
             addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
             return addresses.get(0);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return null;
-
     }
 }
 

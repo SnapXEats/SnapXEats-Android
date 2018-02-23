@@ -13,6 +13,12 @@ public class UserFoodPreferences implements Parcelable {
     private boolean is_food_like;
     private boolean is_food_favourite;
 
+    public UserFoodPreferences(String food_type_info_id, boolean is_food_like, boolean is_food_favourite) {
+        this.food_type_info_id = food_type_info_id;
+        this.is_food_like = is_food_like;
+        this.is_food_favourite = is_food_favourite;
+    }
+
     protected UserFoodPreferences(Parcel in) {
         food_type_info_id = in.readString();
         is_food_like = in.readByte() != 0;

@@ -7,7 +7,7 @@ import android.content.Intent;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.WebConstants;
-import com.snapxeats.ui.preferences.PreferenceActivity;
+import com.snapxeats.ui.home.HomeActivity;
 
 /**
  * Created by Prajakta Patil on 11/1/18.
@@ -35,7 +35,7 @@ public class InstagramApp {
             @Override
             public void onComplete(String code) {
                 SnapXToast.showToast(InstagramApp.this.context, context.getString(R.string.insta_login_success));
-                context.startActivity(new Intent(context, PreferenceActivity.class));
+                context.startActivity(new Intent(context, HomeActivity.class));
             }
 
             @Override
