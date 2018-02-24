@@ -11,8 +11,8 @@ import dagger.Provides;
 public abstract class LocationModule {
     @Provides
     static LocationContract.LocationPresenter providePresenter(LocationInteractor interactor,
-                                                               LocationRouterImpl router){
-        LocationContract.LocationPresenter locationPresenter=new LocationPresenterImpl(interactor,router);
+                                                               LocationRouterImpl router) {
+        LocationContract.LocationPresenter locationPresenter = new LocationPresenterImpl(interactor, router);
         interactor.setLocationPresenter(locationPresenter);
         return locationPresenter;
     }

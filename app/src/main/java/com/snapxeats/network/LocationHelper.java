@@ -9,8 +9,7 @@ import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.snapxeats.ui.preferences.PreferenceActivity;
+import com.snapxeats.ui.home.HomeActivity;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -40,7 +39,7 @@ public class LocationHelper {
         ActivityCompat.requestPermissions(activity,
                 new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.ACCESS_COARSE_LOCATION},
-                PreferenceActivity.PreferenceConstant.ACCESS_FINE_LOCATION);
+                HomeActivity.PreferenceConstant.ACCESS_FINE_LOCATION);
     }
 
     public static boolean isGpsEnabled(Context context) {

@@ -1,24 +1,21 @@
 package com.snapxeats.dagger;
 
+import com.snapxeats.ui.cuisinepreference.CuisinePrefActivity;
+import com.snapxeats.ui.cuisinepreference.CuisinePrefModule;
+import com.snapxeats.ui.foodpreference.FoodPrefModule;
+import com.snapxeats.ui.foodpreference.FoodPreferenceActivity;
 import com.snapxeats.ui.foodstack.FoodStackActivity;
 import com.snapxeats.ui.foodstack.FoodStackModule;
 import com.snapxeats.ui.login.LoginActivity;
 import com.snapxeats.ui.login.LoginModule;
-import com.snapxeats.ui.home.HomeActivity;
-import com.snapxeats.ui.home.HomeModule;
 import com.snapxeats.ui.location.LocationActivity;
 import com.snapxeats.ui.location.LocationModule;
-import com.snapxeats.ui.navpreference.NavPrefModule;
-import com.snapxeats.ui.navpreference.NavPreferenceActivity;
-import com.snapxeats.ui.preferences.PreferenceActivity;
-import com.snapxeats.ui.preferences.PreferenceModule;
+import com.snapxeats.ui.home.HomeActivity;
+import com.snapxeats.ui.home.HomeModule;
 import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
 import com.snapxeats.ui.restaurant.RestaurantDetailsModule;
 import com.snapxeats.ui.splash.SplashActivity;
 import com.snapxeats.ui.splash.SplashModule;
-import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
-import com.snapxeats.ui.restaurant.RestaurantDetailsModule;
-
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 
@@ -31,11 +28,7 @@ public abstract class ActivityBuilder {
 
     @ActivityScoped
     @ContributesAndroidInjector(modules = HomeModule.class)
-    abstract HomeActivity bindHomeActivity();
-
-    @ActivityScoped
-    @ContributesAndroidInjector(modules = PreferenceModule.class)
-    abstract PreferenceActivity bindPreferenceActivity();
+    abstract HomeActivity bindPreferenceActivity();
 
     @ActivityScoped
     @ContributesAndroidInjector(modules = LocationModule.class)
@@ -53,6 +46,9 @@ public abstract class ActivityBuilder {
     @ContributesAndroidInjector(modules = SplashModule.class)
     abstract SplashActivity bindSplashActivity();
 
-    @ContributesAndroidInjector(modules = NavPrefModule.class)
-    abstract NavPreferenceActivity bindNavPrefActivity();
+    @ContributesAndroidInjector(modules = CuisinePrefModule.class)
+    abstract CuisinePrefActivity bindCuisinePrefActivity();
+
+    @ContributesAndroidInjector(modules = FoodPrefModule.class)
+    abstract FoodPreferenceActivity bindFoodPrefActivity();
 }

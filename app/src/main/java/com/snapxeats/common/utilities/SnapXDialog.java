@@ -14,7 +14,8 @@ import com.snapxeats.R;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static com.snapxeats.ui.preferences.PreferenceActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
+import static com.snapxeats.ui.home.HomeActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
+import static com.snapxeats.ui.home.HomeActivity.PreferenceConstant.DEVICE_LOCATION;
 
 /**
  * Created by Snehal Tembare on 11/1/18.
@@ -89,7 +90,8 @@ public class SnapXDialog {
         builder.setMessage(context.getString(R.string.enable_gps));
         builder.setPositiveButton(context.getString(R.string.action_settings), (dialogInterface, i) -> {
             // Show location settings when the user acknowledges the alert dialog
-            context.startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),ACCESS_FINE_LOCATION);
+            context.startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+                    DEVICE_LOCATION);
         });
 
         builder.setNegativeButton(context.getString(R.string.cancel), (dialog, which) -> {
@@ -99,6 +101,8 @@ public class SnapXDialog {
         Dialog alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
+
+
     }
 
     public void showChangePermissionDialog() {

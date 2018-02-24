@@ -52,27 +52,21 @@ public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPresen
 
     @Override
     public void response(SnapXResult result, Object value) {
-        switch (result) {
-            case SUCCESS:
-                if (mFoodStackView != null) {
+        if (null != mFoodStackView) {
+            switch (result) {
+                case SUCCESS:
                     mFoodStackView.success(value);
-                }
-                break;
-            case FAILURE:
-                if (mFoodStackView != null) {
+                    break;
+                case FAILURE:
                     mFoodStackView.error(value);
-                }
-                break;
-            case NONETWORK:
-                if (mFoodStackView != null) {
+                    break;
+                case NONETWORK:
                     mFoodStackView.noNetwork(value);
-                }
-                break;
-            case NETWORKERROR:
-                if (mFoodStackView != null) {
+                    break;
+                case NETWORKERROR:
                     mFoodStackView.networkError(value);
-                }
-                break;
+                    break;
+            }
         }
     }
 }

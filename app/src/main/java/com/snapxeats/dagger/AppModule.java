@@ -5,12 +5,12 @@ import android.content.Context;
 
 import com.snapxeats.common.Router;
 import com.snapxeats.common.utilities.SnapXDialog;
+import com.snapxeats.ui.cuisinepreference.CuisinePrefComponent;
+import com.snapxeats.ui.foodpreference.FoodPrefComponent;
 import com.snapxeats.ui.foodstack.FoodStackComponent;
 import com.snapxeats.ui.location.LocationComponent;
-import com.snapxeats.ui.foodstack.FoodStackComponent;
 import com.snapxeats.ui.login.LoginComponent;
-import com.snapxeats.ui.navpreference.NavPrefComponent;
-import com.snapxeats.ui.preferences.PreferenceComponent;
+import com.snapxeats.ui.home.HomeComponent;
 import com.snapxeats.ui.restaurant.RestaurantDetailsComponent;
 
 import javax.inject.Singleton;
@@ -24,13 +24,15 @@ import dagger.Provides;
  */
 
 @Module(subcomponents = {LoginComponent.class,
-        PreferenceComponent.class,
+        HomeComponent.class,
         FoodStackComponent.class,
         LocationComponent.class,
         RestaurantDetailsComponent.class,
-        NavPrefComponent.class})
+        HomeComponent.class,
+        CuisinePrefComponent.class,
+        FoodPrefComponent.class})
 
-public abstract class AppModule {
+abstract class AppModule {
 
     @Provides
     @Singleton

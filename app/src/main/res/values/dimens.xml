@@ -54,5 +54,6 @@
     <dimen name="common_dimens_200">200dp</dimen>
     <dimen name="common_dimens_24">24dp</dimen>
     <dimen name="common_dimens_4">4dp</dimen>
+    <dimen name="text_size_17">17sp</dimen>
 
 </resources>

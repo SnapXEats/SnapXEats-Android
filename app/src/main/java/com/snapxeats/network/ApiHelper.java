@@ -5,9 +5,10 @@ import com.snapxeats.common.model.PlaceDetail;
 import com.snapxeats.common.model.PlacesAutoCompleteData;
 import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.common.model.RootCuisinePhotos;
+import com.snapxeats.common.model.RootFoodPref;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
-import com.snapxeats.common.model.UserObject;
+import com.snapxeats.common.model.UserPreference;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -74,6 +75,19 @@ public interface ApiHelper {
      * @return
      */
     @POST(WebConstants.USER_PREFERENCES)
-    Call<UserObject> setUserPreferences(@Body UserObject object);
+    Call<UserPreference> setUserPreferences(@Body UserPreference object);
 
+    /**
+     * Get cuisine preferences
+     * @return
+     */
+    @GET(WebConstants.CUISINE_LIST)
+    Call<RootCuisine> getCuisinePreferences();
+
+    /**
+     * Get food preferences
+     * @return
+     */
+    @GET(WebConstants.USER_FOOD_PREF)
+    Call<RootFoodPref> getFoodPreferences();
 }
