@@ -543,7 +543,7 @@ public class NavPrefFragment extends BaseFragment implements View.OnClickListene
     }
 
     private void checkDataFromDb() {
-        String json = preferences.getString("rootFoodPrefList", "");
+        String json = preferences.getString(getString(R.string.rootFoodPrefList), "");
         Type type = new TypeToken<ArrayList<FoodPref>>() {
         }.getType();
         rootFoodPrefList = gson.fromJson(json, type);

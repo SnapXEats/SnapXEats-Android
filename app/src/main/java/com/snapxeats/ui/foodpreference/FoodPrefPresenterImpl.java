@@ -36,27 +36,21 @@ public class FoodPrefPresenterImpl implements FoodPreferenceContract.FoodPrefere
 
     @Override
     public void response(SnapXResult result, Object value) {
-        switch (result) {
-            case SUCCESS:
-                if (foodPrefView != null) {
+        if (foodPrefView != null) {
+            switch (result) {
+                case SUCCESS:
                     foodPrefView.success(value);
-                }
-                break;
-            case FAILURE:
-                if (foodPrefView != null) {
+                    break;
+                case FAILURE:
                     foodPrefView.error(value);
-                }
-                break;
-            case NONETWORK:
-                if (foodPrefView != null) {
+                    break;
+                case NONETWORK:
                     foodPrefView.noNetwork(value);
-                }
-                break;
-            case NETWORKERROR:
-                if (foodPrefView != null) {
+                    break;
+                case NETWORKERROR:
                     foodPrefView.networkError(value);
-                }
-                break;
+                    break;
+            }
         }
     }
 

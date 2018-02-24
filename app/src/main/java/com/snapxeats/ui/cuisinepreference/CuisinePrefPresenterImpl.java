@@ -2,6 +2,7 @@ package com.snapxeats.ui.cuisinepreference;
 
 import com.snapxeats.common.Router;
 import com.snapxeats.common.utilities.SnapXResult;
+
 import javax.inject.Singleton;
 
 /**
@@ -34,27 +35,21 @@ public class CuisinePrefPresenterImpl implements CuisinePrefContract.CuisinePref
 
     @Override
     public void response(SnapXResult result, Object value) {
-        switch (result) {
-            case SUCCESS:
-                if (cuisinePrefView != null) {
+        if (cuisinePrefView != null) {
+            switch (result) {
+                case SUCCESS:
                     cuisinePrefView.success(value);
-                }
-                break;
-            case FAILURE:
-                if (cuisinePrefView != null) {
+                    break;
+                case FAILURE:
                     cuisinePrefView.error(value);
-                }
-                break;
-            case NONETWORK:
-                if (cuisinePrefView != null) {
+                    break;
+                case NONETWORK:
                     cuisinePrefView.noNetwork(value);
-                }
-                break;
-            case NETWORKERROR:
-                if (cuisinePrefView != null) {
+                    break;
+                case NETWORKERROR:
                     cuisinePrefView.networkError(value);
-                }
-                break;
+                    break;
+            }
         }
 
     }

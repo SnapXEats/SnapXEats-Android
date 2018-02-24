@@ -91,5 +91,6 @@
     <string name="want_to_save_pref">Do you want to save the recent Preferences?</string>
     <string name="save_pref_msg">Do you want to apply recent Preferences?</string>
     <string name="discard">Discard</string>
+    <string name="rootFoodPrefList">rootFoodPrefList</string>
 
 </resources>

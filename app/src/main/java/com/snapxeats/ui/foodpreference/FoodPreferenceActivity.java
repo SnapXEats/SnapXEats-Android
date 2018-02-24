@@ -89,7 +89,7 @@ public class FoodPreferenceActivity extends BaseActivity implements
         preferences = utility.getSharedPreferences();
         editor = preferences.edit();
 
-        String json = preferences.getString("rootFoodPrefList", "");
+        String json = preferences.getString(getString(R.string.rootFoodPrefList), "");
 
 
         Type type = new TypeToken<ArrayList<FoodPref>>() {
@@ -108,7 +108,7 @@ public class FoodPreferenceActivity extends BaseActivity implements
     @OnClick(R.id.btn_food_pref_save)
     public void saveFoodPref() {
         String json = gson.toJson(rootFoodPrefList);
-        editor.putString("rootFoodPrefList", json);
+        editor.putString(getString(R.string.rootFoodPrefList), json);
         editor.apply();
         finish();
     }
@@ -121,7 +121,7 @@ public class FoodPreferenceActivity extends BaseActivity implements
             rootFoodPrefList.get(index).set_food_like(false);
             mFoodPrefAdapter.notifyDataSetChanged();
         }
-        editor.putString("rootFoodPrefList", "");
+        editor.putString(getString(R.string.rootFoodPrefList), "");
         editor.apply();
     }
 

@@ -12,7 +12,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class Cuisines extends RealmObject implements Parcelable {
+public class Cuisines implements Parcelable {
 
     private String cuisine_info_id;
     private String cuisine_image_url;
@@ -20,6 +20,7 @@ public class Cuisines extends RealmObject implements Parcelable {
     private boolean isSelected;
     private boolean is_cuisine_like;
     private boolean is_cuisine_favourite;
+    private String user_cuisine_preferences_id;
 
     @Override
     public int describeContents() {
@@ -31,6 +32,7 @@ public class Cuisines extends RealmObject implements Parcelable {
         dest.writeString(this.cuisine_info_id);
         dest.writeString(this.cuisine_image_url);
         dest.writeString(this.cuisine_name);
+        dest.writeString(this.user_cuisine_preferences_id);
         dest.writeByte(this.isSelected ? (byte) 1 : (byte) 0);
         dest.writeByte(this.is_cuisine_like ? (byte) 1 : (byte) 0);
         dest.writeByte(this.is_cuisine_favourite ? (byte) 1 : (byte) 0);
@@ -43,6 +45,7 @@ public class Cuisines extends RealmObject implements Parcelable {
         this.cuisine_info_id = in.readString();
         this.cuisine_image_url = in.readString();
         this.cuisine_name = in.readString();
+        this.user_cuisine_preferences_id = in.readString();
         this.isSelected = in.readByte() != 0;
         this.is_cuisine_like = in.readByte() != 0;
         this.is_cuisine_favourite = in.readByte() != 0;

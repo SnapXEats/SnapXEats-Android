@@ -42,28 +42,23 @@ public class RestaurantDetailsPresenterImpl implements RestaurantDetailsContract
     }
 
     @Override
-    public void response(SnapXResult result,Object value) {
-        switch (result) {
-            case SUCCESS:
-                if (mRestaurantDetailsView != null) {
+    public void response(SnapXResult result, Object value) {
+        if (null != mRestaurantDetailsView) {
+            switch (result) {
+                case SUCCESS:
                     mRestaurantDetailsView.success(value);
-                }
-                break;
-            case FAILURE:
-                if (mRestaurantDetailsView != null) {
+                    break;
+                case FAILURE:
                     mRestaurantDetailsView.error(value);
-                }
-                break;
-            case NONETWORK:
-                if (mRestaurantDetailsView != null) {
+                    break;
+                case NONETWORK:
                     mRestaurantDetailsView.noNetwork(value);
-                }
-                break;
-            case NETWORKERROR:
-                if (mRestaurantDetailsView != null) {
+                    break;
+                case NETWORKERROR:
                     mRestaurantDetailsView.networkError(value);
-                }
-                break;
+                    break;
+            }
         }
+
     }
 }

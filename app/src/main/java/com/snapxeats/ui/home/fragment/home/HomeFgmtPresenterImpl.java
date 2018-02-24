@@ -31,27 +31,21 @@ public class HomeFgmtPresenterImpl implements HomeFgmtContract.HomeFgmtPresenter
 
     @Override
     public void response(SnapXResult result, Object value) {
-        switch (result) {
-            case SUCCESS:
-                if (mHomeFgmtView != null) {
+        if (null != mHomeFgmtView) {
+            switch (result) {
+                case SUCCESS:
                     mHomeFgmtView.success(value);
-                }
-                break;
-            case FAILURE:
-                if (mHomeFgmtView != null) {
+                    break;
+                case FAILURE:
                     mHomeFgmtView.error(value);
-                }
-                break;
-            case NONETWORK:
-                if (mHomeFgmtView != null) {
+                    break;
+                case NONETWORK:
                     mHomeFgmtView.noNetwork(value);
-                }
-                break;
-            case NETWORKERROR:
-                if (mHomeFgmtView != null) {
+                    break;
+                case NETWORKERROR:
                     mHomeFgmtView.networkError(value);
-                }
-                break;
+                    break;
+            }
         }
     }
 

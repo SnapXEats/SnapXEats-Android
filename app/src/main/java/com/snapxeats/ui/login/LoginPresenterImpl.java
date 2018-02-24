@@ -44,28 +44,22 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
     }
 
     @Override
-    public void response(SnapXResult result,Object value) {
-        switch (result) {
-            case SUCCESS:
-                if (mLoginLoginView != null) {
+    public void response(SnapXResult result, Object value) {
+        if (null != mLoginLoginView) {
+            switch (result) {
+                case SUCCESS:
                     mLoginLoginView.success(value);
-                }
-                break;
-            case FAILURE:
-                if (mLoginLoginView != null) {
+                    break;
+                case FAILURE:
                     mLoginLoginView.error(value);
-                }
-                break;
-            case NONETWORK:
-                if (mLoginLoginView != null) {
+                    break;
+                case NONETWORK:
                     mLoginLoginView.noNetwork(value);
-                }
-                break;
-            case NETWORKERROR:
-                if (mLoginLoginView != null) {
+                    break;
+                case NETWORKERROR:
                     mLoginLoginView.networkError(value);
-                }
-                break;
+                    break;
+            }
         }
     }
 

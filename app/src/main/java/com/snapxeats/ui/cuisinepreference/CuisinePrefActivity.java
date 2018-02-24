@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -12,8 +11,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-
 import com.NetworkCheckReceiver;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
@@ -40,6 +37,9 @@ import butterknife.OnClick;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
+
+import static com.SCREEN_NAMES.CUISINE;
+
 
 /**
  * Created by Snehal Tembare on 13/2/18.
@@ -166,7 +166,7 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
     public void noNetwork(Object value) {
         dismissProgressDialog();
         Intent intent = new Intent();
-        intent.putExtra("screen", "CuisinePrefActivity");
+        intent.putExtra("screen", CUISINE);
 //        intent.setAction("android.net.conn.CONNECTIVITY_CHANGE");
 //        intent.setAction("android.net.wifi.WIFI_STATE_CHANGED");
         sendBroadcast(intent);

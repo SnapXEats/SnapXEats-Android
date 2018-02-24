@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 
-public class UserCuisinePreferences extends RealmObject {
+public class UserCuisinePreferences implements Parcelable {
     private String cuisine_info_id;
     private boolean is_cuisine_like;
     private boolean is_cuisine_favourite;
@@ -30,10 +30,10 @@ public class UserCuisinePreferences extends RealmObject {
         this.is_cuisine_favourite = is_cuisine_favourite;
     }
 
-   /* protected UserCuisinePreferences(Parcel in) {
+    protected UserCuisinePreferences(Parcel in) {
         cuisine_info_id = in.readString();
-        is_cuisine_like = in.readString();
-        is_cuisine_favourite = in.readString();
+        is_cuisine_like = in.readByte() != 0;
+        is_cuisine_favourite = in.readByte() != 0;
     }
 
     public static final Creator<UserCuisinePreferences> CREATOR = new Creator<UserCuisinePreferences>() {
@@ -56,7 +56,7 @@ public class UserCuisinePreferences extends RealmObject {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(cuisine_info_id);
-        dest.writeString(is_cuisine_like);
-        dest.writeString(is_cuisine_favourite);
-    }*/
+        dest.writeByte((byte) (is_cuisine_like ? 1 : 0));
+        dest.writeByte((byte) (is_cuisine_favourite ? 1 : 0));
+    }
 }
