@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.SystemClock;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +23,8 @@ import java.util.List;
  */
 public class HomeFgmtAdapter extends RecyclerView.Adapter<HomeFgmtAdapter.ViewHolder> {
 
-    public RootCuisine rootCuisine;
-    public List<Cuisines> cuisineArrayList;
+    private RootCuisine rootCuisine;
+    private List<Cuisines> cuisineArrayList;
     private Context mContext;
     private double UNSELECT_OPACITY = 1.0;
     private double SELECT_OPACITY = 0.4;
@@ -36,7 +37,8 @@ public class HomeFgmtAdapter extends RecyclerView.Adapter<HomeFgmtAdapter.ViewHo
         this.mContext = mContext;
         this.cuisineArrayList = cuisineArrayList;
         this.rootCuisine = rootCuisine;
-        this.itemListener = itemListener;
+        this.selectedCuisineList=selectedCuisineList;
+        HomeFgmtAdapter.itemListener = itemListener;
     }
 
     @Override
@@ -56,6 +58,7 @@ public class HomeFgmtAdapter extends RecyclerView.Adapter<HomeFgmtAdapter.ViewHo
                 .placeholder(R.drawable.ic_cuisine_placeholder).into(viewHolder.imgCuisine);
 
         viewHolder.cardView.setOnClickListener(v -> {
+
             itemListener.recyclerViewListClicked(selectedCuisineList);
             if (SystemClock.elapsedRealtime() - mLastClickTime < 500) {
                 return;
@@ -68,6 +71,7 @@ public class HomeFgmtAdapter extends RecyclerView.Adapter<HomeFgmtAdapter.ViewHo
                 viewHolder.imgCuisineSelected.setVisibility(View.VISIBLE);
                 viewHolder.linearLayoutCuisine.setAlpha((float) SELECT_OPACITY);
                 selectedCuisineList.add(cuisines.getCuisine_name());
+
             } else {
                 viewHolder.imgCuisineSelected.setVisibility(View.GONE);
                 viewHolder.linearLayoutCuisine.setAlpha((float) UNSELECT_OPACITY);
@@ -76,7 +80,7 @@ public class HomeFgmtAdapter extends RecyclerView.Adapter<HomeFgmtAdapter.ViewHo
         });
     }
 
-    public List<String> getSelectedItems() {
+    List<String> getSelectedItems() {
         return selectedCuisineList;
     }
 
@@ -87,7 +91,7 @@ public class HomeFgmtAdapter extends RecyclerView.Adapter<HomeFgmtAdapter.ViewHo
         private LinearLayout linearLayoutCuisine;
         private RecyclerViewClickListener mListener;
 
-        public ViewHolder(View view,RecyclerViewClickListener listener) {
+        ViewHolder(View view,RecyclerViewClickListener listener) {
             super(view);
             mListener = listener;
             view.setOnClickListener(this);

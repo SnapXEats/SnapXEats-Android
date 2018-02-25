@@ -20,6 +20,7 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
 import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.network.LocationHelper;
@@ -159,7 +160,6 @@ public class LocationBaseActivity extends BaseActivity implements
     public String getPlaceName(Location location) {
         String placeName = "";
         Address locationAddress = getAddress(location.getLatitude(), location.getLongitude());
-//        Address locationAddress = getAddress(location.getLatitude(), location.getLongitude());
 
         if (locationAddress != null) {
 

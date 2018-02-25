@@ -52,7 +52,7 @@ public class FoodStackInteractor {
             double lng = -74.4518188;
             List<String> list = selectedCuisineList.getSelectedCuisineList();
 
-            ApiHelper apiHelper = ApiClient.getClient(mContext,BASE_URL).create(ApiHelper.class);
+            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             Call<RootCuisinePhotos> listCuisineCall = apiHelper.getCuisinePhotos(lat, lng, list);
             listCuisineCall.enqueue(new Callback<RootCuisinePhotos>() {
                 @Override
@@ -65,10 +65,12 @@ public class FoodStackInteractor {
 
                 @Override
                 public void onFailure(Call<RootCuisinePhotos> call, Throwable t) {
+                    foodStackView.dismissProgressDialog();
                     mFoodStackPreseneter.response(SnapXResult.ERROR, null);
                 }
             });
         } else {
+            foodStackView.dismissProgressDialog();
             mFoodStackPreseneter.response(SnapXResult.NONETWORK, null);
         }
     }

@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.mindorks.butterknifelite.ButterKnifeLite;
 import com.mindorks.butterknifelite.annotations.BindView;
@@ -42,14 +44,14 @@ public class FoodStackActivity extends BaseActivity
     @BindView(R.id.swipe_view)
     protected SwipeDirectionalView mSwipeView;
 
-    @BindView(R.id.toolbar)
+    @BindView(R.id.toolbar_foodstack)
     protected Toolbar mToolbar;
+
+    @Inject
+    FoodStackContract.FoodStackPreseneter mFoodStackPresenter;
 
     @BindView(R.id.img_foodstack_placeholder)
     protected ImageView mImgFoodStackPlaceholder;
-
-    @Inject
-    FoodStackContract.FoodStackPreseneter mFoodStackPreseneter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,24 +67,25 @@ public class FoodStackActivity extends BaseActivity
     }
 
     public void initView() {
-        mFoodStackPreseneter.addView(this);
+        mFoodStackPresenter.addView(this);
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(false);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         SelectedCuisineList selectedCuisineList;
         selectedCuisineList = getIntent().getExtras().getParcelable(getString(R.string.data_selectedCuisineList));
 
         if (NetworkUtility.isNetworkAvailable(this)) {
-            mFoodStackPreseneter.getCuisinePhotos(this, selectedCuisineList);
+            mFoodStackPresenter.getCuisinePhotos(this, selectedCuisineList);
         } else {
             showNetworkErrorDialog((dialog, which) -> {
             });
         }
         mSwipeView.getBuilder()
                 .setIsUndoEnabled(true)
-                .setDisplayViewCount(5)//stack will show max 10 images
+                .setDisplayViewCount(5)//stack will show max 5 images
                 .setSwipeVerticalThreshold(Utils.dpToPx(50))
                 .setSwipeHorizontalThreshold(Utils.dpToPx(50))
                 .setSwipeDecor(new SwipeDecor()
@@ -90,23 +93,24 @@ public class FoodStackActivity extends BaseActivity
                         .setRelativeScale(0.01f)
                         .setSwipeInMsgLayoutId(R.layout.tinder_swipe_in_msg_view)
                         .setSwipeOutMsgLayoutId(R.layout.tinder_swipe_out_msg_view));
-
         mSwipeView.addItemRemoveListener(count -> {
             //TODO load more images from server when count is zero
         });
 
-        mToolbar.setNavigationOnClickListener(v -> mFoodStackPreseneter.presentScreen(PREFERENCE));
     }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
 
-
+    }
+    @OnClick(R.id.img_foodstack_map)
+    public void imgMaps(){
+        SnapXToast.showToast(this,"Maps");
+    }
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return false;
     }
 
     /**
@@ -116,8 +120,8 @@ public class FoodStackActivity extends BaseActivity
      */
     public void success(Object value) {
         mImgFoodStackPlaceholder.setVisibility(View.GONE);
-        RootCuisinePhotos rootCuisinePhotos = (RootCuisinePhotos) value;
         dismissProgressDialog();
+        RootCuisinePhotos rootCuisinePhotos = (RootCuisinePhotos) value;
         int INDEX_DISH_INFO, INDEX_REST_DISH;
         List<DishesInfo> dishInfo = rootCuisinePhotos.getDishesInfo();
         Map<String, List<String>> listHashMap = new HashMap<>();
@@ -135,7 +139,6 @@ public class FoodStackActivity extends BaseActivity
 
     @Override
     public void error(Object value) {
-
     }
 
     @Override
@@ -146,13 +149,14 @@ public class FoodStackActivity extends BaseActivity
 
     @Override
     public void networkError(Object value) {
-
+        showNetworkErrorDialog((dialog, which) -> {
+        });
     }
 
     @OnClick(R.id.img_cuisine_like)
     public void imgCuisineLike() {
         mSwipeView.doSwipe(true);
-        mFoodStackPreseneter.presentScreen(RESTAURANT_DETAILS);
+        mFoodStackPresenter.presentScreen(RESTAURANT_DETAILS);
     }
 
     @OnClick(R.id.img_cuisine_reject)
@@ -163,13 +167,11 @@ public class FoodStackActivity extends BaseActivity
     @OnClick(R.id.img_cuisine_wishlist)
     public void imgCuisineWishlist() {
         //TODO favourite items to save
-        SnapXToast.showToast(this, "Wishlist");
     }
 
     @OnClick(R.id.img_cuisine_undo)
     public void imgCuisineUndo() {
         //TODO reload image after undo action
         mSwipeView.undoLastSwipe();
-        SnapXToast.showToast(this, "Undo");
     }
 }

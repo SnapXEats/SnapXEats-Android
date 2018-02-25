@@ -39,7 +39,7 @@ public class TinderDirectionalCard {
 
     private Context mContext;
 
-    private Map<String, List<String>> listHashMap;
+    private Map<String,List<String>> listHashMap;
 
     @View(R.id.txtRestaurantName)
     private TextView mTxtDishName;
@@ -66,7 +66,7 @@ public class TinderDirectionalCard {
             mTxtDishName.setText(key);
             List<String> values = entry.getValue();
             for (int i = 0; i < values.size(); i++) {
-                Picasso.with(mContext).load(values.get(i)).into(mImageView);
+                Picasso.with(mContext).load(values.get(i)).placeholder(R.drawable.ic_cuisine_placeholder).into(mImageView);
             }
         }
     }
@@ -74,7 +74,6 @@ public class TinderDirectionalCard {
     @SwipeOutDirectional
     private void onSwipeOutDirectional(SwipeDirection direction) {
         Log.d("DEBUG", "SwipeOutDirectional " + direction.name());
-        SnapXToast.showToast(mContext, "LEFT");
     }
 
     @SwipeCancelState
@@ -85,7 +84,6 @@ public class TinderDirectionalCard {
     @SwipeInDirectional
     private void onSwipeInDirectional(SwipeDirection direction) {
         Log.d("DEBUG", "SwipeInDirectional " + direction.name());
-        SnapXToast.showToast(mContext, "RIGHT");
         mContext.startActivity(new Intent(mContext, RestaurantDetailsActivity.class));
     }
 

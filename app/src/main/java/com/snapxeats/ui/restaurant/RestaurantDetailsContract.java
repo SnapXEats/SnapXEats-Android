@@ -3,6 +3,7 @@ package com.snapxeats.ui.restaurant;
 import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
+import com.snapxeats.common.model.googleDirections.LocationGoogleDir;
 import com.snapxeats.dagger.AppContract;
 
 /**
@@ -15,9 +16,9 @@ public class RestaurantDetailsContract {
 
     interface RestaurantDetailsPresenter extends BasePresenter<RestaurantDetailsView> {
         void presentScreen(Router.Screen screen);
-
+        void getRestDetails(RestaurantDetailsView restaurantDetailsView,String restaurantId);
+        void getGoogleDirections(RestaurantDetailsView restaurantDetailsView,LocationGoogleDir locationGoogleDir);
     }
-
     interface RestaurantDetailsRouter {
         void presentScreen(Router.Screen screen);
 

@@ -1,9 +1,10 @@
 package com.snapxeats.ui.home.fragment.home;
 
 import android.app.Activity;
+import android.util.Log;
+
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
-import com.snapxeats.common.model.SnapXUser;
 import com.snapxeats.common.model.SnapXUserInfo;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
@@ -11,9 +12,9 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -91,8 +92,10 @@ public class HomeFgmtInteractor {
                 @Override
                 public void onResponse(Call<SnapXUserResponse> call, Response<SnapXUserResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        SnapXUserInfo snapXUserInfo=response.body().getUserInfo();
-                        SnapXUser.mUserToken =snapXUserInfo.getToken();
+                        SnapXUserInfo snapXUserInfo = response.body().getUserInfo();
+                        Log.d("---**ServerToken",snapXUserInfo.getToken());
+                        Log.d("---**ServerId",snapXUserInfo.getUser_id());
+
                     }
                 }
 

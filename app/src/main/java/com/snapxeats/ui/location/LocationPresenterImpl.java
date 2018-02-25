@@ -12,7 +12,6 @@ import java.util.List;
 public class LocationPresenterImpl implements LocationContract.LocationPresenter {
     private LocationInteractor interactor;
     private LocationContract.LocationView locationView;
-    public static List<String> arryalist;
     private LocationRouterImpl router;
 
     public LocationPresenterImpl(LocationInteractor interactor,

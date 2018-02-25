@@ -20,9 +20,11 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
     @Nullable
     private LoginContract.LoginView mLoginLoginView;
 
+    private LoginInteractor mLoginInteractor;
+
     @Inject
     public LoginPresenterImpl(LoginInteractor loginInteractor, LoginRouterImpl loginRouter) {
-        LoginInteractor mLoginInteractor = loginInteractor;
+        mLoginInteractor = loginInteractor;
         this.mLoginRouter = loginRouter;
     }
 

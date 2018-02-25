@@ -214,9 +214,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
         if (location != null) {
             selectedLocation = new Location(location.getLatitude(),
                     location.getLongitude(), getPlaceName(location));
-            if (selectedLocation != null) {
                 putData(selectedLocation);
-            }
         }
     }
 

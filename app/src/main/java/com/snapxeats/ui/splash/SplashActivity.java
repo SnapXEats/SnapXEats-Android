@@ -7,15 +7,11 @@ import android.os.Handler;
 import com.facebook.AccessToken;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.common.utilities.AppUtility;
-import com.snapxeats.common.utilities.SnapXDialog;
-import com.snapxeats.ui.login.LoginActivity;
 import com.snapxeats.ui.home.HomeActivity;
+import com.snapxeats.ui.login.LoginActivity;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
-
-import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 
@@ -30,7 +26,7 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         setContentView(R.layout.activity_splash);
+        setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
         checkForUpdates();
     }
@@ -41,15 +37,15 @@ public class SplashActivity extends BaseActivity {
         super.onResume();
         checkForCrashes();
 
-            new Handler().postDelayed(() -> {
-                //check if facebook user is logged in or not
-                if (AccessToken.getCurrentAccessToken() == null) {
-                    startActivity(new Intent(this, LoginActivity.class));
-                    finish();
-                } else {
-                    startActivity(new Intent(this, HomeActivity.class));
-                }
-            }, TIME_OUT);
+        new Handler().postDelayed(() -> {
+            //check if facebook user is logged in or not
+            if (AccessToken.getCurrentAccessToken() == null) {
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
+            } else {
+                startActivity(new Intent(this, HomeActivity.class));
+            }
+        }, TIME_OUT);
 
     }
 

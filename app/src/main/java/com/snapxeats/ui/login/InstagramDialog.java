@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +21,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
 import com.snapxeats.R;
+import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.model.RootInstagram;
+import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.utilities.NetworkUtility;
+import com.snapxeats.network.ApiClient;
+import com.snapxeats.network.ApiHelper;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 /**
  * Created by Prajakta Patil on 11/1/18.
@@ -129,7 +142,6 @@ public class InstagramDialog extends Dialog {
                 if (!((Activity) mContext).isFinishing()) {
                     progressDialog.show();
                 }
-
             } else {
                 AlertDialog optionDialog = new AlertDialog.Builder(mContext).create();
                 optionDialog.setMessage(mContext.getString(R.string.check_network));
@@ -155,9 +167,9 @@ public class InstagramDialog extends Dialog {
         }
     }
 
+
     public interface OAuthDialogListener {
         void onComplete(String accessToken);
-
         void onError(String error);
     }
 }

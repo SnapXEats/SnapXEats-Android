@@ -11,7 +11,6 @@ import com.snapxeats.dagger.AppContract;
 public class LoginContract {
 
     interface LoginView extends BaseView<LoginPresenter>, AppContract.SnapXResults {
-
     }
 
     interface LoginPresenter extends BasePresenter<LoginView> {

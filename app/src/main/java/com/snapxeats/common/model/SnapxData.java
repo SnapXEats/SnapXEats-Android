@@ -1,7 +1,6 @@
 package com.snapxeats.common.model;
 
 import java.util.List;
-import io.realm.RealmObject;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 
-public class SnapxData extends RealmObject {
+public class SnapxData{
     public String serverToken;
     public String serverUserId;
     public String instagramToken;
