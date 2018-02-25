@@ -24,7 +24,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -39,7 +38,6 @@ import com.google.gson.Gson;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.Cuisines;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
@@ -71,6 +69,8 @@ public class HomeFragment extends BaseFragment implements
         AppContract.SnapXResults,
         HomeFgmtAdapter.RecyclerViewClickListener {
 
+    private static final float ALPHA_BLUR_BTN = (float) 0.4;
+    private static final float ALPHA_BTN = (float) 1.0;
     @BindView(R.id.txt_place_name)
     protected TextView mTxtPlaceName;
 
@@ -112,6 +112,7 @@ public class HomeFragment extends BaseFragment implements
     private MyReceiver myReceiver;
     private NetworkCheckReceiver networkCheckReceiver;
     public SharedPreferences preferences;
+    private RootCuisine mRootCuisine;
 
     @Inject
     public HomeFragment() {
@@ -203,7 +204,8 @@ public class HomeFragment extends BaseFragment implements
         }
 
         if (mSnapXUserRequest != null) {
-            presenter.getUserData(this, mSnapXUserRequest);
+            showProgressDialog();
+            presenter.getUserData(mSnapXUserRequest);
         }
 
         mRecyclerView.setNestedScrollingEnabled(false);
@@ -246,7 +248,6 @@ public class HomeFragment extends BaseFragment implements
         }
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -269,7 +270,7 @@ public class HomeFragment extends BaseFragment implements
                 utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
 
                 mTxtPlaceName.setText(mSelectedLocation.getName());
-                presenter.getCuisineList(this, mLocationCuisine);
+                presenter.getCuisineList(mLocationCuisine);
             }
         }
     }
@@ -298,19 +299,23 @@ public class HomeFragment extends BaseFragment implements
      */
     @Override
     public void success(Object value) {
-        RootCuisine rootCuisine = (RootCuisine) value;
-//        List<String> list = new ArrayList<>();
-        List<Cuisines> selectableItems = rootCuisine.getCuisineList();
+        dismissProgressDialog();
+        mRootCuisine = (RootCuisine) value;
+        setRecyclerView();
+    }
+
+    public void setRecyclerView() {
+        List<Cuisines> selectableItems = mRootCuisine.getCuisineList();
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(activity, 2);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        mHomeFgmtAdapter = new HomeFgmtAdapter(activity, selectableItems,rootCuisine,
+        mHomeFgmtAdapter = new HomeFgmtAdapter(activity, selectableItems, mRootCuisine,
                 selectedCuisineList -> {
                     if (selectedCuisineList.size() >= 0) {
-                        mTxtCuisineDone.setAlpha((float) 1.0);
+                        mTxtCuisineDone.setAlpha(ALPHA_BTN);
                         mTxtCuisineDone.setClickable(true);
                     } else if (selectedCuisineList.size() == 0) {
-                        mTxtCuisineDone.setAlpha((float) 0.4);
+                        mTxtCuisineDone.setAlpha(ALPHA_BLUR_BTN);
                         mTxtCuisineDone.setClickable(false);
                     }
                 });
@@ -332,12 +337,9 @@ public class HomeFragment extends BaseFragment implements
         mListener = null;
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        SnapXToast.debug("onActivityResult: HomeActivity");
-
         switch (requestCode) {
             case DEVICE_LOCATION:
                 checkLocalPermissions();
@@ -364,14 +366,12 @@ public class HomeFragment extends BaseFragment implements
         for (int index = 0; index < permissions.length; index++) {
 
             if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
-                SnapXToast.debug("Permissions granted");
 
                 if (checkPermissions()) {
                     mSelectedLocation = getSelectedLocation();
                 }
 
             } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
-                SnapXToast.debug("Permissions denied check never ask again");
                 snapXDialog.showChangePermissionDialog();
             } else {
                 presenter.presentScreen(LOCATION);
@@ -417,17 +417,23 @@ public class HomeFragment extends BaseFragment implements
 
     @Override
     public void error(Object value) {
-
+        dismissProgressDialog();
     }
 
     @Override
     public void noNetwork(Object value) {
         dismissProgressDialog();
+        showNetworkErrorDialog((dialog, which) -> {
+
+        });
     }
 
     @Override
     public void networkError(Object value) {
         dismissProgressDialog();
+        showNetworkErrorDialog((dialog, which) -> {
+
+        });
     }
 
     @Override
@@ -492,8 +498,6 @@ public class HomeFragment extends BaseFragment implements
         builder.setTitle(getActivity().getString(R.string.location_service_not_active));
         builder.setMessage(getActivity().getString(R.string.enable_gps));
         builder.setPositiveButton(getActivity().getString(R.string.action_settings), (dialogInterface, i) -> {
-            // Show location settings when the user acknowledges the alert dialog
-//            getActivity().startActivityFromFragment(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),ACCESS_FINE_LOCATION);
             getActivity().startActivityFromFragment(this,
                     new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),
                     ACCESS_FINE_LOCATION);
@@ -518,7 +522,6 @@ public class HomeFragment extends BaseFragment implements
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            SnapXToast.debug("Intent Detected.");
             if (intent != null) {
                 mSelectedLocation = intent.getParcelableExtra(context.getString(R.string.selected_location));
             }

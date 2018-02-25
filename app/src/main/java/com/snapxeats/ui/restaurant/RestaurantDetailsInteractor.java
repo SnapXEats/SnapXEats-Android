@@ -2,9 +2,9 @@ package com.snapxeats.ui.restaurant;
 
 import android.content.Context;
 
-import com.snapxeats.common.model.googleDirections.RootGoogleDir;
 import com.snapxeats.common.model.RootRestaurantDetails;
 import com.snapxeats.common.model.googleDirections.LocationGoogleDir;
+import com.snapxeats.common.model.googleDirections.RootGoogleDir;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
@@ -38,62 +38,67 @@ public class RestaurantDetailsInteractor {
 
     /**
      * get restaurant details
-     * @param restaurantDetailsView
+     *
      * @param restaurantId
      */
-    public void getRestDetails(RestaurantDetailsContract.RestaurantDetailsView restaurantDetailsView,
-                               String restaurantId) {
-        mContext = restaurantDetailsView.getActivity();
+    public void getRestDetails(String restaurantId) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             Call<RootRestaurantDetails> snapXUserCall = apiHelper.getRestDetails(restaurantId);
             snapXUserCall.enqueue(new Callback<RootRestaurantDetails>() {
                 @Override
                 public void onResponse(Call<RootRestaurantDetails> call, Response<RootRestaurantDetails> response) {
-                   if(response.isSuccessful() && response.body()!=null){
-                       RootRestaurantDetails rootRestaurantDetails=response.body();
-                       mRestaurantDetailsPresenter.response(SnapXResult.SUCCESS,rootRestaurantDetails);
-                   }
+                    if (response.isSuccessful() && response.body() != null) {
+                        RootRestaurantDetails rootRestaurantDetails = response.body();
+                        mRestaurantDetailsPresenter.response(SnapXResult.SUCCESS, rootRestaurantDetails);
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<RootRestaurantDetails> call, Throwable t) {
-                    mRestaurantDetailsPresenter.response(SnapXResult.FAILURE,null);
+                    mRestaurantDetailsPresenter.response(SnapXResult.FAILURE, null);
 
                 }
             });
-        }else{
-            mRestaurantDetailsPresenter.response(SnapXResult.NONETWORK,null);
+        } else {
+            mRestaurantDetailsPresenter.response(SnapXResult.NONETWORK, null);
         }
     }
-    public void getGoogleDirections(RestaurantDetailsContract.RestaurantDetailsView restaurantDetailsView,
-                                    LocationGoogleDir locationGoogleDir) {
-        mContext = restaurantDetailsView.getActivity();
+
+    /**
+     * get google directions api
+     *
+     * @param locationGoogleDir
+     */
+    public void getGoogleDirections(LocationGoogleDir locationGoogleDir) {
 
         if (NetworkUtility.isNetworkAvailable(mContext)) {
-            ApiHelper apiHelper = ApiClient.getClient(mContext,GOOGLE_BASE_URL).create(ApiHelper.class);
+            ApiHelper apiHelper = ApiClient.getClient(mContext, GOOGLE_BASE_URL).create(ApiHelper.class);
             Call<RootGoogleDir> snapXUserCall =
                     apiHelper.getGoogleDir(locationGoogleDir.getGoogleDirOrigin().getOriginLat()
-                            + "," + locationGoogleDir.getGoogleDirOrigin().getOriginLng(),
-                    locationGoogleDir.getGoogleDirDest().getDestinationLat() + ","
-                            + locationGoogleDir.getGoogleDirDest().getDestinationLng());
+                                    + "," + locationGoogleDir.getGoogleDirOrigin().getOriginLng(),
+                            locationGoogleDir.getGoogleDirDest().getDestinationLat() + ","
+                                    + locationGoogleDir.getGoogleDirDest().getDestinationLng());
             snapXUserCall.enqueue(new Callback<RootGoogleDir>() {
                 @Override
                 public void onResponse(Call<RootGoogleDir> call, Response<RootGoogleDir> response) {
-                   if(response.isSuccessful() && response.body()!=null){
-                       RootGoogleDir rootGoogleDir=response.body();
-                    //   mRestaurantDetailsPresenter.response(SnapXResult.SUCCESS,rootGoogleDir);
-                   }
+                    if (response.isSuccessful() && response.body() != null) {
+                        RootGoogleDir rootGoogleDir = response.body();
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<RootGoogleDir> call, Throwable t) {
-                    mRestaurantDetailsPresenter.response(SnapXResult.FAILURE,null);
+                    mRestaurantDetailsPresenter.response(SnapXResult.FAILURE, null);
 
                 }
             });
-        }else{
-            mRestaurantDetailsPresenter.response(SnapXResult.NONETWORK,null);
+        } else {
+            mRestaurantDetailsPresenter.response(SnapXResult.NONETWORK, null);
         }
+    }
+
+    public void setContext(RestaurantDetailsContract.RestaurantDetailsView view) {
+        this.mContext = view.getActivity();
     }
 }

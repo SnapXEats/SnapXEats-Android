@@ -1,7 +1,5 @@
 package com.snapxeats.common.model.googleDirections;
 
-import com.google.maps.model.Distance;
-
 import java.util.List;
 
 import lombok.Getter;
@@ -18,13 +16,13 @@ public class Legs {
 
     private GoogleDistance distance;
 
-    private End_location end_location;
+    private EndLocation end_location;
 
     private String start_address;
 
     private String end_address;
 
-    private Start_location start_location;
+    private StartLocation start_location;
 
     private List<String> traffic_speed_entry;
 

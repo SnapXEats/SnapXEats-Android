@@ -1,6 +1,7 @@
 package com.snapxeats.ui.location;
 
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.snapxeats.common.constants.WebConstants;
@@ -20,8 +21,9 @@ import retrofit2.Response;
 
 public class LocationInteractor {
     private LocationContract.LocationPresenter locationPresenter;
-    private Context mContext;
     private LocationContract.LocationView locationView;
+    private Activity mContext;
+
 
     @Inject
     public LocationInteractor() {
@@ -29,15 +31,6 @@ public class LocationInteractor {
 
     @Inject
     ApiClient apiClient;
-
-    public void setLocationView(LocationContract.LocationView locationView) {
-        this.locationView = locationView;
-    }
-
-    public LocationContract.LocationView getPreferenceView() {
-        return locationView;
-    }
-
 
     public void setPresenter(LocationContract.LocationPresenter presenter) {
         this.locationPresenter = presenter;
@@ -48,9 +41,7 @@ public class LocationInteractor {
     }
 
 
-    public void getPlaceDetails(LocationContract.LocationView locationView, String placeId) {
-        mContext = locationView.getActivity();
-
+    public void getPlaceDetails(String placeId) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = apiClient.getClient(mContext,
                     WebConstants.GOOGLE_BASE_URL).create(ApiHelper.class);
@@ -73,5 +64,9 @@ public class LocationInteractor {
         } else {
             locationPresenter.response(SnapXResult.NONETWORK, null);
         }
+    }
+
+    public void setContext(LocationContract.LocationView view) {
+        this.mContext = view.getActivity();
     }
 }

@@ -34,26 +34,26 @@ public class InstagramData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.id);
-        dest.writeString(this.profile_picture);
-        dest.writeString(this.username);
-        dest.writeString(this.bio);
-        dest.writeString(this.website);
-        dest.writeString(this.is_business);
-        dest.writeString(this.full_name);
+        dest.writeString(id);
+        dest.writeString(profile_picture);
+        dest.writeString(username);
+        dest.writeString(bio);
+        dest.writeString(website);
+        dest.writeString(is_business);
+        dest.writeString(full_name);
     }
 
     public InstagramData() {
     }
 
     protected InstagramData(Parcel in) {
-        this.id = in.readString();
-        this.profile_picture = in.readString();
-        this.username = in.readString();
-        this.bio = in.readString();
-        this.website = in.readString();
-        this.is_business = in.readString();
-        this.full_name = in.readString();
+        id = in.readString();
+        profile_picture = in.readString();
+        username = in.readString();
+        bio = in.readString();
+        website = in.readString();
+        is_business = in.readString();
+        full_name = in.readString();
     }
 
     public static final Parcelable.Creator<InstagramData> CREATOR = new Parcelable.Creator<InstagramData>() {

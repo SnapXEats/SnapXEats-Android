@@ -23,9 +23,9 @@ public class RestaurantDetails implements Parcelable {
 
     private String restaurant_info_id;
 
-    private List<Restaurant_speciality> restaurant_speciality;
+    private List<RestaurantSpeciality> restaurant_speciality;
 
-    private List<Restaurant_pics> restaurant_pics;
+    private List<RestaurantPics> restaurant_pics;
 
     private String restaurant_address;
 
@@ -42,34 +42,34 @@ public class RestaurantDetails implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.location_lat);
-        dest.writeStringList(this.restaurant_timings);
-        dest.writeString(this.isOpenNow);
-        dest.writeString(this.restaurant_info_id);
-        dest.writeList(this.restaurant_speciality);
-        dest.writeList(this.restaurant_pics);
-        dest.writeString(this.restaurant_address);
-        dest.writeString(this.restaurant_name);
-        dest.writeString(this.restaurant_contact_no);
-        dest.writeString(this.location_long);
+        dest.writeString(location_lat);
+        dest.writeStringList(restaurant_timings);
+        dest.writeString(isOpenNow);
+        dest.writeString(restaurant_info_id);
+        dest.writeList(restaurant_speciality);
+        dest.writeList(restaurant_pics);
+        dest.writeString(restaurant_address);
+        dest.writeString(restaurant_name);
+        dest.writeString(restaurant_contact_no);
+        dest.writeString(location_long);
     }
 
     public RestaurantDetails() {
     }
 
     protected RestaurantDetails(Parcel in) {
-        this.location_lat = in.readString();
-        this.restaurant_timings = in.createStringArrayList();
-        this.isOpenNow = in.readString();
-        this.restaurant_info_id = in.readString();
-        this.restaurant_speciality = new ArrayList<Restaurant_speciality>();
-        in.readList(this.restaurant_speciality, Restaurant_speciality.class.getClassLoader());
-        this.restaurant_pics = new ArrayList<Restaurant_pics>();
-        in.readList(this.restaurant_pics, Restaurant_pics.class.getClassLoader());
-        this.restaurant_address = in.readString();
-        this.restaurant_name = in.readString();
-        this.restaurant_contact_no = in.readString();
-        this.location_long = in.readString();
+        location_lat = in.readString();
+        restaurant_timings = in.createStringArrayList();
+        isOpenNow = in.readString();
+        restaurant_info_id = in.readString();
+        restaurant_speciality = new ArrayList<RestaurantSpeciality>();
+        in.readList(restaurant_speciality, RestaurantSpeciality.class.getClassLoader());
+        restaurant_pics = new ArrayList<RestaurantPics>();
+        in.readList(restaurant_pics, RestaurantPics.class.getClassLoader());
+        restaurant_address = in.readString();
+        restaurant_name = in.readString();
+        restaurant_contact_no = in.readString();
+        location_long = in.readString();
     }
 
     public static final Parcelable.Creator<RestaurantDetails> CREATOR = new Parcelable.Creator<RestaurantDetails>() {

@@ -8,6 +8,7 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
+import com.snapxeats.ui.foodpreference.FoodPreferenceContract;
 
 import java.util.List;
 
@@ -30,6 +31,8 @@ public class FoodStackInteractor {
 
     private FoodStackContract.FoodStackPreseneter mFoodStackPreseneter;
 
+    private FoodStackContract.FoodStackView mFoodStackView;
+
     @Inject
     public FoodStackInteractor() {
     }
@@ -37,13 +40,15 @@ public class FoodStackInteractor {
     public void setFoodStackPresenter(FoodStackContract.FoodStackPreseneter foodStackPreseneter) {
         this.mFoodStackPreseneter = foodStackPreseneter;
     }
+    public void setContext(FoodStackContract.FoodStackView view) {
+        this.mFoodStackView = view;
+        this.mContext = view.getActivity();
+    }
 
     /**
      * get cuisines list
      */
-    public void getCuisinePhotos(FoodStackContract.FoodStackView foodStackView, SelectedCuisineList selectedCuisineList) {
-        mContext = foodStackView.getActivity();
-        foodStackView.showProgressDialog();
+    public void getCuisinePhotos( SelectedCuisineList selectedCuisineList) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             //TODO latlng are hardcoded for now
 //        double lat = selectedCuisineList.getLocation().getLatitude();
@@ -65,12 +70,10 @@ public class FoodStackInteractor {
 
                 @Override
                 public void onFailure(Call<RootCuisinePhotos> call, Throwable t) {
-                    foodStackView.dismissProgressDialog();
                     mFoodStackPreseneter.response(SnapXResult.ERROR, null);
                 }
             });
         } else {
-            foodStackView.dismissProgressDialog();
             mFoodStackPreseneter.response(SnapXResult.NONETWORK, null);
         }
     }

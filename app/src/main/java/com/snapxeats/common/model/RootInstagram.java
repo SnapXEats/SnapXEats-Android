@@ -23,18 +23,18 @@ public class RootInstagram implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.data, flags);
-        dest.writeString(this.instagramToken);
-        dest.writeParcelable(this.meta, flags);
+        dest.writeParcelable(data, flags);
+        dest.writeString(instagramToken);
+        dest.writeParcelable(meta, flags);
     }
 
     public RootInstagram() {
     }
 
     protected RootInstagram(Parcel in) {
-        this.data = in.readParcelable(InstagramData.class.getClassLoader());
-        this.instagramToken = in.readString();
-        this.meta = in.readParcelable(InstagramMeta.class.getClassLoader());
+        data = in.readParcelable(InstagramData.class.getClassLoader());
+        instagramToken = in.readString();
+        meta = in.readParcelable(InstagramMeta.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<RootInstagram> CREATOR = new Parcelable.Creator<RootInstagram>() {

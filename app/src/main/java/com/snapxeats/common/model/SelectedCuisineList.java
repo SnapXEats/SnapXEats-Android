@@ -23,16 +23,16 @@ public class SelectedCuisineList implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.location, flags);
-        dest.writeStringList(this.selectedCuisineList);
+        dest.writeParcelable(location, flags);
+        dest.writeStringList(selectedCuisineList);
     }
 
     public SelectedCuisineList() {
     }
 
     protected SelectedCuisineList(Parcel in) {
-        this.location = in.readParcelable(LocationCuisine.class.getClassLoader());
-        this.selectedCuisineList = in.createStringArrayList();
+        location = in.readParcelable(LocationCuisine.class.getClassLoader());
+        selectedCuisineList = in.createStringArrayList();
     }
 
     public static final Parcelable.Creator<SelectedCuisineList> CREATOR = new Parcelable.Creator<SelectedCuisineList>() {

@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RootGoogleDir {
-    private List<Geocoded_waypoints> geocoded_waypoints;
+    private List<GeocodedWaypoints> geocoded_waypoints;
 
     private String status;
 

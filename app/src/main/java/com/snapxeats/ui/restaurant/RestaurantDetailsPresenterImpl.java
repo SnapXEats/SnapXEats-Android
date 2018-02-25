@@ -29,6 +29,7 @@ public class RestaurantDetailsPresenterImpl implements RestaurantDetailsContract
     public void addView(RestaurantDetailsContract.RestaurantDetailsView view) {
         mRestaurantDetailsView = view;
         mDetailsRouter.setView(view);
+        mRestaurantDetailsInteractor.setContext(view);
     }
 
     @Override
@@ -43,14 +44,13 @@ public class RestaurantDetailsPresenterImpl implements RestaurantDetailsContract
     }
 
     @Override
-    public void getRestDetails(RestaurantDetailsContract.RestaurantDetailsView restaurantDetailsView, String restaurantId) {
-        mRestaurantDetailsInteractor.getRestDetails(restaurantDetailsView,restaurantId);
+    public void getRestDetails(String restaurantId) {
+        mRestaurantDetailsInteractor.getRestDetails(restaurantId);
     }
 
     @Override
-    public void getGoogleDirections(RestaurantDetailsContract.RestaurantDetailsView restaurantDetailsView,
-                                    LocationGoogleDir locationGoogleDir) {
-        mRestaurantDetailsInteractor.getGoogleDirections(restaurantDetailsView,locationGoogleDir);
+    public void getGoogleDirections(LocationGoogleDir locationGoogleDir) {
+        mRestaurantDetailsInteractor.getGoogleDirections(locationGoogleDir);
     }
 
     @Override

@@ -23,14 +23,14 @@ public class RootCuisinePhotos implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeTypedList(this.dishesInfo);
+        dest.writeTypedList(dishesInfo);
     }
 
     public RootCuisinePhotos() {
     }
 
     protected RootCuisinePhotos(Parcel in) {
-        this.dishesInfo = in.createTypedArrayList(DishesInfo.CREATOR);
+        dishesInfo = in.createTypedArrayList(DishesInfo.CREATOR);
     }
 
     public static final Parcelable.Creator<RootCuisinePhotos> CREATOR = new Parcelable.Creator<RootCuisinePhotos>() {

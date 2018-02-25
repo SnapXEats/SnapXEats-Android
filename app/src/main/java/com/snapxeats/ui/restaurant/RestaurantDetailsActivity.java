@@ -15,13 +15,13 @@ import android.widget.TextView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
-import com.snapxeats.common.model.Restaurant_pics;
-import com.snapxeats.common.model.Restaurant_speciality;
-import com.snapxeats.common.model.googleDirections.RootGoogleDir;
+import com.snapxeats.common.model.RestaurantPics;
+import com.snapxeats.common.model.RestaurantSpeciality;
 import com.snapxeats.common.model.RootRestaurantDetails;
 import com.snapxeats.common.model.googleDirections.GoogleDirDest;
 import com.snapxeats.common.model.googleDirections.GoogleDirOrigin;
 import com.snapxeats.common.model.googleDirections.LocationGoogleDir;
+import com.snapxeats.common.model.googleDirections.RootGoogleDir;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
@@ -43,9 +43,9 @@ import butterknife.OnClick;
 public class RestaurantDetailsActivity extends BaseActivity implements RestaurantDetailsContract.RestaurantDetailsView,
         AppContract.SnapXResults {
 
-    List<Restaurant_pics> mRestaurantPicsList;
+    List<RestaurantPics> mRestaurantPicsList;
 
-    List<Restaurant_speciality> mRestaurantSpecialties;
+    List<RestaurantSpeciality> mRestaurantSpecialties;
 
     RestImagesAdapter mRestPicsAdapter;
 
@@ -95,27 +95,29 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         snapXDialog.setContext(this);
         ButterKnife.bind(this);
         utility.setContext(this);
+
         //set mToolbar
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        initRestaurantData();
+    }
 
+    public void initRestaurantData() {
         mRestaurantPicsList = new ArrayList<>();
         mRestaurantSpecialties = new ArrayList<>();
         mInflater = LayoutInflater.from(this);
         //get restaurant details
         String id = "12584d25-046b-45d3-8a5e-8a0516dd4c7a";
         showProgressDialog();
-        mRestaurantPresenter.getRestDetails(this, id);
-
+        mRestaurantPresenter.getRestDetails(id);
         //get google directions
         //TODO latlng are hardcoded for now
         final String srcLat = "18.497895";
         final String srcLng = "73.829229";
         final String destLat = "18.504373";
         final String destLng = " 73.830680";
-
         LocationGoogleDir locationGoogleDir = new LocationGoogleDir();
         GoogleDirOrigin googleDirOrigin = new GoogleDirOrigin();
         googleDirOrigin.setOriginLat(srcLat);
@@ -125,13 +127,12 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         googleDirDest.setDestinationLng(destLng);
         locationGoogleDir.setGoogleDirOrigin(googleDirOrigin);
         locationGoogleDir.setGoogleDirDest(googleDirDest);
-        mRestaurantPresenter.getGoogleDirections(this, locationGoogleDir);
+        mRestaurantPresenter.getGoogleDirections(locationGoogleDir);
     }
 
     @OnClick(R.id.img_rest_directions)
     public void imgRestDirections() {
         //TODO navigate to directions screen
-        SnapXToast.showToast(this, "Directions Screen");
     }
 
     @Override
@@ -165,9 +166,11 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     @Override
     public void success(Object value) {
         dismissProgressDialog();
-
         mRootRestaurantDetails = (RootRestaurantDetails) value;
-    //    mRootGoogleDir=(RootGoogleDir)value;
+        setUpRecyclerView();
+    }
+
+    public void setUpRecyclerView() {
 
         //restaurants details
         if (!mRootRestaurantDetails.getRestaurantDetails().getRestaurant_name().isEmpty()) {
@@ -201,9 +204,10 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         mRestPicsAdapter = new RestImagesAdapter(RestaurantDetailsActivity.this, mRestaurantPicsList);
         mRestviewPager.setAdapter(mRestPicsAdapter);
 
+        //TODO data will be used in future
         //google directions data
-     //   mTxtRestDuration.setText(mRootGoogleDir.getRoutes().get(0).getLegs().get(0).getDuration().getValue());
-      //  SnapXToast.showToast(this,"oooo"+mRootGoogleDir.getRoutes().get(0).getLegs().get(0).getDuration().getValue());
+        //   mTxtRestDuration.setText(mRootGoogleDir.getRoutes().get(0).getLegs().get(0).getDuration().getValue());
+        //  SnapXToast.showToast(this,"oooo"+mRootGoogleDir.getRoutes().get(0).getLegs().get(0).getDuration().getValue());
     }
 
     @Override

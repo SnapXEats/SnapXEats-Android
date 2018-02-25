@@ -23,6 +23,7 @@ public class LocationPresenterImpl implements LocationContract.LocationPresenter
     @Override
     public void addView(LocationContract.LocationView view) {
         this.locationView = view;
+        interactor.setContext(view);
     }
 
     @Override
@@ -52,7 +53,7 @@ public class LocationPresenterImpl implements LocationContract.LocationPresenter
 
     @Override
     public void getPlaceDetails(String placeId) {
-        interactor.getPlaceDetails(locationView, placeId);
+        interactor.getPlaceDetails( placeId);
     }
 
     @Override

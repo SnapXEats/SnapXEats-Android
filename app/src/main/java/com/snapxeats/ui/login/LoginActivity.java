@@ -44,8 +44,6 @@ import static com.snapxeats.common.Router.Screen.PREFERENCE;
 
 public class LoginActivity extends BaseActivity implements LoginContract.LoginView, AppContract.SnapXResults {
 
-    private static final String TAG = "LoginActivity";
-
     @Inject
     LoginPresenterImpl mLoginPresenter;
 
@@ -98,10 +96,8 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
                 String key = new String(Base64.encode(md.digest(), 0));
-                Log.d(TAG, key);
             }
         } catch (Exception e) {
-            Log.d(TAG, e.toString());
         }
     }
 
@@ -123,12 +119,6 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                     public void onSuccess(LoginResult loginResult) {
                         if (loginResult != null) {
                             mLoginPresenter.response(SnapXResult.SUCCESS,loginResult);
-                            //TODO get facebook user info
-                            Log.v(TAG, AccessToken.getCurrentAccessToken().toString());//user fb token
-                            Log.v(TAG, AccessToken.getCurrentAccessToken().getUserId());//user fb id
-                            Profile profile=Profile.getCurrentProfile();
-                            Log.v(TAG,profile.getFirstName()+profile.getLastName());//user fb name
-                            Log.v(TAG,profile.getProfilePictureUri(50,10).toString());//user fb image
                         }
                     }
 

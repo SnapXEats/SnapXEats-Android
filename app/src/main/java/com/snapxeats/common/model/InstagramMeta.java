@@ -21,14 +21,14 @@ public class InstagramMeta implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.code);
+        dest.writeString(code);
     }
 
     public InstagramMeta() {
     }
 
     protected InstagramMeta(Parcel in) {
-        this.code = in.readString();
+        code = in.readString();
     }
 
     public static final Parcelable.Creator<InstagramMeta> CREATOR = new Parcelable.Creator<InstagramMeta>() {

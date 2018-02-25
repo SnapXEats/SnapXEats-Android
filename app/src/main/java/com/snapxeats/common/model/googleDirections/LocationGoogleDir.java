@@ -11,9 +11,4 @@ import lombok.Setter;
 public class LocationGoogleDir {
     private GoogleDirOrigin googleDirOrigin;
     private GoogleDirDest googleDirDest;
-/*
-    public LocationGoogleDir(GoogleDirOrigin googleDirOrigin,GoogleDirDest googleDirDest) {
-        this.googleDirOrigin = googleDirOrigin;
-        this.googleDirDest = googleDirDest;
-    }*/
 }

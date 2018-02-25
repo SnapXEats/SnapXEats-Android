@@ -16,12 +16,11 @@ public class RestaurantDetailsContract {
 
     interface RestaurantDetailsPresenter extends BasePresenter<RestaurantDetailsView> {
         void presentScreen(Router.Screen screen);
-        void getRestDetails(RestaurantDetailsView restaurantDetailsView,String restaurantId);
-        void getGoogleDirections(RestaurantDetailsView restaurantDetailsView,LocationGoogleDir locationGoogleDir);
+        void getRestDetails(String restaurantId);
+        void getGoogleDirections(LocationGoogleDir locationGoogleDir);
     }
     interface RestaurantDetailsRouter {
         void presentScreen(Router.Screen screen);
-
         void setView(RestaurantDetailsView view);
     }
 }

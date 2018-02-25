@@ -1,7 +1,6 @@
 package com.snapxeats.common.model.googleDirections;
 
 import com.google.android.gms.maps.model.Polyline;
-import com.google.maps.model.Distance;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,11 +17,11 @@ public class Steps {
 
     private GoogleDistance distance;
 
-    private End_location end_location;
+    private EndLocation end_location;
 
     private Polyline polyline;
 
-    private Start_location start_location;
+    private StartLocation start_location;
 
     private String travel_mode;
 }

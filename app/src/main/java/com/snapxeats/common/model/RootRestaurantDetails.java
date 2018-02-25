@@ -21,14 +21,14 @@ public class RootRestaurantDetails implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.restaurantDetails, flags);
+        dest.writeParcelable(restaurantDetails, flags);
     }
 
     public RootRestaurantDetails() {
     }
 
     protected RootRestaurantDetails(Parcel in) {
-        this.restaurantDetails = in.readParcelable(RestaurantDetails.class.getClassLoader());
+        restaurantDetails = in.readParcelable(RestaurantDetails.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<RootRestaurantDetails> CREATOR = new Parcelable.Creator<RootRestaurantDetails>() {

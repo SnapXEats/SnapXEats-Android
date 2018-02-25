@@ -25,6 +25,6 @@ public class Routes {
 
     private List<String> warnings;
 
-    private List<Overview_polyline> overview_polyline;
+    private List<OverviewPolyline> overview_polyline;
 
 }

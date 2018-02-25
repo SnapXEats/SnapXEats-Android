@@ -8,8 +8,6 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class End_location {
-    private String lng;
-
-    private String lat;
+public class OverviewPolyline {
+    private String points;
 }

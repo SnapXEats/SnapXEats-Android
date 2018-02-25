@@ -78,7 +78,8 @@ public class FoodStackActivity extends BaseActivity
         selectedCuisineList = getIntent().getExtras().getParcelable(getString(R.string.data_selectedCuisineList));
 
         if (NetworkUtility.isNetworkAvailable(this)) {
-            mFoodStackPresenter.getCuisinePhotos(this, selectedCuisineList);
+            showProgressDialog();
+            mFoodStackPresenter.getCuisinePhotos(selectedCuisineList);
         } else {
             showNetworkErrorDialog((dialog, which) -> {
             });
@@ -106,7 +107,6 @@ public class FoodStackActivity extends BaseActivity
     }
     @OnClick(R.id.img_foodstack_map)
     public void imgMaps(){
-        SnapXToast.showToast(this,"Maps");
     }
     @Override
     public void onBackPressed() {
@@ -139,16 +139,19 @@ public class FoodStackActivity extends BaseActivity
 
     @Override
     public void error(Object value) {
+        dismissProgressDialog();
     }
 
     @Override
     public void noNetwork(Object value) {
+        dismissProgressDialog();
         showNetworkErrorDialog((dialog, which) -> {
         });
     }
 
     @Override
     public void networkError(Object value) {
+        dismissProgressDialog();
         showNetworkErrorDialog((dialog, which) -> {
         });
     }

@@ -68,7 +68,6 @@ public class InstagramApp {
                     SnapXToast.showToast(InstagramApp.this.context, context.getString(R.string.insta_login_success));
                     Intent intent = new Intent(context, HomeActivity.class);
                     rootInstagram.setInstagramToken(token);
-                    Log.d("---**InstaToken",token);
                     intent.putExtra(context.getString(R.string.instaInfoIntent), rootInstagram);
                     context.startActivity(intent);
                 }

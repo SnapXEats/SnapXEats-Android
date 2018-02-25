@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.snapxeats.R;
-import com.snapxeats.common.model.Restaurant_pics;
+import com.snapxeats.common.model.RestaurantPics;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -21,10 +21,10 @@ import java.util.List;
  */
 public class RestImagesAdapter extends PagerAdapter {
     private Context mContext;
-    private List<Restaurant_pics> restaurantPicsList;
+    private List<RestaurantPics> restaurantPicsList;
     private LayoutInflater layoutInflater;
 
-    public RestImagesAdapter(Context mContext, List<Restaurant_pics> restaurantPicsList) {
+    public RestImagesAdapter(Context mContext, List<RestaurantPics> restaurantPicsList) {
         this.mContext = mContext;
         this.restaurantPicsList = restaurantPicsList;
         layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
