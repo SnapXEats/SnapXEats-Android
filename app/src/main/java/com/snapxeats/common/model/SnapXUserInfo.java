@@ -12,4 +12,5 @@ public class SnapXUserInfo {
 
     private String token;
     private String user_id;
+    private String social_platform;
 }

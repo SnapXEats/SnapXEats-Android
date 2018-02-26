@@ -12,7 +12,6 @@ import java.util.List;
 public class LocationPresenterImpl implements LocationContract.LocationPresenter {
     private LocationInteractor interactor;
     private LocationContract.LocationView locationView;
-    public static List<String> arryalist;
     private LocationRouterImpl router;
 
     public LocationPresenterImpl(LocationInteractor interactor,
@@ -24,6 +23,7 @@ public class LocationPresenterImpl implements LocationContract.LocationPresenter
     @Override
     public void addView(LocationContract.LocationView view) {
         this.locationView = view;
+        interactor.setContext(view);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class LocationPresenterImpl implements LocationContract.LocationPresenter
 
     @Override
     public void getPlaceDetails(String placeId) {
-        interactor.getPlaceDetails(locationView, placeId);
+        interactor.getPlaceDetails( placeId);
     }
 
     @Override

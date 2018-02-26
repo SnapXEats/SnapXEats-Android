@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -17,8 +16,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -34,7 +31,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.NetworkCheckReceiver;
 import com.facebook.AccessToken;
@@ -42,10 +38,10 @@ import com.google.gson.Gson;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.Cuisines;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
+import com.snapxeats.common.model.RootInstagram;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.utilities.AppUtility;
@@ -54,9 +50,7 @@ import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.foodstack.FoodStackActivity;
-import com.snapxeats.ui.home.HomeActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -75,6 +69,8 @@ public class HomeFragment extends BaseFragment implements
         AppContract.SnapXResults,
         HomeFgmtAdapter.RecyclerViewClickListener {
 
+    private static final float ALPHA_BLUR_BTN = (float) 0.4;
+    private static final float ALPHA_BTN = (float) 1.0;
     @BindView(R.id.txt_place_name)
     protected TextView mTxtPlaceName;
 
@@ -116,6 +112,7 @@ public class HomeFragment extends BaseFragment implements
     private MyReceiver myReceiver;
     private NetworkCheckReceiver networkCheckReceiver;
     public SharedPreferences preferences;
+    private RootCuisine mRootCuisine;
 
     @Inject
     public HomeFragment() {
@@ -141,13 +138,6 @@ public class HomeFragment extends BaseFragment implements
 
         if (checkPermissions()) {
             mSelectedLocation = getSelectedLocation();
-        }
-
-        //get user token
-        if (mSnapXUserRequest != null) {
-            mSnapXUserRequest = new SnapXUserRequest(AccessToken.getCurrentAccessToken().toString(),
-                    getString(R.string.platform_facebook),
-                    AccessToken.getCurrentAccessToken().getUserId());
         }
     }
 
@@ -196,13 +186,27 @@ public class HomeFragment extends BaseFragment implements
 
         toolbar.setNavigationOnClickListener(v -> mDrawerLayout.openDrawer(Gravity.START));
 
-        //get user token
-        if (mSnapXUserRequest != null) {
-            mSnapXUserRequest = new SnapXUserRequest(AccessToken.getCurrentAccessToken().toString(),
+        //refresh facebook token
+        AccessToken.refreshCurrentAccessTokenAsync();
+
+        //get instagram info
+
+        RootInstagram rootInstagram = getActivity().getIntent().getParcelableExtra(getString(R.string.instaInfoIntent));
+
+        if (rootInstagram != null) {
+            mSnapXUserRequest = new SnapXUserRequest(rootInstagram.getInstagramToken(),
+                    getString(R.string.platform_instagram),
+                    rootInstagram.getData().getId());
+        } else if (AccessToken.getCurrentAccessToken() != null) {
+            mSnapXUserRequest = new SnapXUserRequest(AccessToken.getCurrentAccessToken().getToken(),
                     getString(R.string.platform_facebook),
                     AccessToken.getCurrentAccessToken().getUserId());
         }
-        presenter.getUserData(this, mSnapXUserRequest);
+
+        if (mSnapXUserRequest != null) {
+            showProgressDialog();
+            presenter.getUserData(mSnapXUserRequest);
+        }
 
         mRecyclerView.setNestedScrollingEnabled(false);
 
@@ -244,33 +248,30 @@ public class HomeFragment extends BaseFragment implements
         }
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
-
-      /*  IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
-        intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
-        getActivity().registerReceiver(networkCheckReceiver,
-                intentFilter);*/
-
         mTxtCuisineDone.setAlpha((float) 0.4);
         mTxtCuisineDone.setClickable(false);
 
-        if (mSelectedLocation != null) {
+        if (NetworkUtility.isNetworkAvailable(activity)) {
+            //disable 'done' button till cuisines not selected
+            mTxtCuisineDone.setAlpha((float) 0.4);
+            mTxtCuisineDone.setClickable(false);
 
-            //set latitude and longitude for selected cuisines
-            mLocationCuisine = new LocationCuisine();
-            mLocationCuisine.setLatitude(mSelectedLocation.getLat());
-            mLocationCuisine.setLongitude(mSelectedLocation.getLng());
-            selectedCuisineList.setLocation(mLocationCuisine);
+            if (mSelectedLocation != null) {
+                //set latitude and longitude for selected cuisines
+                mLocationCuisine = new LocationCuisine();
+                mLocationCuisine.setLatitude(mSelectedLocation.getLat());
+                mLocationCuisine.setLongitude(mSelectedLocation.getLng());
+                selectedCuisineList.setLocation(mLocationCuisine);
 
-            //Save data in shared preferences
-            utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
+                //Save data in shared preferences
+                utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
 
-            mTxtPlaceName.setText(mSelectedLocation.getName());
-            presenter.getCuisineList(this, mLocationCuisine);
+                mTxtPlaceName.setText(mSelectedLocation.getName());
+                presenter.getCuisineList(mLocationCuisine);
+            }
         }
     }
 
@@ -283,10 +284,44 @@ public class HomeFragment extends BaseFragment implements
                 selectedCuisineList.setSelectedCuisineList(mHomeFgmtAdapter.getSelectedItems());
                 //TODO pass object as ENUM
                 Intent intent = new Intent(activity, FoodStackActivity.class);
+                selectedCuisineList.setSelectedCuisineList(mHomeFgmtAdapter.getSelectedItems());
+
                 intent.putExtra(getString(R.string.data_selectedCuisineList), selectedCuisineList);
-                startActivity(intent);
+                activity.startActivity(intent);
             }
         }
+    }
+
+    /**
+     * get food images
+     *
+     * @param value
+     */
+    @Override
+    public void success(Object value) {
+        dismissProgressDialog();
+        mRootCuisine = (RootCuisine) value;
+        setRecyclerView();
+    }
+
+    public void setRecyclerView() {
+        List<Cuisines> selectableItems = mRootCuisine.getCuisineList();
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(activity, 2);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        mHomeFgmtAdapter = new HomeFgmtAdapter(activity, selectableItems, mRootCuisine,
+                selectedCuisineList -> {
+                    if (selectedCuisineList.size() >= 0) {
+                        mTxtCuisineDone.setAlpha(ALPHA_BTN);
+                        mTxtCuisineDone.setClickable(true);
+                    } else if (selectedCuisineList.size() == 0) {
+                        mTxtCuisineDone.setAlpha(ALPHA_BLUR_BTN);
+                        mTxtCuisineDone.setClickable(false);
+                    }
+                });
+
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setAdapter(mHomeFgmtAdapter);
     }
 
     @Override
@@ -302,13 +337,9 @@ public class HomeFragment extends BaseFragment implements
         mListener = null;
     }
 
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        SnapXToast.debug("onActivityResult: HomeActivity");
-
         switch (requestCode) {
             case DEVICE_LOCATION:
                 checkLocalPermissions();
@@ -335,14 +366,12 @@ public class HomeFragment extends BaseFragment implements
         for (int index = 0; index < permissions.length; index++) {
 
             if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
-                SnapXToast.debug("Permissions granted");
 
                 if (checkPermissions()) {
                     mSelectedLocation = getSelectedLocation();
                 }
 
             } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
-                SnapXToast.debug("Permissions denied check never ask again");
                 snapXDialog.showChangePermissionDialog();
             } else {
                 presenter.presentScreen(LOCATION);
@@ -385,39 +414,26 @@ public class HomeFragment extends BaseFragment implements
         }
     }
 
-    @Override
-    public void success(Object value) {
-        RootCuisine rootCuisine = (RootCuisine) value;
-        List<Cuisines> selectableItems = rootCuisine.getCuisineList();
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(activity, 2);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        mHomeFgmtAdapter = new HomeFgmtAdapter(activity,
-                selectableItems,
-                rootCuisine, selectedCuisineList -> {
-
-            if (selectedCuisineList.size() >= 0) {
-                mTxtCuisineDone.setClickable(true);
-                mTxtCuisineDone.setAlpha((float) 1.0);
-            }
-        });
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setAdapter(mHomeFgmtAdapter);
-    }
 
     @Override
     public void error(Object value) {
-
+        dismissProgressDialog();
     }
 
     @Override
     public void noNetwork(Object value) {
         dismissProgressDialog();
-           }
+        showNetworkErrorDialog((dialog, which) -> {
+
+        });
+    }
 
     @Override
     public void networkError(Object value) {
         dismissProgressDialog();
+        showNetworkErrorDialog((dialog, which) -> {
+
+        });
     }
 
     @Override
@@ -482,8 +498,6 @@ public class HomeFragment extends BaseFragment implements
         builder.setTitle(getActivity().getString(R.string.location_service_not_active));
         builder.setMessage(getActivity().getString(R.string.enable_gps));
         builder.setPositiveButton(getActivity().getString(R.string.action_settings), (dialogInterface, i) -> {
-            // Show location settings when the user acknowledges the alert dialog
-//            getActivity().startActivityFromFragment(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),ACCESS_FINE_LOCATION);
             getActivity().startActivityFromFragment(this,
                     new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),
                     ACCESS_FINE_LOCATION);
@@ -508,7 +522,6 @@ public class HomeFragment extends BaseFragment implements
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            SnapXToast.debug("Intent Detected.");
             if (intent != null) {
                 mSelectedLocation = intent.getParcelableExtra(context.getString(R.string.selected_location));
             }

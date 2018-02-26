@@ -32,6 +32,7 @@ public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPresen
     public void addView(FoodStackContract.FoodStackView view) {
         this.mFoodStackView = view;
         mFoodStackRouter.setView(view);
+        mFoodStackInteractor.setContext(view);
     }
 
     @Override
@@ -46,8 +47,8 @@ public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPresen
     }
 
     @Override
-    public void getCuisinePhotos(FoodStackContract.FoodStackView foodStackView, SelectedCuisineList selectedCuisineList) {
-        mFoodStackInteractor.getCuisinePhotos(foodStackView, selectedCuisineList);
+    public void getCuisinePhotos( SelectedCuisineList selectedCuisineList) {
+        mFoodStackInteractor.getCuisinePhotos( selectedCuisineList);
     }
 
     @Override

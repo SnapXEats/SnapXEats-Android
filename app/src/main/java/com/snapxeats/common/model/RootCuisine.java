@@ -24,16 +24,16 @@ public class RootCuisine implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeTypedList(this.cuisineList);
-        dest.writeStringList(this.userPreSelectedCuisines);
+        dest.writeTypedList(cuisineList);
+        dest.writeStringList(userPreSelectedCuisines);
     }
 
     public RootCuisine() {
     }
 
     protected RootCuisine(Parcel in) {
-        this.cuisineList = in.createTypedArrayList(Cuisines.CREATOR);
-        this.userPreSelectedCuisines = in.createStringArrayList();
+        cuisineList = in.createTypedArrayList(Cuisines.CREATOR);
+        userPreSelectedCuisines = in.createStringArrayList();
     }
 
     public static final Parcelable.Creator<RootCuisine> CREATOR = new Parcelable.Creator<RootCuisine>() {

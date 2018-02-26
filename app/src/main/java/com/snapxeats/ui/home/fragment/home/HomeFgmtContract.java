@@ -21,10 +21,9 @@ public class HomeFgmtContract {
 
         void presentScreen(Router.Screen screen);
 
-        void getCuisineList(HomeFgmtView homeFgmtView,
-                            LocationCuisine locationCuisine);
+        void getCuisineList(LocationCuisine locationCuisine);
 
-        void getUserData(HomeFgmtView homeFgmtView, SnapXUserRequest snapXUserRequest);
+        void getUserData(SnapXUserRequest snapXUserRequest);
 
     }
 

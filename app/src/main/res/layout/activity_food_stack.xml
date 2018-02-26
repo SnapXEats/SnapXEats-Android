@@ -1,26 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/toolbar_foodstack"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize" />
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="@dimen/common_dimens_2"
+        android:paddingRight="@dimen/common_dimens_5"
+        app:theme="@style/ToolBarTheme">
+
+        <ImageView
+            android:id="@+id/img_foodstack_map"
+            android:layout_width="@dimen/dimen_25"
+            android:layout_height="@dimen/dimen_25"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/common_dimens_20"
+            android:src="@drawable/ic_foodstack_map" />
+    </android.support.v7.widget.Toolbar>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <ImageView
-            android:layout_gravity="center"
             android:id="@+id/img_foodstack_placeholder"
             android:layout_width="@dimen/frame_width"
             android:layout_height="@dimen/frame_height"
-            android:src="@drawable/foodstack_placeholder" />
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/common_dimens_20"
+            android:src="@drawable/ic_foodstack_placeholder" />
 
         <com.mindorks.placeholderview.SwipeDirectionalView
             android:id="@+id/swipe_view"
@@ -45,23 +58,23 @@
                 android:id="@+id/img_cuisine_reject"
                 android:layout_width="@dimen/dimens_80dp"
                 android:layout_height="@dimen/dimens_80dp"
-                android:layout_marginLeft="@dimen/common_dimens_12"
+                android:layout_marginStart="@dimen/common_dimens_12"
                 android:background="@drawable/ic_nope" />
 
             <ImageButton
                 android:id="@+id/img_cuisine_like"
                 android:layout_width="@dimen/dimens_80dp"
                 android:layout_height="@dimen/dimens_80dp"
-                android:layout_marginLeft="@dimen/common_dimens_12"
+                android:layout_marginStart="@dimen/common_dimens_12"
                 android:background="@drawable/ic_like" />
 
             <ImageButton
                 android:id="@+id/img_cuisine_wishlist"
                 android:layout_width="@dimen/dimens_50dp"
                 android:layout_height="@dimen/dimens_50dp"
-                android:layout_marginLeft="@dimen/common_dimens_12"
+                android:layout_marginStart="@dimen/common_dimens_12"
                 android:background="@drawable/ic_wish" />
         </LinearLayout>
     </FrameLayout>
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

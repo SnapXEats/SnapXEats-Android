@@ -214,9 +214,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
         if (location != null) {
             selectedLocation = new Location(location.getLatitude(),
                     location.getLongitude(), getPlaceName(location));
-            if (selectedLocation != null) {
                 putData(selectedLocation);
-            }
         }
     }
 
@@ -267,7 +265,6 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     @Override
     public void success(Object value) {
         Result location = (Result) value;
-        SnapXToast.debug("Success Name" + location.getName());
 
         selectedLocation = new Location(location.getGeometry().getLocation().getLat(),
                 location.getGeometry().getLocation().getLng(),

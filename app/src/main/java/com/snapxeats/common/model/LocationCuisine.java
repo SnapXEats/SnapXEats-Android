@@ -22,16 +22,16 @@ public class LocationCuisine implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeDouble(this.latitude);
-        dest.writeDouble(this.longitude);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
     }
 
     public LocationCuisine() {
     }
 
     protected LocationCuisine(Parcel in) {
-        this.latitude = in.readDouble();
-        this.longitude = in.readDouble();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
     }
 
     public static final Parcelable.Creator<LocationCuisine> CREATOR = new Parcelable.Creator<LocationCuisine>() {

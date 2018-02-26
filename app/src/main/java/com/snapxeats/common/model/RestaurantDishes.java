@@ -28,19 +28,19 @@ public class RestaurantDishes implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeList(this.restaurantDishLabels);
-        dest.writeString(this.dish_image_url);
-        dest.writeString(this.restaurant_dish_id);
+        dest.writeList(restaurantDishLabels);
+        dest.writeString(dish_image_url);
+        dest.writeString(restaurant_dish_id);
     }
 
     public RestaurantDishes() {
     }
 
     protected RestaurantDishes(Parcel in) {
-        this.restaurantDishLabels = new ArrayList<RestaurantDishLabels>();
-        in.readList(this.restaurantDishLabels, RestaurantDishLabels.class.getClassLoader());
-        this.dish_image_url = in.readString();
-        this.restaurant_dish_id = in.readString();
+        restaurantDishLabels = new ArrayList<RestaurantDishLabels>();
+        in.readList(restaurantDishLabels, RestaurantDishLabels.class.getClassLoader());
+        dish_image_url = in.readString();
+        restaurant_dish_id = in.readString();
     }
 
     public static final Parcelable.Creator<RestaurantDishes> CREATOR = new Parcelable.Creator<RestaurantDishes>() {

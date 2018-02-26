@@ -3,6 +3,7 @@ package com.snapxeats.ui.restaurant;
 import android.support.annotation.Nullable;
 
 import com.snapxeats.common.Router;
+import com.snapxeats.common.model.googleDirections.LocationGoogleDir;
 import com.snapxeats.common.utilities.SnapXResult;
 
 import javax.inject.Singleton;
@@ -28,6 +29,7 @@ public class RestaurantDetailsPresenterImpl implements RestaurantDetailsContract
     public void addView(RestaurantDetailsContract.RestaurantDetailsView view) {
         mRestaurantDetailsView = view;
         mDetailsRouter.setView(view);
+        mRestaurantDetailsInteractor.setContext(view);
     }
 
     @Override
@@ -39,6 +41,16 @@ public class RestaurantDetailsPresenterImpl implements RestaurantDetailsContract
     public void presentScreen(Router.Screen screen) {
         mDetailsRouter.presentScreen(screen);
 
+    }
+
+    @Override
+    public void getRestDetails(String restaurantId) {
+        mRestaurantDetailsInteractor.getRestDetails(restaurantId);
+    }
+
+    @Override
+    public void getGoogleDirections(LocationGoogleDir locationGoogleDir) {
+        mRestaurantDetailsInteractor.getGoogleDirections(locationGoogleDir);
     }
 
     @Override

@@ -4,7 +4,6 @@ package com.snapxeats.common.constants;
 /**
  * Created by Prajakta Patil on 28/12/17.
  */
-
 public class WebConstants {
     public static final String BASE_URL = "http://ec2-18-216-193-78.us-east-2.compute.amazonaws.com:3000";
     public static final String INSTA_CLIENT_ID = "739cbd7da5c048fbab575487859602c9";
@@ -20,6 +19,9 @@ public class WebConstants {
             "/maps/api/place/details/json?key=AIzaSyBE60eBPlcvijgNGHK3X-Odd8zHJ2WksNk";
     public static final String GOOGLE_BASE_URL = "https://maps.googleapis.com";
     public static final String USER_PREFERENCES = "/api/v1/userPreferences";
+    public static final String RESTAURANT_DETAILS = "/api/v1/restaurant/{restaurantInfoId}";
+    public static final String INSTAGRAM_TOKEN="https://api.instagram.com/v1/users/self/?";
+    public static final String GOOGLE_DIR_API="/maps/api/directions/json?mode=driving&key=AIzaSyBE60eBPlcvijgNGHK3X-Odd8zHJ2WksNk";
     public static final String USER_FOOD_PREF = "/api/v1/foodTypes";
 
 }

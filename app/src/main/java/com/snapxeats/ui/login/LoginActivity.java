@@ -17,6 +17,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.LoggingBehavior;
+import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -24,6 +25,8 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.BuildConfig;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.WebConstants;
+import com.snapxeats.common.model.SnapXUserRequest;
+import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
@@ -33,7 +36,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import static com.snapxeats.common.Router.Screen.CUISINE_PREF;
 import static com.snapxeats.common.Router.Screen.PREFERENCE;
 
 /**
@@ -41,8 +43,6 @@ import static com.snapxeats.common.Router.Screen.PREFERENCE;
  */
 
 public class LoginActivity extends BaseActivity implements LoginContract.LoginView, AppContract.SnapXResults {
-
-    private static final String TAG = "LoginActivity";
 
     @Inject
     LoginPresenterImpl mLoginPresenter;
@@ -96,10 +96,8 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
                 String key = new String(Base64.encode(md.digest(), 0));
-                Log.d(TAG, key);
             }
         } catch (Exception e) {
-            Log.d(TAG, e.toString());
         }
     }
 
@@ -121,8 +119,6 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                     public void onSuccess(LoginResult loginResult) {
                         if (loginResult != null) {
                             mLoginPresenter.response(SnapXResult.SUCCESS,loginResult);
-                            Log.v(TAG, AccessToken.getCurrentAccessToken() + "");
-                            Log.v(TAG, AccessToken.getCurrentAccessToken().getUserId() + "");
                         }
                     }
 
@@ -141,11 +137,6 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     @OnClick(R.id.txt_login_skip)
     public void txtLoginSkip() {
         mLoginPresenter.presentScreen(PREFERENCE);
-    }
-
-    @OnClick(R.id.txt_version)
-    public void txtVersion() {
-        mLoginPresenter.presentScreen(CUISINE_PREF);
     }
 
     @OnClick(R.id.btn_fb_custom)
@@ -208,7 +199,6 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     public void success(Object o) {
         mLoginPresenter.presentScreen(PREFERENCE);
     }
-
 
     @Override
     public void error(Object value) {

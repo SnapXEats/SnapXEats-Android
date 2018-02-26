@@ -21,14 +21,14 @@ public class RestaurantDishLabels implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.dish_label);
+        dest.writeString(dish_label);
     }
 
     public RestaurantDishLabels() {
     }
 
     protected RestaurantDishLabels(Parcel in) {
-        this.dish_label = in.readString();
+        dish_label = in.readString();
     }
 
     public static final Parcelable.Creator<RestaurantDishLabels> CREATOR = new Parcelable.Creator<RestaurantDishLabels>() {

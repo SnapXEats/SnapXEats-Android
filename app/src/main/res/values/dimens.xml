@@ -55,5 +55,12 @@
     <dimen name="common_dimens_24">24dp</dimen>
     <dimen name="common_dimens_4">4dp</dimen>
     <dimen name="text_size_17">17sp</dimen>
+    <dimen name="text_size_24">24sp</dimen>
+    <dimen name="dimen_162">162dp</dimen>
+    <dimen name="dimens_4">4dp</dimen>
+    <dimen name="dimens_40">40dp</dimen>
+    <dimen name="dimens_20">20dp</dimen>
+    <dimen name="dimen_115">115dp</dimen>
+    <dimen name="dimen_rest_details_img_height">257dp</dimen>
 
 </resources>

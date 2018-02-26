@@ -17,7 +17,7 @@
     <application
         android:name=".SnapXApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_snapx_launcher"
+        android:icon="@drawable/ic_snapx_app_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">

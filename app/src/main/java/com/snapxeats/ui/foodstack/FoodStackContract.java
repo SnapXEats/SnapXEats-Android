@@ -21,7 +21,7 @@ public class FoodStackContract {
 
         void presentScreen(Router.Screen screen);
 
-        void getCuisinePhotos(FoodStackContract.FoodStackView foodStackView, SelectedCuisineList selectedCuisineList);
+        void getCuisinePhotos(SelectedCuisineList selectedCuisineList);
     }
 
     public interface FoodStackRouter {

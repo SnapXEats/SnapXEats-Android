@@ -3,7 +3,6 @@ package com.snapxeats.common.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import io.realm.RealmObject;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,9 +1,9 @@
 package com.snapxeats.ui.home.fragment.home;
 
 import android.app.Activity;
+
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
-import com.snapxeats.common.model.SnapXUser;
 import com.snapxeats.common.model.SnapXUserInfo;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
@@ -11,6 +11,7 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -42,13 +43,15 @@ public class HomeFgmtInteractor {
         this.homeFgmtPresenter = presenter;
     }
 
+    public void setContext(HomeFgmtContract.HomeFgmtView view) {
+        this.mContext = view.getActivity();
+    }
+
     /**
      * get cuisines list
      */
-    public void getCuisineList(HomeFgmtContract.HomeFgmtView homeFgmtView, LocationCuisine locationCuisine) {
-        mContext = homeFgmtView.getActivity();
+    public void getCuisineList(LocationCuisine locationCuisine) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
-            homeFgmtView.showProgressDialog();
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
 
         /*    TODO latlng are hardcoded for now
@@ -60,10 +63,9 @@ public class HomeFgmtInteractor {
             listCuisineCall.enqueue(new Callback<RootCuisine>() {
                 @Override
                 public void onResponse(Call<RootCuisine> call, Response<RootCuisine> response) {
-                    homeFgmtView.dismissProgressDialog();
                     if (response.isSuccessful() && response.body() != null) {
                         RootCuisine rootCuisine = response.body();
-                        homeFgmtPresenter.response(SnapXResult.SUCCESS,rootCuisine);
+                        homeFgmtPresenter.response(SnapXResult.SUCCESS, rootCuisine);
                     }
                 }
 
@@ -79,30 +81,31 @@ public class HomeFgmtInteractor {
 
     /**
      * get user info
-     * @param homeFgmtView
+     *
      * @param snapXUserRequest
      */
-    void getUserData(HomeFgmtContract.HomeFgmtView homeFgmtView, SnapXUserRequest snapXUserRequest){
-        mContext= homeFgmtView.getActivity();
-        if(NetworkUtility.isNetworkAvailable(mContext)){
-            ApiHelper apiHelper=ApiClient.getClient(mContext,BASE_URL).create(ApiHelper.class);
-            Call<SnapXUserResponse> snapXUserCall=apiHelper.getUserToken(snapXUserRequest);
+    void getUserData(SnapXUserRequest snapXUserRequest) {
+        if (NetworkUtility.isNetworkAvailable(mContext)) {
+            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            Call<SnapXUserResponse> snapXUserCall = apiHelper.getUserToken(snapXUserRequest);
             snapXUserCall.enqueue(new Callback<SnapXUserResponse>() {
                 @Override
                 public void onResponse(Call<SnapXUserResponse> call, Response<SnapXUserResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        SnapXUserInfo snapXUserInfo=response.body().getUserInfo();
-                        SnapXUser.mUserToken =snapXUserInfo.getToken();
+                        SnapXUserInfo snapXUserInfo = response.body().getUserInfo();
+
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SnapXUserResponse> call, Throwable t) {
-                    homeFgmtPresenter.response(SnapXResult.FAILURE,null);
+                    homeFgmtPresenter.response(SnapXResult.FAILURE, null);
                 }
             });
-        }else {
-            homeFgmtPresenter.response(SnapXResult.NONETWORK,null);
+        } else {
+            homeFgmtPresenter.response(SnapXResult.NONETWORK, null);
         }
     }
+
+
 }

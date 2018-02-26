@@ -55,15 +55,14 @@ public class HomeFgmtPresenterImpl implements HomeFgmtContract.HomeFgmtPresenter
     }
 
     @Override
-    public void getCuisineList(HomeFgmtContract.HomeFgmtView mHomeFgmtView,
-                               LocationCuisine locationCuisine) {
+    public void getCuisineList(LocationCuisine locationCuisine) {
 
-        mHomeFgmtInteractor.getCuisineList(mHomeFgmtView, locationCuisine);
+        mHomeFgmtInteractor.getCuisineList(locationCuisine);
     }
 
     @Override
-    public void getUserData(HomeFgmtContract.HomeFgmtView view, SnapXUserRequest snapXUserRequest) {
-        mHomeFgmtInteractor.getUserData(view, snapXUserRequest);
+    public void getUserData(SnapXUserRequest snapXUserRequest) {
+        mHomeFgmtInteractor.getUserData(snapXUserRequest);
     }
 
     /**
@@ -76,6 +75,7 @@ public class HomeFgmtPresenterImpl implements HomeFgmtContract.HomeFgmtPresenter
     public void addView(HomeFgmtContract.HomeFgmtView view) {
         mHomeFgmtView = view;
         mHomeFgmtRouter.setView(view);
+        mHomeFgmtInteractor.setContext(view);
     }
 
     @Override

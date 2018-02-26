@@ -16,17 +16,10 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.Cuisines;
-import com.snapxeats.common.model.FoodPref;
-import com.snapxeats.common.model.Location;
 import com.snapxeats.common.model.RootCuisine;
-import com.snapxeats.common.model.SnapxData;
-import com.snapxeats.common.model.UserCuisinePreferences;
-import com.snapxeats.common.model.UserFoodPreferences;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -34,9 +27,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.realm.Realm;
-import io.realm.RealmList;
-import io.realm.RealmResults;
 
 import static com.SCREEN_NAMES.CUISINE;
 
@@ -62,9 +52,6 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
 
     @Inject
     AppUtility utility;
-
-    private Realm mRealm;
-
     private CuisinePrefAdapter mCuisinePrefAdapter;
     private NetworkCheckReceiver networkCheckReceiver;
     private List<Cuisines> rootCuisineList;
@@ -90,8 +77,6 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(getString(R.string.cuisine_preference));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mRealm = Realm.getDefaultInstance();
         networkCheckReceiver = new NetworkCheckReceiver();
 
         showProgressDialog();
@@ -101,19 +86,11 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
     @Override
     protected void onResume() {
         super.onResume();
-
-        /*IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
-        intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
-        getActivity().registerReceiver(networkCheckReceiver,
-                intentFilter);*/
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-//        unregisterReceiver(networkCheckReceiver);
     }
 
     @Override
@@ -219,32 +196,6 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
         builder.setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-                mRealm.beginTransaction();
-                SnapxData snapxData = mRealm.createObject(SnapxData.class);
-
-                RealmList<UserCuisinePreferences> list = new RealmList<>();
-//                list.addAll(rootCuisineList);
-
-                UserCuisinePreferences preferences;
-
-                for (Cuisines cuisines : rootCuisineList) {
-                    preferences = new UserCuisinePreferences(cuisines.getCuisine_info_id(),
-                            cuisines.is_cuisine_like(), cuisines.is_cuisine_favourite());
-                    list.add(preferences);
-                }
-
-                snapxData.setSelectedCuisinesList(list);
-                mRealm.commitTransaction();
-
-               /* for (Cuisines cuisines : mCuisinePrefAdapter.selectedCuisineList) {
-                    SnapXToast.debug("****List" + cuisines.toString());
-                }*/
-
-                RealmResults<SnapxData> results = mRealm.where(SnapxData.class).findAll();
-                results.load();
-                List<UserCuisinePreferences> listFromRealm = results.get(0).getSelectedCuisinesList();
-
                 for (Cuisines cuisines : rootCuisineList) {
                     SnapXToast.debug("****From db List" + cuisines.toString());
                 }
