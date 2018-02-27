@@ -4,7 +4,7 @@ import android.app.Activity;
 
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
-import com.snapxeats.common.model.SnapXUserInfo;
+import com.snapxeats.common.model.SnapXUser;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.utilities.NetworkUtility;
@@ -88,12 +88,13 @@ public class HomeFgmtInteractor {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             Call<SnapXUserResponse> snapXUserCall = apiHelper.getUserToken(snapXUserRequest);
+
             snapXUserCall.enqueue(new Callback<SnapXUserResponse>() {
                 @Override
                 public void onResponse(Call<SnapXUserResponse> call, Response<SnapXUserResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        SnapXUserInfo snapXUserInfo = response.body().getUserInfo();
-
+                        SnapXUser snapXUser = response.body().getUserInfo();
+                        homeFgmtPresenter.response(SnapXResult.SUCCESS, snapXUser);
                     }
                 }
 
@@ -106,6 +107,4 @@ public class HomeFgmtInteractor {
             homeFgmtPresenter.response(SnapXResult.NONETWORK, null);
         }
     }
-
-
 }

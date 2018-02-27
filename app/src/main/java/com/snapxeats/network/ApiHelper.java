@@ -74,14 +74,14 @@ public interface ApiHelper {
     Call<PlaceDetail> getPlaceDetails(@Query("placeid") String placeId);
 
 
-    /**
+   /* *//**
      * Set user preferences
      *
      * @param object- Set user preferences
      * @return
-     */
+     *//*
     @POST(WebConstants.USER_PREFERENCES)
-    Call<UserPreference> setUserPreferences(@Body UserPreference object);
+    Call<UserPreference> setUserPreferences(@Body UserPreference object);*/
 
     /**
      * get restaurant details

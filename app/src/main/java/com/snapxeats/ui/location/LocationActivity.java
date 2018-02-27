@@ -214,7 +214,9 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
         if (location != null) {
             selectedLocation = new Location(location.getLatitude(),
                     location.getLongitude(), getPlaceName(location));
+            if (selectedLocation != null) {
                 putData(selectedLocation);
+            }
         }
     }
 
@@ -234,13 +236,11 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            SnapXToast.debug("Permissions granted");
             if (checkPermissions()) {
                 getData();
             }
             //To add data in preferences
         } else if (!shouldShowRequestPermissionRationale(permissions[0])) {
-            SnapXToast.debug("Permissions denied check never ask again");
             snapXDialog.showChangePermissionDialog();
         }
     }
@@ -265,10 +265,17 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     @Override
     public void success(Object value) {
         Result location = (Result) value;
+        String placeName;
+
+        if (null != location.getVicinity()) {
+            placeName = location.getVicinity();
+        } else {
+            placeName = location.getName();
+        }
 
         selectedLocation = new Location(location.getGeometry().getLocation().getLat(),
                 location.getGeometry().getLocation().getLng(),
-                location.getVicinity());
+                placeName);
 
         //Send selected location to home fragment
         putData(selectedLocation);

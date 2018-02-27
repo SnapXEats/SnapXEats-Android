@@ -26,9 +26,9 @@ public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.
     private OnDoubleTapListenr onDoubleTapListenr;
     private int tapCount = 0;
 
-     CuisinePrefAdapter(Context mContext,
-                              List<Cuisines> cuisineArrayList,
-                              OnDoubleTapListenr onDoubleTapListenr) {
+    CuisinePrefAdapter(Context mContext,
+                       List<Cuisines> cuisineArrayList,
+                       OnDoubleTapListenr onDoubleTapListenr) {
         this.cuisineArrayList = cuisineArrayList;
         this.mContext = mContext;
         this.onDoubleTapListenr = onDoubleTapListenr;
@@ -62,6 +62,8 @@ public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.
             holder.imgStatus.setImageResource(0);
             cuisines.set_cuisine_favourite(false);
             cuisines.set_cuisine_like(false);
+            CuisinePrefActivity.isCuisineSelecetionChange = true;
+
         });
     }
 

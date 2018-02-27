@@ -38,12 +38,18 @@ import com.google.gson.Gson;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
+import com.snapxeats.SnapXApplication;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.Cuisines;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.common.model.RootInstagram;
 import com.snapxeats.common.model.SelectedCuisineList;
+import com.snapxeats.common.model.SnapXUser;
 import com.snapxeats.common.model.SnapXUserRequest;
+import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.SnapxDataDao;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
@@ -113,6 +119,8 @@ public class HomeFragment extends BaseFragment implements
     private NetworkCheckReceiver networkCheckReceiver;
     public SharedPreferences preferences;
     private RootCuisine mRootCuisine;
+    private DaoSession daoSession;
+    private SnapxDataDao snapxDataDao;
 
     @Inject
     public HomeFragment() {
@@ -133,6 +141,7 @@ public class HomeFragment extends BaseFragment implements
         snapXDialog.setContext(getActivity());
         utility.setContext(getActivity());
         presenter.addView(this);
+        daoSession = ((SnapXApplication) getActivity().getApplication()).getDaoSession();
 
         buildGoogleAPIClient();
 
@@ -270,6 +279,7 @@ public class HomeFragment extends BaseFragment implements
                 utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
 
                 mTxtPlaceName.setText(mSelectedLocation.getName());
+                showProgressDialog();
                 presenter.getCuisineList(mLocationCuisine);
             }
         }
@@ -300,8 +310,34 @@ public class HomeFragment extends BaseFragment implements
     @Override
     public void success(Object value) {
         dismissProgressDialog();
-        mRootCuisine = (RootCuisine) value;
-        setRecyclerView();
+
+        if (value instanceof RootCuisine) {
+            mRootCuisine = (RootCuisine) value;
+            setRecyclerView();
+        } else if (value instanceof SnapXUser) {
+            SnapXUser snapXUser = (SnapXUser) value;
+//            saveDataInDb(snapXUser);
+        }
+        saveDataInDb();
+
+    }
+
+    private void saveDataInDb() {
+
+        snapxDataDao = daoSession.getSnapxDataDao();
+
+        SnapxData snapxData = new SnapxData();
+      /*  snapxData.setServerUserId(snapXUser.getUser_id());
+        snapxData.setServerToken(snapXUser.getToken());
+        snapxData.setSocialToken(snapXUser.getSocial_platform());
+        snapxData.setIsFirstTimeUser(snapXUser.getIsFirstTimeUser());*/
+
+        snapxData.setSocialToken("6898929419.739cbd7.8e2b496c9a524c68be878ba51f7bd044");
+        snapxData.setSocialUserId("6898929419");
+        snapxData.setUserName("snapxeats");
+        snapxData.setUserImage("https://scontent.cdninstagram.com/vp/430b0b2120cf968dda35b6d342f99a3b/5B18595E/t51.2885-19/s150x150/27892527_245377196003325_939776446803476480_n.jpg");
+
+        snapxDataDao.insert(snapxData);
     }
 
     public void setRecyclerView() {

@@ -10,12 +10,15 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
+
 import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
 import com.snapxeats.ui.home.fragment.home.HomeFragment;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -43,11 +46,14 @@ public class HomeActivity extends LocationBaseActivity implements
     private FragmentTransaction transaction;
     private FragmentManager fragmentManager;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+//        SQLiteDatabaseHandler db = new SQLiteDatabaseHandler(this);
+//        db.getReadableDatabase();
         initView();
     }
 
@@ -58,11 +64,11 @@ public class HomeActivity extends LocationBaseActivity implements
 
     @Override
     public void initView() {
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         fragmentManager = getFragmentManager();
-        android.app.FragmentTransaction transaction;
         transaction = fragmentManager.beginTransaction();
 
         transaction.replace(R.id.frame_layout, homeFragment);

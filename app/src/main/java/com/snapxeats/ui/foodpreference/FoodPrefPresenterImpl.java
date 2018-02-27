@@ -1,7 +1,11 @@
 package com.snapxeats.ui.foodpreference;
 
 import com.snapxeats.common.Router;
+import com.snapxeats.common.model.FoodPref;
+import com.snapxeats.common.model.UserFoodPreferences;
 import com.snapxeats.common.utilities.SnapXResult;
+
+import java.util.List;
 
 import javax.inject.Singleton;
 
@@ -62,5 +66,15 @@ public class FoodPrefPresenterImpl implements FoodPreferenceContract.FoodPrefere
     @Override
     public void getFoodPrefList() {
         interactor.getFoodPrefList();
+    }
+
+    @Override
+    public void saveFoodPrefList(List<FoodPref> foodPrefList) {
+        interactor.saveFoodPrefList(foodPrefList);
+    }
+
+    @Override
+    public List<UserFoodPreferences> getFoodPrefListFromDb() {
+        return interactor.getFoodPrefListFromDb();
     }
 }

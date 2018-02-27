@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -24,18 +26,26 @@ import com.facebook.login.widget.LoginButton;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BuildConfig;
 import com.snapxeats.R;
+import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.constants.WebConstants;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.SnapxDataDao;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
+
 import net.hockeyapp.android.utils.Base64;
+
 import java.security.MessageDigest;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static com.snapxeats.common.Router.Screen.PREFERENCE;
 
 /**
@@ -118,20 +128,45 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         if (loginResult != null) {
-                            mLoginPresenter.response(SnapXResult.SUCCESS,loginResult);
+                            mLoginPresenter.response(SnapXResult.SUCCESS, loginResult);
+                            saveDataInDb();
+                           /* AccessToken.getCurrentAccessToken().getToken();
+                            AccessToken.getCurrentAccessToken().getUserId();
+                            Profile.getCurrentProfile().getFirstName();
+                            Profile.getCurrentProfile().getLastName();
+                            Profile.getCurrentProfile().getProfilePictureUri(50,50);*/
                         }
                     }
 
                     @Override
                     public void onCancel() {
-                        mLoginPresenter.response(SnapXResult.NETWORKERROR,null);
+                        mLoginPresenter.response(SnapXResult.NETWORKERROR, null);
                     }
 
                     @Override
                     public void onError(FacebookException exception) {
-                        mLoginPresenter.response(SnapXResult.ERROR,null);
+                        mLoginPresenter.response(SnapXResult.ERROR, null);
                     }
                 });
+    }
+
+    private void saveDataInDb() {
+
+        String userName = Profile.getCurrentProfile().getFirstName() + " "
+                + Profile.getCurrentProfile().getLastName();
+
+        Uri profileUri = Profile.getCurrentProfile().getProfilePictureUri(50, 50);
+
+        DaoSession daoSession = ((SnapXApplication) getApplication()).getDaoSession();
+        SnapxDataDao snapxDataDao = daoSession.getSnapxDataDao();
+
+        SnapxData snapxData = new SnapxData();
+        snapxData.setSocialToken(AccessToken.getCurrentAccessToken().getToken());
+        snapxData.setSocialUserId(AccessToken.getCurrentAccessToken().getUserId());
+        snapxData.setUserName(userName);
+        snapxData.setUserImage(profileUri.toString());
+
+        snapxDataDao.insert(snapxData);
     }
 
     @OnClick(R.id.txt_login_skip)
@@ -166,12 +201,12 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
             @Override
             public void onSuccess() {
                 //TODO data passed null for now
-                mLoginPresenter.response(SnapXResult.SUCCESS,null);
+                mLoginPresenter.response(SnapXResult.SUCCESS, null);
             }
 
             @Override
             public void onFail(String error) {
-                mLoginPresenter.response(SnapXResult.NETWORKERROR,null);
+                mLoginPresenter.response(SnapXResult.NETWORKERROR, null);
             }
         });
     }

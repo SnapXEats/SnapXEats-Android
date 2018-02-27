@@ -1,7 +1,11 @@
 package com.snapxeats.ui.cuisinepreference;
 
 import com.snapxeats.common.Router;
+import com.snapxeats.common.model.Cuisines;
+import com.snapxeats.common.model.UserCuisinePreferences;
 import com.snapxeats.common.utilities.SnapXResult;
+
+import java.util.List;
 
 import javax.inject.Singleton;
 
@@ -62,5 +66,20 @@ public class CuisinePrefPresenterImpl implements CuisinePrefContract.CuisinePref
     @Override
     public void getCuisinePrefList() {
         interactor.getCuisinePref();
+    }
+
+    @Override
+    public void saveCuisineList(List<Cuisines> rootCuisineList) {
+        interactor.saveCuisineList(rootCuisineList);
+    }
+
+    @Override
+    public List<UserCuisinePreferences> getCuisineListFromDb() {
+        return interactor.getCuisinePrefListFromDb();
+    }
+
+    @Override
+    public void resetCuisineList() {
+        interactor.resetCuisineList();
     }
 }
