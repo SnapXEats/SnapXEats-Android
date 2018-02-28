@@ -2,8 +2,6 @@ package com.snapxeats.common.model;
 
 import org.greenrobot.greendao.annotation.Entity;
 
-import java.util.List;
-
 import org.greenrobot.greendao.annotation.Generated;
 
 /**
@@ -12,8 +10,8 @@ import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
 public class SnapxData {
-    public String serverToken;
-    public String serverUserId;
+    public String token;
+    public String userId;
     public String socialToken;
     public String socialUserId;
     public String userImage;
@@ -21,15 +19,12 @@ public class SnapxData {
     public String socialPlatform;
     public boolean isFirstTimeUser;
 
-    //    public List<UserPreference> userPreferenceList;
-//    public List<UserCuisinePreferences> selectedCuisinesList;
-//    public List<UserFoodPreferences> selectedfoodList;
-    @Generated(hash = 1271651620)
-    public SnapxData(String serverToken, String serverUserId, String socialToken,
-                     String socialUserId, String userImage, String userName,
-                     String socialPlatform, boolean isFirstTimeUser) {
-        this.serverToken = serverToken;
-        this.serverUserId = serverUserId;
+    @Generated(hash = 41198777)
+    public SnapxData(String token, String userId, String socialToken,
+            String socialUserId, String userImage, String userName,
+            String socialPlatform, boolean isFirstTimeUser) {
+        this.token = token;
+        this.userId = userId;
         this.socialToken = socialToken;
         this.socialUserId = socialUserId;
         this.userImage = userImage;
@@ -42,20 +37,20 @@ public class SnapxData {
     public SnapxData() {
     }
 
-    public String getServerToken() {
-        return this.serverToken;
+    public String getToken() {
+        return this.token;
     }
 
-    public void setServerToken(String serverToken) {
-        this.serverToken = serverToken;
+    public void setToken(String token) {
+        this.token = token;
     }
 
-    public String getServerUserId() {
-        return this.serverUserId;
+    public String getUserId() {
+        return this.userId;
     }
 
-    public void setServerUserId(String serverUserId) {
-        this.serverUserId = serverUserId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getSocialToken() {

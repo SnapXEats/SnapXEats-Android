@@ -34,22 +34,18 @@ import android.widget.TextView;
 
 import com.NetworkCheckReceiver;
 import com.facebook.AccessToken;
+import com.facebook.Profile;
 import com.google.gson.Gson;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
-import com.snapxeats.SnapXApplication;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.Cuisines;
-import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.common.model.RootInstagram;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.model.SnapXUser;
 import com.snapxeats.common.model.SnapXUserRequest;
-import com.snapxeats.common.model.SnapxData;
-import com.snapxeats.common.model.SnapxDataDao;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
@@ -111,28 +107,13 @@ public class HomeFragment extends BaseFragment implements
 
     private SnapXUserRequest mSnapXUserRequest;
 
-    private OnFragmentInteractionListener mListener;
-
     private Activity activity;
     private DrawerLayout mDrawerLayout;
-    private MyReceiver myReceiver;
-    private NetworkCheckReceiver networkCheckReceiver;
     public SharedPreferences preferences;
     private RootCuisine mRootCuisine;
-    private DaoSession daoSession;
-    private SnapxDataDao snapxDataDao;
 
     @Inject
     public HomeFragment() {
-    }
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        myReceiver = new HomeFragment.MyReceiver();
-        networkCheckReceiver = new NetworkCheckReceiver();
     }
 
     @Override
@@ -141,7 +122,7 @@ public class HomeFragment extends BaseFragment implements
         snapXDialog.setContext(getActivity());
         utility.setContext(getActivity());
         presenter.addView(this);
-        daoSession = ((SnapXApplication) getActivity().getApplication()).getDaoSession();
+        mTxtPlaceName.setSingleLine();
 
         buildGoogleAPIClient();
 
@@ -175,11 +156,8 @@ public class HomeFragment extends BaseFragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initView();
-        mTxtPlaceName.setSingleLine();
-
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         mRecyclerView.setNestedScrollingEnabled(false);
-
 
         mDrawerLayout = activity.findViewById(R.id.drawer_layout);
 
@@ -316,28 +294,14 @@ public class HomeFragment extends BaseFragment implements
             setRecyclerView();
         } else if (value instanceof SnapXUser) {
             SnapXUser snapXUser = (SnapXUser) value;
-//            saveDataInDb(snapXUser);
+
+            SharedPreferences preferences = utility.getSharedPreferences();
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(getString(R.string.user_id), snapXUser.getUser_id());
+            editor.apply();
+
+            presenter.saveUserDataInDb(snapXUser);
         }
-        saveDataInDb();
-
-    }
-
-    private void saveDataInDb() {
-
-        snapxDataDao = daoSession.getSnapxDataDao();
-
-        SnapxData snapxData = new SnapxData();
-      /*  snapxData.setServerUserId(snapXUser.getUser_id());
-        snapxData.setServerToken(snapXUser.getToken());
-        snapxData.setSocialToken(snapXUser.getSocial_platform());
-        snapxData.setIsFirstTimeUser(snapXUser.getIsFirstTimeUser());*/
-
-        snapxData.setSocialToken("6898929419.739cbd7.8e2b496c9a524c68be878ba51f7bd044");
-        snapxData.setSocialUserId("6898929419");
-        snapxData.setUserName("snapxeats");
-        snapxData.setUserImage("https://scontent.cdninstagram.com/vp/430b0b2120cf968dda35b6d342f99a3b/5B18595E/t51.2885-19/s150x150/27892527_245377196003325_939776446803476480_n.jpg");
-
-        snapxDataDao.insert(snapxData);
     }
 
     public void setRecyclerView() {
@@ -370,7 +334,6 @@ public class HomeFragment extends BaseFragment implements
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     @Override
@@ -546,11 +509,6 @@ public class HomeFragment extends BaseFragment implements
         Dialog alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
-    }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 
 

@@ -129,7 +129,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                     public void onSuccess(LoginResult loginResult) {
                         if (loginResult != null) {
                             mLoginPresenter.response(SnapXResult.SUCCESS, loginResult);
-                            saveDataInDb();
+//                            saveDataInDb();
                            /* AccessToken.getCurrentAccessToken().getToken();
                             AccessToken.getCurrentAccessToken().getUserId();
                             Profile.getCurrentProfile().getFirstName();

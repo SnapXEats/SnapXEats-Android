@@ -2,8 +2,6 @@ package com.snapxeats.ui.foodpreference;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -12,12 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.SnapXApplication;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.FoodPref;
 import com.snapxeats.common.model.RootFoodPref;
 import com.snapxeats.common.model.UserFoodPreferences;
@@ -26,8 +20,6 @@ import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.cuisinepreference.OnDoubleTapListenr;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -118,7 +110,7 @@ public class FoodPreferenceActivity extends BaseActivity implements
     }
 
     private void setUpRecyclerView() {
-        getFoodPrefDataFromDb();
+        getFoodPrefData();
 
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(FoodPreferenceActivity.this,
                 2);
@@ -184,21 +176,9 @@ public class FoodPreferenceActivity extends BaseActivity implements
         return true;
     }
 
-    private void getFoodPrefDataFromDb() {
-
+    private void getFoodPrefData() {
         userFoodPreferencesList = presenter.getFoodPrefListFromDb();
-
-        if (null != userFoodPreferencesList && 0 < userFoodPreferencesList.size()) {
-            for (int index = 0; index < rootFoodPrefList.size(); index++) {
-                if (userFoodPreferencesList.get(index).getIs_food_favourite()) {
-                    rootFoodPrefList.get(index).set_food_favourite
-                            (userFoodPreferencesList.get(index).getIs_food_favourite());
-                } else if (userFoodPreferencesList.get(index).getIs_food_like()) {
-                    rootFoodPrefList.get(index).set_food_like
-                            (userFoodPreferencesList.get(index).getIs_food_like());
-                }
-            }
-        }
+        new FoodPrefFbHelper().getFoodPrefData(rootFoodPrefList, userFoodPreferencesList);
     }
 
     public void showSavePrefDialog() {

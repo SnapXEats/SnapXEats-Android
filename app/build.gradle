@@ -96,7 +96,11 @@ dependencies {
     //Segmented control
     compile 'com.github.ceryle:SegmentedButton:v2.0.2'
 
+    //Greendao
     compile 'org.greenrobot:greendao:3.2.2'
+
+    //CircularImageview
+    compile 'com.pkmmte.view:circularimageview:1.1'
 
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'

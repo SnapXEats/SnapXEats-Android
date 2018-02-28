@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.LocationCuisine;
+import com.snapxeats.common.model.SnapXUser;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.utilities.SnapXResult;
 
@@ -63,6 +64,11 @@ public class HomeFgmtPresenterImpl implements HomeFgmtContract.HomeFgmtPresenter
     @Override
     public void getUserData(SnapXUserRequest snapXUserRequest) {
         mHomeFgmtInteractor.getUserData(snapXUserRequest);
+    }
+
+    @Override
+    public void saveUserDataInDb(SnapXUser snapXUser) {
+        mHomeFgmtInteractor.saveDataInDb(snapXUser);
     }
 
     /**

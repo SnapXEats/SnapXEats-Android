@@ -99,5 +99,6 @@
     <string name="get_uber_ride">Get A Ride</string>
     <string name="call">Call</string>
     <string name="directions">Directions</string>
+    <string name="user_id">user_id</string>
 
 </resources>

@@ -142,10 +142,8 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
                 SnapXToast.debug("afterTextChanged LocationActivity");
                 if (s.length() == 0)
                     if (resultList != null && mAdapter != null) {
-                        resultList.clear();
-                        predictionList.clear();
-                        mAdapter.notifyDataSetChanged();
-                        mListView.setVisibility(View.GONE);
+                    resetViews();
+
                     }
             }
         });
@@ -164,6 +162,14 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
         });
     }
 
+    private void resetViews() {
+        resultList.clear();
+        predictionList.clear();
+        mListView.setVisibility(View.GONE);
+        mImgLoader.setVisibility(View.GONE);
+        mAdapter.notifyDataSetChanged();
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -173,10 +179,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     public void clearText() {
         mAutoCompleteTextView.setText("");
         if (mAdapter != null) {
-            mListView.setVisibility(View.GONE);
-            resultList.clear();
-            predictionList.clear();
-            mAdapter.notifyDataSetChanged();
+            resetViews();
         }
     }
 

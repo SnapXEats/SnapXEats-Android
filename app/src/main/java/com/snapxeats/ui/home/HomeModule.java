@@ -33,6 +33,15 @@ public abstract class HomeModule {
     abstract NavPrefFragment navPrefFragment();
 
     @Provides
+    static HomeContract.HomePresenter provideHomePresenter(HomeInteractor interactor,
+                                                               HomeRouterImpl router) {
+        HomeContract.HomePresenter homePresenter =
+                new HomePresenterImpl(interactor, router);
+        interactor.setHomePresenter(homePresenter);
+        return homePresenter;
+    }
+
+    @Provides
     static HomeFgmtContract.HomeFgmtPresenter providePresenter(HomeFgmtInteractor interactor,
                                                                HomeFgmtRouterImpl router) {
         HomeFgmtContract.HomeFgmtPresenter homeFgmtPresenter =

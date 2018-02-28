@@ -10,24 +10,26 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
 import com.NetworkCheckReceiver;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.model.Cuisines;
-import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.common.model.UserCuisinePreferences;
-import com.snapxeats.common.model.UserCuisinePreferencesDao;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static com.SCREENNAMES.CUISINE;
 
 
@@ -55,9 +57,6 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
     private CuisinePrefAdapter mCuisinePrefAdapter;
     private NetworkCheckReceiver networkCheckReceiver;
     private List<Cuisines> rootCuisineList;
-
-    private DaoSession daoSession;
-    private UserCuisinePreferencesDao cuisinePreferencesDao;
     private List<UserCuisinePreferences> cuisinedPrefList;
     public static boolean isCuisineSelecetionChange;
 
@@ -85,28 +84,14 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
         networkCheckReceiver = new NetworkCheckReceiver();
         cuisinedPrefList = new ArrayList<>();
 
-        daoSession = ((SnapXApplication) getApplication()).getDaoSession();
-        cuisinePreferencesDao = daoSession.getUserCuisinePreferencesDao();
-
         showProgressDialog();
         prefPresenter.getCuisinePrefList();
     }
 
-    private void getCuisinePrefDataFromDb() {
-
+    private void getCuisinePrefData() {
         cuisinedPrefList = prefPresenter.getCuisineListFromDb();
 
-        if (null != cuisinedPrefList && 0 < cuisinedPrefList.size()) {
-            for (int index = 0; index < rootCuisineList.size(); index++) {
-                if (cuisinedPrefList.get(index).getIs_cuisine_favourite()) {
-                    rootCuisineList.get(index).set_cuisine_favourite
-                            (cuisinedPrefList.get(index).getIs_cuisine_favourite());
-                } else if (cuisinedPrefList.get(index).getIs_cuisine_like()) {
-                    rootCuisineList.get(index).set_cuisine_like
-                            (cuisinedPrefList.get(index).getIs_cuisine_like());
-                }
-            }
-        }
+        rootCuisineList = new CuisinePrefDbHelper().getCuisinePrefData(cuisinedPrefList, rootCuisineList);
     }
 
     @Override
@@ -139,7 +124,7 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
     }
 
     private void setUpRecyclerView() {
-        getCuisinePrefDataFromDb();
+        getCuisinePrefData();
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(CuisinePrefActivity.this, 2);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setLayoutManager(layoutManager);
