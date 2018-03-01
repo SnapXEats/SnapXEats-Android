@@ -10,7 +10,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class Cuisines implements Parcelable {
+public class Cuisines  implements Parcelable {
 
     private String cuisine_info_id;
     private String cuisine_image_url;

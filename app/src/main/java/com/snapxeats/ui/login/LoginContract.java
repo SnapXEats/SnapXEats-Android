@@ -15,6 +15,7 @@ public class LoginContract {
 
     interface LoginPresenter extends BasePresenter<LoginView> {
         void presentScreen(Router.Screen screen);
+
     }
 
     public interface LoginRouter {

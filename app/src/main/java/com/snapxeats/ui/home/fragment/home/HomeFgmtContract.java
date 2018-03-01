@@ -4,6 +4,7 @@ import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.LocationCuisine;
+import com.snapxeats.common.model.SnapXUser;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.dagger.AppContract;
 
@@ -25,6 +26,7 @@ public class HomeFgmtContract {
 
         void getUserData(SnapXUserRequest snapXUserRequest);
 
+        void saveUserDataInDb(SnapXUser snapXUser);
     }
 
     interface HomeFgmtRouter {

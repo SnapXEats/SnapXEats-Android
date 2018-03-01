@@ -1,12 +1,19 @@
 package com.snapxeats.ui.home.fragment.home;
 
 import android.app.Activity;
+import android.net.Uri;
 
+import com.facebook.AccessToken;
+import com.facebook.Profile;
+import com.snapxeats.SnapXApplication;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
-import com.snapxeats.common.model.SnapXUserInfo;
+import com.snapxeats.common.model.SnapXUser;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
+import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.SnapxDataDao;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
@@ -29,6 +36,8 @@ import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 public class HomeFgmtInteractor {
 
     private HomeFgmtContract.HomeFgmtPresenter homeFgmtPresenter;
+    private DaoSession daoSession;
+    private SnapxDataDao snapxDataDao;
 
     private Activity mContext;
 
@@ -45,6 +54,7 @@ public class HomeFgmtInteractor {
 
     public void setContext(HomeFgmtContract.HomeFgmtView view) {
         this.mContext = view.getActivity();
+        daoSession = ((SnapXApplication) mContext.getApplication()).getDaoSession();
     }
 
     /**
@@ -88,12 +98,13 @@ public class HomeFgmtInteractor {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             Call<SnapXUserResponse> snapXUserCall = apiHelper.getUserToken(snapXUserRequest);
+
             snapXUserCall.enqueue(new Callback<SnapXUserResponse>() {
                 @Override
                 public void onResponse(Call<SnapXUserResponse> call, Response<SnapXUserResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        SnapXUserInfo snapXUserInfo = response.body().getUserInfo();
-
+                        SnapXUser snapXUser = response.body().getUserInfo();
+                        homeFgmtPresenter.response(SnapXResult.SUCCESS, snapXUser);
                     }
                 }
 
@@ -107,5 +118,26 @@ public class HomeFgmtInteractor {
         }
     }
 
+    public void saveDataInDb(SnapXUser snapXUser) {
+        snapxDataDao = daoSession.getSnapxDataDao();
 
+        SnapxData snapxData = new SnapxData();
+        //Data from server
+        snapxData.setUserId(snapXUser.getUser_id());
+        snapxData.setToken(snapXUser.getToken());
+        snapxData.setSocialToken(snapXUser.getSocial_platform());
+        snapxData.setIsFirstTimeUser(snapXUser.getIsFirstTimeUser());
+
+        String userName = Profile.getCurrentProfile().getFirstName() + " "
+                + Profile.getCurrentProfile().getLastName();
+
+        Uri profileUri = Profile.getCurrentProfile().getProfilePictureUri(50, 50);
+
+        snapxData.setSocialToken(AccessToken.getCurrentAccessToken().getToken());
+        snapxData.setSocialUserId(AccessToken.getCurrentAccessToken().getUserId());
+        snapxData.setUserName(userName);
+        snapxData.setUserImage(profileUri.toString());
+
+        snapxDataDao.insert(snapxData);
+    }
 }

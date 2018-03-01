@@ -1,7 +1,11 @@
 package com.snapxeats;
 
+import com.snapxeats.common.model.DaoMaster;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.dagger.AppComponent;
 import com.snapxeats.dagger.DaggerAppComponent;
+
+import org.greenrobot.greendao.database.Database;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DaggerApplication;
@@ -11,6 +15,19 @@ import dagger.android.DaggerApplication;
  */
 
 public class SnapXApplication extends DaggerApplication {
+    public DaoSession daoSession;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "SnapXDb");
+        Database db = helper.getWritableDb();
+        daoSession = new DaoMaster(db).newSession();
+    }
+
+    public DaoSession getDaoSession() {
+        return daoSession;
+    }
 
     protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
         AppComponent appComponent = DaggerAppComponent.builder().application(this).build();

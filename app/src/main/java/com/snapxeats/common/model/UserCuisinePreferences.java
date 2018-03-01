@@ -3,59 +3,69 @@ package com.snapxeats.common.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.greenrobot.greendao.annotation.Entity;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * Created by Snehal Tembare on 11/2/18.
  */
 
-@Getter
-@Setter
-
-public class UserCuisinePreferences implements Parcelable {
+@Entity
+public class UserCuisinePreferences {
     private String cuisine_info_id;
     private boolean is_cuisine_like;
     private boolean is_cuisine_favourite;
+    private String user_id;
 
-    public UserCuisinePreferences() {
-    }
-
+    @Generated(hash = 1113470737)
     public UserCuisinePreferences(String cuisine_info_id,
                                   boolean is_cuisine_like,
-                                  boolean is_cuisine_favourite) {
+                                  boolean is_cuisine_favourite,
+                                  String user_id) {
         this.cuisine_info_id = cuisine_info_id;
         this.is_cuisine_like = is_cuisine_like;
         this.is_cuisine_favourite = is_cuisine_favourite;
+        this.user_id = user_id;
     }
 
-    protected UserCuisinePreferences(Parcel in) {
-        cuisine_info_id = in.readString();
-        is_cuisine_like = in.readByte() != 0;
-        is_cuisine_favourite = in.readByte() != 0;
+    @Generated(hash = 1225303133)
+    public UserCuisinePreferences() {
     }
 
-    public static final Creator<UserCuisinePreferences> CREATOR = new Creator<UserCuisinePreferences>() {
-        @Override
-        public UserCuisinePreferences createFromParcel(Parcel in) {
-            return new UserCuisinePreferences(in);
-        }
-
-        @Override
-        public UserCuisinePreferences[] newArray(int size) {
-            return new UserCuisinePreferences[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
+    public String getCuisine_info_id() {
+        return this.cuisine_info_id;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(cuisine_info_id);
-        dest.writeByte((byte) (is_cuisine_like ? 1 : 0));
-        dest.writeByte((byte) (is_cuisine_favourite ? 1 : 0));
+    public void setCuisine_info_id(String cuisine_info_id) {
+        this.cuisine_info_id = cuisine_info_id;
     }
+
+    public boolean getIs_cuisine_like() {
+        return this.is_cuisine_like;
+    }
+
+    public void setIs_cuisine_like(boolean is_cuisine_like) {
+        this.is_cuisine_like = is_cuisine_like;
+    }
+
+    public boolean getIs_cuisine_favourite() {
+        return this.is_cuisine_favourite;
+    }
+
+    public void setIs_cuisine_favourite(boolean is_cuisine_favourite) {
+        this.is_cuisine_favourite = is_cuisine_favourite;
+    }
+
+    public String getUser_id() {
+        return this.user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
 }

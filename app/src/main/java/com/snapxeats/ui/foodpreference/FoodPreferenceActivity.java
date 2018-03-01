@@ -2,8 +2,6 @@ package com.snapxeats.ui.foodpreference;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -12,20 +10,16 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.FoodPref;
 import com.snapxeats.common.model.RootFoodPref;
+import com.snapxeats.common.model.UserFoodPreferences;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.cuisinepreference.OnDoubleTapListenr;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -59,10 +53,9 @@ public class FoodPreferenceActivity extends BaseActivity implements
 
     private FoodPrefAdapter mFoodPrefAdapter;
     private List<FoodPref> rootFoodPrefList;
+    private List<UserFoodPreferences> userFoodPreferencesList;
+
     public static boolean isFoodPrefSelected;
-    private SharedPreferences preferences;
-    private SharedPreferences.Editor editor;
-    private Gson gson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,32 +78,14 @@ public class FoodPreferenceActivity extends BaseActivity implements
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(getString(R.string.food_preference));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        gson = new Gson();
-        preferences = utility.getSharedPreferences();
-        editor = preferences.edit();
 
-        String json = preferences.getString(getString(R.string.rootFoodPrefList), "");
-
-
-        Type type = new TypeToken<ArrayList<FoodPref>>() {
-        }.getType();
-        ArrayList<FoodPref> listFromDb = gson.fromJson(json, type);
-
-        if (listFromDb != null) {
-            rootFoodPrefList = listFromDb;
-            setUpRecyclerView();
-        } else {
-            showProgressDialog();
-            presenter.getFoodPrefList();
-        }
+        showProgressDialog();
+        presenter.getFoodPrefList();
     }
 
     @OnClick(R.id.btn_food_pref_save)
     public void saveFoodPref() {
-        String json = gson.toJson(rootFoodPrefList);
-        editor.putString(getString(R.string.rootFoodPrefList), json);
-        editor.apply();
-        finish();
+        saveFoodPrefInDbAndFinish();
     }
 
 
@@ -121,8 +96,6 @@ public class FoodPreferenceActivity extends BaseActivity implements
             rootFoodPrefList.get(index).set_food_like(false);
             mFoodPrefAdapter.notifyDataSetChanged();
         }
-        editor.putString(getString(R.string.rootFoodPrefList), "");
-        editor.apply();
     }
 
     @Override
@@ -132,14 +105,13 @@ public class FoodPreferenceActivity extends BaseActivity implements
             RootFoodPref rootFoodPref = (RootFoodPref) value;
 
             rootFoodPrefList = rootFoodPref.getFoodTypeList();
-            SnapXToast.debug("CuisinePrefActivity: Size" + rootFoodPrefList.size());
-
             setUpRecyclerView();
-
         }
     }
 
     private void setUpRecyclerView() {
+        getFoodPrefData();
+
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(FoodPreferenceActivity.this,
                 2);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -204,31 +176,33 @@ public class FoodPreferenceActivity extends BaseActivity implements
         return true;
     }
 
+    private void getFoodPrefData() {
+        userFoodPreferencesList = presenter.getFoodPrefListFromDb();
+        new FoodPrefFbHelper().getFoodPrefData(rootFoodPrefList, userFoodPreferencesList);
+    }
+
     public void showSavePrefDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.want_to_save_pref));
-        builder.setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        builder.setPositiveButton(getString(R.string.save), (dialog, which) -> {
 
-                String json = gson.toJson(rootFoodPrefList);
-                editor.putString("rootFoodPrefList", json);
-                editor.apply();
-                finish();
+            saveFoodPrefInDbAndFinish();
 
-            }
         });
 
-        builder.setNegativeButton(getString(R.string.discard), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                finish();
-            }
+        builder.setNegativeButton(getString(R.string.discard), (dialog, which) -> {
+            dialog.dismiss();
+            finish();
         });
         Dialog alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
 
+    }
+
+    private void saveFoodPrefInDbAndFinish() {
+        presenter.saveFoodPrefList(rootFoodPrefList);
+        isFoodPrefSelected = false;
+        finish();
     }
 }

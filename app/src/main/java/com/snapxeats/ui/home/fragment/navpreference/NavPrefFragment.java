@@ -21,43 +21,38 @@ import android.widget.CheckBox;
 import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
+import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.FoodPref;
-import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.SnapxDataDao;
+import com.snapxeats.common.model.UserCuisinePreferences;
+import com.snapxeats.common.model.UserCuisinePreferencesDao;
 import com.snapxeats.common.model.UserFoodPreferences;
 import com.snapxeats.common.model.UserPreference;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.ui.foodpreference.FoodPreferenceActivity;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.ceryle.segmentedbutton.SegmentedButton;
 import co.ceryle.segmentedbutton.SegmentedButtonGroup;
-
 import static com.snapxeats.common.Router.Screen.CUISINE_PREF;
-import static com.snapxeats.common.Router.Screen.FOOD_PREF;
-import static com.snapxeats.ui.home.HomeActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.DISTANCE.DISTANCE_FIVE;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.DISTANCE.DISTANCE_FOUR;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.DISTANCE.DISTANCE_ONE;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.DISTANCE.DISTANCE_THREE;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.DISTANCE.DISTANCE_TWO;
-import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.PRICING.AUTO;
+import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.PRICING.PRICE_AUTO;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.PRICING.PRICE_FOUR;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.PRICING.PRICE_ONE;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.PRICING.PRICE_THREE;
@@ -87,7 +82,7 @@ public class NavPrefFragment extends BaseFragment implements View.OnClickListene
     }
 
     public interface PRICING {
-        int AUTO = 0;
+        int PRICE_AUTO = 0;
         int PRICE_ONE = 1;
         int PRICE_TWO = 2;
         int PRICE_THREE = 3;
@@ -216,9 +211,6 @@ public class NavPrefFragment extends BaseFragment implements View.OnClickListene
     @BindView(R.id.txt_distance_five)
     protected TextView mTxtDistanceFive;
 
-    /*@BindView(R.id.txt_location)
-    protected TextView mTxtLocation;*/
-
     @BindView(R.id.card_rating_three)
     protected CardView mLayoutRatingThree;
 
@@ -234,8 +226,15 @@ public class NavPrefFragment extends BaseFragment implements View.OnClickListene
     @BindView(R.id.check_food)
     protected CheckBox mFoodCheckBox;
 
-    private Gson gson;
+    @BindView(R.id.check_cuisines)
+    protected CheckBox mCuisineCheckBox;
     private ArrayList<FoodPref> rootFoodPrefList;
+
+    private List<UserCuisinePreferences> cuisinedPrefList;
+
+    private DaoSession daoSession;
+    private SnapxDataDao snapxDataDao;
+    private UserCuisinePreferencesDao cuisinePreferencesDao;
 
     @Inject
     public NavPrefFragment() {
@@ -251,7 +250,8 @@ public class NavPrefFragment extends BaseFragment implements View.OnClickListene
         utility.setContext(activity);
         snapXDialog.setContext(activity);
         preferences = utility.getSharedPreferences();
-        gson = new Gson();
+
+        daoSession = ((SnapXApplication) getActivity().getApplication()).getDaoSession();
     }
 
     private void updateDistanceUI(int position) {
@@ -314,18 +314,15 @@ public class NavPrefFragment extends BaseFragment implements View.OnClickListene
     private void updatePricingUI(int position) {
 
         switch (position) {
-            case AUTO:
-                /*TODO-Need to ask
-                pricing = DISTANCE_ONE;*/
+            case PRICE_AUTO:
+                pricing = PRICE_AUTO;
                 mSbgPricing.clearFocus();
-
                 mSbgPricing.setPosition(0);
 
-//                mSbPriceAuto.setDrawable(ContextCompat.getColor(activity,R.color.pref_slider_foreground));
-                mSbPriceOne.setBackgroundColor(ContextCompat.getColor(activity,R.color.pref_slider_background));
-                mSbPriceTwo.setBackgroundColor(ContextCompat.getColor(activity,R.color.pref_slider_background));
-                mSbPriceThree.setBackgroundColor(ContextCompat.getColor(activity,R.color.pref_slider_background));
-                mSbPriceFour.setBackgroundColor(ContextCompat.getColor(activity,R.color.pref_slider_background));
+                mSbPriceOne.setBackgroundColor(ContextCompat.getColor(activity, R.color.pref_slider_background));
+                mSbPriceTwo.setBackgroundColor(ContextCompat.getColor(activity, R.color.pref_slider_background));
+                mSbPriceThree.setBackgroundColor(ContextCompat.getColor(activity, R.color.pref_slider_background));
+                mSbPriceFour.setBackgroundColor(ContextCompat.getColor(activity, R.color.pref_slider_background));
 
                 mTxtPriceAuto.setTextColor(ContextCompat.getColor(activity, R.color.pref_txt_selected_color));
                 mTxtPriceOne.setTextColor(ContextCompat.getColor(activity, R.color.pref_txt_color));
@@ -340,11 +337,10 @@ public class NavPrefFragment extends BaseFragment implements View.OnClickListene
 
                 mSbgPricing.setPosition(1);
 
-                mSbPriceAuto.setBackgroundColor(ContextCompat.getColor(activity,R.color.pref_slider_background));
-//                mSbPriceOne.setDrawable(ContextCompat.getColor(activity,R.color.pref_slider_foreground));
-                mSbPriceTwo.setBackgroundColor(ContextCompat.getColor(activity,R.color.pref_slider_background));
-                mSbPriceThree.setBackgroundColor(ContextCompat.getColor(activity,R.color.pref_slider_background));
-                mSbPriceFour.setBackgroundColor(ContextCompat.getColor(activity,R.color.pref_slider_background));
+                mSbPriceAuto.setBackgroundColor(ContextCompat.getColor(activity, R.color.pref_slider_background));
+                mSbPriceTwo.setBackgroundColor(ContextCompat.getColor(activity, R.color.pref_slider_background));
+                mSbPriceThree.setBackgroundColor(ContextCompat.getColor(activity, R.color.pref_slider_background));
+                mSbPriceFour.setBackgroundColor(ContextCompat.getColor(activity, R.color.pref_slider_background));
 
                 mTxtPriceAuto.setTextColor(ContextCompat.getColor(activity, R.color.pref_txt_color));
                 mTxtPriceOne.setTextColor(ContextCompat.getColor(activity, R.color.pref_txt_selected_color));
@@ -379,11 +375,10 @@ public class NavPrefFragment extends BaseFragment implements View.OnClickListene
                 pricing = PRICE_FOUR;
                 mSbgPricing.setPosition(4);
 
-                mSbPriceAuto.setBackgroundColor(ContextCompat.getColor(activity,R.color.pref_slider_background));
-                mSbPriceOne.setBackgroundColor(ContextCompat.getColor(activity,R.color.pref_slider_background));
-                mSbPriceTwo.setBackgroundColor(ContextCompat.getColor(activity,R.color.pref_slider_background));
-                mSbPriceThree.setBackgroundColor(ContextCompat.getColor(activity,R.color.pref_slider_background));
-//                mSbPriceFour.setBackgroundColor(ContextCompat.getColor(activity,R.color.pref_slider_foreground));
+                mSbPriceAuto.setBackgroundColor(ContextCompat.getColor(activity, R.color.pref_slider_background));
+                mSbPriceOne.setBackgroundColor(ContextCompat.getColor(activity, R.color.pref_slider_background));
+                mSbPriceTwo.setBackgroundColor(ContextCompat.getColor(activity, R.color.pref_slider_background));
+                mSbPriceThree.setBackgroundColor(ContextCompat.getColor(activity, R.color.pref_slider_background));
 
                 mTxtPriceAuto.setTextColor(ContextCompat.getColor(activity, R.color.pref_txt_color));
                 mTxtPriceOne.setTextColor(ContextCompat.getColor(activity, R.color.pref_txt_color));
@@ -476,12 +471,6 @@ public class NavPrefFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        /*if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }*/
     }
 
     @OnClick(R.id.btn_pref_apply)
@@ -489,19 +478,15 @@ public class NavPrefFragment extends BaseFragment implements View.OnClickListene
         UserFoodPreferences preferences;
         List<UserFoodPreferences> list = new ArrayList<>();
         for (FoodPref foodPref : rootFoodPrefList) {
-            preferences = new UserFoodPreferences(foodPref.getFood_type_info_id(),
+            preferences = new UserFoodPreferences(null,foodPref.getFood_type_info_id(),
                     foodPref.is_food_like(), foodPref.is_food_favourite());
             list.add(preferences);
         }
-        UserPreference userPreference = new UserPreference("token", "user_preferences_id",
-                String.valueOf(rating), String.valueOf(pricing), String.valueOf(distance),
-                isSortByDistance, isSortByRating, null, list);
-    }
+           }
 
     @Override
     public void onDetach() {
         super.onDetach();
-//        mListener = null;
     }
 
     @Override
@@ -543,17 +528,17 @@ public class NavPrefFragment extends BaseFragment implements View.OnClickListene
     }
 
     private void checkDataFromDb() {
-        String json = preferences.getString(getString(R.string.rootFoodPrefList), "");
-        Type type = new TypeToken<ArrayList<FoodPref>>() {
-        }.getType();
-        rootFoodPrefList = gson.fromJson(json, type);
-        SnapXToast.debug("Shared pref Data:" + rootFoodPrefList);
-        if (null != rootFoodPrefList) {
-            mFoodCheckBox.setVisibility(View.VISIBLE);
-            mFoodCheckBox.setChecked(true);
+
+        cuisinePreferencesDao = daoSession.getUserCuisinePreferencesDao();
+
+        cuisinedPrefList = cuisinePreferencesDao.loadAll();
+
+        if (null != cuisinedPrefList && 0 < cuisinedPrefList.size()) {
+            mCuisineCheckBox.setVisibility(View.VISIBLE);
+            mCuisineCheckBox.setChecked(true);
         } else {
-            mFoodCheckBox.setVisibility(View.GONE);
-            mFoodCheckBox.setChecked(false);
+            mCuisineCheckBox.setVisibility(View.GONE);
+            mCuisineCheckBox.setChecked(false);
         }
     }
 
@@ -711,6 +696,4 @@ public class NavPrefFragment extends BaseFragment implements View.OnClickListene
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-
 }

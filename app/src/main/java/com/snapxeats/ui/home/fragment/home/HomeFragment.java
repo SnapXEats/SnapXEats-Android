@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 import com.NetworkCheckReceiver;
 import com.facebook.AccessToken;
+import com.facebook.Profile;
 import com.google.gson.Gson;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
@@ -43,6 +44,7 @@ import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisine;
 import com.snapxeats.common.model.RootInstagram;
 import com.snapxeats.common.model.SelectedCuisineList;
+import com.snapxeats.common.model.SnapXUser;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
@@ -105,26 +107,13 @@ public class HomeFragment extends BaseFragment implements
 
     private SnapXUserRequest mSnapXUserRequest;
 
-    private OnFragmentInteractionListener mListener;
-
     private Activity activity;
     private DrawerLayout mDrawerLayout;
-    private MyReceiver myReceiver;
-    private NetworkCheckReceiver networkCheckReceiver;
     public SharedPreferences preferences;
     private RootCuisine mRootCuisine;
 
     @Inject
     public HomeFragment() {
-    }
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        myReceiver = new HomeFragment.MyReceiver();
-        networkCheckReceiver = new NetworkCheckReceiver();
     }
 
     @Override
@@ -133,6 +122,7 @@ public class HomeFragment extends BaseFragment implements
         snapXDialog.setContext(getActivity());
         utility.setContext(getActivity());
         presenter.addView(this);
+        mTxtPlaceName.setSingleLine();
 
         buildGoogleAPIClient();
 
@@ -166,11 +156,8 @@ public class HomeFragment extends BaseFragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initView();
-        mTxtPlaceName.setSingleLine();
-
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         mRecyclerView.setNestedScrollingEnabled(false);
-
 
         mDrawerLayout = activity.findViewById(R.id.drawer_layout);
 
@@ -270,6 +257,7 @@ public class HomeFragment extends BaseFragment implements
                 utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
 
                 mTxtPlaceName.setText(mSelectedLocation.getName());
+                showProgressDialog();
                 presenter.getCuisineList(mLocationCuisine);
             }
         }
@@ -300,8 +288,20 @@ public class HomeFragment extends BaseFragment implements
     @Override
     public void success(Object value) {
         dismissProgressDialog();
-        mRootCuisine = (RootCuisine) value;
-        setRecyclerView();
+
+        if (value instanceof RootCuisine) {
+            mRootCuisine = (RootCuisine) value;
+            setRecyclerView();
+        } else if (value instanceof SnapXUser) {
+            SnapXUser snapXUser = (SnapXUser) value;
+
+            SharedPreferences preferences = utility.getSharedPreferences();
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(getString(R.string.user_id), snapXUser.getUser_id());
+            editor.apply();
+
+            presenter.saveUserDataInDb(snapXUser);
+        }
     }
 
     public void setRecyclerView() {
@@ -334,7 +334,6 @@ public class HomeFragment extends BaseFragment implements
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     @Override
@@ -510,11 +509,6 @@ public class HomeFragment extends BaseFragment implements
         Dialog alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
-    }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 
 
