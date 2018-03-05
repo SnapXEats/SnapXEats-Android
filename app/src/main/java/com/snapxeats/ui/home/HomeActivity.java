@@ -10,6 +10,10 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
+import android.widget.TextView;
+
+import com.facebook.AccessToken;
+import com.facebook.Profile;
 import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
@@ -40,8 +44,11 @@ public class HomeActivity extends LocationBaseActivity implements
     protected DrawerLayout mDrawerLayout;
 
     private FragmentTransaction transaction;
+
     private FragmentManager fragmentManager;
 
+    @BindView(R.id.nav_view)
+    protected NavigationView mNavigationView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,12 +65,19 @@ public class HomeActivity extends LocationBaseActivity implements
 
     @Override
     public void initView() {
-
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mNavigationView.setNavigationItemSelectedListener(this);
 
         fragmentManager = getFragmentManager();
         transaction = fragmentManager.beginTransaction();
+
+        TextView mTxtUserName=mNavigationView.findViewById(R.id.txt_nav_name);
+        mTxtUserName.setText(Profile.getCurrentProfile().getFirstName()+" "+
+                Profile.getCurrentProfile().getLastName());
+
+       /* TextView mTxtUserEmail=mNavigationView.findViewById(R.id.txt_nav_email);
+        mTxtUserName.setText(Profile.getCurrentProfile());
+*/
+
 
         transaction.replace(R.id.frame_layout, homeFragment);
         transaction.commit();
@@ -74,11 +88,9 @@ public class HomeActivity extends LocationBaseActivity implements
         super.onResume();
     }
 
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-
         Fragment selectedFragment = null;
         switch (item.getItemId()) {
             case R.id.nav_home:
@@ -102,7 +114,6 @@ public class HomeActivity extends LocationBaseActivity implements
             transaction.replace(R.id.frame_layout, selectedFragment);
             transaction.commit();
         }
-
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -116,7 +127,6 @@ public class HomeActivity extends LocationBaseActivity implements
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }
-
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

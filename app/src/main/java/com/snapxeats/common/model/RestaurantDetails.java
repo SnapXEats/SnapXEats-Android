@@ -17,7 +17,7 @@ import lombok.Setter;
 public class RestaurantDetails implements Parcelable {
     private String location_lat;
 
-    private List<String> restaurant_timings;
+    private List<RestaurantTimings> restaurant_timings;
 
     private String isOpenNow;
 
@@ -43,11 +43,11 @@ public class RestaurantDetails implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(location_lat);
-        dest.writeStringList(restaurant_timings);
+        dest.writeList(restaurant_timings);
         dest.writeString(isOpenNow);
         dest.writeString(restaurant_info_id);
-        dest.writeList(restaurant_speciality);
-        dest.writeList(restaurant_pics);
+        dest.writeTypedList(restaurant_speciality);
+        dest.writeTypedList(restaurant_pics);
         dest.writeString(restaurant_address);
         dest.writeString(restaurant_name);
         dest.writeString(restaurant_contact_no);
@@ -59,13 +59,12 @@ public class RestaurantDetails implements Parcelable {
 
     protected RestaurantDetails(Parcel in) {
         location_lat = in.readString();
-        restaurant_timings = in.createStringArrayList();
+        restaurant_timings = new ArrayList<RestaurantTimings>();
+        in.readList(restaurant_timings, RestaurantTimings.class.getClassLoader());
         isOpenNow = in.readString();
         restaurant_info_id = in.readString();
-        restaurant_speciality = new ArrayList<RestaurantSpeciality>();
-        in.readList(restaurant_speciality, RestaurantSpeciality.class.getClassLoader());
-        restaurant_pics = new ArrayList<RestaurantPics>();
-        in.readList(restaurant_pics, RestaurantPics.class.getClassLoader());
+        restaurant_speciality = in.createTypedArrayList(RestaurantSpeciality.CREATOR);
+        restaurant_pics = in.createTypedArrayList(RestaurantPics.CREATOR);
         restaurant_address = in.readString();
         restaurant_name = in.readString();
         restaurant_contact_no = in.readString();

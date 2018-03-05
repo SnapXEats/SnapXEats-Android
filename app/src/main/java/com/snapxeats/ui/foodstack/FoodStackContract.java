@@ -3,8 +3,6 @@ package com.snapxeats.ui.foodstack;
 import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
-import com.snapxeats.common.model.RootCuisine;
-import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.dagger.AppContract;
 
@@ -13,11 +11,11 @@ import com.snapxeats.dagger.AppContract;
  */
 public class FoodStackContract {
 
-    interface FoodStackView extends BaseView<FoodStackPreseneter>, AppContract.SnapXResults {
+    interface FoodStackView extends BaseView<FoodStackPresenter>, AppContract.SnapXResults {
     }
 
 
-    interface FoodStackPreseneter extends BasePresenter<FoodStackView> {
+    interface FoodStackPresenter extends BasePresenter<FoodStackView> {
 
         void presentScreen(Router.Screen screen);
 

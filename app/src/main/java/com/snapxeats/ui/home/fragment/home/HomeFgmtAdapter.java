@@ -70,12 +70,12 @@ public class HomeFgmtAdapter extends RecyclerView.Adapter<HomeFgmtAdapter.ViewHo
             if (cuisines.isSelected()) {
                 viewHolder.imgCuisineSelected.setVisibility(View.VISIBLE);
                 viewHolder.linearLayoutCuisine.setAlpha((float) SELECT_OPACITY);
-                selectedCuisineList.add(cuisines.getCuisine_name());
+                selectedCuisineList.add(cuisines.getCuisine_info_id());
 
             } else {
                 viewHolder.imgCuisineSelected.setVisibility(View.GONE);
                 viewHolder.linearLayoutCuisine.setAlpha((float) UNSELECT_OPACITY);
-                selectedCuisineList.remove(cuisines.getCuisine_name());
+                selectedCuisineList.remove(cuisines.getCuisine_info_id());
             }
         });
     }

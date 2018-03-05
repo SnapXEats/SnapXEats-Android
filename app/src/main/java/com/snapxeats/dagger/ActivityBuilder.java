@@ -14,6 +14,8 @@ import com.snapxeats.ui.home.HomeActivity;
 import com.snapxeats.ui.home.HomeModule;
 import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
 import com.snapxeats.ui.restaurant.RestaurantDetailsModule;
+import com.snapxeats.ui.restaurantInfo.RestaurantInfoActivity;
+import com.snapxeats.ui.restaurantInfo.RestaurantInfoModule;
 import com.snapxeats.ui.splash.SplashActivity;
 import com.snapxeats.ui.splash.SplashModule;
 import dagger.Module;
@@ -51,4 +53,7 @@ public abstract class ActivityBuilder {
 
     @ContributesAndroidInjector(modules = FoodPrefModule.class)
     abstract FoodPreferenceActivity bindFoodPrefActivity();
+
+    @ContributesAndroidInjector(modules = RestaurantInfoModule.class)
+    abstract RestaurantInfoActivity bindRestaurantInfoActivity();
 }

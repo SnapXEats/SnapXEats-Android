@@ -108,4 +108,9 @@ dependencies {
 
     //google directions library
     compile 'com.google.maps:google-maps-services:0.1.20'
+
+    //swipe library
+    compile "com.yuyakaido.android:card-stack-view:1.0.0-beta8"
+    compile 'com.github.bumptech.glide:glide:4.0.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
 }

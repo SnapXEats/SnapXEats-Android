@@ -147,7 +147,6 @@ public class FoodPreferenceActivity extends BaseActivity implements
         dismissProgressDialog();
         showNetworkErrorDialog((dialog, which) -> {
         });
-
     }
 
     @Override

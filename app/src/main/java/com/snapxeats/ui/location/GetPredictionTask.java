@@ -79,7 +79,6 @@ public class GetPredictionTask extends AsyncTask<String, Void, List<Prediction>>
                 predictionList.add(prediction);
             }
         } catch (JSONException e) {
-            Log.e(TAG, "Cannot process JSON results", e);
         }
         return predictionList;
     }
@@ -94,7 +93,6 @@ public class GetPredictionTask extends AsyncTask<String, Void, List<Prediction>>
             sb.append("&input=" + URLEncoder.encode(input, "utf8"));
 
             URL url = new URL(sb.toString());
-            SnapXToast.debug("Prediction url:" + url);
             conn = (HttpURLConnection) url.openConnection();
             InputStreamReader in = new InputStreamReader(conn.getInputStream());
 

@@ -83,14 +83,12 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         networkCheckReceiver = new NetworkCheckReceiver();
         cuisinedPrefList = new ArrayList<>();
-
         showProgressDialog();
         prefPresenter.getCuisinePrefList();
     }
 
     private void getCuisinePrefData() {
         cuisinedPrefList = prefPresenter.getCuisineListFromDb();
-
         rootCuisineList = new CuisinePrefDbHelper().getCuisinePrefData(cuisinedPrefList, rootCuisineList);
     }
 
@@ -168,8 +166,6 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
         dismissProgressDialog();
         Intent intent = new Intent();
         intent.putExtra("screen", CUISINE);
-//        intent.setAction("android.net.conn.CONNECTIVITY_CHANGE");
-//        intent.setAction("android.net.wifi.WIFI_STATE_CHANGED");
         sendBroadcast(intent);
 
         showNetworkErrorDialog((dialog, which) -> {

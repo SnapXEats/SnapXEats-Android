@@ -35,11 +35,6 @@
             android:layout_marginBottom="@dimen/common_dimens_20"
             android:src="@drawable/ic_foodstack_placeholder" />
 
-        <com.mindorks.placeholderview.SwipeDirectionalView
-            android:id="@+id/swipe_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -75,6 +70,31 @@
                 android:layout_marginStart="@dimen/common_dimens_12"
                 android:background="@drawable/ic_wish" />
         </LinearLayout>
+
+        <com.yuyakaido.android.cardstackview.CardStackView
+            android:id="@+id/activity_main_card_stack_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="150dp"
+            android:layout_marginEnd="@dimen/common_dimens_30"
+            android:layout_marginStart="@dimen/common_dimens_30"
+            android:layout_marginTop="@dimen/common_dimens_40"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/dimen_32"
+            android:paddingLeft="@dimen/dimen_16"
+            android:paddingRight="@dimen/dimen_16"
+            android:paddingTop="@dimen/dimen_32"
+            app:elevationEnabled="true"
+            app:leftOverlay="@layout/food_overlay_dislike"
+            app:rightOverlay="@layout/food_overlay_like"
+            app:scaleDiff="0.02"
+            app:stackFrom="bottom"
+            app:swipeDirection="freedom_no_bottom"
+            app:swipeEnabled="true"
+            app:swipeThreshold="0.75"
+            app:topOverlay="@layout/food_overlay_wishlist"
+            app:translationDiff="12"
+            app:visibleCount="5" />
     </FrameLayout>
 
 </LinearLayout>
