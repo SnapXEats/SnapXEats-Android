@@ -11,13 +11,16 @@ import com.snapxeats.common.model.RootRestaurantDetails;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.model.UserPreference;
+import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.googleDirections.RootGoogleDir;
+import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -93,6 +96,15 @@ public interface ApiHelper {
     Call<RootRestaurantDetails> getRestDetails(@Path("restaurantInfoId") String restaurantInfoId);
 
     /**
+     * get restaurant info
+     *
+     * @param restaurantInfoId
+     * @return
+     */
+    @GET(WebConstants.RESTAURANT_INFO)
+    Call<RootRestaurantInfo> getRestInfo(@Path("restaurantInfoId") String restaurantInfoId);
+
+    /**
      * get instagram info
      *
      * @param accessToken
@@ -127,4 +139,15 @@ public interface ApiHelper {
      */
     @GET(WebConstants.USER_FOOD_PREF)
     Call<RootFoodPref> getFoodPreferences();
+
+    /**
+     * foodstack gestures api
+     *
+     * @param token
+     * @param rootFoodGestures
+     * @return
+     */
+    @POST(WebConstants.FOODSTACK_GESTURES)
+    Call<RootFoodGestures> foodstackGestures(@Header("Authorization") String token,
+                                             @Body RootFoodGestures rootFoodGestures);
 }

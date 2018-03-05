@@ -7,7 +7,10 @@ import android.os.Handler;
 import com.facebook.AccessToken;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
+import com.snapxeats.common.model.RootInstagram;
+import com.snapxeats.common.model.SnapXUser;
 import com.snapxeats.ui.home.HomeActivity;
+import com.snapxeats.ui.home.fragment.home.HomeFragment;
 import com.snapxeats.ui.login.LoginActivity;
 
 import net.hockeyapp.android.CrashManager;
@@ -39,10 +42,11 @@ public class SplashActivity extends BaseActivity {
 
         new Handler().postDelayed(() -> {
             //check if facebook user is logged in or not
-            if (AccessToken.getCurrentAccessToken() == null) {
+            if (AccessToken.getCurrentAccessToken() == null /*&& rootInstagram.getData().getId()==null*/) {
                 startActivity(new Intent(this, LoginActivity.class));
                 finish();
-            } else {
+            }
+            else {
                 startActivity(new Intent(this, HomeActivity.class));
             }
         }, TIME_OUT);

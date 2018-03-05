@@ -12,11 +12,11 @@ import dagger.Provides;
 public abstract class FoodStackModule {
 
     @Provides
-    static FoodStackContract.FoodStackPreseneter preseneter(FoodStackInteractor interactor,
-                                                            FoodStackRouterImpl foodStackRouter){
-        FoodStackContract.FoodStackPreseneter foodStackPreseneter=new FoodStackPresenterImpl(interactor,foodStackRouter);
-        interactor.setFoodStackPresenter(foodStackPreseneter);
-        return foodStackPreseneter;
+    static FoodStackContract.FoodStackPresenter preseneter(FoodStackInteractor interactor,
+                                                           FoodStackRouterImpl foodStackRouter){
+        FoodStackContract.FoodStackPresenter foodStackPresenter =new FoodStackPresenterImpl(interactor,foodStackRouter);
+        interactor.setFoodStackPresenter(foodStackPresenter);
+        return foodStackPresenter;
     }
     @Provides
     static FoodStackRouterImpl provideFoodStackRouter(Router router){

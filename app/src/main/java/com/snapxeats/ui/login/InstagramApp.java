@@ -3,8 +3,11 @@ package com.snapxeats.ui.login;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 
+import com.facebook.AccessToken;
+import com.facebook.Profile;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.constants.SnapXToast;
@@ -71,12 +74,11 @@ public class InstagramApp {
             public void onResponse(Call<RootInstagram> call, Response<RootInstagram> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     rootInstagram = response.body();
+                    //Save data in db
                     saveDataInDb(token, rootInstagram);
-
                     SnapXToast.showToast(InstagramApp.this.context, context.getString(R.string.insta_login_success));
                     Intent intent = new Intent(context, HomeActivity.class);
                     rootInstagram.setInstagramToken(token);
-                    //Save data in db
                     intent.putExtra(context.getString(R.string.instaInfoIntent), rootInstagram);
                     context.startActivity(intent);
                 }
@@ -87,24 +89,15 @@ public class InstagramApp {
             }
         });
     }
-
+    //save data to db
     private void saveDataInDb(String token, RootInstagram rootInstagram) {
-
         DaoSession daoSession = ((SnapXApplication) context.getApplicationContext()).getDaoSession();
         SnapxDataDao snapxDataDao = daoSession.getSnapxDataDao();
-
         SnapxData snapxData = new SnapxData();
-
-        /*snapxData.setSocialToken(token);
+        snapxData.setSocialToken(token);
         snapxData.setSocialUserId(rootInstagram.getData().getId());
         snapxData.setUserName(rootInstagram.getData().getFull_name());
-        snapxData.setUserImage(rootInstagram.getData().getProfile_picture());*/
-
-        snapxData.setSocialToken("6898929419.739cbd7.8e2b496c9a524c68be878ba51f7bd044");
-        snapxData.setSocialUserId("6898929419");
-        snapxData.setUserName("snapxeats");
-        snapxData.setUserImage("https://scontent.cdninstagram.com/vp/430b0b2120cf968dda35b6d342f99a3b/5B18595E/t51.2885-19/s150x150/27892527_245377196003325_939776446803476480_n.jpg");
-
+        snapxData.setUserImage(rootInstagram.getData().getProfile_picture());
         snapxDataDao.insert(snapxData);
     }
 

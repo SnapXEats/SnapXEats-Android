@@ -1,20 +1,23 @@
 package com.snapxeats.ui.restaurant;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.RestaurantPics;
 import com.snapxeats.common.model.RestaurantSpeciality;
 import com.snapxeats.common.model.RootRestaurantDetails;
@@ -23,11 +26,20 @@ import com.snapxeats.common.model.googleDirections.GoogleDirOrigin;
 import com.snapxeats.common.model.googleDirections.LocationGoogleDir;
 import com.snapxeats.common.model.googleDirections.RootGoogleDir;
 import com.snapxeats.common.utilities.AppUtility;
+import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.network.ApiClient;
+import com.snapxeats.network.ApiHelper;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -35,6 +47,11 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static com.snapxeats.common.constants.WebConstants.GOOGLE_BASE_URL;
 
 /**
  * Created by Prajakta Patil on 05/02/18.
@@ -68,8 +85,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     private RootRestaurantDetails mRootRestaurantDetails;
 
-    private RootGoogleDir mRootGoogleDir;
-
     @BindView(R.id.txt_restaurant_name)
     protected TextView mTxtRestName;
 
@@ -79,7 +94,19 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     @BindView(R.id.toolbar_rest_details)
     protected Toolbar mToolbar;
 
-    private TextView mTxtRestDuration;
+    @BindView(R.id.txt_google_duration)
+    protected TextView mTxtRestDuration;
+
+    @BindView(R.id.spinner_rest_timings)
+    protected Spinner mSpinner;
+
+    @BindView(R.id.txt_rest_time)
+    protected TextView mTxtRestTime;
+
+    @BindView(R.id.img_rest_call)
+    protected ImageView mImgCall;
+
+    private String restContactNo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +122,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         snapXDialog.setContext(this);
         ButterKnife.bind(this);
         utility.setContext(this);
-
         //set mToolbar
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -104,20 +130,65 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         initRestaurantData();
     }
 
+    //uber button click
+    @OnClick(R.id.layout_uber)
+    public void layoutUber() {
+        boolean isAppInstalled = appInstalledOrNot("com.ubercab");
+        if (isAppInstalled) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(getString(R.string.book_uber_ride))
+                    .setPositiveButton(getString(R.string.confirm_uber), (dialog, which) -> {
+                        Intent LaunchIntent = getPackageManager()
+                                .getLaunchIntentForPackage("com.ubercab");
+                        startActivity(LaunchIntent);
+                    })
+                    .setNegativeButton(getString(R.string.not_now), (dialog, which) -> {
+                    })
+                    .show();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(getString(R.string.install_uber))
+                    .setPositiveButton(getString(R.string.ok), (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://play.google.com/store/apps/details?id=com.ubercab"))))
+                    .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
+                    })
+                    .show();
+        }
+    }
+
+    private boolean appInstalledOrNot(String uri) {
+        PackageManager pm = getPackageManager();
+        try {
+            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+        }
+
+        return false;
+    }
+
     public void initRestaurantData() {
         mRestaurantPicsList = new ArrayList<>();
         mRestaurantSpecialties = new ArrayList<>();
         mInflater = LayoutInflater.from(this);
         //get restaurant details
-        String id = "12584d25-046b-45d3-8a5e-8a0516dd4c7a";
+        String id = getIntent().getStringExtra(getString(R.string.intent_foodstackRestDetailsId));
         showProgressDialog();
         mRestaurantPresenter.getRestDetails(id);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    private void setGoogleDir() {
         //get google directions
         //TODO latlng are hardcoded for now
-        final String srcLat = "18.497895";
-        final String srcLng = "73.829229";
-        final String destLat = "18.504373";
-        final String destLng = " 73.830680";
+        final String srcLat = "40.4862157";
+        final String srcLng = "-74.4518188";
+        final String destLat = mRootRestaurantDetails.getRestaurantDetails().getLocation_lat();
+        final String destLng = mRootRestaurantDetails.getRestaurantDetails().getLocation_long();
         LocationGoogleDir locationGoogleDir = new LocationGoogleDir();
         GoogleDirOrigin googleDirOrigin = new GoogleDirOrigin();
         googleDirOrigin.setOriginLat(srcLat);
@@ -127,8 +198,9 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         googleDirDest.setDestinationLng(destLng);
         locationGoogleDir.setGoogleDirOrigin(googleDirOrigin);
         locationGoogleDir.setGoogleDirDest(googleDirDest);
-        mRestaurantPresenter.getGoogleDirections(locationGoogleDir);
+        getGoogleDirections(locationGoogleDir);
     }
+
 
     @OnClick(R.id.img_rest_directions)
     public void imgRestDirections() {
@@ -143,12 +215,10 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     @OnClick(R.id.img_rest_call)
     public void imgRestCall() {
-        if (mRootRestaurantDetails.getRestaurantDetails().getRestaurant_contact_no() != null) {
+        if (mRootRestaurantDetails != null && !restContactNo.isEmpty()) {
             String contact = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_contact_no();
             Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", contact, null));
             startActivity(intent);
-        } else {
-            SnapXToast.showToast(this, "No phone");
         }
     }
 
@@ -166,12 +236,15 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     @Override
     public void success(Object value) {
         dismissProgressDialog();
-        mRootRestaurantDetails = (RootRestaurantDetails) value;
-        setUpRecyclerView();
+        if (RootRestaurantDetails.class.isInstance(value)) {
+            mRootRestaurantDetails = (RootRestaurantDetails) value;
+            setUpRecyclerView();
+            restaurantTimingsList();
+            setGoogleDir();
+        }
     }
 
     public void setUpRecyclerView() {
-
         //restaurants details
         if (!mRootRestaurantDetails.getRestaurantDetails().getRestaurant_name().isEmpty()) {
             String restName = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_name();
@@ -180,6 +253,13 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         if (!mRootRestaurantDetails.getRestaurantDetails().getRestaurant_address().isEmpty()) {
             String restAddress = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_address();
             mTxtRestAddr.setText(restAddress);
+        }
+
+        if (!mRootRestaurantDetails.getRestaurantDetails().getRestaurant_contact_no().isEmpty()) {
+            restContactNo = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_contact_no();
+        } else {
+            mImgCall.setClickable(false);
+            mImgCall.setAlpha((float) 0.5);
         }
 
         for (int INDEX_REST_PICS = 0;
@@ -204,10 +284,43 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         mRestPicsAdapter = new RestImagesAdapter(RestaurantDetailsActivity.this, mRestaurantPicsList);
         mRestviewPager.setAdapter(mRestPicsAdapter);
 
-        //TODO data will be used in future
-        //google directions data
-        //   mTxtRestDuration.setText(mRootGoogleDir.getRoutes().get(0).getLegs().get(0).getDuration().getValue());
-        //  SnapXToast.showToast(this,"oooo"+mRootGoogleDir.getRoutes().get(0).getLegs().get(0).getDuration().getValue());
+    }
+
+    private void restaurantTimingsList() {
+        List<String> listTimings = new ArrayList<>();
+        if (mRootRestaurantDetails.getRestaurantDetails().getRestaurant_timings().size() != 0) {
+            for (int i = 0; i < mRootRestaurantDetails.getRestaurantDetails().getRestaurant_timings().size(); i++) {
+                listTimings.add(mRootRestaurantDetails.getRestaurantDetails().getRestaurant_timings().get(i).getDay_of_week() +
+                        "         " +
+                        mRootRestaurantDetails.getRestaurantDetails().getRestaurant_timings().get(i).getRestaurant_open_close_time());
+            }
+            Comparator<String> dateComparator = (s1, s2) -> {
+                try {
+                    SimpleDateFormat format = new SimpleDateFormat("EEEE");
+                    Date d1 = format.parse(s1);
+                    Date d2 = format.parse(s2);
+                    if (d1.equals(d2)) {
+                        return s1.substring(s1.indexOf(" ") + 1).compareTo(s2.substring(s2.indexOf(" ") + 1));
+                    } else {
+                        Calendar cal1 = Calendar.getInstance();
+                        Calendar cal2 = Calendar.getInstance();
+                        cal1.setTime(d1);
+                        cal2.setTime(d2);
+                        return cal1.get(Calendar.DAY_OF_WEEK) - cal2.get(Calendar.DAY_OF_WEEK);
+                    }
+                } catch (ParseException pe) {
+                    throw new RuntimeException(pe);
+                }
+            };
+            Collections.sort(listTimings, dateComparator);
+            ArrayAdapter<String> adapter =
+                    new ArrayAdapter<String>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, listTimings);
+            mSpinner.setAdapter(adapter);
+        } else {
+            mSpinner.setVisibility(View.GONE);
+            mTxtRestTime.setVisibility(View.VISIBLE);
+            mTxtRestTime.setText("No timings available");
+        }
     }
 
     @Override
@@ -225,5 +338,34 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     @Override
     public void networkError(Object value) {
         dismissProgressDialog();
+    }
+
+    //get google directions
+    public void getGoogleDirections(LocationGoogleDir locationGoogleDir) {
+
+        if (NetworkUtility.isNetworkAvailable(this)) {
+            ApiHelper apiHelper = ApiClient.getClient(this, GOOGLE_BASE_URL).create(ApiHelper.class);
+            Call<RootGoogleDir> snapXUserCall =
+                    apiHelper.getGoogleDir(locationGoogleDir.getGoogleDirOrigin().getOriginLat()
+                                    + "," + locationGoogleDir.getGoogleDirOrigin().getOriginLng(),
+                            locationGoogleDir.getGoogleDirDest().getDestinationLat() + ","
+                                    + locationGoogleDir.getGoogleDirDest().getDestinationLng());
+            snapXUserCall.enqueue(new Callback<RootGoogleDir>() {
+                @Override
+                public void onResponse(Call<RootGoogleDir> call, Response<RootGoogleDir> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        RootGoogleDir rootGoogleDir = response.body();
+                        mTxtRestDuration
+                                .setText(rootGoogleDir.getRoutes().get(0).getLegs().get(0)
+                                        .getDuration().getText() + " " + getString(R.string.away));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<RootGoogleDir> call, Throwable t) {
+                }
+            });
+        } else {
+        }
     }
 }

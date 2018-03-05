@@ -32,11 +32,9 @@ public class SnapXToast {
     }
 
     public static void info(String message) {
-        Log.i(LOG_TAG, message);
     }
 
     public static void debug(String message) {
-        Log.i(LOG_TAG, message);
     }
 
 }

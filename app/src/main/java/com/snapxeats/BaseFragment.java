@@ -147,8 +147,6 @@ public class BaseFragment extends DaggerFragment implements GoogleApiClient.Conn
             } else if (locationAddress.getThoroughfare() != null) {
                 placeName = locationAddress.getThoroughfare();
             }
-
-            Log.i(TAG, "Address" + placeName);
         }
         return placeName;
 
@@ -160,7 +158,6 @@ public class BaseFragment extends DaggerFragment implements GoogleApiClient.Conn
         Geocoder geocoder;
         List<Address> addresses;
         geocoder = new Geocoder(getActivity(), Locale.getDefault());
-        SnapXToast.debug("Geocoder available:" + Geocoder.isPresent());
         try {
             addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
 

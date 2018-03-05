@@ -62,5 +62,7 @@
     <dimen name="dimens_20">20dp</dimen>
     <dimen name="dimen_115">115dp</dimen>
     <dimen name="dimen_rest_details_img_height">257dp</dimen>
+    <dimen name="dimen_16">16dp</dimen>
+    <dimen name="dimen_32">32dp</dimen>
 
 </resources>

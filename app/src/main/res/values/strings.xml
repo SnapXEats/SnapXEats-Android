@@ -100,5 +100,15 @@
     <string name="call">Call</string>
     <string name="directions">Directions</string>
     <string name="user_id">user_id</string>
+    <string name="book_uber_ride">Are you sure you want to book a uber ride?</string>
+    <string name="confirm_uber">Yes,confirm</string>
+    <string name="not_now">Not now</string>
+    <string name="install_uber">Install Uber app to book a ride.</string>
+    <string name="okay">Okay</string>
+    <string name="more_info">More Info</string>
+    <string name="intent_foodstackRestInfoId">foodstackRestInfoId</string>
+    <string name="intent_foodstackRestDetailsId">foodstackRestDetailsId</string>
+    <string name="away">away</string>
+    <string name="no_timings">No timings available</string>
 
 </resources>

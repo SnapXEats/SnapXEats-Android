@@ -1,15 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:mContext="com.snapxeats.ui.restaurantInfo.RestaurantInfoActivity">
-<TextView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:text="Restaurant Info Screen"/>
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="Roboto-Medium"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_rest_info"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:elevation="@dimen/dimens_4" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewPager_rest_info"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_rest_details_img_height"
+            android:background="@color/text_color_primary" />
+
+        <TextView
+            android:id="@+id/txt_rest_info_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_dimens_20"
+            android:layout_marginTop="@dimen/common_dimens_15"
+            android:textColor="@color/colorCuisine"
+            android:textSize="@dimen/text_size_24"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_rest_info_addr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_dimens_20"
+            android:layout_marginTop="@dimen/common_dimens_10"
+            android:textColor="@color/colorTextGrey"
+            android:textSize="@dimen/text_size_12"
+            android:textStyle="bold" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/common_dimens_20"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/spinner_rest_info_timings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dialog" />
+
+            <TextView
+                android:id="@+id/txt_rest_info_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_dimens_10"
+                android:textColor="@color/colorTextGrey"
+                android:textSize="@dimen/text_size_14"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_dimens_20"
+            android:layout_marginTop="@dimen/common_dimens_15"
+            android:text="@string/more_info"
+            android:textColor="@color/colorCuisine"
+            android:textSize="@dimen/text_size_16"
+            android:textStyle="bold" />
+
+        <ListView
+            android:id="@+id/list_rest_aminities"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_dimens_20"
+            android:divider="@null" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_dimens_20"
+            android:layout_marginTop="@dimen/common_dimens_20"
+            android:text="Photo taken on 25th Jan 2014"
+            android:textColor="@color/text_color_primary"
+            android:textSize="@dimen/text_size_14" />
+    </LinearLayout>
+</ScrollView>

@@ -13,7 +13,7 @@ import javax.inject.Singleton;
  */
 
 @Singleton
-public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPreseneter {
+public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPresenter {
 
     private FoodStackRouterImpl mFoodStackRouter;
 

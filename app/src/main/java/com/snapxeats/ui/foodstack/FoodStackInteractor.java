@@ -8,7 +8,6 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
-import com.snapxeats.ui.foodpreference.FoodPreferenceContract;
 
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class FoodStackInteractor {
 
     private Activity mContext;
 
-    private FoodStackContract.FoodStackPreseneter mFoodStackPreseneter;
+    private FoodStackContract.FoodStackPresenter mFoodStackPresenter;
 
     private FoodStackContract.FoodStackView mFoodStackView;
 
@@ -37,8 +36,8 @@ public class FoodStackInteractor {
     public FoodStackInteractor() {
     }
 
-    public void setFoodStackPresenter(FoodStackContract.FoodStackPreseneter foodStackPreseneter) {
-        this.mFoodStackPreseneter = foodStackPreseneter;
+    public void setFoodStackPresenter(FoodStackContract.FoodStackPresenter foodStackPresenter) {
+        this.mFoodStackPresenter = foodStackPresenter;
     }
     public void setContext(FoodStackContract.FoodStackView view) {
         this.mFoodStackView = view;
@@ -64,17 +63,49 @@ public class FoodStackInteractor {
                 public void onResponse(Call<RootCuisinePhotos> call, Response<RootCuisinePhotos> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         RootCuisinePhotos rootCuisine = response.body();
-                        mFoodStackPreseneter.response(SnapXResult.SUCCESS, rootCuisine);
+                        mFoodStackPresenter.response(SnapXResult.SUCCESS, rootCuisine);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<RootCuisinePhotos> call, Throwable t) {
-                    mFoodStackPreseneter.response(SnapXResult.ERROR, null);
+                    mFoodStackPresenter.response(SnapXResult.ERROR, null);
                 }
             });
         } else {
-            mFoodStackPreseneter.response(SnapXResult.NONETWORK, null);
+            mFoodStackPresenter.response(SnapXResult.NONETWORK, null);
         }
     }
+
+  /*  public void foodstackGestures(){
+        //"Bearer " + mAccessToken
+
+        if (NetworkUtility.isNetworkAvailable(mContext)) {
+            //TODO latlng are hardcoded for now
+//        double lat = selectedCuisineList.getLocation().getLatitude();
+//        double lng = selectedCuisineList.getLocation().getLongitude();
+            double lat = 40.4862157;
+            double lng = -74.4518188;
+            List<String> list = selectedCuisineList.getSelectedCuisineList();
+
+            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            Call<RootCuisinePhotos> listCuisineCall = apiHelper.getCuisinePhotos(lat, lng, list);
+            listCuisineCall.enqueue(new Callback<RootCuisinePhotos>() {
+                @Override
+                public void onResponse(Call<RootCuisinePhotos> call, Response<RootCuisinePhotos> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        RootCuisinePhotos rootCuisine = response.body();
+                        mFoodStackPresenter.response(SnapXResult.SUCCESS, rootCuisine);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<RootCuisinePhotos> call, Throwable t) {
+                    mFoodStackPresenter.response(SnapXResult.ERROR, null);
+                }
+            });
+        } else {
+            mFoodStackPresenter.response(SnapXResult.NONETWORK, null);
+        }*/
+//    }
 }

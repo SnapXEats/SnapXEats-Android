@@ -107,7 +107,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                 md.update(signature.toByteArray());
                 String key = new String(Base64.encode(md.digest(), 0));
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -129,12 +129,6 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                     public void onSuccess(LoginResult loginResult) {
                         if (loginResult != null) {
                             mLoginPresenter.response(SnapXResult.SUCCESS, loginResult);
-//                            saveDataInDb();
-                           /* AccessToken.getCurrentAccessToken().getToken();
-                            AccessToken.getCurrentAccessToken().getUserId();
-                            Profile.getCurrentProfile().getFirstName();
-                            Profile.getCurrentProfile().getLastName();
-                            Profile.getCurrentProfile().getProfilePictureUri(50,50);*/
                         }
                     }
 
@@ -148,25 +142,6 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                         mLoginPresenter.response(SnapXResult.ERROR, null);
                     }
                 });
-    }
-
-    private void saveDataInDb() {
-
-        String userName = Profile.getCurrentProfile().getFirstName() + " "
-                + Profile.getCurrentProfile().getLastName();
-
-        Uri profileUri = Profile.getCurrentProfile().getProfilePictureUri(50, 50);
-
-        DaoSession daoSession = ((SnapXApplication) getApplication()).getDaoSession();
-        SnapxDataDao snapxDataDao = daoSession.getSnapxDataDao();
-
-        SnapxData snapxData = new SnapxData();
-        snapxData.setSocialToken(AccessToken.getCurrentAccessToken().getToken());
-        snapxData.setSocialUserId(AccessToken.getCurrentAccessToken().getUserId());
-        snapxData.setUserName(userName);
-        snapxData.setUserImage(profileUri.toString());
-
-        snapxDataDao.insert(snapxData);
     }
 
     @OnClick(R.id.txt_login_skip)
