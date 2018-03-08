@@ -24,9 +24,9 @@ public class HomeFgmtContract {
 
         void getCuisineList(LocationCuisine locationCuisine);
 
-        void getUserData(SnapXUserRequest snapXUserRequest);
+/*        void getUserData(SnapXUserRequest snapXUserRequest);
 
-        void saveUserDataInDb(SnapXUser snapXUser);
+        void saveUserDataInDb(SnapXUser snapXUser);*/
     }
 
     interface HomeFgmtRouter {

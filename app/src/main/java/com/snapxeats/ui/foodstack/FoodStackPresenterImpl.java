@@ -43,12 +43,11 @@ public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPresen
     @Override
     public void presentScreen(Router.Screen screen) {
         mFoodStackRouter.presentScreen(screen);
-
     }
 
     @Override
-    public void getCuisinePhotos( SelectedCuisineList selectedCuisineList) {
-        mFoodStackInteractor.getCuisinePhotos( selectedCuisineList);
+    public void getCuisinePhotos(SelectedCuisineList selectedCuisineList) {
+        mFoodStackInteractor.getCuisinePhotos(selectedCuisineList);
     }
 
     @Override

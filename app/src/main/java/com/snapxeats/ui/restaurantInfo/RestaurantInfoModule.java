@@ -21,7 +21,6 @@ public abstract class RestaurantInfoModule {
 
     @Provides
     static RestaurantInfoRouterImpl provideRestaurantInfoRouter(Router router) {
-        RestaurantInfoRouterImpl restaurantInfoRouter = new RestaurantInfoRouterImpl(router);
-        return restaurantInfoRouter;
+        return new RestaurantInfoRouterImpl(router);
     }
 }

@@ -20,10 +20,9 @@ public class WebConstants {
     public static final String GOOGLE_BASE_URL = "https://maps.googleapis.com";
     public static final String USER_PREFERENCES = "/api/v1/userPreferences";
     public static final String RESTAURANT_DETAILS = "/api/v1/restaurant/{restaurantInfoId}";
-    public static final String INSTAGRAM_TOKEN="https://api.instagram.com/v1/users/self/?";
-    public static final String GOOGLE_DIR_API="/maps/api/directions/json?mode=driving&key=AIzaSyBE60eBPlcvijgNGHK3X-Odd8zHJ2WksNk";
+    public static final String INSTAGRAM_TOKEN = "https://api.instagram.com/v1/users/self/?";
+    public static final String GOOGLE_DIR_API = "/maps/api/directions/json?mode=driving&key=AIzaSyBE60eBPlcvijgNGHK3X-Odd8zHJ2WksNk";
     public static final String USER_FOOD_PREF = "/api/v1/foodTypes";
-    public static final String  RESTAURANT_INFO= "/api/v1/restaurant/restaurantDetails/{restaurantInfoId}";
-    public static final String  FOODSTACK_GESTURES= "/api/v1/userGesture";
-
+    public static final String RESTAURANT_INFO = "/api/v1/restaurant/restaurantDetails/{restaurantInfoId}";
+    public static final String FOODSTACK_GESTURES = "/api/v1/userGesture";
 }

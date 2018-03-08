@@ -69,7 +69,7 @@ public class HomeFgmtAdapter extends RecyclerView.Adapter<HomeFgmtAdapter.ViewHo
 
             if (cuisines.isSelected()) {
                 viewHolder.imgCuisineSelected.setVisibility(View.VISIBLE);
-                viewHolder.linearLayoutCuisine.setAlpha((float) SELECT_OPACITY);
+
                 selectedCuisineList.add(cuisines.getCuisine_info_id());
 
             } else {

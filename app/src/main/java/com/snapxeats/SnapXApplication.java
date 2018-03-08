@@ -6,7 +6,6 @@ import com.snapxeats.dagger.AppComponent;
 import com.snapxeats.dagger.DaggerAppComponent;
 
 import org.greenrobot.greendao.database.Database;
-
 import dagger.android.AndroidInjector;
 import dagger.android.DaggerApplication;
 
