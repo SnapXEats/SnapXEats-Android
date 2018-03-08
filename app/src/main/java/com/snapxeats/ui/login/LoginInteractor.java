@@ -66,6 +66,8 @@ public class LoginInteractor {
         this.mContext = view.getActivity();
         this.appUtility.setContext(view.getActivity());
         daoSession = ((SnapXApplication) mContext.getApplicationContext()).getDaoSession();
+        snapxDataDao = daoSession.getSnapxDataDao();
+        snapxData = new SnapxData();
     }
 
     //get instagram info
@@ -136,10 +138,6 @@ public class LoginInteractor {
 
     //save data to db
     private void saveInstaDataInDb(SnapXUser snapXUser, String token, RootInstagram rootInstagram) {
-        daoSession = ((SnapXApplication) mContext.getApplicationContext()).getDaoSession();
-        snapxDataDao = daoSession.getSnapxDataDao();
-        snapxData = new SnapxData();
-
         //User data from server
         saveServerDataInDb(snapXUser);
         snapxData.setSocialToken(token);
@@ -154,9 +152,6 @@ public class LoginInteractor {
     }
 
     public void saveServerDataInDb(SnapXUser snapXUser) {
-        daoSession = ((SnapXApplication) mContext.getApplicationContext()).getDaoSession();
-        snapxDataDao = daoSession.getSnapxDataDao();
-        snapxData = new SnapxData();
         snapxData.setUserId(snapXUser.getUser_id());
         snapxData.setToken(snapXUser.getToken());
         snapxData.setSocialPlatform(snapXUser.getSocial_platform());
@@ -169,9 +164,6 @@ public class LoginInteractor {
     }
 
     public void saveFbDataInDb(SnapXUser snapXUser) {
-        daoSession = ((SnapXApplication) mContext.getApplicationContext()).getDaoSession();
-        snapxDataDao = daoSession.getSnapxDataDao();
-        snapxData = new SnapxData();
         saveServerDataInDb(snapXUser);
         snapxData.setUserId(AccessToken.getCurrentAccessToken().getUserId());
         snapxData.setSocialToken(AccessToken.getCurrentAccessToken().getToken());

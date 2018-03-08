@@ -41,6 +41,10 @@ import javax.inject.Inject;
  * Created by Prajakta Patil on 30/1/18.
  */
 
+/**
+ * This activity is not yet functionally completed
+ */
+
 public class FoodStackActivity extends BaseActivity
         implements FoodStackContract.FoodStackView, AppContract.SnapXResults {
 
@@ -113,20 +117,22 @@ public class FoodStackActivity extends BaseActivity
         setup();
 
     }
-    public void setButtonActions(){
+
+    public void setButtonActions() {
         mImgLike.setClickable(true);
-        mImgLike.setAlpha((float)1.0);
+        mImgLike.setAlpha((float) 1.0);
 
         mImgDislike.setClickable(true);
-        mImgDislike.setAlpha((float)1.0);
+        mImgDislike.setAlpha((float) 1.0);
 
         mImgUndo.setClickable(true);
-        mImgUndo.setAlpha((float)1.0);
+        mImgUndo.setAlpha((float) 1.0);
 
         mImgLWishlist.setClickable(true);
-        mImgLWishlist.setAlpha((float)1.0);
+        mImgLWishlist.setAlpha((float) 1.0);
 
     }
+
     private void setup() {
         cardStackView.setCardEventListener(new CardStackView.CardEventListener() {
             @Override
@@ -137,11 +143,12 @@ public class FoodStackActivity extends BaseActivity
 
             @Override
             public void onCardSwiped(SwipeDirection direction) {
-
+                /*Enable button actions*/
+                setButtonActions();
                 //TODO in progress
                 switch (direction) {
                     case Top: {
-                       // swipeTop();
+                        // swipeTop();
                         break;
                     }
                     case Right: {
@@ -245,6 +252,7 @@ public class FoodStackActivity extends BaseActivity
             cardStackView.setAdapter(mStackAdapter);
         }
     }
+
     //swipe LEFT
     public void swipeLeft() {
         List<FoodStackData> data = extractFoodStackImages();
@@ -253,6 +261,7 @@ public class FoodStackActivity extends BaseActivity
         }
         gestureLeft();
     }
+
     private void gestureLeft() {
         View target = cardStackView.getTopView();
         ValueAnimator rotation = ObjectAnimator.ofPropertyValuesHolder(
@@ -355,6 +364,8 @@ public class FoodStackActivity extends BaseActivity
 
     @OnClick(R.id.img_cuisine_undo)
     public void imgCuisineUndo() {
+        mImgUndo.setClickable(false);
+        mImgUndo.setAlpha((float) 0.5);
         cardStackView.reverse();
     }
 
