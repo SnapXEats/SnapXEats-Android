@@ -6,9 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,19 +17,16 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.LoggingBehavior;
-import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BuildConfig;
 import com.snapxeats.R;
-import com.snapxeats.SnapXApplication;
+import com.snapxeats.common.Router;
 import com.snapxeats.common.constants.WebConstants;
-import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.SnapXUserRequest;
-import com.snapxeats.common.model.SnapxData;
-import com.snapxeats.common.model.SnapxDataDao;
+import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
@@ -46,16 +41,17 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.snapxeats.common.Router.Screen.PREFERENCE;
+import static com.snapxeats.common.Router.Screen.HOME;
 
 /**
  * Created by Prajakta Patil on 4/1/18.
  */
 
-public class LoginActivity extends BaseActivity implements LoginContract.LoginView, AppContract.SnapXResults {
+public class LoginActivity extends BaseActivity implements LoginContract.LoginView,
+        AppContract.SnapXResults, InstagramDialog.InstagramDialogListener {
 
     @Inject
-    LoginPresenterImpl mLoginPresenter;
+    LoginContract.LoginPresenter mLoginPresenter;
 
     private CallbackManager mCallbackManager;
 
@@ -70,6 +66,8 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     @BindView(R.id.txt_version)
     protected TextView mTxtVersion;
 
+    private SnapXUserRequest snapXUserRequest;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,14 +76,19 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
         initView();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     public void initView() {
         mLoginPresenter.addView(this);
         mCallbackManager = CallbackManager.Factory.create();
         getFbHashKey(this);
         loginWithFacebook();
         //TODO manage instagram session
-        initInstagram();
         setVersionAndBuildLabel();
+        initInstagram();
 
         //permission for getting token in logs
         if (BuildConfig.DEBUG) {
@@ -127,9 +130,10 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        if (loginResult != null) {
-                            mLoginPresenter.response(SnapXResult.SUCCESS, loginResult);
-                        }
+                            snapXUserRequest = new SnapXUserRequest(AccessToken.getCurrentAccessToken().getToken(),
+                                    getString(R.string.platform_facebook), AccessToken.getCurrentAccessToken().getUserId());
+                            showProgressDialog();
+                            mLoginPresenter.getUserdata(snapXUserRequest);
                     }
 
                     @Override
@@ -146,7 +150,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
 
     @OnClick(R.id.txt_login_skip)
     public void txtLoginSkip() {
-        mLoginPresenter.presentScreen(PREFERENCE);
+        mLoginPresenter.presentScreen(HOME);
     }
 
     @OnClick(R.id.btn_fb_custom)
@@ -164,6 +168,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     public void btnLoginInstagram(View view) {
         if (NetworkUtility.isNetworkAvailable(this)) {
             mApp.authorize();
+
         } else {
             showNetworkErrorDialog(null);
         }
@@ -206,13 +211,15 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     }
 
     @Override
-    public void success(Object o) {
-        mLoginPresenter.presentScreen(PREFERENCE);
+    public void success(Object value) {
+        dismissProgressDialog();
+        //TODO value not used yet
+        SnapXUserResponse snapXUserResponse = (SnapXUserResponse) value;
+        mLoginPresenter.presentScreen(Router.Screen.HOME);
     }
 
     @Override
     public void error(Object value) {
-
     }
 
     @Override
@@ -224,6 +231,12 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     @Override
     public void networkError(Object value) {
 
+    }
+
+    @Override
+    public void onReturnValue(String token) {
+        showProgressDialog();
+        mLoginPresenter.getInstaInfo(token);
     }
 }
 

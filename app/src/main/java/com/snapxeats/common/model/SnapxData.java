@@ -3,6 +3,7 @@ package com.snapxeats.common.model;
 import org.greenrobot.greendao.annotation.Entity;
 
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 
 /**
  * Created by Prajakta Patil on 20/2/18.
@@ -11,6 +12,7 @@ import org.greenrobot.greendao.annotation.Generated;
 @Entity
 public class SnapxData {
     public String token;
+    @Id
     public String userId;
     public String socialToken;
     public String socialUserId;

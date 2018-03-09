@@ -14,7 +14,6 @@ public class FoodStackContract {
     interface FoodStackView extends BaseView<FoodStackPresenter>, AppContract.SnapXResults {
     }
 
-
     interface FoodStackPresenter extends BasePresenter<FoodStackView> {
 
         void presentScreen(Router.Screen screen);

@@ -61,7 +61,7 @@ public class HomeFgmtPresenterImpl implements HomeFgmtContract.HomeFgmtPresenter
         mHomeFgmtInteractor.getCuisineList(locationCuisine);
     }
 
-    @Override
+   /* @Override
     public void getUserData(SnapXUserRequest snapXUserRequest) {
         mHomeFgmtInteractor.getUserData(snapXUserRequest);
     }
@@ -69,7 +69,7 @@ public class HomeFgmtPresenterImpl implements HomeFgmtContract.HomeFgmtPresenter
     @Override
     public void saveUserDataInDb(SnapXUser snapXUser) {
         mHomeFgmtInteractor.saveDataInDb(snapXUser);
-    }
+    }*/
 
     /**
      * Set view to Presenter

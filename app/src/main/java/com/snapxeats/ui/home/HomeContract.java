@@ -2,6 +2,7 @@ package com.snapxeats.ui.home;
 
 import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
+import com.snapxeats.common.Router;
 import com.snapxeats.common.model.SnapxData;
 
 import java.util.List;
@@ -11,15 +12,17 @@ import java.util.List;
  */
 
 public class HomeContract {
-    public interface HomeView extends BaseView<HomePresenter>{
+    public interface HomeView extends BaseView<HomePresenter> {
 
     }
 
-    public interface HomePresenter extends BasePresenter<HomeView>{
+    public interface HomePresenter extends BasePresenter<HomeView> {
         List<SnapxData> getUserDataFromDb();
     }
 
     public interface HomeRouter {
+        void presentScreen(Router.Screen screen);
 
+        void setView(HomeContract.HomeView view);
     }
 }

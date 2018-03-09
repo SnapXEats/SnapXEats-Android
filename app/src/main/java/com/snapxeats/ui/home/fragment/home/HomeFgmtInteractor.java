@@ -93,11 +93,11 @@ public class HomeFgmtInteractor {
      * get user info
      *
      * @param snapXUserRequest
-     */
+     *//*
     void getUserData(SnapXUserRequest snapXUserRequest) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
-            Call<SnapXUserResponse> snapXUserCall = apiHelper.getUserToken(snapXUserRequest);
+            Call<SnapXUserResponse> snapXUserCall = apiHelper.getServerToken(snapXUserRequest);
 
             snapXUserCall.enqueue(new Callback<SnapXUserResponse>() {
                 @Override
@@ -137,7 +137,6 @@ public class HomeFgmtInteractor {
         snapxData.setSocialUserId(AccessToken.getCurrentAccessToken().getUserId());
         snapxData.setUserName(userName);
         snapxData.setUserImage(profileUri.toString());
-
         snapxDataDao.insert(snapxData);
-    }
+    }*/
 }

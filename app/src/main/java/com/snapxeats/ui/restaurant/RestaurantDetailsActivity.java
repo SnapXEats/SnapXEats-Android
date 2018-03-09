@@ -24,13 +24,9 @@ import com.snapxeats.common.model.RootRestaurantDetails;
 import com.snapxeats.common.model.googleDirections.GoogleDirDest;
 import com.snapxeats.common.model.googleDirections.GoogleDirOrigin;
 import com.snapxeats.common.model.googleDirections.LocationGoogleDir;
-import com.snapxeats.common.model.googleDirections.RootGoogleDir;
 import com.snapxeats.common.utilities.AppUtility;
-import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
-import com.snapxeats.network.ApiClient;
-import com.snapxeats.network.ApiHelper;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -47,11 +43,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import static com.snapxeats.common.constants.WebConstants.GOOGLE_BASE_URL;
 
 /**
  * Created by Prajakta Patil on 05/02/18.
@@ -198,7 +189,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         googleDirDest.setDestinationLng(destLng);
         locationGoogleDir.setGoogleDirOrigin(googleDirOrigin);
         locationGoogleDir.setGoogleDirDest(googleDirDest);
-        getGoogleDirections(locationGoogleDir);
+        //getGoogleDirections(locationGoogleDir);
     }
 
 
@@ -314,7 +305,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             };
             Collections.sort(listTimings, dateComparator);
             ArrayAdapter<String> adapter =
-                    new ArrayAdapter<String>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, listTimings);
+                    new ArrayAdapter<>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, listTimings);
             mSpinner.setAdapter(adapter);
         } else {
             mSpinner.setVisibility(View.GONE);
@@ -340,8 +331,9 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         dismissProgressDialog();
     }
 
+    //TODO functionality is yet to complete
     //get google directions
-    public void getGoogleDirections(LocationGoogleDir locationGoogleDir) {
+   /* public void getGoogleDirections(LocationGoogleDir locationGoogleDir) {
 
         if (NetworkUtility.isNetworkAvailable(this)) {
             ApiHelper apiHelper = ApiClient.getClient(this, GOOGLE_BASE_URL).create(ApiHelper.class);
@@ -367,5 +359,5 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             });
         } else {
         }
-    }
+    }*/
 }

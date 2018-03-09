@@ -5,11 +5,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,20 +21,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.facebook.AccessToken;
 import com.snapxeats.R;
-import com.snapxeats.common.constants.SnapXToast;
-import com.snapxeats.common.model.RootInstagram;
-import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.utilities.NetworkUtility;
-import com.snapxeats.network.ApiClient;
-import com.snapxeats.network.ApiHelper;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 /**
  * Created by Prajakta Patil on 11/1/18.
@@ -123,6 +111,13 @@ public class InstagramDialog extends Dialog {
             if (url.startsWith(InstagramApp.mCallbackUrl)) {
                 String urls[] = url.split("=");
                 mListener.onComplete(urls[1]);
+                //
+                InstagramDialogListener activity = (InstagramDialogListener) mContext;
+                activity.onReturnValue(urls[1]);
+                //
+              /*  Intent intent = new Intent(mContext, LoginActivity.class);
+                intent.putExtra(mContext.getString(R.string.instagramToken), urls[1]);
+                mContext.startActivity(intent);*/
                 InstagramDialog.this.dismiss();
                 return true;
             }
@@ -171,5 +166,9 @@ public class InstagramDialog extends Dialog {
     public interface OAuthDialogListener {
         void onComplete(String accessToken);
         void onError(String error);
+    }
+
+    public interface InstagramDialogListener {
+        void onReturnValue(String s);
     }
 }

@@ -33,7 +33,7 @@
     <string name="network_error">Check Internet connection</string>
     <string name="loading">Loading...</string>
     <string name="instagram">Cancel</string>
-    <string name="insta_callback_url"><![CDATA[&response_type=user_id]]></string>
+    <string name="insta_callback_url"><![CDATA[&response_type=token]]></string>
     <string name="insta_redirect_url"><![CDATA[&redirect_uri=]]></string>
     <string name="insta_client_id">\?client_id=</string>
     <string name="build">- Build -</string>
@@ -110,5 +110,11 @@
     <string name="intent_foodstackRestDetailsId">foodstackRestDetailsId</string>
     <string name="away">away</string>
     <string name="no_timings">No timings available</string>
+    <string name="reward_points">Reward Points</string>
+    <string name="instagramToken">instagramToken</string>
+    <string name="pref_server_id">serverId</string>
+    <string name="rotation">rotation</string>
+    <string name="translationX">translationX</string>
+    <string name="translationY">translationY</string>
 
 </resources>

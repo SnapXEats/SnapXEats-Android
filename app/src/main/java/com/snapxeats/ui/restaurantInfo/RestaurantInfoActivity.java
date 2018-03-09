@@ -104,7 +104,6 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
 
     public void initRestaurantInfo() {
         mRestaurantPicsList = new ArrayList<>();
-//        LayoutInflater mInflater = LayoutInflater.from(this);
         //get restaurant details'
         String id = getIntent().getStringExtra(getString(R.string.intent_foodstackRestInfoId));
         showProgressDialog();

@@ -3,9 +3,9 @@ package com.snapxeats.ui.login;
 import android.support.annotation.Nullable;
 
 import com.snapxeats.common.Router;
+import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.utilities.SnapXResult;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
@@ -22,9 +22,8 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
 
     private LoginInteractor mLoginInteractor;
 
-    @Inject
     public LoginPresenterImpl(LoginInteractor loginInteractor, LoginRouterImpl loginRouter) {
-        mLoginInteractor = loginInteractor;
+        this.mLoginInteractor = loginInteractor;
         this.mLoginRouter = loginRouter;
     }
 
@@ -32,6 +31,7 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
     public void addView(LoginContract.LoginView loginView) {
         this.mLoginLoginView = loginView;
         mLoginRouter.setView(loginView);
+        mLoginInteractor.setContext(loginView);
     }
 
     @Override
@@ -42,9 +42,17 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
     @Override
     public void presentScreen(Router.Screen screen) {
         mLoginRouter.presentScreen(screen);
-
     }
 
+    @Override
+    public void getInstaInfo(String token) {
+        mLoginInteractor.getInstaInfo(token);
+    }
+
+    @Override
+    public void getUserdata(SnapXUserRequest snapXUserRequest) {
+        mLoginInteractor.getUserData(snapXUserRequest);
+    }
     @Override
     public void response(SnapXResult result, Object value) {
         if (null != mLoginLoginView) {
@@ -64,5 +72,4 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
             }
         }
     }
-
 }

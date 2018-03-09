@@ -105,8 +105,6 @@ public class HomeFragment extends BaseFragment implements
 
     private LocationCuisine mLocationCuisine;
 
-    private SnapXUserRequest mSnapXUserRequest;
-
     private Activity activity;
     private DrawerLayout mDrawerLayout;
     public SharedPreferences preferences;
@@ -175,25 +173,6 @@ public class HomeFragment extends BaseFragment implements
 
         //refresh facebook token
         AccessToken.refreshCurrentAccessTokenAsync();
-
-        //get instagram info
-
-        RootInstagram rootInstagram = getActivity().getIntent().getParcelableExtra(getString(R.string.instaInfoIntent));
-
-        if (rootInstagram != null) {
-            mSnapXUserRequest = new SnapXUserRequest(rootInstagram.getInstagramToken(),
-                    getString(R.string.platform_instagram),
-                    rootInstagram.getData().getId());
-        } else if (AccessToken.getCurrentAccessToken() != null) {
-            mSnapXUserRequest = new SnapXUserRequest(AccessToken.getCurrentAccessToken().getToken(),
-                    getString(R.string.platform_facebook),
-                    AccessToken.getCurrentAccessToken().getUserId());
-        }
-
-        if (mSnapXUserRequest != null) {
-            showProgressDialog();
-            presenter.getUserData(mSnapXUserRequest);
-        }
 
         mRecyclerView.setNestedScrollingEnabled(false);
 
@@ -300,7 +279,7 @@ public class HomeFragment extends BaseFragment implements
             editor.putString(getString(R.string.user_id), snapXUser.getUser_id());
             editor.apply();
 
-            presenter.saveUserDataInDb(snapXUser);
+          //  presenter.saveUserDataInDb(snapXUser);
         }
     }
 

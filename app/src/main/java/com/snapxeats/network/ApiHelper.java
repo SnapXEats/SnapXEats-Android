@@ -56,7 +56,7 @@ public interface ApiHelper {
      * @return
      */
     @POST(WebConstants.SNAPX_TOKEN)
-    Call<SnapXUserResponse> getUserToken(@Body SnapXUserRequest snapXUserRequest);
+    Call<SnapXUserResponse> getServerToken(@Body SnapXUserRequest snapXUserRequest);
 
     /**
      * Get predection list
@@ -77,14 +77,14 @@ public interface ApiHelper {
     Call<PlaceDetail> getPlaceDetails(@Query("placeid") String placeId);
 
 
-   /* *//**
+    /**
      * Set user preferences
      *
      * @param object- Set user preferences
      * @return
-     *//*
+     */
     @POST(WebConstants.USER_PREFERENCES)
-    Call<UserPreference> setUserPreferences(@Body UserPreference object);*/
+    Call<UserPreference> setUserPreferences(@Body UserPreference object);
 
     /**
      * get restaurant details

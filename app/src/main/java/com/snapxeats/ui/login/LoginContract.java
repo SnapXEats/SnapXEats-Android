@@ -3,6 +3,7 @@ package com.snapxeats.ui.login;
 import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
+import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.dagger.AppContract;
 
 /**
@@ -16,10 +17,14 @@ public class LoginContract {
     interface LoginPresenter extends BasePresenter<LoginView> {
         void presentScreen(Router.Screen screen);
 
+        void getInstaInfo(String token);
+
+        void getUserdata(SnapXUserRequest snapXUserRequest);
     }
 
     public interface LoginRouter {
         void presentScreen(Router.Screen screen);
+
         void setView(LoginContract.LoginView view);
     }
 }

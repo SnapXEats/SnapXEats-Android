@@ -10,15 +10,17 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
-import android.widget.TextView;
 
-import com.facebook.AccessToken;
-import com.facebook.Profile;
 import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
+import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.ui.home.fragment.home.HomeFragment;
+import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
+
+import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -50,6 +52,9 @@ public class HomeActivity extends LocationBaseActivity implements
     @BindView(R.id.nav_view)
     protected NavigationView mNavigationView;
 
+    @Inject
+    HomeContract.HomePresenter mPresenter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,21 +70,19 @@ public class HomeActivity extends LocationBaseActivity implements
 
     @Override
     public void initView() {
+        mPresenter.addView(this);
         mNavigationView.setNavigationItemSelectedListener(this);
 
         fragmentManager = getFragmentManager();
         transaction = fragmentManager.beginTransaction();
 
-        TextView mTxtUserName=mNavigationView.findViewById(R.id.txt_nav_name);
-        mTxtUserName.setText(Profile.getCurrentProfile().getFirstName()+" "+
-                Profile.getCurrentProfile().getLastName());
+        List<SnapxData> snapxData = mPresenter.getUserDataFromDb();
 
-       /* TextView mTxtUserEmail=mNavigationView.findViewById(R.id.txt_nav_email);
-        mTxtUserName.setText(Profile.getCurrentProfile());
-*/
-
-
-        transaction.replace(R.id.frame_layout, homeFragment);
+        if (snapxData.get(0).getIsFirstTimeUser()) {
+            transaction.replace(R.id.frame_layout, navPrefFragment);
+        } else {
+            transaction.replace(R.id.frame_layout, homeFragment);
+        }
         transaction.commit();
     }
 

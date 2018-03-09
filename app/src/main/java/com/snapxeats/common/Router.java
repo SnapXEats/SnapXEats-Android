@@ -2,12 +2,14 @@ package com.snapxeats.common;
 
 import android.app.Activity;
 import android.content.Intent;
+
 import com.snapxeats.ui.cuisinepreference.CuisinePrefActivity;
 import com.snapxeats.ui.foodpreference.FoodPreferenceActivity;
 import com.snapxeats.ui.foodstack.FoodStackActivity;
-import com.snapxeats.ui.location.LocationActivity;
 import com.snapxeats.ui.home.HomeActivity;
+import com.snapxeats.ui.location.LocationActivity;
 import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -18,7 +20,7 @@ import javax.inject.Singleton;
 @Singleton
 public class Router {
     public enum Screen {
-        LOCATION, PREFERENCE, FOODSTACK, RESTAURANT_DETAILS, CUISINE_PREF, FOOD_PREF
+        LOCATION, HOME, FOODSTACK, RESTAURANT_DETAILS, CUISINE_PREF, FOOD_PREF
     }
 
     private Activity mActivity;
@@ -43,7 +45,7 @@ public class Router {
             case FOODSTACK:
                 presentFoodStackScreen();
                 break;
-            case PREFERENCE:
+            case HOME:
                 presentPreferenceScreen();
                 break;
             case RESTAURANT_DETAILS:
@@ -77,10 +79,6 @@ public class Router {
     private void presentRestaurantDetailsScreen() {
         mActivity.startActivity(new Intent(mActivity, RestaurantDetailsActivity.class));
     }
-
-//    private void presentPrefScreen() {
-//        mActivity.startActivity(new Intent(mActivity, NavPreferenceActivity.class));
-//    }
 
     private void presentCuisinePrefScreen() {
         mActivity.startActivity(new Intent(mActivity, CuisinePrefActivity.class));
