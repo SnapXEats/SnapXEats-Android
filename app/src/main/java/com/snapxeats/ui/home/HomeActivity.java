@@ -13,10 +13,7 @@ import android.view.MenuItem;
 
 import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.SnapXApplication;
-import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.SnapxData;
-import com.snapxeats.common.model.SnapxDataDao;
 import com.snapxeats.ui.home.fragment.home.HomeFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
 
@@ -33,11 +30,6 @@ import butterknife.ButterKnife;
 
 public class HomeActivity extends LocationBaseActivity implements
         NavigationView.OnNavigationItemSelectedListener, HomeContract.HomeView {
-
-    private SnapxDataDao snapxDataDao;
-    private DaoSession daoSession;
-    private List<SnapxData> listSnapxData;
-    private SnapxData snapxData;
 
     public interface PreferenceConstant {
         int ACCESS_FINE_LOCATION = 1;
@@ -60,6 +52,9 @@ public class HomeActivity extends LocationBaseActivity implements
     @BindView(R.id.nav_view)
     protected NavigationView mNavigationView;
 
+    @Inject
+    HomeContract.HomePresenter mPresenter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,22 +70,18 @@ public class HomeActivity extends LocationBaseActivity implements
 
     @Override
     public void initView() {
+        mPresenter.addView(this);
         mNavigationView.setNavigationItemSelectedListener(this);
-
-        snapxData = new SnapxData();
-        daoSession = ((SnapXApplication) getApplication()).getDaoSession();
-        snapxDataDao = daoSession.getSnapxDataDao();
-        listSnapxData = snapxDataDao.loadAll();
 
         fragmentManager = getFragmentManager();
         transaction = fragmentManager.beginTransaction();
 
-        if (listSnapxData.get(0).getIsFirstTimeUser()) {
+        List<SnapxData> snapxData = mPresenter.getUserDataFromDb();
+
+        if (snapxData.get(0).getIsFirstTimeUser()) {
             transaction.replace(R.id.frame_layout, navPrefFragment);
         } else {
-            //snapxData.setIsFirstTimeUser(true);
             transaction.replace(R.id.frame_layout, homeFragment);
-           // snapxDataDao.update(snapxData);
         }
         transaction.commit();
     }

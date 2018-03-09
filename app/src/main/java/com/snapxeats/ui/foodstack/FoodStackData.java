@@ -15,9 +15,8 @@ public class FoodStackData extends RootCuisinePhotos {
     String url;
     private String id;
 
-    FoodStackData(String name, String url, String id) {
+    FoodStackData(String name, String id) {
         this.name = name;
-        this.url = url;
         this.id = id;
     }
 }

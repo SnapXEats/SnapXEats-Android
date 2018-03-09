@@ -1,7 +1,9 @@
 package com.snapxeats.ui.foodpreference;
 
 import android.app.Activity;
+
 import com.snapxeats.common.Router;
+
 import javax.inject.Inject;
 
 /**

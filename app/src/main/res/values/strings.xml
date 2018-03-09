@@ -113,5 +113,8 @@
     <string name="reward_points">Reward Points</string>
     <string name="instagramToken">instagramToken</string>
     <string name="pref_server_id">serverId</string>
+    <string name="rotation">rotation</string>
+    <string name="translationX">translationX</string>
+    <string name="translationY">translationY</string>
 
 </resources>
