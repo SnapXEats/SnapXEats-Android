@@ -1,9 +1,7 @@
 package com.snapxeats.ui.home.fragment.navpreference;
 
 import android.app.Activity;
-
 import com.snapxeats.common.Router;
-
 import javax.inject.Singleton;
 
 /**
@@ -12,6 +10,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public class NavPrefRouterImpl implements NavPrefContract.NavPrefRouter {
+
     private Activity activity;
     private Router router;
 

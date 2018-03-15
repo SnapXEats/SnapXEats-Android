@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SelectedCuisineList;
+import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
@@ -36,12 +37,16 @@ public class FoodStackInteractor {
     public FoodStackInteractor() {
     }
 
+    @Inject
+    AppUtility utility;
+
     public void setFoodStackPresenter(FoodStackContract.FoodStackPresenter foodStackPresenter) {
         this.mFoodStackPresenter = foodStackPresenter;
     }
     public void setContext(FoodStackContract.FoodStackView view) {
         this.mFoodStackView = view;
         this.mContext = view.getActivity();
+        utility.setContext(mContext);
     }
 
     /**
@@ -56,8 +61,21 @@ public class FoodStackInteractor {
             double lng = -74.4518188;
             List<String> list = selectedCuisineList.getSelectedCuisineList();
 
+            /*locationCuisine.setLatitude(lat);
+            locationCuisine.setLongitude(lng);
+            SelectedCuisineList selectedCuisineList=new SelectedCuisineList(locationCuisine,null);*/
+
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
-            Call<RootCuisinePhotos> listCuisineCall = apiHelper.getCuisinePhotos(lat, lng, list);
+            Call<RootCuisinePhotos> listCuisineCall = apiHelper.getCuisinePhotos(
+                    utility.getAuthToken(mContext),
+                    lat, lng, selectedCuisineList.getRestaurant_rating(),
+                    selectedCuisineList.getRestaurant_price(),
+                    selectedCuisineList.getRestaurant_distance(),
+                    selectedCuisineList.getSort_by_distance(),
+                    selectedCuisineList.getSort_by_rating(),
+                    selectedCuisineList.getSelectedCuisineList(),
+                    selectedCuisineList.getSelectedFoodList());
+
             listCuisineCall.enqueue(new Callback<RootCuisinePhotos>() {
                 @Override
                 public void onResponse(Call<RootCuisinePhotos> call, Response<RootCuisinePhotos> response) {
@@ -76,36 +94,4 @@ public class FoodStackInteractor {
             mFoodStackPresenter.response(SnapXResult.NONETWORK, null);
         }
     }
-
-  /*  public void foodstackGestures(){
-        //"Bearer " + mAccessToken
-
-        if (NetworkUtility.isNetworkAvailable(mContext)) {
-            //TODO latlng are hardcoded for now
-//        double lat = selectedCuisineList.getLocation().getLatitude();
-//        double lng = selectedCuisineList.getLocation().getLongitude();
-            double lat = 40.4862157;
-            double lng = -74.4518188;
-            List<String> list = selectedCuisineList.getSelectedCuisineList();
-
-            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
-            Call<RootCuisinePhotos> listCuisineCall = apiHelper.getCuisinePhotos(lat, lng, list);
-            listCuisineCall.enqueue(new Callback<RootCuisinePhotos>() {
-                @Override
-                public void onResponse(Call<RootCuisinePhotos> call, Response<RootCuisinePhotos> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        RootCuisinePhotos rootCuisine = response.body();
-                        mFoodStackPresenter.response(SnapXResult.SUCCESS, rootCuisine);
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<RootCuisinePhotos> call, Throwable t) {
-                    mFoodStackPresenter.response(SnapXResult.ERROR, null);
-                }
-            });
-        } else {
-            mFoodStackPresenter.response(SnapXResult.NONETWORK, null);
-        }*/
-//    }
 }

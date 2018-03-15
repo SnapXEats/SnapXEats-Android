@@ -12,7 +12,6 @@ import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
@@ -22,9 +21,9 @@ import android.widget.ListView;
 import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
-import com.snapxeats.common.model.Location;
-import com.snapxeats.common.model.Prediction;
-import com.snapxeats.common.model.Result;
+import com.snapxeats.common.model.location.Location;
+import com.snapxeats.common.model.location.Prediction;
+import com.snapxeats.common.model.location.Result;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
@@ -112,12 +111,10 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
         mAutoCompleteTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                SnapXToast.debug("beforeTextChanged LocationActivity");
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                SnapXToast.debug("onTextChanged LocationActivity");
 
                 setClearIcon(s);
 
@@ -139,7 +136,6 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
 
             @Override
             public void afterTextChanged(Editable s) {
-                SnapXToast.debug("afterTextChanged LocationActivity");
                 if (s.length() == 0)
                     if (resultList != null && mAdapter != null) {
                     resetViews();
@@ -150,7 +146,6 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
 
         mListView.setOnItemClickListener((parent, view, position, id) -> {
             String address = (String) parent.getItemAtPosition(position);
-            SnapXToast.debug("Address" + address + "Id" + parent.getItemAtPosition(position));
 
             InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (in != null)

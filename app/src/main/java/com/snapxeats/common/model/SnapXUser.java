@@ -1,61 +1,56 @@
 package com.snapxeats.common.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Created by Prajakta Patil on 7/2/18.
  */
 
-@Entity
-public class SnapXUser {
+@Getter
+@Setter
+
+public class SnapXUser implements Parcelable{
     private String token;
     private String user_id;
     private String social_platform;
-    private boolean isFirstTimeUser;
+    private boolean first_time_login;
 
-    @Generated(hash = 1772475278)
-    public SnapXUser(String token, String user_id, String social_platform,
-            boolean isFirstTimeUser) {
-        this.token = token;
-        this.user_id = user_id;
-        this.social_platform = social_platform;
-        this.isFirstTimeUser = isFirstTimeUser;
+    protected SnapXUser(Parcel in) {
+        token = in.readString();
+        user_id = in.readString();
+        social_platform = in.readString();
+        first_time_login = in.readByte() != 0;
     }
 
-    @Generated(hash = 972905057)
-    public SnapXUser() {
+    public static final Creator<SnapXUser> CREATOR = new Creator<SnapXUser>() {
+        @Override
+        public SnapXUser createFromParcel(Parcel in) {
+            return new SnapXUser(in);
+        }
+
+        @Override
+        public SnapXUser[] newArray(int size) {
+            return new SnapXUser[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public String getToken() {
-        return this.token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getUser_id() {
-        return this.user_id;
-    }
-
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
-    }
-
-    public String getSocial_platform() {
-        return this.social_platform;
-    }
-
-    public void setSocial_platform(String social_platform) {
-        this.social_platform = social_platform;
-    }
-
-    public boolean getIsFirstTimeUser() {
-        return this.isFirstTimeUser;
-    }
-
-    public void setIsFirstTimeUser(boolean isFirstTimeUser) {
-        this.isFirstTimeUser = isFirstTimeUser;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(token);
+        dest.writeString(user_id);
+        dest.writeString(social_platform);
+        dest.writeByte((byte) (first_time_login ? 1 : 0));
     }
 }

@@ -3,10 +3,8 @@ package com.snapxeats.ui.location;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.snapxeats.R;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.WebConstants;
-import com.snapxeats.common.model.Prediction;
+import com.snapxeats.common.model.location.Prediction;
 
 import org.json.JSONArray;
 import org.json.JSONException;

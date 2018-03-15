@@ -3,6 +3,8 @@ package com.snapxeats.ui.home.fragment.navpreference;
 import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
+import com.snapxeats.common.model.preference.RootUserPreference;
+import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.dagger.AppContract;
 
 /**
@@ -17,6 +19,14 @@ public class NavPrefContract {
 
     public interface NavPrefPresenter extends BasePresenter<NavPrefView> {
         void presentScreen(Router.Screen screen);
+
+        void savePreferences(UserPreference userPreference);
+
+        void updatePreferences(UserPreference userPreference);
+
+        void saveLocalData(UserPreference userPreference);
+
+        void saveUserData();
     }
 
     public interface NavPrefRouter {

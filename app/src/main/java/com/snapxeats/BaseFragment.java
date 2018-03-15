@@ -7,11 +7,9 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -22,24 +20,19 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.snapxeats.common.Router;
-import com.snapxeats.common.constants.SnapXToast;
-import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
-import com.snapxeats.network.LocationHelper;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-
 import javax.inject.Inject;
-
 import dagger.android.DaggerFragment;
 
 /**
  * Created by Snehal Tembare on 16/2/18.
  */
 
-public class BaseFragment extends DaggerFragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class BaseFragment extends DaggerFragment implements
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "BaseFragment";
     private GoogleApiClient mGoogleApiClient;
@@ -51,8 +44,6 @@ public class BaseFragment extends DaggerFragment implements GoogleApiClient.Conn
 
     @Inject
     SnapXDialog mSnapXDialog;
-
-
 
     @Nullable
     @Override
@@ -75,9 +66,9 @@ public class BaseFragment extends DaggerFragment implements GoogleApiClient.Conn
         mSnapXDialog.dismissProgressSialog();
     }
 
-    public void showDenyDialog(DialogInterface.OnClickListener positiveClick,
-                               DialogInterface.OnClickListener negativeClick) {
-        mSnapXDialog.showDenyDialog(positiveClick, negativeClick);
+    public void showResetDialog(DialogInterface.OnClickListener negativeClick,
+                                DialogInterface.OnClickListener positiveClick) {
+        mSnapXDialog.showResetDialog(negativeClick, positiveClick);
     }
 
     public void showNetworkErrorDialog(DialogInterface.OnClickListener click) {
@@ -121,6 +112,7 @@ public class BaseFragment extends DaggerFragment implements GoogleApiClient.Conn
         });
 
     }
+
     /**
      * Method to display the location on UI
      */
@@ -153,7 +145,6 @@ public class BaseFragment extends DaggerFragment implements GoogleApiClient.Conn
     }
 
 
-
     public Address getAddress(double latitude, double longitude) {
         Geocoder geocoder;
         List<Address> addresses;
@@ -183,5 +174,4 @@ public class BaseFragment extends DaggerFragment implements GoogleApiClient.Conn
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-
 }

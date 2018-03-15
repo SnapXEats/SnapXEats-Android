@@ -21,8 +21,9 @@ public class AppContract {
 
         void showNetworkErrorDialog(DialogInterface.OnClickListener click);
 
-        void showDenyDialog(DialogInterface.OnClickListener positiveClick,
+        void showResetDialog(DialogInterface.OnClickListener positiveClick,
                             DialogInterface.OnClickListener negativeClick);
+
         DialogInterface.OnClickListener setListener(AppContract.DialogListenerAction button);
 
     }

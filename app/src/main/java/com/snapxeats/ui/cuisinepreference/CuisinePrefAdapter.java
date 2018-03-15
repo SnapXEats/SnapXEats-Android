@@ -8,12 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.snapxeats.R;
-import com.snapxeats.common.constants.SnapXToast;
-import com.snapxeats.common.model.Cuisines;
+import com.snapxeats.common.model.preference.Cuisines;
 import com.squareup.picasso.Picasso;
-
 import java.util.List;
 
 /**
@@ -21,6 +18,9 @@ import java.util.List;
  */
 
 public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.ViewHolder> {
+
+    private static final int SINGLE_TAP = 1;
+    private static final int DOUBLE_TAP = 2;
     private List<Cuisines> cuisineArrayList;
     private Context mContext;
     private OnDoubleTapListenr onDoubleTapListenr;
@@ -59,11 +59,11 @@ public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.
         }
 
         holder.imgStatus.setOnClickListener(v -> {
+            CuisinePrefActivity.isDirty = true;
             holder.imgStatus.setImageResource(0);
             cuisines.set_cuisine_favourite(false);
             cuisines.set_cuisine_like(false);
-            CuisinePrefActivity.isCuisineSelecetionChange = true;
-
+            notifyDataSetChanged();
         });
     }
 
@@ -92,18 +92,16 @@ public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.
         public void onClick(View v) {
             int position = getAdapterPosition();
             tapCount++;
-            if (tapCount == 1) {
+            if (tapCount == SINGLE_TAP) {
                 new Handler().postDelayed(() -> {
-                    if (tapCount == 1) {
+                    if (tapCount == SINGLE_TAP) {
                         //Single click
-                        SnapXToast.debug("Single");
                         onDoubleTapListenr.onSingleTap(position, true);
 
-                    } else if (tapCount == 2) {
+                    } else if (tapCount == DOUBLE_TAP) {
                         //Double click
                         onDoubleTapListenr.onDoubleTap(position, true);
                         tapCount = 0;
-                        SnapXToast.debug("Double");
                     }
                     tapCount = 0;
                 }, TIME_DELAY);

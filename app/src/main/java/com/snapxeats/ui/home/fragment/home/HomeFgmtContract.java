@@ -4,9 +4,13 @@ import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.LocationCuisine;
-import com.snapxeats.common.model.SnapXUser;
-import com.snapxeats.common.model.SnapXUserRequest;
+import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.preference.UserCuisinePreferences;
+import com.snapxeats.common.model.preference.UserFoodPreferences;
+import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.dagger.AppContract;
+
+import java.util.List;
 
 /**
  * Created by Snehal Tembare on 3/1/18.
@@ -23,10 +27,6 @@ public class HomeFgmtContract {
         void presentScreen(Router.Screen screen);
 
         void getCuisineList(LocationCuisine locationCuisine);
-
-/*        void getUserData(SnapXUserRequest snapXUserRequest);
-
-        void saveUserDataInDb(SnapXUser snapXUser);*/
     }
 
     interface HomeFgmtRouter {

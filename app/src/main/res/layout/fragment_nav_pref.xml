@@ -39,7 +39,7 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/btn_pref_apply"
+                        android:id="@+id/txt_pref_apply"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginRight="@dimen/common_dimens_10"
@@ -47,7 +47,7 @@
                         android:gravity="end|center"
                         android:padding="@dimen/common_dimens_10"
                         android:text="@string/apply"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/text_color_tertiary"
                         android:textSize="@dimen/text_size_18"
                         android:textStyle="bold" />
 
@@ -64,44 +64,6 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <!--Location layout-->
-                <!--<LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/common_dimens_10"
-                        android:text="@string/location"
-                        android:textColor="@color/text_color_primary"
-                        android:textSize="@dimen/text_size_12"
-                        android:theme="@style/TextViewStyle" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/common_dimens_5">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="@dimen/common_dimens_20"
-                            android:src="@drawable/ic_cuisine_marker" />
-
-                        <TextView
-                            android:id="@+id/txt_location"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/common_dimens_5"
-                            android:ellipsize="end"
-                            android:text="@string/select_location"
-                            android:textColor="@color/colorPrimary"
-                            android:textSize="@dimen/text_size_14" />
-                    </LinearLayout>
-                </LinearLayout>-->
-
-                <!--Ratings layout-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -119,123 +81,35 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/common_dimens_15">
+                        android:padding="@dimen/common_dimens_5">
 
-                        <android.support.v7.widget.CardView
-                            android:id="@+id/card_rating_three"
-                            android:layout_width="0dp"
+                        <ImageView
+                            android:id="@+id/rating_three"
+                            android:layout_width="120dp"
                             android:layout_height="@dimen/dimen_100"
-                            android:layout_weight="1"
-                            android:elevation="@dimen/common_1">
-                            <View
-                                android:id="@+id/view_rating_three"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/common_dimens_2"
-                                android:layout_marginBottom="@dimen/common_dimens_10" />
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:gravity="center_horizontal|center_vertical"
-                                android:orientation="vertical">
-
-                                <RatingBar
-                                    android:id="@+id/rating_bar_three"
-                                    style="?android:attr/ratingBarStyleSmall"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginBottom="@dimen/common_dimens_5"
-                                    android:numStars="3" />
-
-                                <TextView
-                                    android:id="@+id/txt_rating_three"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/three_stars"
-                                    android:textColor="@color/text_color_primary" />
-                            </LinearLayout>
-
-                        </android.support.v7.widget.CardView>
-
+                            android:src="@drawable/three_star_bw" />
 
                         <View
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.06" />
 
-                        <android.support.v7.widget.CardView
-                            android:id="@+id/card_rating_four"
-                            android:layout_width="0dp"
+                        <ImageView
+                            android:id="@+id/rating_four"
+                            android:layout_width="120dp"
                             android:layout_height="@dimen/dimen_100"
-                            android:layout_weight="1"
-                            android:elevation="@dimen/common_1">
-                            <View
-                                android:id="@+id/view_rating_four"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/common_dimens_2"
-                                android:layout_marginBottom="@dimen/common_dimens_10" />
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:gravity="center_horizontal|center_vertical"
-                                android:orientation="vertical">
-                                <RatingBar
-                                    android:id="@+id/rating_bar_four"
-                                    style="?android:attr/ratingBarStyleSmall"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginBottom="@dimen/common_dimens_5"
-                                    android:numStars="4" />
-
-                                <TextView
-                                    android:id="@+id/txt_rating_four"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:text="@string/four_stars"
-                                    android:textColor="@color/text_color_primary" />
-                            </LinearLayout>
-                        </android.support.v7.widget.CardView>
+                            android:src="@drawable/four_star_bw" />
 
                         <View
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.06"  />
+                            android:layout_weight="0.06" />
 
-                        <android.support.v7.widget.CardView
-                            android:id="@+id/card_rating_five"
-                            android:layout_width="0dp"
+                        <ImageView
+                            android:id="@+id/rating_five"
+                            android:layout_width="120dp"
                             android:layout_height="@dimen/dimen_100"
-                            android:layout_weight="1"
-                            android:elevation="@dimen/common_1">
-                            <View
-                                android:id="@+id/view_rating_five"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/common_dimens_2"
-                                android:layout_marginBottom="@dimen/common_dimens_10" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center_horizontal|center_vertical"
-                            android:orientation="vertical">
-
-                            <RatingBar
-                                android:id="@+id/rating_bar_five"
-                                style="?android:attr/ratingBarStyleSmall"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="@dimen/common_dimens_5"
-                                android:numStars="5" />
-
-                            <TextView
-                                android:id="@+id/txt_rating_five"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="@string/five_stars"
-                                android:textColor="@color/text_color_primary" />
-                        </LinearLayout>
-                        </android.support.v7.widget.CardView>
+                            android:src="@drawable/five_star_bw" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -254,56 +128,52 @@
                         android:textSize="@dimen/text_size_12"
                         android:theme="@style/TextViewStyle" />
 
-                    <co.ceryle.segmentedbutton.SegmentedButtonGroup
-                        android:id="@+id/sbg_pricing"
+                    <LinearLayout
+                        android:id="@+id/sg_pricing"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/common_dimens_15"
                         android:layout_margin="@dimen/common_dimens_10"
-                        app:sbg_backgroundColor="@color/pref_slider_background"
-                        app:sbg_borderColor="@color/pref_slider_background"
-                        app:sbg_borderSize="@dimen/common_dimens_1"
-                        app:sbg_dividerRadius="@dimen/common_dimens_10"
-                        app:sbg_draggable="true"
-                        app:sbg_position="0"
-                        app:sbg_radius="@dimen/common_dimens_10"
-                        app:sbg_selectorColor="@color/pref_slider_foreground">
+                        android:background="@drawable/segmented_bg"
+                        android:orientation="horizontal">
 
-                        <co.ceryle.segmentedbutton.SegmentedButton
-                            android:id="@+id/seg_btn_price_auto"
+                        <RadioButton
+                            android:id="@+id/btn_price_auto"
+                            style="@style/RadioButton"
+                            android:background="@drawable/segmented_fg"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:padding="@dimen/common_dimens_4" />
+                            android:layout_weight="1" />
 
-                        <co.ceryle.segmentedbutton.SegmentedButton
-                            android:id="@+id/seg_btn_price_one"
+                        <RadioButton
+                            android:id="@+id/btn_price_one"
+                            style="@style/RadioButton"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:padding="@dimen/common_dimens_4" />
+                            android:layout_weight="1" />
 
-                        <co.ceryle.segmentedbutton.SegmentedButton
-                            android:id="@+id/seg_btn_price_two"
+                        <RadioButton
+                            android:id="@+id/rd_price_two"
+                            style="@style/RadioButton"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:padding="@dimen/common_dimens_4" />
+                            android:layout_weight="1" />
 
-                        <co.ceryle.segmentedbutton.SegmentedButton
-                            android:id="@+id/seg_btn_price_three"
+                        <RadioButton
+                            android:id="@+id/btn_price_three"
+                            style="@style/RadioButton"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:padding="@dimen/common_dimens_4" />
+                            android:layout_weight="1" />
 
-                        <co.ceryle.segmentedbutton.SegmentedButton
-                            android:id="@+id/seg_btn_price_four"
+                        <RadioButton
+                            android:id="@+id/btn_price_four"
+                            style="@style/RadioButton"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:padding="@dimen/common_dimens_4" />
+                            android:layout_weight="1" />
 
-                    </co.ceryle.segmentedbutton.SegmentedButtonGroup>
+                    </LinearLayout>
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -318,9 +188,9 @@
                             android:clickable="true"
                             android:gravity="center_horizontal"
                             android:text="@string/auto"
-                            android:textStyle="bold"
                             android:textColor="@color/pref_txt_selected_color"
-                            android:textSize="@dimen/text_size_15" />
+                            android:textSize="@dimen/text_size_15"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/txt_price_one"
@@ -330,9 +200,9 @@
                             android:clickable="true"
                             android:gravity="center_horizontal"
                             android:text="$"
-                            android:textStyle="bold"
                             android:textColor="@color/pref_txt_selected_color"
-                            android:textSize="@dimen/text_size_15" />
+                            android:textSize="@dimen/text_size_15"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/txt_price_two"
@@ -342,8 +212,8 @@
                             android:clickable="true"
                             android:gravity="center_horizontal"
                             android:text="$$"
-                            android:textStyle="bold"
-                            android:textSize="@dimen/text_size_15" />
+                            android:textSize="@dimen/text_size_15"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/txt_price_three"
@@ -353,8 +223,8 @@
                             android:clickable="true"
                             android:gravity="center_horizontal"
                             android:text="$$$"
-                            android:textStyle="bold"
-                            android:textSize="@dimen/text_size_15" />
+                            android:textSize="@dimen/text_size_15"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/txt_price_four"
@@ -364,8 +234,8 @@
                             android:clickable="true"
                             android:gravity="center_horizontal"
                             android:text="$$$$"
-                            android:textStyle="bold"
-                            android:textSize="@dimen/text_size_15" />
+                            android:textSize="@dimen/text_size_15"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -385,64 +255,61 @@
                         android:textSize="@dimen/text_size_12"
                         android:theme="@style/TextViewStyle" />
 
-                    <co.ceryle.segmentedbutton.SegmentedButtonGroup
-                        android:id="@+id/sbg_distance"
+                    <LinearLayout
+                        android:id="@+id/layout_group_distance"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/common_dimens_15"
                         android:layout_margin="@dimen/common_dimens_10"
-                        app:sbg_backgroundColor="@color/pref_slider_background"
-                        app:sbg_borderColor="@color/pref_slider_background"
-                        app:sbg_borderSize="@dimen/common_dimens_1"
-                        app:sbg_draggable="true"
-                        app:sbg_radius="@dimen/common_dimens_10"
-                        app:sbg_selectorColor="@color/pref_slider_foreground">
+                        android:background="@drawable/segmented_bg"
+                        android:orientation="horizontal">
 
-                        <co.ceryle.segmentedbutton.SegmentedButton
-                            android:id="@+id/seg_distance_one"
+                        <RadioButton
+                            android:id="@+id/btn_distance_one"
+                            style="@style/RadioButton"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:padding="@dimen/common_dimens_4"
-                            app:sb_textColor="@color/pref_slider_background"
-                            app:sb_textColor_onSelection="@color/colorPrimary" />
+                            android:background="@drawable/segmented_fg"
+                            android:buttonTint="@color/pref_slider_background" />
 
-                        <co.ceryle.segmentedbutton.SegmentedButton
-                            android:id="@+id/seg_distance_two"
+                        <RadioButton
+                            android:id="@+id/btn_distance_two"
+                            style="@style/RadioButton"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:padding="@dimen/common_dimens_4"
-                            app:sb_textColor="@color/pref_slider_background"
-                            app:sb_textColor_onSelection="@color/colorPrimary" />
+                            android:background="@drawable/segmented_bg"
+                            android:buttonTint="@color/pref_slider_background" />
 
-                        <co.ceryle.segmentedbutton.SegmentedButton
-                            android:id="@+id/seg_distance_three"
+                        <RadioButton
+                            android:id="@+id/btn_distance_three"
+                            style="@style/RadioButton"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:padding="@dimen/common_dimens_4"
-                            app:sb_textColor="@color/pref_slider_background"
-                            app:sb_textColor_onSelection="@color/colorPrimary" />
+                            android:background="@drawable/segmented_bg"
+                            android:buttonTint="@color/pref_slider_background" />
 
-                        <co.ceryle.segmentedbutton.SegmentedButton
-                            android:id="@+id/seg_distance_four"
+                        <RadioButton
+                            android:id="@+id/btn_distance_four"
+                            style="@style/RadioButton"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:padding="@dimen/common_dimens_4"
-                            app:sb_textColor="@color/pref_slider_background"
-                            app:sb_textColor_onSelection="@color/colorPrimary" />
+                            android:background="@drawable/segmented_bg"
+                            android:buttonTint="@color/pref_slider_background" />
 
-                        <co.ceryle.segmentedbutton.SegmentedButton
-                            android:id="@+id/seg_distance_five"
+                        <RadioButton
+                            android:id="@+id/btn_distance_five"
+                            style="@style/RadioButton"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:padding="@dimen/common_dimens_4"
-                            app:sb_textColor="@color/pref_slider_background"
-                            app:sb_textColor_onSelection="@color/colorPrimary" />
+                            android:background="@drawable/segmented_bg"
+                            android:buttonTint="@color/pref_slider_background" />
 
-                    </co.ceryle.segmentedbutton.SegmentedButtonGroup>
+
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -457,8 +324,8 @@
                             android:clickable="true"
                             android:gravity="center_horizontal"
                             android:text="1"
-                            android:textStyle="bold"
-                            android:textSize="@dimen/text_size_15" />
+                            android:textSize="@dimen/text_size_15"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/txt_distance_two"
@@ -468,8 +335,8 @@
                             android:clickable="true"
                             android:gravity="center_horizontal"
                             android:text="2"
-                            android:textStyle="bold"
-                            android:textSize="@dimen/text_size_15" />
+                            android:textSize="@dimen/text_size_15"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/txt_distance_three"
@@ -479,8 +346,8 @@
                             android:clickable="true"
                             android:gravity="center_horizontal"
                             android:text="3"
-                            android:textStyle="bold"
-                            android:textSize="@dimen/text_size_15" />
+                            android:textSize="@dimen/text_size_15"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/txt_distance_four"
@@ -490,8 +357,8 @@
                             android:clickable="true"
                             android:gravity="center_horizontal"
                             android:text="4"
-                            android:textStyle="bold"
-                            android:textSize="@dimen/text_size_15" />
+                            android:textSize="@dimen/text_size_15"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/txt_distance_five"
@@ -501,8 +368,8 @@
                             android:clickable="true"
                             android:gravity="center_horizontal"
                             android:text="5"
-                            android:textStyle="bold"
-                            android:textSize="@dimen/text_size_15" />
+                            android:textSize="@dimen/text_size_15"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -534,6 +401,7 @@
                             android:id="@+id/radio_group_sort_by"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:clickable="true"
                             android:orientation="horizontal">
 
                             <RadioButton
@@ -541,6 +409,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="0.5"
+                                android:checked="true"
                                 android:text="@string/distance" />
 
                             <RadioButton
@@ -609,10 +478,10 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentTop="true"
-                                    android:visibility="gone"
-                                    android:enabled="false"
                                     android:buttonTint="@color/text_color_primary"
-                                    android:textColor="@color/check_box_text_color"/>
+                                    android:enabled="false"
+                                    android:textColor="@color/check_box_text_color"
+                                    android:visibility="gone" />
                             </RelativeLayout>
 
 
@@ -658,10 +527,10 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentTop="true"
-                                    android:visibility="gone"
-                                    android:enabled="false"
                                     android:buttonTint="@color/text_color_primary"
-                                    android:textColor="@color/check_box_text_color"/>
+                                    android:enabled="false"
+                                    android:textColor="@color/check_box_text_color"
+                                    android:visibility="gone" />
                             </RelativeLayout>
 
                         </android.support.v7.widget.CardView>

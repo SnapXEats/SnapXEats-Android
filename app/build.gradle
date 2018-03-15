@@ -7,8 +7,8 @@ android {
         applicationId "com.snapxeats"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 302
-        versionName "0.3"
+        versionCode 401
+        versionName "0.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         resValue "string", "HOCKEYAPP_APP_ID", HOCKEYAPP_APP_key
     }
@@ -74,10 +74,12 @@ dependencies {
     //Retrofit logs
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
     implementation 'com.squareup:android-times-square:1.6.5@aar'
+
     //Google API's
-    implementation 'com.google.android.gms:play-services-maps:11.8.0'
-    implementation 'com.google.android.gms:play-services-places:11.8.0'
-    implementation 'com.google.android.gms:play-services-location:11.8.0'
+    implementation 'com.google.android.gms:play-services-maps:10.2.0'
+    implementation 'com.google.android.gms:play-services-places:10.2.0'
+    implementation 'com.google.android.gms:play-services-location:10.2.0'
+
     //facebook sdk
     implementation 'com.facebook.android:facebook-android-sdk:4.29.0'
     //Multidex
@@ -108,6 +110,9 @@ dependencies {
 
     //google directions library
     compile 'com.google.maps:google-maps-services:0.1.20'
+
+    //Segmented cotrol group
+    compile 'info.hoang8f:android-segmented:1.0.6'
 
     //swipe library
     compile "com.yuyakaido.android:card-stack-view:1.0.0-beta8"

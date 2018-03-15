@@ -3,12 +3,9 @@ package com.snapxeats;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -18,17 +15,13 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.maps.model.LatLng;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.network.LocationHelper;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-
 import javax.inject.Inject;
 
 /**
@@ -139,7 +132,7 @@ public class LocationBaseActivity extends BaseActivity implements
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        SnapXToast.debug("Connection failed: ConnectionResult.getErrorCode() = "
+        SnapXToast.error("Connection failed: ConnectionResult.getErrorCode() = "
                 + connectionResult.getErrorCode());
     }
 
@@ -168,6 +161,7 @@ public class LocationBaseActivity extends BaseActivity implements
             } else if (locationAddress.getThoroughfare() != null) {
                 placeName = locationAddress.getThoroughfare();
             }
+
         }
         return placeName;
 

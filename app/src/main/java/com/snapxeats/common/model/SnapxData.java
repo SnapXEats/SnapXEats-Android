@@ -1,9 +1,14 @@
 package com.snapxeats.common.model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import org.greenrobot.greendao.annotation.Entity;
 
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Property;
+import org.greenrobot.greendao.annotation.ToOne;
 
 /**
  * Created by Prajakta Patil on 20/2/18.
@@ -16,20 +21,20 @@ public class SnapxData {
     public String userId;
     public String socialToken;
     public String socialUserId;
-    public String userImage;
+    public String imageUrl;
     public String userName;
     public String socialPlatform;
     public boolean isFirstTimeUser;
 
-    @Generated(hash = 41198777)
+    @Generated(hash = 367889088)
     public SnapxData(String token, String userId, String socialToken,
-            String socialUserId, String userImage, String userName,
+            String socialUserId, String imageUrl, String userName,
             String socialPlatform, boolean isFirstTimeUser) {
         this.token = token;
         this.userId = userId;
         this.socialToken = socialToken;
         this.socialUserId = socialUserId;
-        this.userImage = userImage;
+        this.imageUrl = imageUrl;
         this.userName = userName;
         this.socialPlatform = socialPlatform;
         this.isFirstTimeUser = isFirstTimeUser;
@@ -71,12 +76,12 @@ public class SnapxData {
         this.socialUserId = socialUserId;
     }
 
-    public String getUserImage() {
-        return this.userImage;
+    public String getImageUrl() {
+        return this.imageUrl;
     }
 
-    public void setUserImage(String userImage) {
-        this.userImage = userImage;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public String getUserName() {
