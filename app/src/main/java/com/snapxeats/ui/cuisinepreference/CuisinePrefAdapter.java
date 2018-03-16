@@ -8,10 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.snapxeats.R;
 import com.snapxeats.common.model.preference.Cuisines;
 import com.squareup.picasso.Picasso;
+
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Snehal Tembare on 13/2/18.
@@ -44,27 +49,7 @@ public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Cuisines cuisines = cuisineArrayList.get(position);
-        Picasso.with(mContext).load(cuisines.getCuisine_image_url()).into(holder.imgCuisinePref);
-        holder.txtCuisineName.setText(cuisines.getCuisine_name());
-
-        if (cuisines.is_cuisine_favourite()) {
-            holder.imgStatus.setVisibility(View.VISIBLE);
-            holder.imgStatus.setImageResource(R.drawable.ic_superlike_pref);
-
-        } else if (cuisines.is_cuisine_like()) {
-            holder.imgStatus.setVisibility(View.VISIBLE);
-            holder.imgStatus.setImageResource(R.drawable.ic_like_pref);
-        } else {
-            holder.imgStatus.setImageResource(0);
-        }
-
-        holder.imgStatus.setOnClickListener(v -> {
-            CuisinePrefActivity.isDirty = true;
-            holder.imgStatus.setImageResource(0);
-            cuisines.set_cuisine_favourite(false);
-            cuisines.set_cuisine_like(false);
-            notifyDataSetChanged();
-        });
+        holder.setItem(position, cuisines);
     }
 
     @Override
@@ -75,18 +60,47 @@ public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private static final long TIME_DELAY = 250;
-        private TextView txtCuisineName;
-        private ImageView imgCuisinePref;
-        private ImageView imgStatus;
 
-        public ViewHolder(View itemView) {
+        @BindView(R.id.txt_cuisine_pref_name)
+        TextView txtCuisineName;
+
+        @BindView(R.id.img_cuisine_pref)
+        ImageView imgCuisinePref;
+
+        @BindView(R.id.img_status)
+        ImageView imgStatus;
+
+        ViewHolder(View itemView) {
             super(itemView);
+            ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
-
-            txtCuisineName = itemView.findViewById(R.id.txt_cuisine_pref_name);
-            imgCuisinePref = itemView.findViewById(R.id.img_cuisine_pref);
-            imgStatus = itemView.findViewById(R.id.img_status);
         }
+
+        void setItem(int position, Cuisines cuisines) {
+
+            Picasso.with(mContext).load(cuisines.getCuisine_image_url()).into(imgCuisinePref);
+            txtCuisineName.setText(cuisines.getCuisine_name());
+
+            if (cuisines.is_cuisine_favourite()) {
+                imgStatus.setVisibility(View.VISIBLE);
+                imgStatus.setImageResource(R.drawable.ic_superlike_pref);
+
+            } else if (cuisines.is_cuisine_like()) {
+                imgStatus.setVisibility(View.VISIBLE);
+                imgStatus.setImageResource(R.drawable.ic_like_pref);
+            } else {
+                imgStatus.setVisibility(View.INVISIBLE);
+            }
+
+            imgStatus.setOnClickListener(v -> {
+                CuisinePrefActivity.isDirty = true;
+                imgStatus.setVisibility(View.INVISIBLE);
+                cuisines.set_cuisine_favourite(false);
+                cuisines.set_cuisine_like(false);
+                notifyItemChanged(position);
+            });
+        }
+
 
         @Override
         public void onClick(View v) {

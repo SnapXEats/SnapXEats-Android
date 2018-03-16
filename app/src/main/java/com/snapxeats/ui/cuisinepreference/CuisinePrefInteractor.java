@@ -56,8 +56,6 @@ public class CuisinePrefInteractor {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
 
-            // AppUtility.getAuthToken(this.mContext);
-
             Call<RootCuisine> cuisinesCall = apiHelper.getCuisinePreferences();
             cuisinesCall.enqueue(new Callback<RootCuisine>() {
                 @Override

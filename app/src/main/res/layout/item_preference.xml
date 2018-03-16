@@ -44,6 +44,7 @@
                 android:layout_height="@dimen/common_dimens_40"
                 android:src="@drawable/ic_like_pref"
                 android:layout_gravity="center"
+                android:visibility="invisible"
                 android:padding="@dimen/common_dimens_10"/>
         </LinearLayout>
 

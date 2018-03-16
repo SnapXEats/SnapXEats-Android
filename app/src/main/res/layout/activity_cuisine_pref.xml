@@ -46,7 +46,8 @@
                 android:layout_weight="1"
                 android:text="@string/set_preferences"
                 android:textColor="@color/text_color_primary"
-                android:textSize="@dimen/text_size_14" />
+                android:textSize="@dimen/text_size_14"
+                android:padding="@dimen/common_dimens_5"/>
 
             <TextView
                 android:id="@+id/txt_reset"
@@ -58,14 +59,9 @@
                 android:textStyle="bold"
                 android:textColor="@color/text_color_tertiary"
                 android:textSize="@dimen/text_size_14"
-                 />
+                android:padding="@dimen/common_dimens_5" />
         </LinearLayout>
 
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:nestedScrollingEnabled="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -77,10 +73,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/common_dimens_20"
-                    android:layout_marginRight="@dimen/common_dimens_20" />
+                    android:layout_marginRight="@dimen/common_dimens_20"/>
 
             </LinearLayout>
-        </ScrollView>
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
