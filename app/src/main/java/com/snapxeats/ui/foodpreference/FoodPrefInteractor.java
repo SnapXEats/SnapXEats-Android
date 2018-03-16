@@ -1,16 +1,15 @@
 package com.snapxeats.ui.foodpreference;
 
 import android.app.Activity;
-
+import android.content.SharedPreferences;
+import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
-import com.snapxeats.common.model.Cuisines;
-import com.snapxeats.common.model.DaoSession;
-import com.snapxeats.common.model.FoodPref;
-import com.snapxeats.common.model.RootFoodPref;
-import com.snapxeats.common.model.UserCuisinePreferences;
-import com.snapxeats.common.model.UserCuisinePreferencesDao;
-import com.snapxeats.common.model.UserFoodPreferences;
-import com.snapxeats.common.model.UserFoodPreferencesDao;
+import com.snapxeats.common.model.preference.DaoSession;
+import com.snapxeats.common.model.preference.FoodPref;
+import com.snapxeats.common.model.preference.RootFoodPref;
+import com.snapxeats.common.model.preference.UserFoodPreferences;
+import com.snapxeats.common.model.preference.UserFoodPreferencesDao;
+import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
@@ -32,9 +31,13 @@ public class FoodPrefInteractor {
     private Activity mContext;
     private DaoSession daoSession;
     private UserFoodPreferencesDao foodPreferencesDao;
+
     @Inject
     public FoodPrefInteractor() {
     }
+
+    @Inject
+    AppUtility utility;
 
     public void setPresenter(FoodPreferenceContract.FoodPreferencePresenter presenter) {
         this.presenter = presenter;
@@ -43,6 +46,7 @@ public class FoodPrefInteractor {
     public void setContext(FoodPreferenceContract.FoodPreferenceView view) {
         this.view = view;
         this.mContext = view.getActivity();
+        utility.setContext(mContext);
         daoSession = ((SnapXApplication) mContext.getApplication()).getDaoSession();
         foodPreferencesDao = daoSession.getUserFoodPreferencesDao();
     }
@@ -73,19 +77,18 @@ public class FoodPrefInteractor {
 
         foodPreferencesDao.deleteAll();
         UserFoodPreferences foodPreferences = null;
-        for (FoodPref foodPref : foodPrefList) {
-            foodPreferences = new UserFoodPreferences("",foodPref.getFood_type_info_id(),
-                    foodPref.is_food_like(), foodPref.is_food_favourite());
+        SharedPreferences preferences = utility.getSharedPreferences();
+        String userId = preferences.getString(mContext.getString(R.string.user_id), "");
 
-            if (null != foodPreferences) {
-                foodPreferencesDao.insert(foodPreferences);
+        for (FoodPref foodPref : foodPrefList) {
+            if (foodPref.is_food_like() || foodPref.is_food_favourite()) {
+                foodPreferences = new UserFoodPreferences(foodPref.getFood_type_info_id(),
+                        foodPref.is_food_like(), foodPref.is_food_favourite(), userId);
+
+                if (null != foodPreferences) {
+                    foodPreferencesDao.insert(foodPreferences);
+                }
             }
         }
-    }
-
-
-    public List<UserFoodPreferences> getFoodPrefListFromDb() {
-
-        return foodPreferencesDao.loadAll() != null ? foodPreferencesDao.loadAll() : null;
     }
 }

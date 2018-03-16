@@ -89,7 +89,8 @@
     <string name="food_preference">Food Preferences</string>
     <string name="save">Save</string>
     <string name="preference">Preference</string>
-    <string name="want_to_save_pref">Do you want to save the recent Preferences?</string>
+    <string name="preference_save_message">You have made some changes to your preferences, You need to save them first.</string>
+    <string name="preference_reset_message">Do you really want to reset your preferences. Please press Ok or Cancel</string>
     <string name="save_pref_msg">Do you want to apply recent Preferences?</string>
     <string name="discard">Discard</string>
     <string name="rootFoodPrefList">rootFoodPrefList</string>
@@ -99,6 +100,7 @@
     <string name="get_uber_ride">Get A Ride</string>
     <string name="call">Call</string>
     <string name="directions">Directions</string>
+    <string name="user_token">user_token</string>
     <string name="user_id">user_id</string>
     <string name="book_uber_ride">Are you sure you want to book a uber ride?</string>
     <string name="confirm_uber">Yes,confirm</string>
@@ -116,5 +118,8 @@
     <string name="rotation">rotation</string>
     <string name="translationX">translationX</string>
     <string name="translationY">translationY</string>
+    <string name="social_platform">social_platform</string>
+    <string name="isFirstTimeUser">isFirstTimeUser</string>
+    <string name="error">Error</string>
 
 </resources>

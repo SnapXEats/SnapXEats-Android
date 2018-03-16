@@ -2,10 +2,9 @@ package com.snapxeats.ui.location;
 
 
 import android.app.Activity;
-import android.content.Context;
 
 import com.snapxeats.common.constants.WebConstants;
-import com.snapxeats.common.model.PlaceDetail;
+import com.snapxeats.common.model.location.PlaceDetail;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;

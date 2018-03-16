@@ -1,8 +1,9 @@
 package com.snapxeats.ui.home;
 
 import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.preference.RootUserPreference;
+import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.utilities.SnapXResult;
-
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ public class HomePresenterImpl implements HomeContract.HomePresenter {
 
     @Override
     public void dropView() {
-
+        homeView = null;
     }
 
     @Override
@@ -38,7 +39,42 @@ public class HomePresenterImpl implements HomeContract.HomePresenter {
     }
 
     @Override
-    public void response(SnapXResult result, Object value) {
+    public void updatePreferences(UserPreference mUserPreference) {
+        interactor.updatePreferences(mUserPreference);
+    }
 
+    @Override
+    public void saveLocalData(UserPreference mUserPreference) {
+        interactor.saveDataInLocalDb(mUserPreference);
+    }
+
+    @Override
+    public void savePreferences(UserPreference mUserPreference) {
+        interactor.applyPreferences(mUserPreference);
+    }
+
+    @Override
+    public RootUserPreference getUserPreferenceFromDb() {
+        return interactor.getUserPreferenceFromDb();
+    }
+
+    @Override
+    public void response(SnapXResult result, Object value) {
+        if (null != homeView) {
+            switch (result) {
+                case SUCCESS:
+                    homeView.success(value);
+                    break;
+                case FAILURE:
+                    homeView.error(value);
+                    break;
+                case NONETWORK:
+                    homeView.noNetwork(value);
+                    break;
+                case NETWORKERROR:
+                    homeView.networkError(value);
+                    break;
+            }
+        }
     }
 }

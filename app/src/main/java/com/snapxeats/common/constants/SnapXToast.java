@@ -35,6 +35,11 @@ public class SnapXToast {
     }
 
     public static void debug(String message) {
+        Log.d(LOG_TAG, message);
+    }
+
+    public static void error(String message) {
+        Log.e(LOG_TAG, message);
     }
 
 }

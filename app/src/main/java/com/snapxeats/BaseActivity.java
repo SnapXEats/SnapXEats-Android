@@ -67,9 +67,9 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
         mSnapXDialog.dismissProgressSialog();
     }
 
-    public void showDenyDialog(DialogInterface.OnClickListener positiveClick,
-                               DialogInterface.OnClickListener negativeClick) {
-        mSnapXDialog.showDenyDialog(positiveClick, negativeClick);
+    public void showResetDialog(DialogInterface.OnClickListener negativeClick ,
+                                DialogInterface.OnClickListener positiveClick) {
+        mSnapXDialog.showResetDialog(negativeClick, positiveClick);
     }
 
     public void showNetworkErrorDialog(DialogInterface.OnClickListener click) {

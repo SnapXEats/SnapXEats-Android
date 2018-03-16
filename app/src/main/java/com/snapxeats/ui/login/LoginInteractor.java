@@ -8,13 +8,13 @@ import com.facebook.AccessToken;
 import com.facebook.Profile;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
-import com.snapxeats.common.model.DaoSession;
-import com.snapxeats.common.model.RootInstagram;
+import com.snapxeats.common.model.login.RootInstagram;
 import com.snapxeats.common.model.SnapXUser;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
+import com.snapxeats.common.model.preference.DaoSession;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
@@ -110,7 +110,8 @@ public class LoginInteractor {
                         /** save userId to shared preferences **/
                         SharedPreferences settings = appUtility.getSharedPreferences();
                         SharedPreferences.Editor editor = settings.edit();
-                        editor.putString(mContext.getString(R.string.pref_server_id), snapXUser.getUserInfo().getUser_id());
+                        editor.putString(mContext.getString(R.string.user_id), snapXUser.getUserInfo().getUser_id());
+                        editor.putBoolean(mContext.getString(R.string.isFirstTimeUser), snapXUser.getUserInfo().isFirst_time_login());
                         editor.commit();
                         /** save instagram data **/
                         if (snapXUser.getUserInfo().getSocial_platform().
@@ -143,7 +144,7 @@ public class LoginInteractor {
         snapxData.setSocialToken(token);
         snapxData.setSocialUserId(rootInstagram.getData().getId());
         snapxData.setUserName(rootInstagram.getData().getFull_name());
-        snapxData.setUserImage(rootInstagram.getData().getProfile_picture());
+        snapxData.setImageUrl(rootInstagram.getData().getProfile_picture());
         if (snapxDataDao.loadAll().size() == 0) {
             snapxDataDao.insert(snapxData);
         } else {
@@ -155,7 +156,7 @@ public class LoginInteractor {
         snapxData.setUserId(snapXUser.getUser_id());
         snapxData.setToken(snapXUser.getToken());
         snapxData.setSocialPlatform(snapXUser.getSocial_platform());
-        snapxData.setIsFirstTimeUser(snapXUser.getIsFirstTimeUser());
+        snapxData.setIsFirstTimeUser(snapXUser.isFirst_time_login());
         if (snapxDataDao.loadAll().size() == 0) {
             snapxDataDao.insert(snapxData);
         } else {
@@ -171,7 +172,7 @@ public class LoginInteractor {
                 + Profile.getCurrentProfile().getLastName();
         Uri profileUri = Profile.getCurrentProfile().getProfilePictureUri(50, 50);
         snapxData.setUserName(userName);
-        snapxData.setUserImage(profileUri.toString());
+        snapxData.setImageUrl(profileUri.toString());
         if (snapxDataDao.loadAll().size() == 0) {
             snapxDataDao.insert(snapxData);
         } else {

@@ -1,16 +1,17 @@
 package com.snapxeats.network;
 
 import com.snapxeats.common.constants.WebConstants;
-import com.snapxeats.common.model.PlaceDetail;
-import com.snapxeats.common.model.PlacesAutoCompleteData;
-import com.snapxeats.common.model.RootCuisine;
+import com.snapxeats.common.model.location.PlaceDetail;
+import com.snapxeats.common.model.location.PlacesAutoCompleteData;
+import com.snapxeats.common.model.preference.RootCuisine;
 import com.snapxeats.common.model.RootCuisinePhotos;
-import com.snapxeats.common.model.RootFoodPref;
-import com.snapxeats.common.model.RootInstagram;
+import com.snapxeats.common.model.preference.RootFoodPref;
+import com.snapxeats.common.model.login.RootInstagram;
 import com.snapxeats.common.model.RootRestaurantDetails;
+import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
-import com.snapxeats.common.model.UserPreference;
+import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.googleDirections.RootGoogleDir;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
@@ -22,6 +23,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -45,9 +47,16 @@ public interface ApiHelper {
      * @return
      */
     @GET(WebConstants.CUISINE_PHOTOS)
-    Call<RootCuisinePhotos> getCuisinePhotos(@Query("latitude") double latitude,
+    Call<RootCuisinePhotos> getCuisinePhotos(@Header("Authorization") String token,
+                                             @Query("latitude") double latitude,
                                              @Query("longitude") double longitude,
-                                             @Query("cuisineArray") List<String> cuisineList);
+                                             @Query("restaurant_rating") int restaurant_rating,
+                                             @Query("restaurant_price") int restaurant_price,
+                                             @Query("restaurant_distance") int restaurant_distance,
+                                             @Query("sort_by_distance") int sort_by_distance,
+                                             @Query("sort_by_rating") int sort_by_rating,
+                                             @Query("cuisineArray") List<String> cuisineList,
+                                             @Query("foodArray") List<String> foodArray);
 
     /**
      * get user info
@@ -83,8 +92,18 @@ public interface ApiHelper {
      * @param object- Set user preferences
      * @return
      */
+
     @POST(WebConstants.USER_PREFERENCES)
-    Call<UserPreference> setUserPreferences(@Body UserPreference object);
+    Call<UserPreference> setUserPreferences(@Header("Authorization") String token,
+                                            @Body UserPreference object);
+
+    /**
+     * Update user preferences
+     */
+
+    @PUT(WebConstants.USER_PREFERENCES)
+    Call<UserPreference> updateUserPreferences(@Header("Authorization") String token,
+                                               @Body UserPreference object);
 
     /**
      * get restaurant details
@@ -133,14 +152,6 @@ public interface ApiHelper {
     Call<RootCuisine> getCuisinePreferences();
 
     /**
-     * Get food preferences
-     *
-     * @return
-     */
-    @GET(WebConstants.USER_FOOD_PREF)
-    Call<RootFoodPref> getFoodPreferences();
-
-    /**
      * foodstack gestures api
      *
      * @param token
@@ -150,4 +161,21 @@ public interface ApiHelper {
     @POST(WebConstants.FOODSTACK_GESTURES)
     Call<RootFoodGestures> foodstackGestures(@Header("Authorization") String token,
                                              @Body RootFoodGestures rootFoodGestures);
+
+    /**
+     * Get food preferences
+     *
+     * @return
+     */
+    @GET(WebConstants.USER_FOOD_PREF)
+    Call<RootFoodPref> getFoodPreferences();
+
+    /**
+     * Get user preferences
+     *
+     * @param token
+     * @return
+     */
+    @GET(WebConstants.USER_PREF)
+    Call<RootUserPreference> getUserPreferences(@Header("Authorization") String token);
 }

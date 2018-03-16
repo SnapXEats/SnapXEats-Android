@@ -1,6 +1,6 @@
 package com.snapxeats.ui.location;
 
-import com.snapxeats.common.model.Prediction;
+import com.snapxeats.common.model.location.Prediction;
 
 import java.util.List;
 

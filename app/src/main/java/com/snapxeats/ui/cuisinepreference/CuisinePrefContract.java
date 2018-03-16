@@ -3,10 +3,8 @@ package com.snapxeats.ui.cuisinepreference;
 import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
-import com.snapxeats.common.model.Cuisines;
-import com.snapxeats.common.model.UserCuisinePreferences;
+import com.snapxeats.common.model.preference.Cuisines;
 import com.snapxeats.dagger.AppContract;
-
 import java.util.List;
 
 /**
@@ -25,10 +23,6 @@ public class CuisinePrefContract {
         void getCuisinePrefList();
 
         void saveCuisineList(List<Cuisines> rootCuisineList);
-
-        List<UserCuisinePreferences> getCuisineListFromDb();
-
-        void resetCuisineList();
     }
 
     interface CuisinePrefRouter {

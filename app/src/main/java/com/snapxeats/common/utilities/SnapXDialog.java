@@ -69,15 +69,15 @@ public class SnapXDialog {
     /**
      * Show dialog when user deny Location permission very first time
      */
-    public void showDenyDialog(DialogInterface.OnClickListener positiveClick,
-                               DialogInterface.OnClickListener negativeClick) {
+    public void showResetDialog(DialogInterface.OnClickListener negativeClick,
+                                DialogInterface.OnClickListener positiveClick) {
         mDenyDialog = new AlertDialog.Builder(context);
-        mDenyDialog.setTitle(context.getString(R.string.location_permission_denied))
-                .setMessage(context.getString(R.string.permission_denied_msg));
+        mDenyDialog.setTitle(context.getString(R.string.error))
+                .setMessage(context.getString(R.string.preference_reset_message));
 
-        mDenyDialog.setNegativeButton(context.getString(R.string.yes), negativeClick);
+        mDenyDialog.setNegativeButton(context.getString(R.string.cancel), negativeClick);
 
-        mDenyDialog.setPositiveButton(context.getString(R.string.retry), positiveClick);
+        mDenyDialog.setPositiveButton(context.getString(R.string.ok), positiveClick);
         mDenyDialog.show();
     }
 
@@ -120,6 +120,14 @@ public class SnapXDialog {
                         });
 
         AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    public void showSavePreferenceDilog(DialogInterface.OnClickListener positiveClick) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        alertDialog.setTitle(context.getString(R.string.error))
+                .setMessage(context.getString(R.string.preference_save_message))
+                .setPositiveButton(context.getString(R.string.apply), positiveClick);
         alertDialog.show();
     }
 }

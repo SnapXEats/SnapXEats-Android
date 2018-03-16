@@ -4,24 +4,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
-import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
+import com.snapxeats.common.model.preference.DaoSession;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.ui.home.HomeActivity;
 import com.snapxeats.ui.login.LoginActivity;
-
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
-
 import javax.inject.Inject;
-
 import butterknife.ButterKnife;
-
 import static com.snapxeats.common.model.SnapxDataDao.Properties.UserId;
 
 /**
@@ -47,7 +42,7 @@ public class SplashActivity extends BaseActivity {
 
         SharedPreferences settings = appUtility.getSharedPreferences();
         snapxData = snapxDataDao.queryBuilder()
-                .where(UserId.eq(settings.getString(getString(R.string.pref_server_id), ""))).limit(1).unique();
+                .where(UserId.eq(settings.getString(getString(R.string.user_id), ""))).limit(1).unique();
     }
 
     @Override

@@ -21,6 +21,17 @@
     <style name="TextViewStyle">
         <item name="android:textAllCaps">true</item>
     </style>
+    <style name="HomeActivityTheme" parent="Theme.AppCompat"></style>
 
+
+    <style name="CustomRadioButton">
+        <item name="android:textColor">@drawable/button_text_color</item>
+        <item name="android:minHeight">33dp</item>
+        <item name="android:minWidth">70dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:button">@null</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+    </style>
 
 </resources>

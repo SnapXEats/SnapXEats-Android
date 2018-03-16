@@ -1,10 +1,9 @@
 package com.snapxeats;
 
-import com.snapxeats.common.model.DaoMaster;
-import com.snapxeats.common.model.DaoSession;
+import com.snapxeats.common.model.preference.DaoMaster;
+import com.snapxeats.common.model.preference.DaoSession;
 import com.snapxeats.dagger.AppComponent;
 import com.snapxeats.dagger.DaggerAppComponent;
-
 import org.greenrobot.greendao.database.Database;
 import dagger.android.AndroidInjector;
 import dagger.android.DaggerApplication;
@@ -13,8 +12,10 @@ import dagger.android.DaggerApplication;
  * Created by Prajakta Patil on 28/12/17.
  */
 
-public class SnapXApplication extends DaggerApplication {
+public final class SnapXApplication extends DaggerApplication {
     public DaoSession daoSession;
+    private String token;
+
 
     @Override
     public void onCreate() {
@@ -32,6 +33,14 @@ public class SnapXApplication extends DaggerApplication {
         AppComponent appComponent = DaggerAppComponent.builder().application(this).build();
         appComponent.inject(this);
         return appComponent;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
 
