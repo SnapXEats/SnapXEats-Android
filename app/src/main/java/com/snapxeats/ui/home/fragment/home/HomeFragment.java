@@ -338,7 +338,6 @@ public class HomeFragment extends BaseFragment implements
         mRecyclerView.setAdapter(adapter);
     }
 
-
     private List<Cuisines> getSelectedCuisineList() {
         List<Cuisines> selectedCuisineList = new ArrayList<>();
         if (cuisinesList != null) {
@@ -372,7 +371,6 @@ public class HomeFragment extends BaseFragment implements
                 break;
         }
     }
-
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -439,7 +437,6 @@ public class HomeFragment extends BaseFragment implements
             checkGpsPermission();
         }
     }
-
 
     @Override
     public void error(Object value) {
@@ -549,9 +546,7 @@ public class HomeFragment extends BaseFragment implements
                 }
             }
         }
-
     }
-
 
     public static class MyReceiver extends BroadcastReceiver {
 

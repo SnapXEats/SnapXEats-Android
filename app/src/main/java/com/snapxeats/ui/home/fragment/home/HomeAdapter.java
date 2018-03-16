@@ -13,6 +13,8 @@ import com.snapxeats.common.model.preference.Cuisines;
 import com.snapxeats.ui.cuisinepreference.OnDoubleTapListenr;
 import com.squareup.picasso.Picasso;
 import java.util.List;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Snehal Tembare on 7/3/18.
@@ -44,22 +46,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Cuisines cuisines = cuisineArrayList.get(position);
-        Picasso.with(mContext).load(cuisines.getCuisine_image_url()).into(holder.imgCuisinePref);
-        holder.txtCuisineName.setText(cuisines.getCuisine_name());
-
-        if (cuisines.is_cuisine_like()) {
-            holder.imgCuisineSelected.setVisibility(View.VISIBLE);
-            holder.linearLayoutCuisine.setAlpha((float) SELECT_OPACITY);
-        } else if (cuisines.is_cuisine_favourite()) {
-            holder.imgCuisineSelected.setVisibility(View.VISIBLE);
-            holder.linearLayoutCuisine.setAlpha((float) SELECT_OPACITY);
-        } else if (!cuisines.is_cuisine_like()) {
-            holder.imgCuisineSelected.setVisibility(View.GONE);
-            holder.linearLayoutCuisine.setAlpha((float) UNSELECT_OPACITY);
-        } else if (!cuisines.is_cuisine_favourite()) {
-            holder.imgCuisineSelected.setVisibility(View.GONE);
-            holder.linearLayoutCuisine.setAlpha((float) UNSELECT_OPACITY);
-        }
+        holder.setItem(cuisines);
     }
 
     @Override
@@ -69,20 +56,27 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
 
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView txtCuisineName;
-        private ImageView imgCuisinePref;
-        private ImageView imgCuisineSelected;
-        private LinearLayout linearLayoutCuisine;
+
+        @BindView(R.id.txt_cuisine_name)
+        TextView txtCuisineName;
+
+        @BindView(R.id.img_cuisine)
+        ImageView imgCuisinePref;
 
 
-        public ViewHolder(View view) {
+        @BindView(R.id.img_cuisine_selected)
+        ImageView imgCuisineSelected;
+
+        @BindView(R.id.layout_cuisine_cardview)
+        LinearLayout linearLayoutCuisine;
+
+        private Cuisines item;
+
+
+        ViewHolder(View view) {
             super(view);
+            ButterKnife.bind(this,view);
             view.setOnClickListener(this);
-
-            txtCuisineName = view.findViewById(R.id.txt_cuisine_name);
-            imgCuisinePref = view.findViewById(R.id.img_cuisine);
-            imgCuisineSelected = view.findViewById(R.id.img_cuisine_selected);
-            linearLayoutCuisine = view.findViewById(R.id.layout_cuisine_cardview);
         }
 
         @Override
@@ -93,6 +87,25 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
                 onDoubleTapListenr.onSingleTap(position, false);
             } else {
                 onDoubleTapListenr.onSingleTap(position, true);
+            }
+        }
+
+        public void setItem(Cuisines cuisines) {
+            Picasso.with(mContext).load(cuisines.getCuisine_image_url()).into(imgCuisinePref);
+            txtCuisineName.setText(cuisines.getCuisine_name());
+
+            if (cuisines.is_cuisine_like()) {
+                imgCuisineSelected.setVisibility(View.VISIBLE);
+                linearLayoutCuisine.setAlpha((float) SELECT_OPACITY);
+            } else if (cuisines.is_cuisine_favourite()) {
+                imgCuisineSelected.setVisibility(View.VISIBLE);
+                linearLayoutCuisine.setAlpha((float) SELECT_OPACITY);
+            } else if (!cuisines.is_cuisine_like()) {
+                imgCuisineSelected.setVisibility(View.GONE);
+                linearLayoutCuisine.setAlpha((float) UNSELECT_OPACITY);
+            } else if (!cuisines.is_cuisine_favourite()) {
+                imgCuisineSelected.setVisibility(View.GONE);
+                linearLayoutCuisine.setAlpha((float) UNSELECT_OPACITY);
             }
         }
     }

@@ -6,13 +6,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
+
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.model.preference.FoodPref;
@@ -24,13 +24,18 @@ import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.cuisinepreference.OnDoubleTapListenr;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.mindorks.placeholderview.Utils.dpToPx;
 
 /**
  * Created by Snehal Tembare on 13/2/17.
@@ -171,29 +176,31 @@ public class FoodPreferenceActivity extends BaseActivity implements
     private void setUpRecyclerView() {
         getFoodPrefDataDb();
 
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(FoodPreferenceActivity.this,
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this,
                 2);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setLayoutManager(layoutManager);
 
-        mFoodPrefAdapter = new FoodPrefAdapter(this, rootFoodPrefList,
-                new OnDoubleTapListenr() {
-                    @Override
-                    public void onSingleTap(int position, boolean isLike) {
-                        isDirty = true;
-                        rootFoodPrefList.get(position).set_food_like(isLike);
-                        mFoodPrefAdapter.notifyDataSetChanged();
-                    }
+        if (null != rootFoodPrefList) {
+            mFoodPrefAdapter = new FoodPrefAdapter(this, rootFoodPrefList,
+                    new OnDoubleTapListenr() {
+                        @Override
+                        public void onSingleTap(int position, boolean isLike) {
+                            isDirty = true;
+                            rootFoodPrefList.get(position).set_food_like(isLike);
+                            mFoodPrefAdapter.notifyItemChanged(position);
+                        }
 
-                    @Override
-                    public void onDoubleTap(int position, boolean isSuperLike) {
-                        isDirty = true;
-                        rootFoodPrefList.get(position).set_food_favourite(isSuperLike);
-                        mFoodPrefAdapter.notifyDataSetChanged();
-                    }
-                });
+                        @Override
+                        public void onDoubleTap(int position, boolean isSuperLike) {
+                            isDirty = true;
+                            rootFoodPrefList.get(position).set_food_favourite(isSuperLike);
+                            mFoodPrefAdapter.notifyItemChanged(position);
+                        }
+                    });
 
-        mRecyclerView.setAdapter(mFoodPrefAdapter);
+            mRecyclerView.setAdapter(mFoodPrefAdapter);
+            mFoodPrefAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

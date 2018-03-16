@@ -2,7 +2,10 @@ package com.snapxeats.ui.cuisinepreference;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -10,9 +13,12 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
+
 import com.NetworkCheckReceiver;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
@@ -24,13 +30,20 @@ import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.SCREENNAMES.CUISINE;
+import static com.mindorks.placeholderview.Utils.dpToPx;
+
 
 /**
  * Created by Snehal Tembare on 13/2/18.
@@ -174,39 +187,39 @@ public class CuisinePrefActivity extends BaseActivity implements
 
     private void setUpRecyclerView() {
         getCuisinePrefDataFromDb();
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(CuisinePrefActivity.this, 2);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
         mRecyclerView.setLayoutManager(layoutManager);
 
         if (null != rootCuisineList) {
             mCuisinePrefAdapter = new CuisinePrefAdapter(this,
                     rootCuisineList, new OnDoubleTapListenr() {
-                Cuisines cuisines;
 
                 @Override
                 public void onSingleTap(int position, boolean isLike) {
-                    cuisines = rootCuisineList.get(position);
-                    cuisines.set_cuisine_like(isLike);
                     isDirty = true;
-                    mCuisinePrefAdapter.notifyDataSetChanged();
+                    rootCuisineList.get(position).set_cuisine_like(isLike);
+                    mCuisinePrefAdapter.notifyItemChanged(position);
                 }
 
                 @Override
                 public void onDoubleTap(int position, boolean isSuperLike) {
-                    cuisines = rootCuisineList.get(position);
-                    cuisines.set_cuisine_favourite(isSuperLike);
                     isDirty = true;
-                    mCuisinePrefAdapter.notifyDataSetChanged();
+                    rootCuisineList.get(position).set_cuisine_favourite(isSuperLike);
+                    mCuisinePrefAdapter.notifyItemChanged(position);
+
                 }
             });
             mRecyclerView.setAdapter(mCuisinePrefAdapter);
+            mCuisinePrefAdapter.notifyDataSetChanged();
         }
     }
 
+
+
     @OnClick(R.id.btn_cuisine_pref_save)
     public void saveCusinePref() {
-        saveCuisinePrefInDbAndFinish();
-    }
+            saveCuisinePrefInDbAndFinish();
+          }
 
     @Override
     public void error(Object value) {
@@ -216,6 +229,12 @@ public class CuisinePrefActivity extends BaseActivity implements
     @Override
     public void noNetwork(Object value) {
         dismissProgressDialog();
+        Intent intent = new Intent();
+        intent.putExtra("screen", CUISINE);
+//        intent.setAction("android.net.conn.CONNECTIVITY_CHANGE");
+//        intent.setAction("android.net.wifi.WIFI_STATE_CHANGED");
+        sendBroadcast(intent);
+
         showNetworkErrorDialog((dialog, which) -> {
         });
 
