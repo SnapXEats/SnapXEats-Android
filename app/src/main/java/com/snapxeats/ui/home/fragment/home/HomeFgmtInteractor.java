@@ -2,8 +2,8 @@ package com.snapxeats.ui.home.fragment.home;
 
 import android.app.Activity;
 import com.snapxeats.SnapXApplication;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.LocationCuisine;
-import com.snapxeats.common.model.preference.DaoSession;
 import com.snapxeats.common.model.preference.RootCuisine;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;

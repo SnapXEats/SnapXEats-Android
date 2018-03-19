@@ -51,6 +51,8 @@ import butterknife.OnClick;
 public class RestaurantDetailsActivity extends BaseActivity implements RestaurantDetailsContract.RestaurantDetailsView,
         AppContract.SnapXResults {
 
+    private static final String UBER_PACKAGE ="com.ubercab";
+    private static final String UBER_URI ="https://play.google.com/store/apps/details?id=com.ubercab";
     List<RestaurantPics> mRestaurantPicsList;
 
     List<RestaurantSpeciality> mRestaurantSpecialties;
@@ -124,13 +126,13 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     //uber button click
     @OnClick(R.id.layout_uber)
     public void layoutUber() {
-        boolean isAppInstalled = appInstalledOrNot("com.ubercab");
+        boolean isAppInstalled = appInstalledOrNot(UBER_PACKAGE);
         if (isAppInstalled) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(getString(R.string.book_uber_ride))
                     .setPositiveButton(getString(R.string.confirm_uber), (dialog, which) -> {
                         Intent LaunchIntent = getPackageManager()
-                                .getLaunchIntentForPackage("com.ubercab");
+                                .getLaunchIntentForPackage(UBER_PACKAGE);
                         startActivity(LaunchIntent);
                     })
                     .setNegativeButton(getString(R.string.not_now), (dialog, which) -> {
@@ -140,7 +142,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(getString(R.string.install_uber))
                     .setPositiveButton(getString(R.string.ok), (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("https://play.google.com/store/apps/details?id=com.ubercab"))))
+                            Uri.parse(UBER_URI))))
                     .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
                     })
                     .show();
@@ -307,10 +309,12 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             ArrayAdapter<String> adapter =
                     new ArrayAdapter<>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, listTimings);
             mSpinner.setAdapter(adapter);
+            mTxtRestTime.setVisibility(View.VISIBLE);
+
         } else {
             mSpinner.setVisibility(View.GONE);
             mTxtRestTime.setVisibility(View.VISIBLE);
-            mTxtRestTime.setText("No timings available");
+            mTxtRestTime.setText(getString(R.string.no_timings));
         }
     }
 
@@ -330,34 +334,4 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     public void networkError(Object value) {
         dismissProgressDialog();
     }
-
-    //TODO functionality is yet to complete
-    //get google directions
-   /* public void getGoogleDirections(LocationGoogleDir locationGoogleDir) {
-
-        if (NetworkUtility.isNetworkAvailable(this)) {
-            ApiHelper apiHelper = ApiClient.getClient(this, GOOGLE_BASE_URL).create(ApiHelper.class);
-            Call<RootGoogleDir> snapXUserCall =
-                    apiHelper.getGoogleDir(locationGoogleDir.getGoogleDirOrigin().getOriginLat()
-                                    + "," + locationGoogleDir.getGoogleDirOrigin().getOriginLng(),
-                            locationGoogleDir.getGoogleDirDest().getDestinationLat() + ","
-                                    + locationGoogleDir.getGoogleDirDest().getDestinationLng());
-            snapXUserCall.enqueue(new Callback<RootGoogleDir>() {
-                @Override
-                public void onResponse(Call<RootGoogleDir> call, Response<RootGoogleDir> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        RootGoogleDir rootGoogleDir = response.body();
-                        mTxtRestDuration
-                                .setText(rootGoogleDir.getRoutes().get(0).getLegs().get(0)
-                                        .getDuration().getText() + " " + getString(R.string.away));
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<RootGoogleDir> call, Throwable t) {
-                }
-            });
-        } else {
-        }
-    }*/
 }

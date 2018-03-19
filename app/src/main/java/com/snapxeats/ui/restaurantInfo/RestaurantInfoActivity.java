@@ -142,8 +142,9 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
             ArrayAdapter<String> adapter =
                     new ArrayAdapter<>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, listTimings);
             adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-
             mSpinner.setAdapter(adapter);
+            mTxtRestTime.setVisibility(View.VISIBLE);
+
         } else {
             mSpinner.setVisibility(View.GONE);
             mTxtRestTime.setVisibility(View.VISIBLE);
