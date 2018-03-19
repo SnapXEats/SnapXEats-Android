@@ -44,39 +44,39 @@
             android:padding="@dimen/common_dimens_10">
 
             <ImageButton
-                android:alpha="0.5"
-                android:clickable="false"
                 android:id="@+id/img_cuisine_undo"
                 android:layout_width="@dimen/dimens_50dp"
                 android:layout_height="@dimen/dimens_50dp"
-                android:background="@drawable/ic_undo" />
+                android:alpha="0.5"
+                android:background="@drawable/ic_undo"
+                android:clickable="false" />
 
             <ImageButton
-                android:alpha="0.5"
-                android:clickable="false"
                 android:id="@+id/img_cuisine_dislike"
                 android:layout_width="@dimen/dimens_80dp"
                 android:layout_height="@dimen/dimens_80dp"
                 android:layout_marginStart="@dimen/common_dimens_12"
-                android:background="@drawable/ic_nope" />
+                android:alpha="0.5"
+                android:background="@drawable/ic_nope"
+                android:clickable="false" />
 
             <ImageButton
-                android:alpha="0.5"
-                android:clickable="false"
                 android:id="@+id/img_cuisine_like"
                 android:layout_width="@dimen/dimens_80dp"
                 android:layout_height="@dimen/dimens_80dp"
                 android:layout_marginStart="@dimen/common_dimens_12"
-                android:background="@drawable/ic_like" />
+                android:alpha="0.5"
+                android:background="@drawable/ic_like"
+                android:clickable="false" />
 
             <ImageButton
-                android:alpha="0.5"
-                android:clickable="false"
                 android:id="@+id/img_cuisine_wishlist"
                 android:layout_width="@dimen/dimens_50dp"
                 android:layout_height="@dimen/dimens_50dp"
                 android:layout_marginStart="@dimen/common_dimens_12"
-                android:background="@drawable/ic_wish" />
+                android:alpha="0.5"
+                android:background="@drawable/ic_wish"
+                android:clickable="false" />
         </LinearLayout>
 
         <com.yuyakaido.android.cardstackview.CardStackView

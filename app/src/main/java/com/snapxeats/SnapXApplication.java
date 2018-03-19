@@ -1,7 +1,7 @@
 package com.snapxeats;
 
-import com.snapxeats.common.model.preference.DaoMaster;
-import com.snapxeats.common.model.preference.DaoSession;
+import com.snapxeats.common.model.DaoMaster;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.dagger.AppComponent;
 import com.snapxeats.dagger.DaggerAppComponent;
 import org.greenrobot.greendao.database.Database;

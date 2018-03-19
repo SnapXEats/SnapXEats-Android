@@ -51,15 +51,31 @@
 
             <Spinner
                 android:id="@+id/spinner_rest_info_timings"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:spinnerMode="dialog" />
+                android:spinnerMode="dropdown" />
 
             <TextView
-                android:id="@+id/txt_rest_info_time"
+                android:id="@+id/txt_rest_info_open"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/common_dimens_10"
+                android:drawablePadding="@dimen/common_dimens_10"
+                android:drawableStart="@drawable/ic_rest_clock"
+                android:text="@string/open_today"
+                android:textColor="@color/colorTextGrey"
+                android:textSize="@dimen/text_size_14"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/txt_rest_info_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_dimens_10"
+                android:drawableStart="@drawable/ic_rest_clock"
+                android:drawablePadding="@dimen/common_dimens_10"
+                android:drawableEnd="@drawable/ic_rest_arrow"
+                android:text="@string/close_today"
                 android:textColor="@color/colorTextGrey"
                 android:textSize="@dimen/text_size_14"
                 android:visibility="gone" />
@@ -83,11 +99,12 @@
             android:divider="@null" />
 
         <TextView
+            android:id="@+id/txt_photo_taken"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/common_dimens_20"
             android:layout_marginTop="@dimen/common_dimens_20"
-            android:text="Photo taken on 25th Jan 2014"
+            android:text="Photo taken on 12th Jan 2014"
             android:textColor="@color/text_color_primary"
             android:textSize="@dimen/text_size_14" />
     </LinearLayout>

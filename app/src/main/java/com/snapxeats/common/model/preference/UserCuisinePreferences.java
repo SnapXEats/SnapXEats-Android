@@ -23,7 +23,6 @@ public class UserCuisinePreferences {
 
     @Id(autoincrement = true)
     private transient Long id;
-
     @Expose
     private String cuisine_info_id;
     @Expose
@@ -78,6 +77,4 @@ public class UserCuisinePreferences {
     public void setUserPreferenceId(String userPreferenceId) {
         this.userPreferenceId = userPreferenceId;
     }
-
-
 }

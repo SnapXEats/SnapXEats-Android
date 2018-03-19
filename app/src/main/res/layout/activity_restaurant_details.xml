@@ -52,13 +52,30 @@
                 android:id="@+id/spinner_rest_timings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:spinnerMode="dialog" />
+                android:spinnerMode="dropdown"/>
 
             <TextView
-                android:id="@+id/txt_rest_time"
+                android:id="@+id/txt_rest_details_open"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/common_dimens_10"
+                android:drawableStart="@drawable/ic_rest_clock"
+                android:drawablePadding="@dimen/common_dimens_10"
+                android:drawableEnd="@drawable/ic_rest_arrow"
+                android:text="@string/open_today"
+                android:textColor="@color/colorTextGrey"
+                android:textSize="@dimen/text_size_14"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/txt_rest_details_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_dimens_10"
+                android:drawableStart="@drawable/ic_rest_clock"
+                android:drawablePadding="@dimen/common_dimens_10"
+                android:drawableEnd="@drawable/ic_rest_arrow"
+                android:text="@string/close_today"
                 android:textColor="@color/colorTextGrey"
                 android:textSize="@dimen/text_size_14"
                 android:visibility="gone" />
@@ -133,7 +150,6 @@
                 android:src="@drawable/ic_uber" />
 
             <TextView
-                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/img_uber"
@@ -150,7 +166,6 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/common_dimens_20"
-                android:text="5 mins away"
                 android:textColor="@color/colorCuisine"
                 android:textSize="@dimen/text_size_16" />
         </RelativeLayout>

@@ -4,6 +4,7 @@ import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.SelectedCuisineList;
+import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.dagger.AppContract;
 
 /**
@@ -19,6 +20,8 @@ public class FoodStackContract {
         void presentScreen(Router.Screen screen);
 
         void getCuisinePhotos(SelectedCuisineList selectedCuisineList);
+
+        void saveGesturesToDb(String count, RootFoodGestures rootFoodGestures);
     }
 
     public interface FoodStackRouter {

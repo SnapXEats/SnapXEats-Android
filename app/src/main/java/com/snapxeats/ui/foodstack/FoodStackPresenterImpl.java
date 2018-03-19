@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.SelectedCuisineList;
+import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.utilities.SnapXResult;
 
 import javax.inject.Singleton;
@@ -48,6 +49,11 @@ public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPresen
     @Override
     public void getCuisinePhotos(SelectedCuisineList selectedCuisineList) {
         mFoodStackInteractor.getCuisinePhotos(selectedCuisineList);
+    }
+
+    @Override
+    public void saveGesturesToDb(String count, RootFoodGestures rootFoodGestures) {
+        mFoodStackInteractor.saveGesturesToDb(count,rootFoodGestures);
     }
 
     @Override

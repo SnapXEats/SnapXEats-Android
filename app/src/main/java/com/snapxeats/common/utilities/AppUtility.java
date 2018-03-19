@@ -8,10 +8,10 @@ import android.support.v7.app.AlertDialog;
 import com.google.gson.Gson;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
 import com.snapxeats.common.model.location.Location;
-import com.snapxeats.common.model.preference.DaoSession;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

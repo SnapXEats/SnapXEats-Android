@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.common.model.RestaurantPics;
+import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
@@ -73,8 +73,11 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     @BindView(R.id.list_rest_aminities)
     protected ListView mListRestAminities;
 
-    @BindView(R.id.txt_rest_info_time)
-    protected TextView mTxtRestTime;
+    @BindView(R.id.txt_rest_info_open)
+    protected TextView mTxtRestOpen;
+
+    @BindView(R.id.txt_rest_info_close)
+    protected TextView mTxtRestClose;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +115,10 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
 
     //set restaurant timings
     private void setRestaurantTimingsList() {
+        ArrayAdapter<String> adapter;
         List<String> listTimings = new ArrayList<>();
+        String isOpenNow = mRootRestaurantInfo.getRestaurantDetails().getIsOpenNow();
+
         if (mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size() != 0) {
             for (int i = 0; i < mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size(); i++) {
                 listTimings.add(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().get(i).getDay_of_week()
@@ -139,17 +145,17 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
                 }
             };
             Collections.sort(listTimings, dateComparator);
-            ArrayAdapter<String> adapter =
-                    new ArrayAdapter<>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, listTimings);
+            adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, listTimings);
             adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
             mSpinner.setAdapter(adapter);
-            mTxtRestTime.setVisibility(View.VISIBLE);
+            mTxtRestOpen.setVisibility(View.VISIBLE);
+        } else if (isOpenNow.equalsIgnoreCase("true")) {
+            mSpinner.setVisibility(View.GONE);
+            mTxtRestOpen.setVisibility(View.VISIBLE);
 
         } else {
             mSpinner.setVisibility(View.GONE);
-            mTxtRestTime.setVisibility(View.VISIBLE);
-            mTxtRestTime.setText(getString(R.string.no_timings));
-
+            mTxtRestClose.setVisibility(View.VISIBLE);
         }
     }
 

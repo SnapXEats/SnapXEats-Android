@@ -1,10 +1,11 @@
 package com.snapxeats.ui.home;
 
 import android.app.Activity;
+
 import com.snapxeats.SnapXApplication;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
-import com.snapxeats.common.model.preference.DaoSession;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserCuisinePreferences;
 import com.snapxeats.common.model.preference.UserCuisinePreferencesDao;
@@ -17,11 +18,15 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
+
 import java.util.List;
+
 import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 /**
@@ -158,7 +163,6 @@ public class HomeInteractor {
                 rootUserPreference.setSort_by_distance(true);
             }
 
-
             List<UserCuisinePreferences> selectedCuisineList = cuisineDao.queryBuilder().
                     whereOr(UserCuisinePreferencesDao.Properties.Is_cuisine_favourite.eq(1),
                             (UserCuisinePreferencesDao.Properties.Is_cuisine_like.eq(1))).list();
@@ -172,6 +176,6 @@ public class HomeInteractor {
             rootUserPreference.setUserFoodPreferences(selectedFoodList);
 
         }
-        return rootUserPreference != null ? rootUserPreference : null;
+        return rootUserPreference;
     }
 }

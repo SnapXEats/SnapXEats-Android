@@ -18,6 +18,8 @@ public class RestaurantDetailsContract {
         void presentScreen(Router.Screen screen);
 
         void getRestDetails(String restaurantId);
+
+        void getGoogleDirections(LocationGoogleDir locationGoogleDir);
     }
 
     interface RestaurantDetailsRouter {

@@ -24,7 +24,6 @@ import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 public class HomeFgmtInteractor {
 
     private HomeFgmtContract.HomeFgmtPresenter homeFgmtPresenter;
-    private DaoSession daoSession;
 
     private Activity mContext;
 
@@ -41,7 +40,6 @@ public class HomeFgmtInteractor {
 
     public void setContext(HomeFgmtContract.HomeFgmtView view) {
         this.mContext = view.getActivity();
-        daoSession = ((SnapXApplication) mContext.getApplication()).getDaoSession();
     }
 
     /**

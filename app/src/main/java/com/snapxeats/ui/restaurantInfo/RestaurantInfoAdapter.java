@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.snapxeats.R;
-import com.snapxeats.common.model.RestaurantPics;
+import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

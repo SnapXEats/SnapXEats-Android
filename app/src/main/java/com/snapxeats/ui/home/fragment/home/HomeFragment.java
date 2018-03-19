@@ -38,11 +38,11 @@ import com.google.gson.Gson;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
-import com.snapxeats.common.model.preference.Cuisines;
 import com.snapxeats.common.model.LocationCuisine;
-import com.snapxeats.common.model.preference.RootCuisine;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.model.SnapXUser;
+import com.snapxeats.common.model.preference.Cuisines;
+import com.snapxeats.common.model.preference.RootCuisine;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserCuisinePreferences;
 import com.snapxeats.common.utilities.AppUtility;
@@ -103,8 +103,6 @@ public class HomeFragment extends BaseFragment implements
 
     private SelectedCuisineList selectedCuisineList;
 
-    private LocationCuisine mLocationCuisine;
-
     private Activity activity;
     private DrawerLayout mDrawerLayout;
     public SharedPreferences preferences;
@@ -112,6 +110,7 @@ public class HomeFragment extends BaseFragment implements
     private List<Cuisines> cuisinesList;
     private List<String> selectedList;
     private HomeAdapter adapter;
+    private LocationCuisine mLocationCuisine;
 
     @Inject
     public HomeFragment() {
@@ -251,8 +250,6 @@ public class HomeFragment extends BaseFragment implements
                 mLocationCuisine.setLatitude(mSelectedLocation.getLat());
                 mLocationCuisine.setLongitude(mSelectedLocation.getLng());
 
-//                selectedCuisineList.setLocation(mLocationCuisine);
-
                 //Save data in shared preferences
                 utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
 
@@ -274,7 +271,7 @@ public class HomeFragment extends BaseFragment implements
         if (selectedList.size() != 0) {
             if (mSelectedLocation != null) {
                 //set selected cuisines data
-                selectedCuisineList = homeFgmtHelper.getSelectedCusineObject(mLocationCuisine,selectedList);
+                selectedCuisineList = homeFgmtHelper.getSelectedCusineObject(mLocationCuisine, selectedList);
 
                 Intent intent = new Intent(activity, FoodStackActivity.class);
                 intent.putExtra(getString(R.string.data_selectedCuisineList), selectedCuisineList);
