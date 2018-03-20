@@ -29,7 +29,7 @@ public class FoodStackAdapter extends ArrayAdapter<FoodStackData> {
     @Override
     public View getView(int position, View contentView, @NonNull ViewGroup parent) {
         ViewHolder holder;
-        if (contentView == null) {
+        if (null == contentView) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             contentView = inflater.inflate(R.layout.item_foodstack_card, parent, false);
             holder = new ViewHolder(contentView);
@@ -53,8 +53,8 @@ public class FoodStackAdapter extends ArrayAdapter<FoodStackData> {
         ImageView mImgDishes;
 
         ViewHolder(View view) {
-            this.mTxtDishName = view.findViewById(R.id.txt_card_rest_name);
-            this.mImgDishes = view.findViewById(R.id.txt_card_rest_image);
+            mTxtDishName = view.findViewById(R.id.txt_card_rest_name);
+            mImgDishes = view.findViewById(R.id.txt_card_rest_image);
         }
     }
 }

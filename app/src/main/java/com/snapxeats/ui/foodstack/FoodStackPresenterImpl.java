@@ -23,7 +23,6 @@ public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPresen
     @Nullable
     private FoodStackContract.FoodStackView mFoodStackView;
 
-
     public FoodStackPresenterImpl(FoodStackInteractor foodStackInteractor, FoodStackRouterImpl foodStackRouter) {
         this.mFoodStackInteractor = foodStackInteractor;
         this.mFoodStackRouter = foodStackRouter;
@@ -52,8 +51,18 @@ public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPresen
     }
 
     @Override
-    public void saveGesturesToDb(String count, RootFoodGestures rootFoodGestures) {
-        mFoodStackInteractor.saveGesturesToDb(count,rootFoodGestures);
+    public void saveDislikeToDb(RootFoodGestures rootFoodGestures) {
+        mFoodStackInteractor.saveDislikesToDb(rootFoodGestures);
+    }
+
+    @Override
+    public void saveWishlistToDb(RootFoodGestures rootFoodGestures) {
+        mFoodStackInteractor.saveWishlistToDb(rootFoodGestures);
+    }
+
+    @Override
+    public void foodstackGestures(RootFoodGestures rootFoodGestures) {
+        mFoodStackInteractor.foodstackGestures(rootFoodGestures);
     }
 
     @Override

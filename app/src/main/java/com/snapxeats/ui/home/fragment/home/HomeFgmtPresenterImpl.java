@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.LocationCuisine;
+import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.utilities.SnapXResult;
 import javax.inject.Singleton;
 
@@ -57,7 +58,6 @@ public class HomeFgmtPresenterImpl implements HomeFgmtContract.HomeFgmtPresenter
 
         mHomeFgmtInteractor.getCuisineList(locationCuisine);
     }
-
     /**
      * Set view to Presenter
      *

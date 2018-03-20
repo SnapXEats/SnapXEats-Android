@@ -20,9 +20,9 @@ import com.snapxeats.R;
 import com.snapxeats.common.model.DishesInfo;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SelectedCuisineList;
-import com.snapxeats.common.model.foodGestures.FoodGestureDislike;
-import com.snapxeats.common.model.foodGestures.FoodGestureLike;
-import com.snapxeats.common.model.foodGestures.FoodGestureWishlist;
+import com.snapxeats.common.model.foodGestures.FoodDislikes;
+import com.snapxeats.common.model.foodGestures.FoodLikes;
+import com.snapxeats.common.model.foodGestures.FoodWishlists;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.restaurantDetails.RestaurantDishes;
 import com.snapxeats.common.utilities.AppUtility;
@@ -98,15 +98,16 @@ public class FoodStackActivity extends BaseActivity
 
     private List<String> stringsUrl;
 
-    private int wishListCount;
-
     @Inject
     AppUtility mAppUtility;
 
-    private List<FoodGestureWishlist> foodGestureWishlist;
-    private List<FoodGestureDislike> foodGestureDislike;
-    private List<FoodGestureLike> foodGestureLike;
+    private List<FoodWishlists> foodGestureWishlist;
+    private List<FoodDislikes> foodGestureDislike;
+    private List<FoodLikes> foodLikes;
     private LinkedList<FoodStackData> foodDataList;
+
+    @Inject
+    FoodStackDbHelper foodStackDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +116,12 @@ public class FoodStackActivity extends BaseActivity
         ButterKnifeLite.bind(this);
         initView();
     }
+
+   /* private void foodGestures() {
+        foodStackDbHelper.saveFoodDislikes(foodGestureDislike);
+        foodStackDbHelper.saveFoodWishlist(foodGestureWishlist);
+        mFoodStackPresenter.foodstackGestures(mRootFoodGestures);
+    }*/
 
     @Override
     public Activity getActivity() {
@@ -132,17 +139,16 @@ public class FoodStackActivity extends BaseActivity
         foodStackDataList = new ArrayList<>();
         foodGestureWishlist = new ArrayList<>();
         foodGestureDislike = new ArrayList<>();
-        foodGestureLike = new ArrayList<>();
+        foodLikes = new ArrayList<>();
         foodDataList = new LinkedList<>();
 
         SelectedCuisineList selectedCuisineList = getIntent().getExtras().getParcelable(getString(R.string.data_selectedCuisineList));
-        assert selectedCuisineList != null;
+        assert null != selectedCuisineList;
         if (selectedCuisineList.getSelectedCuisineList().size() != 0) {
             enableGestureActions();
         } else {
             disableGestureActions();
         }
-
         if (NetworkUtility.isNetworkAvailable(this)) {
             showProgressDialog();
             mFoodStackPresenter.getCuisinePhotos(selectedCuisineList);
@@ -209,6 +215,7 @@ public class FoodStackActivity extends BaseActivity
 
                 switch (direction) {
                     case Top: {
+                      //  swipeTop();
                         break;
                     }
                     case Right: {
@@ -321,11 +328,13 @@ public class FoodStackActivity extends BaseActivity
     public void swipeLeft() {
         setUndoEnable();
         int index = cardStackView.getTopIndex();
-        FoodGestureDislike foodDislikeItem;
+        FoodDislikes foodDislikeItem;
         if (isLoggedIn()) {
-            foodDislikeItem = new FoodGestureDislike();
+            foodDislikeItem = new FoodDislikes();
             foodDislikeItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
             foodGestureDislike.add(foodDislikeItem);
+            mRootFoodGestures.setDislike_dish_array(foodGestureDislike);
+            mFoodStackPresenter.saveDislikeToDb(mRootFoodGestures);
         }
         gestureLeft();
     }
@@ -333,14 +342,13 @@ public class FoodStackActivity extends BaseActivity
     //swipe TOP
     public void swipeTop() {
         int index = cardStackView.getTopIndex();
-        wishListCount++;
-        FoodGestureWishlist foodGestureWishItem;
+        FoodWishlists foodGestureWishItem;
         if (isLoggedIn()) {
-            foodGestureWishItem = new FoodGestureWishlist();
+            foodGestureWishItem = new FoodWishlists();
             foodGestureWishItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
             foodGestureWishlist.add(foodGestureWishItem);
             mRootFoodGestures.setWishlist_dish_array(foodGestureWishlist);
-            mFoodStackPresenter.saveGesturesToDb(Integer.toString(wishListCount), mRootFoodGestures);
+            mFoodStackPresenter.saveWishlistToDb(mRootFoodGestures);
         }
         gestureTop();
     }
@@ -353,8 +361,7 @@ public class FoodStackActivity extends BaseActivity
         }
         int index = cardStackView.getTopIndex();
         Intent intent = new Intent(FoodStackActivity.this, RestaurantDetailsActivity.class);
-        intent.putExtra(getString(R.string.intent_foodstackRestDetailsId),
-                foodStackDataList.get(index).getId());
+        intent.putExtra(getString(R.string.intent_foodstackRestDetailsId), foodStackDataList.get(index).getId());
         startActivity(intent);
         gestureRight();
     }

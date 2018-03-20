@@ -48,7 +48,7 @@ public class RestaurantInfoInteractor {
                 @Override
                 public void onResponse(Call<RootRestaurantInfo> call,
                                        Response<RootRestaurantInfo> response) {
-                    if (response.isSuccessful() && response.body() != null) {
+                    if (response.isSuccessful() && null!=response.body()) {
                         RootRestaurantInfo rootRestaurantDetails = response.body();
                         mRestaurantInfoPresenter.response(SnapXResult.SUCCESS, rootRestaurantDetails);
                     }

@@ -118,7 +118,7 @@ public class HomeActivity extends LocationBaseActivity implements
         userId = preferences.getString(getString(R.string.user_id), "");
         mRootUserPreference = mPresenter.getUserPreferenceFromDb();
 
-        if (snapxData != null && snapxData.size() > 0) {
+        if (null != snapxData && snapxData.size() > 0) {
             if (snapxData.get(0).getIsFirstTimeUser()) {
                 transaction.replace(R.id.frame_layout, navPrefFragment);
             } else {
@@ -129,7 +129,7 @@ public class HomeActivity extends LocationBaseActivity implements
         }
         mSnapxData = mPresenter.getUserDataFromDb();
         setUserInfo();
-        if (mSnapxData != null && mSnapxData.size() > 0) {
+        if (null != mSnapxData && mSnapxData.size() > 0) {
             if (mSnapxData.get(0).getIsFirstTimeUser()) {
                 transaction.replace(R.id.frame_layout, navPrefFragment);
             } else {
@@ -144,12 +144,12 @@ public class HomeActivity extends LocationBaseActivity implements
     private void setWishlistCount() {
         LinearLayout linearLayout = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
                 .getActionView().findViewById(R.id.layout_wishlist_count);
-        if (mSnapxData != null && mSnapxData.size() > 0 && isLoggedIn()) {
+        if (null != mSnapxData && mSnapxData.size() > 0 && isLoggedIn()) {
             linearLayout.setVisibility(View.VISIBLE);
             TextView view = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
                     .getActionView().findViewById(R.id.txt_count_wishlist);
             view.setText(getString(R.string.zero));
-            if (mSnapxData.get(0).getFoodWishlistCount() != null && !mSnapxData.get(0).getFoodWishlistCount().isEmpty()) {
+            if (null != mSnapxData.get(0).getFoodWishlistCount() && !mSnapxData.get(0).getFoodWishlistCount().isEmpty()) {
                 view.setText(mSnapxData.get(0).getFoodWishlistCount());
             } else {
                 view.setText(getString(R.string.zero));
@@ -176,7 +176,7 @@ public class HomeActivity extends LocationBaseActivity implements
 
     private void setUserInfo() {
         initNavHeaderViews();
-        if (isLoggedIn() && mSnapxData != null && mSnapxData.size() > 0) {
+        if (isLoggedIn() && null != mSnapxData && mSnapxData.size() > 0) {
             Picasso.with(this).load(mSnapxData.get(0).getImageUrl()).into(imgUser);
             txtUserName.setText(mSnapxData.get(0).getUserName());
         } else {
@@ -213,7 +213,7 @@ public class HomeActivity extends LocationBaseActivity implements
                     break;
             }
 
-            if (selectedFragment != null) {
+            if (null != selectedFragment) {
                 transaction = fragmentManager.beginTransaction();
                 transaction.replace(R.id.frame_layout, selectedFragment);
                 transaction.commit();
@@ -227,7 +227,7 @@ public class HomeActivity extends LocationBaseActivity implements
                     .setCancelable(false)
                     .setPositiveButton(getString(R.string.apply), (dialog, which) -> {
 
-                        if (userId != null && !userId.isEmpty()) {
+                        if (null != userId && !userId.isEmpty()) {
 
                             if (null != mUserPreference) {
                                 showProgressDialog();

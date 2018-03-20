@@ -1,13 +1,19 @@
 package com.snapxeats.ui.foodstack;
 
 import android.app.Activity;
+import android.util.Log;
 
 import com.snapxeats.SnapXApplication;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
+import com.snapxeats.common.model.foodGestures.FoodDislikes;
+import com.snapxeats.common.model.foodGestures.FoodDislikesDao;
+import com.snapxeats.common.model.foodGestures.FoodWishlists;
+import com.snapxeats.common.model.foodGestures.FoodWishlistsDao;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
@@ -33,13 +39,11 @@ import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 public class FoodStackInteractor {
 
     private Activity mContext;
-
     private FoodStackContract.FoodStackPresenter mFoodStackPresenter;
-
     private FoodStackContract.FoodStackView mFoodStackView;
-    private SnapxDataDao snapxDataDao;
-    private DaoSession daoSession;
-    private SnapxData snapxData;
+
+    @Inject
+    FoodStackDbHelper foodStackDbHelper;
 
     @Inject
     public FoodStackInteractor() {
@@ -55,9 +59,7 @@ public class FoodStackInteractor {
     public void setContext(FoodStackContract.FoodStackView view) {
         this.mFoodStackView = view;
         this.mContext = view.getActivity();
-        daoSession = ((SnapXApplication) mContext.getApplicationContext()).getDaoSession();
-        snapxDataDao = daoSession.getSnapxDataDao();
-        snapxData = new SnapxData();
+        foodStackDbHelper.setContext(mContext);
     }
 
     /**
@@ -85,7 +87,7 @@ public class FoodStackInteractor {
             listCuisineCall.enqueue(new Callback<RootCuisinePhotos>() {
                 @Override
                 public void onResponse(Call<RootCuisinePhotos> call, Response<RootCuisinePhotos> response) {
-                    if (response.isSuccessful() && response.body() != null) {
+                    if (response.isSuccessful() && null!=response.body()) {
                         RootCuisinePhotos rootCuisine = response.body();
                         mFoodStackPresenter.response(SnapXResult.SUCCESS, rootCuisine);
                     }
@@ -101,12 +103,38 @@ public class FoodStackInteractor {
         }
     }
 
-    public void saveGesturesToDb(String count, RootFoodGestures rootFoodGestures) {
-        snapxData.setFoodWishlistCount(count);
-        if (snapxDataDao.loadAll().size() > 0) {
-            List<SnapxData> snapxDataList = snapxDataDao.loadAll();
-            snapxDataList.get(0).setFoodWishlistCount(count);
-            snapxDataDao.update(snapxDataList.get(0));
+    public void saveDislikesToDb(RootFoodGestures rootFoodGestures) {
+        List<FoodDislikes> foodGestureDislikes = rootFoodGestures.getDislike_dish_array();
+        foodStackDbHelper.saveFoodDislikes(foodGestureDislikes);
+    }
+
+    public void saveWishlistToDb(RootFoodGestures rootFoodGestures) {
+        String count = String.valueOf(rootFoodGestures.getWishlist_dish_array().size());
+        List<FoodWishlists> foodGestureWishlists = rootFoodGestures.getWishlist_dish_array();
+        foodStackDbHelper.saveFoodWishlist(foodGestureWishlists);
+        foodStackDbHelper.saveFoodWishlistCount(count);
+    }
+    /**
+     * food gestures api
+     * @param rootFoodGestures
+     */
+    public void foodstackGestures(RootFoodGestures rootFoodGestures) {
+        if (NetworkUtility.isNetworkAvailable(mContext)) {
+            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            Call<RootFoodGestures> call = apiHelper.foodstackGestures(utility.getAuthToken(mContext), rootFoodGestures);
+            call.enqueue(new Callback<RootFoodGestures>() {
+                @Override
+                public void onResponse(Call<RootFoodGestures> call, Response<RootFoodGestures> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                    }
+                }
+                @Override
+                public void onFailure(Call<RootFoodGestures> call, Throwable t) {
+                    mFoodStackPresenter.response(SnapXResult.ERROR, null);
+                }
+            });
+        } else {
+            mFoodStackPresenter.response(SnapXResult.NONETWORK, null);
         }
     }
 }

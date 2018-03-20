@@ -4,18 +4,13 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
@@ -42,15 +37,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.SCREENNAMES.CUISINE;
-import static com.mindorks.placeholderview.Utils.dpToPx;
 
 
 /**
  * Created by Snehal Tembare on 13/2/18.
  */
 
-public class CuisinePrefActivity extends BaseActivity implements
-        CuisinePrefContract.CuisinePrefView,
+public class CuisinePrefActivity extends BaseActivity implements CuisinePrefContract.CuisinePrefView,
         AppContract.SnapXResults {
 
     @BindView(R.id.recyclerview_cuisine)
@@ -151,10 +144,8 @@ public class CuisinePrefActivity extends BaseActivity implements
         rootCuisineList = helper.getCuisinePrefData(selectedCuisineList, rootCuisineList);
     }
 
-
     @OnClick(R.id.txt_reset)
     public void resetFoodPref() {
-
         AppContract.DialogListenerAction positiveClick = () -> {
             for (int index = 0; index < rootCuisineList.size(); index++) {
                 rootCuisineList.get(index).set_cuisine_favourite(false);
@@ -169,7 +160,6 @@ public class CuisinePrefActivity extends BaseActivity implements
         };
 
         showResetDialog(setListener(negativeClick), setListener(positiveClick));
-
     }
 
     @Override
@@ -206,7 +196,6 @@ public class CuisinePrefActivity extends BaseActivity implements
                     isDirty = true;
                     rootCuisineList.get(position).set_cuisine_favourite(isSuperLike);
                     mCuisinePrefAdapter.notifyItemChanged(position);
-
                 }
             });
             mRecyclerView.setAdapter(mCuisinePrefAdapter);
@@ -214,12 +203,10 @@ public class CuisinePrefActivity extends BaseActivity implements
         }
     }
 
-
-
     @OnClick(R.id.btn_cuisine_pref_save)
     public void saveCusinePref() {
-            saveCuisinePrefInDbAndFinish();
-          }
+        saveCuisinePrefInDbAndFinish();
+    }
 
     @Override
     public void error(Object value) {
@@ -231,14 +218,9 @@ public class CuisinePrefActivity extends BaseActivity implements
         dismissProgressDialog();
         Intent intent = new Intent();
         intent.putExtra("screen", CUISINE);
-//        intent.setAction("android.net.conn.CONNECTIVITY_CHANGE");
-//        intent.setAction("android.net.wifi.WIFI_STATE_CHANGED");
         sendBroadcast(intent);
-
         showNetworkErrorDialog((dialog, which) -> {
         });
-
-
     }
 
     @Override

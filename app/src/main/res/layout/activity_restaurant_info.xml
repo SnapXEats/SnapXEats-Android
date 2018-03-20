@@ -12,10 +12,19 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
+            android:textAlignment="center"
             android:id="@+id/toolbar_rest_info"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:elevation="@dimen/dimens_4" />
+            android:elevation="@dimen/dimens_4" >
+            <TextView
+                android:textSize="@dimen/txt_size_16"
+                android:textColor="@color/colorBlack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/toolbar_rest_info"
+                android:layout_gravity="center" />
+        </android.support.v7.widget.Toolbar>
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewPager_rest_info"
@@ -46,7 +55,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/common_dimens_20"
+            android:layout_marginStart="@dimen/common_dimens_20"
             android:orientation="horizontal">
 
             <Spinner
@@ -80,12 +89,16 @@
                 android:textSize="@dimen/text_size_14"
                 android:visibility="gone" />
         </FrameLayout>
+        <View
+            android:layout_margin="@dimen/common_dimens_15"
+            android:background="@color/colorLightGrey"
+            android:layout_width = "match_parent"
+            android:layout_height="@dimen/common_dimens_1"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/common_dimens_20"
-            android:layout_marginTop="@dimen/common_dimens_15"
             android:text="@string/more_info"
             android:textColor="@color/colorCuisine"
             android:textSize="@dimen/text_size_16"
@@ -98,14 +111,20 @@
             android:layout_marginStart="@dimen/common_dimens_20"
             android:divider="@null" />
 
+        <View
+            android:layout_margin="@dimen/common_dimens_15"
+            android:background="@color/colorLightGrey"
+            android:layout_width = "match_parent"
+            android:layout_height="@dimen/common_dimens_1"/>
         <TextView
+            android:layout_marginBottom="@dimen/common_dimens_20"
             android:id="@+id/txt_photo_taken"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/common_dimens_20"
-            android:layout_marginTop="@dimen/common_dimens_20"
+            android:textStyle="italic"
             android:text="Photo taken on 12th Jan 2014"
-            android:textColor="@color/text_color_primary"
+            android:textColor="@color/colorCuisine"
             android:textSize="@dimen/text_size_14" />
     </LinearLayout>
 </ScrollView>

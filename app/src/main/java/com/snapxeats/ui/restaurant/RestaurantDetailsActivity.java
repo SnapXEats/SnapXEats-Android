@@ -215,7 +215,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     @OnClick(R.id.img_rest_call)
     public void imgRestCall() {
-        if (mRootRestaurantDetails != null && !restContactNo.isEmpty()) {
+        if (null!=mRootRestaurantDetails && !restContactNo.isEmpty()) {
             String contact = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_contact_no();
             Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts(REST_CALL, contact, null));
             startActivity(intent);

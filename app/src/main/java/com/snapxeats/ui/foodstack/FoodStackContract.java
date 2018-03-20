@@ -21,7 +21,11 @@ public class FoodStackContract {
 
         void getCuisinePhotos(SelectedCuisineList selectedCuisineList);
 
-        void saveGesturesToDb(String count, RootFoodGestures rootFoodGestures);
+        void saveDislikeToDb(RootFoodGestures rootFoodGestures);
+
+        void saveWishlistToDb(RootFoodGestures rootFoodGestures);
+
+        void foodstackGestures(RootFoodGestures rootFoodGestures);
     }
 
     public interface FoodStackRouter {

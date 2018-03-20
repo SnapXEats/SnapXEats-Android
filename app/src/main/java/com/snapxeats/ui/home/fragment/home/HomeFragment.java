@@ -41,6 +41,8 @@ import com.snapxeats.R;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.model.SnapXUser;
+import com.snapxeats.common.model.foodGestures.FoodWishlistsDao;
+import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.preference.Cuisines;
 import com.snapxeats.common.model.preference.RootCuisine;
 import com.snapxeats.common.model.preference.RootUserPreference;
@@ -146,11 +148,6 @@ public class HomeFragment extends BaseFragment implements
         // Inflate the layout for this fragment
         View view = null;
 
-        if (view != null) {
-            ViewGroup parent = (ViewGroup) view.getParent();
-            if (parent != null)
-                parent.removeView(view);
-        }
         try {
             view = inflater.inflate(R.layout.fragment_home, container, false);
             ButterKnife.bind(this, view);
@@ -262,6 +259,7 @@ public class HomeFragment extends BaseFragment implements
 
     @OnClick(R.id.btn_cuisine_done)
     public void btnCuisineDone() {
+
         for (Cuisines cuisines : cuisinesList) {
             if (cuisines.is_cuisine_like() || cuisines.is_cuisine_favourite()) {
                 selectedList.add(cuisines.getCuisine_info_id());
@@ -344,7 +342,7 @@ public class HomeFragment extends BaseFragment implements
                 }
             }
         }
-        return selectedCuisineList != null ? selectedCuisineList : null;
+        return selectedCuisineList;
     }
 
     @Override

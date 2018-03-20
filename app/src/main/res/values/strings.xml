@@ -124,5 +124,7 @@
     <string name="error">Error</string>
     <string name="nav_login">Log-In to SnapXEats and Earn Reward Points</string>
     <string name="zero">0</string>
+    <string name="toolbar_rest_info">Restaurant Info</string>
+    <string name="toolbar_rest_details">Restaurant Details</string>
 
 </resources>

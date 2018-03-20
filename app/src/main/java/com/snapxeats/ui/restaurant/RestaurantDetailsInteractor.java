@@ -48,7 +48,7 @@ public class RestaurantDetailsInteractor {
             snapXUserCall.enqueue(new Callback<RootRestaurantDetails>() {
                 @Override
                 public void onResponse(Call<RootRestaurantDetails> call, Response<RootRestaurantDetails> response) {
-                    if (response.isSuccessful() && response.body() != null) {
+                    if (response.isSuccessful() && null!=response.body()) {
                         RootRestaurantDetails rootRestaurantDetails = response.body();
                         mRestaurantDetailsPresenter.response(SnapXResult.SUCCESS, rootRestaurantDetails);
                     }
@@ -80,7 +80,7 @@ public class RestaurantDetailsInteractor {
             snapXUserCall.enqueue(new Callback<RootGoogleDir>() {
                 @Override
                 public void onResponse(Call<RootGoogleDir> call, Response<RootGoogleDir> response) {
-                    if (response.isSuccessful() && response.body() != null) {
+                    if (response.isSuccessful() && null!=response.body()) {
                         RootGoogleDir rootGoogleDir = response.body();
                         mRestaurantDetailsPresenter.response(SnapXResult.SUCCESS, rootGoogleDir);
                     }

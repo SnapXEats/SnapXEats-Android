@@ -207,7 +207,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
-            if (row == null) {
+            if (null==row) {
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
                 row = inflater.inflate(R.layout.list_restaurant_aminities, parent, false);
             }

@@ -78,7 +78,7 @@ public class LoginInteractor {
         snapXUserCall.enqueue(new Callback<RootInstagram>() {
             @Override
             public void onResponse(Call<RootInstagram> call, Response<RootInstagram> response) {
-                if (response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful() && null!=response.body()) {
                     rootInstagram = response.body();
                     SnapXUserRequest snapXUserRequest = new SnapXUserRequest(rootInstagram.getInstagramToken(),
                             mContext.getString(R.string.platform_instagram), rootInstagram.getData().getId());
@@ -105,7 +105,7 @@ public class LoginInteractor {
             snapXUserCall.enqueue(new Callback<SnapXUserResponse>() {
                 @Override
                 public void onResponse(Call<SnapXUserResponse> call, Response<SnapXUserResponse> response) {
-                    if (response.isSuccessful() && response.body() != null) {
+                    if (response.isSuccessful() && null!=response.body()) {
                         SnapXUserResponse snapXUser = response.body();
                         /** save userId to shared preferences **/
                         SharedPreferences settings = appUtility.getSharedPreferences();
