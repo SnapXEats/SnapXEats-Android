@@ -8,13 +8,13 @@ import com.facebook.AccessToken;
 import com.facebook.Profile;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
-import com.snapxeats.common.model.login.RootInstagram;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.SnapXUser;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
-import com.snapxeats.common.model.preference.DaoSession;
+import com.snapxeats.common.model.login.RootInstagram;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
@@ -78,7 +78,7 @@ public class LoginInteractor {
         snapXUserCall.enqueue(new Callback<RootInstagram>() {
             @Override
             public void onResponse(Call<RootInstagram> call, Response<RootInstagram> response) {
-                if (response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful() && null!=response.body()) {
                     rootInstagram = response.body();
                     SnapXUserRequest snapXUserRequest = new SnapXUserRequest(rootInstagram.getInstagramToken(),
                             mContext.getString(R.string.platform_instagram), rootInstagram.getData().getId());
@@ -105,7 +105,7 @@ public class LoginInteractor {
             snapXUserCall.enqueue(new Callback<SnapXUserResponse>() {
                 @Override
                 public void onResponse(Call<SnapXUserResponse> call, Response<SnapXUserResponse> response) {
-                    if (response.isSuccessful() && response.body() != null) {
+                    if (response.isSuccessful() && null!=response.body()) {
                         SnapXUserResponse snapXUser = response.body();
                         /** save userId to shared preferences **/
                         SharedPreferences settings = appUtility.getSharedPreferences();
@@ -157,6 +157,16 @@ public class LoginInteractor {
         snapxData.setToken(snapXUser.getToken());
         snapxData.setSocialPlatform(snapXUser.getSocial_platform());
         snapxData.setIsFirstTimeUser(snapXUser.isFirst_time_login());
+        if (snapXUser.getSocial_platform().equalsIgnoreCase(mContext.getString(R.string.platform_facebook))) {
+            String userName = Profile.getCurrentProfile().getFirstName() + " "
+                    + Profile.getCurrentProfile().getLastName();
+            Uri profileUri = Profile.getCurrentProfile().getProfilePictureUri(50, 50);
+            snapxData.setUserName(userName);
+            snapxData.setImageUrl(profileUri.toString());
+        } else if (snapXUser.getSocial_platform().equalsIgnoreCase(mContext.getString(R.string.platform_instagram))) {
+            snapxData.setImageUrl(rootInstagram.getData().getProfile_picture());
+            snapxData.setUserName(rootInstagram.getData().getFull_name());
+        }
         if (snapxDataDao.loadAll().size() == 0) {
             snapxDataDao.insert(snapxData);
         } else {
@@ -168,11 +178,6 @@ public class LoginInteractor {
         saveServerDataInDb(snapXUser);
         snapxData.setUserId(AccessToken.getCurrentAccessToken().getUserId());
         snapxData.setSocialToken(AccessToken.getCurrentAccessToken().getToken());
-        String userName = Profile.getCurrentProfile().getFirstName() + " "
-                + Profile.getCurrentProfile().getLastName();
-        Uri profileUri = Profile.getCurrentProfile().getProfilePictureUri(50, 50);
-        snapxData.setUserName(userName);
-        snapxData.setImageUrl(profileUri.toString());
         if (snapxDataDao.loadAll().size() == 0) {
             snapxDataDao.insert(snapxData);
         } else {

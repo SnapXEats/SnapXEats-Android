@@ -1,9 +1,20 @@
 package com.snapxeats.ui.foodstack;
 
 import android.app.Activity;
+import android.util.Log;
 
+import com.snapxeats.SnapXApplication;
+import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SelectedCuisineList;
+import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.SnapxDataDao;
+import com.snapxeats.common.model.foodGestures.FoodDislikes;
+import com.snapxeats.common.model.foodGestures.FoodDislikesDao;
+import com.snapxeats.common.model.foodGestures.FoodWishlists;
+import com.snapxeats.common.model.foodGestures.FoodWishlistsDao;
+import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
@@ -28,10 +39,11 @@ import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 public class FoodStackInteractor {
 
     private Activity mContext;
-
     private FoodStackContract.FoodStackPresenter mFoodStackPresenter;
-
     private FoodStackContract.FoodStackView mFoodStackView;
+
+    @Inject
+    FoodStackDbHelper foodStackDbHelper;
 
     @Inject
     public FoodStackInteractor() {
@@ -43,28 +55,24 @@ public class FoodStackInteractor {
     public void setFoodStackPresenter(FoodStackContract.FoodStackPresenter foodStackPresenter) {
         this.mFoodStackPresenter = foodStackPresenter;
     }
+
     public void setContext(FoodStackContract.FoodStackView view) {
         this.mFoodStackView = view;
         this.mContext = view.getActivity();
-        utility.setContext(mContext);
+        foodStackDbHelper.setContext(mContext);
     }
 
     /**
      * get cuisines list
      */
-    public void getCuisinePhotos( SelectedCuisineList selectedCuisineList) {
+    public void getCuisinePhotos(SelectedCuisineList selectedCuisineList) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             //TODO latlng are hardcoded for now
-//        double lat = selectedCuisineList.getLocation().getLatitude();
-//        double lng = selectedCuisineList.getLocation().getLongitude();
-            double lat = 40.4862157;
-            double lng = -74.4518188;
-            List<String> list = selectedCuisineList.getSelectedCuisineList();
-
-            /*locationCuisine.setLatitude(lat);
+             /*locationCuisine.setLatitude(lat);
             locationCuisine.setLongitude(lng);
             SelectedCuisineList selectedCuisineList=new SelectedCuisineList(locationCuisine,null);*/
-
+            double lat = 40.4862157;
+            double lng = -74.4518188;
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             Call<RootCuisinePhotos> listCuisineCall = apiHelper.getCuisinePhotos(
                     utility.getAuthToken(mContext),
@@ -79,7 +87,7 @@ public class FoodStackInteractor {
             listCuisineCall.enqueue(new Callback<RootCuisinePhotos>() {
                 @Override
                 public void onResponse(Call<RootCuisinePhotos> call, Response<RootCuisinePhotos> response) {
-                    if (response.isSuccessful() && response.body() != null) {
+                    if (response.isSuccessful() && null!=response.body()) {
                         RootCuisinePhotos rootCuisine = response.body();
                         mFoodStackPresenter.response(SnapXResult.SUCCESS, rootCuisine);
                     }
@@ -87,6 +95,41 @@ public class FoodStackInteractor {
 
                 @Override
                 public void onFailure(Call<RootCuisinePhotos> call, Throwable t) {
+                    mFoodStackPresenter.response(SnapXResult.ERROR, null);
+                }
+            });
+        } else {
+            mFoodStackPresenter.response(SnapXResult.NONETWORK, null);
+        }
+    }
+
+    public void saveDislikesToDb(RootFoodGestures rootFoodGestures) {
+        List<FoodDislikes> foodGestureDislikes = rootFoodGestures.getDislike_dish_array();
+        foodStackDbHelper.saveFoodDislikes(foodGestureDislikes);
+    }
+
+    public void saveWishlistToDb(RootFoodGestures rootFoodGestures) {
+        String count = String.valueOf(rootFoodGestures.getWishlist_dish_array().size());
+        List<FoodWishlists> foodGestureWishlists = rootFoodGestures.getWishlist_dish_array();
+        foodStackDbHelper.saveFoodWishlist(foodGestureWishlists);
+        foodStackDbHelper.saveFoodWishlistCount(count);
+    }
+    /**
+     * food gestures api
+     * @param rootFoodGestures
+     */
+    public void foodstackGestures(RootFoodGestures rootFoodGestures) {
+        if (NetworkUtility.isNetworkAvailable(mContext)) {
+            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            Call<RootFoodGestures> call = apiHelper.foodstackGestures(utility.getAuthToken(mContext), rootFoodGestures);
+            call.enqueue(new Callback<RootFoodGestures>() {
+                @Override
+                public void onResponse(Call<RootFoodGestures> call, Response<RootFoodGestures> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                    }
+                }
+                @Override
+                public void onFailure(Call<RootFoodGestures> call, Throwable t) {
                     mFoodStackPresenter.response(SnapXResult.ERROR, null);
                 }
             });

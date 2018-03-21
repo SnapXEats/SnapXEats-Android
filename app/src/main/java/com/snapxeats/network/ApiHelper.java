@@ -5,9 +5,9 @@ import com.snapxeats.common.model.location.PlaceDetail;
 import com.snapxeats.common.model.location.PlacesAutoCompleteData;
 import com.snapxeats.common.model.preference.RootCuisine;
 import com.snapxeats.common.model.RootCuisinePhotos;
+import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.common.model.preference.RootFoodPref;
 import com.snapxeats.common.model.login.RootInstagram;
-import com.snapxeats.common.model.RootRestaurantDetails;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
@@ -92,7 +92,6 @@ public interface ApiHelper {
      * @param object- Set user preferences
      * @return
      */
-
     @POST(WebConstants.USER_PREFERENCES)
     Call<UserPreference> setUserPreferences(@Header("Authorization") String token,
                                             @Body UserPreference object);

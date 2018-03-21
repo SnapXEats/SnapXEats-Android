@@ -3,6 +3,8 @@ package com.snapxeats.common.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.snapxeats.common.model.restaurantDetails.RestaurantDishes;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DishesInfo implements Parcelable {
+
     private List<RestaurantDishes> restaurantDishes;
 
     private String restaurant_info_id;

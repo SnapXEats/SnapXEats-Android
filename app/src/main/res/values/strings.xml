@@ -110,16 +110,21 @@
     <string name="more_info">More Info</string>
     <string name="intent_foodstackRestInfoId">foodstackRestInfoId</string>
     <string name="intent_foodstackRestDetailsId">foodstackRestDetailsId</string>
-    <string name="away">away</string>
+    <string name="away"> away</string>
     <string name="no_timings">No timings available</string>
     <string name="reward_points">Reward Points</string>
     <string name="instagramToken">instagramToken</string>
-    <string name="pref_server_id">serverId</string>
     <string name="rotation">rotation</string>
     <string name="translationX">translationX</string>
     <string name="translationY">translationY</string>
+    <string name="open_today">Open Today</string>
+    <string name="close_today">Closed Today</string>
     <string name="social_platform">social_platform</string>
     <string name="isFirstTimeUser">isFirstTimeUser</string>
     <string name="error">Error</string>
+    <string name="nav_login">Log-In to SnapXEats and Earn Reward Points</string>
+    <string name="zero">0</string>
+    <string name="toolbar_rest_info">Restaurant Info</string>
+    <string name="toolbar_rest_details">Restaurant Details</string>
 
 </resources>

@@ -47,6 +47,12 @@ public class RestaurantDetailsPresenterImpl implements RestaurantDetailsContract
     public void getRestDetails(String restaurantId) {
         mRestaurantDetailsInteractor.getRestDetails(restaurantId);
     }
+
+    @Override
+    public void getGoogleDirections(LocationGoogleDir locationGoogleDir) {
+        mRestaurantDetailsInteractor.getGoogleDirections(locationGoogleDir);
+    }
+
     @Override
     public void response(SnapXResult result, Object value) {
         if (null != mRestaurantDetailsView) {

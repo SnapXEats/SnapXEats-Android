@@ -12,6 +12,11 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.pkmmte.view.CircularImageView;
 import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.model.SnapxData;
@@ -21,10 +26,15 @@ import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.home.fragment.home.HomeFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isDirty;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.mUserPreference;
 
@@ -35,7 +45,6 @@ import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.mUser
 public class HomeActivity extends LocationBaseActivity implements
         NavigationView.OnNavigationItemSelectedListener, HomeContract.HomeView,
         AppContract.SnapXResults {
-
 
     public interface PreferenceConstant {
         int ACCESS_FINE_LOCATION = 1;
@@ -61,6 +70,11 @@ public class HomeActivity extends LocationBaseActivity implements
     @Inject
     HomeContract.HomePresenter mPresenter;
 
+    private List<SnapxData> mSnapxData;
+
+    @Inject
+    AppUtility mAppUtility;
+
     private SharedPreferences preferences;
     private String userId;
 
@@ -69,6 +83,13 @@ public class HomeActivity extends LocationBaseActivity implements
 
     @Inject
     RootUserPreference mRootUserPreference;
+
+    private CircularImageView imgUser;
+    private View mNavHeader;
+    private TextView txtUserName;
+    private TextView txtNotLoggedIn;
+    private TextView txtRewards;
+    private LinearLayout mLayoutUserData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,7 +118,7 @@ public class HomeActivity extends LocationBaseActivity implements
         userId = preferences.getString(getString(R.string.user_id), "");
         mRootUserPreference = mPresenter.getUserPreferenceFromDb();
 
-        if (snapxData != null && snapxData.size() > 0) {
+        if (null != snapxData && snapxData.size() > 0) {
             if (snapxData.get(0).getIsFirstTimeUser()) {
                 transaction.replace(R.id.frame_layout, navPrefFragment);
             } else {
@@ -106,13 +127,68 @@ public class HomeActivity extends LocationBaseActivity implements
         } else {
             transaction.replace(R.id.frame_layout, homeFragment);
         }
+        mSnapxData = mPresenter.getUserDataFromDb();
+        setUserInfo();
+        if (null != mSnapxData && mSnapxData.size() > 0) {
+            if (mSnapxData.get(0).getIsFirstTimeUser()) {
+                transaction.replace(R.id.frame_layout, navPrefFragment);
+            } else {
+                transaction.replace(R.id.frame_layout, homeFragment);
+            }
+        } else
+            transaction.replace(R.id.frame_layout, homeFragment);
         transaction.commit();
         mNavigationView.setCheckedItem(R.id.nav_home);
+    }
+
+    private void setWishlistCount() {
+        LinearLayout linearLayout = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
+                .getActionView().findViewById(R.id.layout_wishlist_count);
+        if (null != mSnapxData && mSnapxData.size() > 0 && isLoggedIn()) {
+            linearLayout.setVisibility(View.VISIBLE);
+            TextView view = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
+                    .getActionView().findViewById(R.id.txt_count_wishlist);
+            view.setText(getString(R.string.zero));
+            if (null != mSnapxData.get(0).getFoodWishlistCount() && !mSnapxData.get(0).getFoodWishlistCount().isEmpty()) {
+                view.setText(mSnapxData.get(0).getFoodWishlistCount());
+            } else {
+                view.setText(getString(R.string.zero));
+            }
+        } else {
+            linearLayout.setVisibility(View.GONE);
+        }
+    }
+
+    public boolean isLoggedIn() {
+        SharedPreferences preferences = mAppUtility.getSharedPreferences();
+        String serverUserId = preferences.getString(getString(R.string.user_id), "");
+        return !serverUserId.isEmpty();
+    }
+
+    public void initNavHeaderViews() {
+        mNavHeader = mNavigationView.getHeaderView(0);
+        imgUser = mNavHeader.findViewById(R.id.img_user);
+        txtUserName = mNavHeader.findViewById(R.id.txt_user_name);
+        txtNotLoggedIn = mNavHeader.findViewById(R.id.txt_nav_not_logged_in);
+        txtRewards = mNavHeader.findViewById(R.id.txt_nav_rewards);
+        mLayoutUserData = mNavHeader.findViewById(R.id.layout_user_data);
+    }
+
+    private void setUserInfo() {
+        initNavHeaderViews();
+        if (isLoggedIn() && null != mSnapxData && mSnapxData.size() > 0) {
+            Picasso.with(this).load(mSnapxData.get(0).getImageUrl()).into(imgUser);
+            txtUserName.setText(mSnapxData.get(0).getUserName());
+        } else {
+            mLayoutUserData.setVisibility(View.GONE);
+            txtNotLoggedIn.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        setWishlistCount();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -137,7 +213,7 @@ public class HomeActivity extends LocationBaseActivity implements
                     break;
             }
 
-            if (selectedFragment != null) {
+            if (null != selectedFragment) {
                 transaction = fragmentManager.beginTransaction();
                 transaction.replace(R.id.frame_layout, selectedFragment);
                 transaction.commit();
@@ -151,7 +227,7 @@ public class HomeActivity extends LocationBaseActivity implements
                     .setCancelable(false)
                     .setPositiveButton(getString(R.string.apply), (dialog, which) -> {
 
-                        if (userId != null && !userId.isEmpty()) {
+                        if (null != userId && !userId.isEmpty()) {
 
                             if (null != mUserPreference) {
                                 showProgressDialog();

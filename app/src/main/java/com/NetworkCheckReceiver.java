@@ -28,7 +28,7 @@ public class NetworkCheckReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        Toast.makeText(context, "Network Detected.", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context, "Network Detected.", Toast.LENGTH_SHORT).show();
         if (null != intent) {
             SCREENNAMES screen = intent.getExtras().getParcelable("screen");
 

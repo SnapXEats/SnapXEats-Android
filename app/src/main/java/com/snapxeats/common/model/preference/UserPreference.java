@@ -11,6 +11,7 @@ import org.greenrobot.greendao.annotation.ToMany;
 import java.util.List;
 
 import org.greenrobot.greendao.DaoException;
+import com.snapxeats.common.model.DaoSession;
 
 /**
  * Created by Snehal Tembare on 8/2/18.
@@ -51,7 +52,6 @@ public class UserPreference {
     @Generated(hash = 2081933574)
     private transient UserPreferenceDao myDao;
 
-
     @Generated(hash = 1348862546)
     public UserPreference(String id, String restaurant_rating, String restaurant_price,
             String restaurant_distance, boolean sort_by_distance, boolean sort_by_rating) {
@@ -66,7 +66,6 @@ public class UserPreference {
     @Generated(hash = 1390964)
     public UserPreference() {
     }
-
     public UserPreference(String id,
                           String restaurant_rating,
                           String restaurant_price,
@@ -83,6 +82,13 @@ public class UserPreference {
         this.sort_by_rating = sort_by_rating;
         this.user_cuisine_preferences = user_cuisine_preferences;
         this.user_food_preferences = user_food_preferences;
+    }
+    public String getId() {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getRestaurant_rating() {
@@ -125,20 +131,33 @@ public class UserPreference {
         this.sort_by_rating = sort_by_rating;
     }
 
-    public String getId() {
-        return this.id;
+    /**
+     * To-many relationship, resolved on first access (and after reset).
+     * Changes to to-many relations are not persisted, make changes to the target entity.
+     */
+    @Generated(hash = 1331219827)
+    public List<UserCuisinePreferences> getUser_cuisine_preferences() {
+        if (user_cuisine_preferences == null) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            UserCuisinePreferencesDao targetDao = daoSession.getUserCuisinePreferencesDao();
+            List<UserCuisinePreferences> user_cuisine_preferencesNew = targetDao
+                    ._queryUserPreference_User_cuisine_preferences(id);
+            synchronized (this) {
+                if (user_cuisine_preferences == null) {
+                    user_cuisine_preferences = user_cuisine_preferencesNew;
+                }
+            }
+        }
+        return user_cuisine_preferences;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setCuisinePrefList(List<UserCuisinePreferences> user_cuisine_preferences) {
-        this.user_cuisine_preferences = user_cuisine_preferences;
-    }
-
-    public void setFoodPrefList(List<UserFoodPreferences> user_food_preferences) {
-        this.user_food_preferences = user_food_preferences;
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 1132281012)
+    public synchronized void resetUser_cuisine_preferences() {
+        user_cuisine_preferences = null;
     }
 
     /**
@@ -164,9 +183,7 @@ public class UserPreference {
         return user_food_preferences;
     }
 
-    /**
-     * Resets a to-many relationship, making the next get call to query for a fresh result.
-     */
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     @Generated(hash = 2119780956)
     public synchronized void resetUser_food_preferences() {
         user_food_preferences = null;
@@ -208,41 +225,12 @@ public class UserPreference {
         myDao.update(this);
     }
 
-    /**
-     * To-many relationship, resolved on first access (and after reset).
-     * Changes to to-many relations are not persisted, make changes to the target entity.
-     */
-    @Generated(hash = 1331219827)
-    public List<UserCuisinePreferences> getUser_cuisine_preferences() {
-        if (user_cuisine_preferences == null) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            UserCuisinePreferencesDao targetDao = daoSession.getUserCuisinePreferencesDao();
-            List<UserCuisinePreferences> user_cuisine_preferencesNew = targetDao
-                    ._queryUserPreference_User_cuisine_preferences(id);
-            synchronized (this) {
-                if (user_cuisine_preferences == null) {
-                    user_cuisine_preferences = user_cuisine_preferencesNew;
-                }
-            }
-        }
-        return user_cuisine_preferences;
-    }
-
-    /**
-     * Resets a to-many relationship, making the next get call to query for a fresh result.
-     */
-    @Generated(hash = 1132281012)
-    public synchronized void resetUser_cuisine_preferences() {
-        user_cuisine_preferences = null;
-    }
-
     /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 1374549841)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getUserPreferenceDao() : null;
     }
+
+
 }

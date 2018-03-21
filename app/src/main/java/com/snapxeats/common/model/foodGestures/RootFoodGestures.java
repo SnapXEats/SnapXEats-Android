@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RootFoodGestures {
-    List<FoodGestureWishlist> wishlist_dish_array;
-    List<FoodGestureLike> like_dish_array;
-    List<FoodGestureDislike> dislike_dish_array;
+    List<FoodWishlists> wishlist_dish_array;
+    List<FoodLikes> like_dish_array;
+    List<FoodDislikes> dislike_dish_array;
 }

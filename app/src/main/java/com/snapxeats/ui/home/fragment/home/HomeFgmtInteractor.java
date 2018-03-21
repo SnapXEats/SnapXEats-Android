@@ -1,19 +1,22 @@
 package com.snapxeats.ui.home.fragment.home;
 
 import android.app.Activity;
-import com.snapxeats.SnapXApplication;
+
 import com.snapxeats.common.model.LocationCuisine;
-import com.snapxeats.common.model.preference.DaoSession;
 import com.snapxeats.common.model.preference.RootCuisine;
+import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 /**
@@ -24,9 +27,11 @@ import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 public class HomeFgmtInteractor {
 
     private HomeFgmtContract.HomeFgmtPresenter homeFgmtPresenter;
-    private DaoSession daoSession;
 
     private Activity mContext;
+
+    @Inject
+    AppUtility utility;
 
     @Inject
     HomeFgmtInteractor() {
@@ -41,7 +46,8 @@ public class HomeFgmtInteractor {
 
     public void setContext(HomeFgmtContract.HomeFgmtView view) {
         this.mContext = view.getActivity();
-        daoSession = ((SnapXApplication) mContext.getApplication()).getDaoSession();
+        utility.setContext(mContext);
+
     }
 
     /**
@@ -62,7 +68,7 @@ public class HomeFgmtInteractor {
             listCuisineCall.enqueue(new Callback<RootCuisine>() {
                 @Override
                 public void onResponse(Call<RootCuisine> call, Response<RootCuisine> response) {
-                    if (response.isSuccessful() && response.body() != null) {
+                    if (response.isSuccessful() && null != response.body()) {
                         RootCuisine rootCuisine = response.body();
                         homeFgmtPresenter.response(SnapXResult.SUCCESS, rootCuisine);
                     }

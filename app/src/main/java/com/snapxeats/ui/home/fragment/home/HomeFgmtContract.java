@@ -5,6 +5,7 @@ import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.preference.UserCuisinePreferences;
 import com.snapxeats.common.model.preference.UserFoodPreferences;
 import com.snapxeats.common.model.preference.UserPreference;

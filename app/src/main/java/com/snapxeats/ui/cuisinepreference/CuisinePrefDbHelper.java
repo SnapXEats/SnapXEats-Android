@@ -18,7 +18,6 @@ public class CuisinePrefDbHelper {
     public CuisinePrefDbHelper() {
     }
 
-
     /**
      * Map Selected Cuisines to cuisine list
      */
@@ -47,14 +46,14 @@ public class CuisinePrefDbHelper {
     public List<Cuisines> getSelectedCuisineList(List<Cuisines> rootCuisineList) {
 
         List<Cuisines> selectedCuisineList = new ArrayList<>();
-        if (rootCuisineList != null) {
+        if (null!=rootCuisineList) {
             for (Cuisines cuisines : rootCuisineList) {
                 if (cuisines.is_cuisine_favourite() || cuisines.is_cuisine_like()) {
                     selectedCuisineList.add(cuisines);
                 }
             }
         }
-        return selectedCuisineList != null ? selectedCuisineList : null;
+        return selectedCuisineList;
     }
 
     public List<UserCuisinePreferences> getSelectedUserCuisinePreferencesList
@@ -62,7 +61,7 @@ public class CuisinePrefDbHelper {
 
         List<UserCuisinePreferences> selectedCuisineList = new ArrayList<>();
         UserCuisinePreferences userCuisinePreferences;
-        if (rootCuisineList != null) {
+        if (null!=rootCuisineList) {
             for (Cuisines cuisines : rootCuisineList) {
                 if (cuisines.is_cuisine_favourite() || cuisines.is_cuisine_like()) {
                     userCuisinePreferences = new UserCuisinePreferences(cuisines.getCuisine_info_id()
@@ -71,6 +70,6 @@ public class CuisinePrefDbHelper {
                 }
             }
         }
-        return selectedCuisineList != null ? selectedCuisineList : null;
+        return selectedCuisineList;
     }
 }

@@ -1,6 +1,10 @@
 package com.snapxeats.ui.foodstack;
 
+import android.os.Parcel;
+
 import com.snapxeats.common.model.RootCuisinePhotos;
+
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,13 +14,16 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class FoodStackData extends RootCuisinePhotos {
+public class FoodStackData {
     public String name;
-    String url;
+    public List<String> url;
     private String id;
+    private String dishId;
 
-    FoodStackData(String name, String id) {
+    public FoodStackData(String name, String id,List<String> url,String dishId) {
         this.name = name;
+        this.url = url;
         this.id = id;
+        this.dishId = dishId;
     }
 }
