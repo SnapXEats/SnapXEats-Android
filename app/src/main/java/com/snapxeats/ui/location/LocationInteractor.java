@@ -1,8 +1,7 @@
 package com.snapxeats.ui.location;
 
 
-import android.app.Activity;
-
+import android.content.Context;
 import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.location.PlaceDetail;
 import com.snapxeats.common.utilities.NetworkUtility;
@@ -21,7 +20,7 @@ import retrofit2.Response;
 public class LocationInteractor {
     private LocationContract.LocationPresenter locationPresenter;
     private LocationContract.LocationView locationView;
-    private Activity mContext;
+    private Context mContext;
 
 
     @Inject
@@ -48,8 +47,8 @@ public class LocationInteractor {
             call.enqueue(new Callback<PlaceDetail>() {
                 @Override
                 public void onResponse(Call<PlaceDetail> call, Response<PlaceDetail> response) {
-                    if (response.isSuccessful() && response != null
-                            && response.body().getResult() != null) {
+                    if (response.isSuccessful() && null != response
+                            && null != response.body().getResult()) {
                         locationPresenter.response(SnapXResult.SUCCESS, response.body().getResult());
                     }
                 }

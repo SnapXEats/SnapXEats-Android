@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
@@ -20,6 +21,7 @@ import com.snapxeats.common.model.preference.RootFoodPref;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserFoodPreferences;
 import com.snapxeats.common.utilities.AppUtility;
+import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.cuisinepreference.OnDoubleTapListenr;
@@ -56,6 +58,9 @@ public class FoodPreferenceActivity extends BaseActivity implements
 
     @BindView(R.id.btn_food_pref_save)
     protected TextView mTxtSave;
+
+    @BindView(R.id.parent_layout)
+    protected ConstraintLayout mParentLayout;
 
     @Inject
     FoodPreferenceContract.FoodPreferencePresenter presenter;
@@ -163,7 +168,7 @@ public class FoodPreferenceActivity extends BaseActivity implements
 
     @Override
     public void success(Object value) {
-        if (value != null) {
+        if (null != value) {
             dismissProgressDialog();
             RootFoodPref rootFoodPref = (RootFoodPref) value;
 
@@ -212,6 +217,12 @@ public class FoodPreferenceActivity extends BaseActivity implements
     public void noNetwork(Object value) {
         dismissProgressDialog();
         showNetworkErrorDialog((dialog, which) -> {
+            if (!NetworkUtility.isNetworkAvailable(this) && null != rootFoodPrefList) {
+                AppContract.DialogListenerAction click = () -> {
+                    presenter.getFoodPrefList();
+                };
+                showSnackBar(mParentLayout, setClickListener(click));
+            }
         });
     }
 
@@ -271,7 +282,7 @@ public class FoodPreferenceActivity extends BaseActivity implements
         userFoodPreferencesList = helper.getSelectedUserFoodPreferencesList(rootFoodPrefList);
         mRootUserPreference.setUserFoodPreferences(userFoodPreferencesList);
 
-        if (userId != null && !userId.isEmpty()) {
+        if (null != userId && !userId.isEmpty()) {
             presenter.saveFoodPrefList(rootFoodPrefList);
         }
         finish();

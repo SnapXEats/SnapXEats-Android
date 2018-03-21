@@ -27,7 +27,7 @@ public class HomeFgmtHelper {
     @Inject
     RootUserPreference rootUserPreference;
 
-    public SelectedCuisineList getSelectedCusineObject(LocationCuisine mLocationCuisine, List<String> selectedList) {
+    SelectedCuisineList getSelectedCusine(LocationCuisine mLocationCuisine, List<String> selectedList) {
         SelectedCuisineList selectedCuisineList = new SelectedCuisineList();
         selectedCuisineList.setLocation(mLocationCuisine);
         cuisineList = new ArrayList<>();
@@ -87,7 +87,7 @@ public class HomeFgmtHelper {
         } else {
             cuisineList.addAll(selectedList);
         }
-        return cuisineList != null ? cuisineList : null;
+        return cuisineList;
     }
 
     public List<String> getFoodList() {
@@ -97,6 +97,6 @@ public class HomeFgmtHelper {
                 foodList.add(foodPreferences.getFood_type_info_id());
             }
         }
-        return foodList != null ? foodList : null;
+        return foodList;
     }
 }

@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.pkmmte.view.CircularImageView;
+
 import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.model.SnapxData;
@@ -28,6 +29,7 @@ import com.snapxeats.ui.home.fragment.home.HomeFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
 import com.squareup.picasso.Picasso;
 
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -36,7 +38,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isDirty;
-import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.mUserPreference;
 
 /**
  * Created by Snehal Tembare on 3/1/18.
@@ -80,6 +81,9 @@ public class HomeActivity extends LocationBaseActivity implements
 
     @Inject
     AppUtility utility;
+
+    @Inject
+    HomeDbHelper homeDbHelper;
 
     @Inject
     RootUserPreference mRootUserPreference;
@@ -229,6 +233,8 @@ public class HomeActivity extends LocationBaseActivity implements
 
                         if (null != userId && !userId.isEmpty()) {
 
+                            UserPreference mUserPreference = homeDbHelper.mapLocalObject(mRootUserPreference);
+
                             if (null != mUserPreference) {
                                 showProgressDialog();
                                 mPresenter.saveLocalData(mUserPreference);
@@ -244,6 +250,7 @@ public class HomeActivity extends LocationBaseActivity implements
                             FragmentTransaction transaction = fragmentManager.beginTransaction();
                             transaction.replace(R.id.frame_layout, homeFragment);
                             mNavigationView.setCheckedItem(R.id.nav_home);
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
                             isDirty = false;
                             transaction.commit();
                         }

@@ -1,15 +1,14 @@
 package com.snapxeats.ui.home.fragment.navpreference;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import com.snapxeats.R;
-import com.snapxeats.SnapXApplication;
-import com.snapxeats.common.model.DaoSession;
+import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
 import com.snapxeats.common.model.preference.UserPreference;
-import com.snapxeats.common.model.preference.UserPreferenceDao;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
@@ -30,7 +29,7 @@ public class NavPrefInteractor {
 
     private NavPrefContract.NavPrefPresenter navPrefPresenter;
     private NavPrefContract.NavPrefView view;
-    private Activity mContext;
+    private Context mContext;
     private DaoSession daoSession;
 
     @Inject
@@ -38,6 +37,12 @@ public class NavPrefInteractor {
 
     @Inject
     RootUserPreference rootUserPreference;
+
+    @Inject
+    PrefDbHelper helper;
+
+    @Inject
+    DbHelper dbHelper;
 
     @Inject
     public NavPrefInteractor() {
@@ -51,14 +56,15 @@ public class NavPrefInteractor {
         this.view = context;
         mContext = context.getActivity();
         utility.setContext(mContext);
-        daoSession = ((SnapXApplication) mContext.getApplication()).getDaoSession();
+        dbHelper.setContext(mContext);
+        daoSession = dbHelper.getDaoSesion();
     }
 
     /**
      * POST- Save user preferences
      */
 
-    public void applyPreferences(UserPreference userPreference) {
+    public void applyPreferences(UserPreference userPreference)     {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             Call<UserPreference> userPreferenceCall = apiHelper.setUserPreferences(utility.getAuthToken(mContext), userPreference);
@@ -82,8 +88,7 @@ public class NavPrefInteractor {
 
 
     public void saveDataInLocalDb(UserPreference userPreference) {
-        UserPreferenceDao userPreferenceDao = daoSession.getUserPreferenceDao();
-        userPreferenceDao.insertOrReplaceInTx(userPreference);
+        helper.userPreference(userPreference);
     }
 
     /**
@@ -141,7 +146,7 @@ public class NavPrefInteractor {
         }
     }
 
-    public void saveUserData() {
+    void saveUserData() {
         SnapxDataDao snapxDataDao = daoSession.getSnapxDataDao();
         if (snapxDataDao.loadAll().size() > 0) {
             List<SnapxData> snapxDataList = snapxDataDao.loadAll();

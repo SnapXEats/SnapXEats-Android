@@ -41,8 +41,6 @@ import com.snapxeats.R;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.model.SnapXUser;
-import com.snapxeats.common.model.foodGestures.FoodWishlistsDao;
-import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.preference.Cuisines;
 import com.snapxeats.common.model.preference.RootCuisine;
 import com.snapxeats.common.model.preference.RootUserPreference;
@@ -148,6 +146,11 @@ public class HomeFragment extends BaseFragment implements
         // Inflate the layout for this fragment
         View view = null;
 
+        if (null != view) {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (parent != null)
+                parent.removeView(view);
+        }
         try {
             view = inflater.inflate(R.layout.fragment_home, container, false);
             ButterKnife.bind(this, view);
@@ -259,7 +262,6 @@ public class HomeFragment extends BaseFragment implements
 
     @OnClick(R.id.btn_cuisine_done)
     public void btnCuisineDone() {
-
         for (Cuisines cuisines : cuisinesList) {
             if (cuisines.is_cuisine_like() || cuisines.is_cuisine_favourite()) {
                 selectedList.add(cuisines.getCuisine_info_id());
@@ -268,9 +270,8 @@ public class HomeFragment extends BaseFragment implements
 
         if (selectedList.size() != 0) {
             if (mSelectedLocation != null) {
+                selectedCuisineList = homeFgmtHelper.getSelectedCusine(mLocationCuisine,selectedList);
                 //set selected cuisines data
-                selectedCuisineList = homeFgmtHelper.getSelectedCusineObject(mLocationCuisine, selectedList);
-
                 Intent intent = new Intent(activity, FoodStackActivity.class);
                 intent.putExtra(getString(R.string.data_selectedCuisineList), selectedCuisineList);
                 activity.startActivity(intent);
@@ -299,8 +300,6 @@ public class HomeFragment extends BaseFragment implements
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(getString(R.string.user_id), snapXUser.getUser_id());
             editor.apply();
-
-            //  presenter.saveUserDataInDb(snapXUser);
         }
     }
 

@@ -42,7 +42,7 @@ public class GetPredictionTask extends AsyncTask<String, Void, List<Prediction>>
     @Override
     protected List<Prediction> doInBackground(String... strings) {
         StringBuilder result = getData(strings[0]);
-        if (result != null) {
+        if (null != result) {
             predictionList = parseData(result);
         }
         return predictionList;
@@ -51,7 +51,7 @@ public class GetPredictionTask extends AsyncTask<String, Void, List<Prediction>>
     @Override
     protected void onPostExecute(List<Prediction> predictions) {
         super.onPostExecute(predictions);
-        if (predictionList != null) {
+        if (null != predictionList) {
             onTaskCompleted.onTaskCompleted(predictions);
         }
     }
@@ -106,7 +106,7 @@ public class GetPredictionTask extends AsyncTask<String, Void, List<Prediction>>
         } catch (IOException e) {
             Log.e(TAG, "Nw Error connecting to Places API", e);
         } finally {
-            if (conn != null) {
+            if (null != conn) {
                 conn.disconnect();
             }
         }

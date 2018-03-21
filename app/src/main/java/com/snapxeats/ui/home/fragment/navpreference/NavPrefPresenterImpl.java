@@ -36,7 +36,7 @@ public class NavPrefPresenterImpl implements NavPrefContract.NavPrefPresenter {
 
     @Override
     public void response(SnapXResult result, Object value) {
-        if (navPrefView != null) {
+        if (null != navPrefView) {
             switch (result) {
                 case SUCCESS:
                     navPrefView.success(value);

@@ -1,10 +1,7 @@
 package com.snapxeats.ui.foodpreference;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
-import com.snapxeats.R;
-import com.snapxeats.SnapXApplication;
-import com.snapxeats.common.model.DaoSession;
+import android.content.Context;
+
 import com.snapxeats.common.model.preference.FoodPref;
 import com.snapxeats.common.model.preference.RootFoodPref;
 import com.snapxeats.common.model.preference.UserFoodPreferences;
@@ -28,8 +25,7 @@ import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 public class FoodPrefInteractor {
     private FoodPreferenceContract.FoodPreferencePresenter presenter;
     private FoodPreferenceContract.FoodPreferenceView view;
-    private Activity mContext;
-    private DaoSession daoSession;
+    private Context mContext;
     private UserFoodPreferencesDao foodPreferencesDao;
 
     @Inject
@@ -39,6 +35,9 @@ public class FoodPrefInteractor {
     @Inject
     AppUtility utility;
 
+    @Inject
+    FoodPrefDbHelper helper;
+
     public void setPresenter(FoodPreferenceContract.FoodPreferencePresenter presenter) {
         this.presenter = presenter;
     }
@@ -47,18 +46,18 @@ public class FoodPrefInteractor {
         this.view = view;
         this.mContext = view.getActivity();
         utility.setContext(mContext);
-        daoSession = ((SnapXApplication) mContext.getApplication()).getDaoSession();
-        foodPreferencesDao = daoSession.getUserFoodPreferencesDao();
+        helper.setContext(mContext);
+        foodPreferencesDao = helper.getFoodPreferencesDao();
     }
 
-    public void getFoodPrefList() {
+    void getFoodPrefList() {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             Call<RootFoodPref> foodPrefCall = apiHelper.getFoodPreferences();
             foodPrefCall.enqueue(new Callback<RootFoodPref>() {
                 @Override
                 public void onResponse(Call<RootFoodPref> call, Response<RootFoodPref> response) {
-                    if (response.isSuccessful() && response.body().getFoodTypeList() != null) {
+                    if (response.isSuccessful() && null != response.body().getFoodTypeList()) {
                         presenter.response(SnapXResult.SUCCESS, response.body());
                     }
                 }
@@ -73,22 +72,7 @@ public class FoodPrefInteractor {
         }
     }
 
-    public void saveFoodPrefList(List<FoodPref> foodPrefList) {
-
-        foodPreferencesDao.deleteAll();
-        UserFoodPreferences foodPreferences = null;
-        SharedPreferences preferences = utility.getSharedPreferences();
-        String userId = preferences.getString(mContext.getString(R.string.user_id), "");
-
-        for (FoodPref foodPref : foodPrefList) {
-            if (foodPref.is_food_like() || foodPref.is_food_favourite()) {
-                foodPreferences = new UserFoodPreferences(foodPref.getFood_type_info_id(),
-                        foodPref.is_food_like(), foodPref.is_food_favourite(), userId);
-
-                if (null != foodPreferences) {
-                    foodPreferencesDao.insert(foodPreferences);
-                }
-            }
-        }
+    void saveFoodPrefList(List<FoodPref> foodPrefList) {
+        helper.saveFoodPrefList(foodPrefList);
     }
 }

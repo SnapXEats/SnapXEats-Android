@@ -37,7 +37,7 @@ public class FoodPrefPresenterImpl implements FoodPreferenceContract.FoodPrefere
 
     @Override
     public void response(SnapXResult result, Object value) {
-        if (foodPrefView != null) {
+        if (null != foodPrefView) {
             switch (result) {
                 case SUCCESS:
                     foodPrefView.success(value);

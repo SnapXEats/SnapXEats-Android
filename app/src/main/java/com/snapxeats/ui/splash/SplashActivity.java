@@ -6,8 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.SnapXApplication;
-import com.snapxeats.common.model.DaoSession;
+import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
 import com.snapxeats.common.utilities.AppUtility;
@@ -29,6 +28,9 @@ public class SplashActivity extends BaseActivity {
     @Inject
     AppUtility appUtility;
 
+    @Inject
+    DbHelper dbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,13 +38,16 @@ public class SplashActivity extends BaseActivity {
         ButterKnife.bind(this);
         checkForUpdates();
 
-        DaoSession daoSession = ((SnapXApplication) getApplication()).getDaoSession();
-        SnapxDataDao snapxDataDao = daoSession.getSnapxDataDao();
         appUtility.setContext(this);
+        dbHelper.setContext(this);
+
+        SnapxDataDao snapxDataDao = dbHelper.getSnapxDataDao();
 
         SharedPreferences settings = appUtility.getSharedPreferences();
-        snapxData = snapxDataDao.queryBuilder()
-                .where(UserId.eq(settings.getString(getString(R.string.user_id), ""))).limit(1).unique();
+        if (null != snapxDataDao) {
+            snapxData = snapxDataDao.queryBuilder()
+                    .where(UserId.eq(settings.getString(getString(R.string.user_id), ""))).limit(1).unique();
+        }
     }
 
     @Override
@@ -52,7 +57,7 @@ public class SplashActivity extends BaseActivity {
         int TIME_OUT = 1000;
         new Handler().postDelayed(() -> {
             //check if facebook user is logged in or not
-            if (snapxData != null && !snapxData.getUserId().isEmpty()) {
+            if (null != snapxData && !snapxData.getUserId().isEmpty()) {
                 startActivity(new Intent(this, HomeActivity.class));
             } else {
                 startActivity(new Intent(this, LoginActivity.class));

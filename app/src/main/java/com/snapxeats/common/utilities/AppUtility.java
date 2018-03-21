@@ -8,11 +8,10 @@ import android.support.v7.app.AlertDialog;
 import com.google.gson.Gson;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
-import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
+import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.location.Location;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -33,9 +32,9 @@ public class AppUtility {
     public AppUtility() {
     }
 
-    public void setContext(Activity context) {
+    public void setContext(Context context) {
         this.mContext = context;
-        daoSession = ((SnapXApplication) context.getApplication()).getDaoSession();
+        daoSession = ((SnapXApplication) context.getApplicationContext()).getDaoSession();
         snapxDataDao = daoSession.getSnapxDataDao();
         if (snapxDataDao.loadAll() != null && snapxDataDao.loadAll().size() > 0) {
             snapxData = snapxDataDao.loadAll().get(0);
@@ -88,16 +87,6 @@ public class AppUtility {
                 app.setToken(token);
             }
         }
-    }
-
-    public void displayDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
-        alertDialog.setTitle(mContext.getString(R.string.error))
-                .setMessage(mContext.getString(R.string.preference_save_message))
-                .setPositiveButton(mContext.getString(R.string.apply), (dialog, which) -> {
-//                            presenter.updatePreferences(mUserPreference);
-                });
-        alertDialog.show();
     }
 
 }

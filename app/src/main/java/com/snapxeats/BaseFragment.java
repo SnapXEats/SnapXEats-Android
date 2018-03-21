@@ -21,6 +21,8 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.snapxeats.common.Router;
 import com.snapxeats.common.utilities.SnapXDialog;
+import com.snapxeats.dagger.AppContract;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -73,6 +75,14 @@ public class BaseFragment extends DaggerFragment implements
 
     public void showNetworkErrorDialog(DialogInterface.OnClickListener click) {
         mSnapXDialog.showNetworkErrorDialog(click);
+    }
+
+    public void showSnackBar(View view, View.OnClickListener click) {
+        mSnapXDialog.showSnackBar(view, click);
+    }
+
+    public View.OnClickListener setClickListener(AppContract.DialogListenerAction button) {
+        return v -> button.action();
     }
 
     public void buildGoogleAPIClient() {

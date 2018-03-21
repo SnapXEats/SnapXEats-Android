@@ -1,11 +1,11 @@
 package com.snapxeats;
 
-import com.snapxeats.common.model.DaoMaster;
-import com.snapxeats.common.model.DaoSession;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.snapxeats.common.model.foodGestures.DaoMaster;
+import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.dagger.AppComponent;
 import com.snapxeats.dagger.DaggerAppComponent;
-
-import org.greenrobot.greendao.database.Database;
 import dagger.android.AndroidInjector;
 import dagger.android.DaggerApplication;
 
@@ -22,7 +22,7 @@ public final class SnapXApplication extends DaggerApplication {
     public void onCreate() {
         super.onCreate();
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "SnapXDb");
-        Database db = helper.getWritableDb();
+        SQLiteDatabase db = helper.getWritableDatabase();
         daoSession = new DaoMaster(db).newSession();
     }
 

@@ -46,7 +46,7 @@ public class RestaurantInfoPresenterImpl
 
     @Override
     public void response(SnapXResult result, Object value) {
-        if (null != mRestaurantInfoView) {
+        if (mRestaurantInfoView != null) {
             switch (result) {
                 case SUCCESS:
                     mRestaurantInfoView.success(value);

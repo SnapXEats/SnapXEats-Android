@@ -7,14 +7,14 @@ import android.net.Uri;
 import com.facebook.AccessToken;
 import com.facebook.Profile;
 import com.snapxeats.R;
-import com.snapxeats.SnapXApplication;
-import com.snapxeats.common.model.DaoSession;
+import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.model.foodGestures.DaoSession;
+import com.snapxeats.common.model.login.RootInstagram;
 import com.snapxeats.common.model.SnapXUser;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
-import com.snapxeats.common.model.login.RootInstagram;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
@@ -27,7 +27,6 @@ import javax.inject.Singleton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 /**
@@ -40,7 +39,6 @@ public class LoginInteractor {
     private LoginContract.LoginView mLoginLoginView;
     private LoginContract.LoginPresenter mLoginPresenter;
     private SnapxDataDao snapxDataDao;
-    private DaoSession daoSession;
     private SnapxData snapxData;
     private Context mContext;
     private RootInstagram rootInstagram;
@@ -50,12 +48,10 @@ public class LoginInteractor {
     public AppUtility appUtility;
 
     @Inject
+    DbHelper dbHelper;
+
+    @Inject
     public LoginInteractor() {
-
-    }
-
-    public void setLoginView(LoginContract.LoginView loginLoginView) {
-        mLoginLoginView = loginLoginView;
     }
 
     public void setPresenter(LoginContract.LoginPresenter loginPresenter) {
@@ -64,9 +60,9 @@ public class LoginInteractor {
 
     public void setContext(LoginContract.LoginView view) {
         this.mContext = view.getActivity();
-        this.appUtility.setContext(view.getActivity());
-        daoSession = ((SnapXApplication) mContext.getApplicationContext()).getDaoSession();
-        snapxDataDao = daoSession.getSnapxDataDao();
+        appUtility.setContext(view.getActivity());
+        dbHelper.setContext(mContext);
+        snapxDataDao = dbHelper.getSnapxDataDao();
         snapxData = new SnapxData();
     }
 

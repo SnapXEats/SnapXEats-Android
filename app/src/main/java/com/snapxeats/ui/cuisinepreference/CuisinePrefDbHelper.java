@@ -1,7 +1,15 @@
 package com.snapxeats.ui.cuisinepreference;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import com.snapxeats.R;
+import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.preference.Cuisines;
 import com.snapxeats.common.model.preference.UserCuisinePreferences;
+import com.snapxeats.common.model.preference.UserCuisinePreferencesDao;
+import com.snapxeats.common.utilities.AppUtility;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -14,8 +22,31 @@ import javax.inject.Singleton;
 @Singleton
 public class CuisinePrefDbHelper {
 
+    private Context mContext;
+
     @Inject
-    public CuisinePrefDbHelper() {
+    CuisinePrefDbHelper() {
+    }
+
+
+    @Inject
+    AppUtility utility;
+
+    @Inject
+    DbHelper dbHelper;
+
+    private UserCuisinePreferencesDao cuisinePreferencesDao;
+
+
+    public void setContext(Context context) {
+        this.mContext = context;
+        utility.setContext(mContext);
+        dbHelper.setContext(mContext);
+    }
+
+    UserCuisinePreferencesDao getCuisinePreferencesDao() {
+        cuisinePreferencesDao = dbHelper.getUserCuisinePreferencesDao();
+        return cuisinePreferencesDao;
     }
 
     /**
@@ -37,31 +68,31 @@ public class CuisinePrefDbHelper {
                 }
             }
         }
-        return rootCuisineList;
+        return null != rootCuisineList ? rootCuisineList : null;
     }
 
     /**
      * To manage selected cuisine count
      */
-    public List<Cuisines> getSelectedCuisineList(List<Cuisines> rootCuisineList) {
+    List<Cuisines> getSelectedCuisineList(List<Cuisines> rootCuisineList) {
 
         List<Cuisines> selectedCuisineList = new ArrayList<>();
-        if (null!=rootCuisineList) {
+        if (null != rootCuisineList) {
             for (Cuisines cuisines : rootCuisineList) {
                 if (cuisines.is_cuisine_favourite() || cuisines.is_cuisine_like()) {
                     selectedCuisineList.add(cuisines);
                 }
             }
         }
-        return selectedCuisineList;
+        return null != selectedCuisineList ? selectedCuisineList : null;
     }
 
-    public List<UserCuisinePreferences> getSelectedUserCuisinePreferencesList
+    List<UserCuisinePreferences> getSelectedUserCuisinePreferencesList
             (List<Cuisines> rootCuisineList) {
 
         List<UserCuisinePreferences> selectedCuisineList = new ArrayList<>();
         UserCuisinePreferences userCuisinePreferences;
-        if (null!=rootCuisineList) {
+        if (null != rootCuisineList) {
             for (Cuisines cuisines : rootCuisineList) {
                 if (cuisines.is_cuisine_favourite() || cuisines.is_cuisine_like()) {
                     userCuisinePreferences = new UserCuisinePreferences(cuisines.getCuisine_info_id()
@@ -70,6 +101,22 @@ public class CuisinePrefDbHelper {
                 }
             }
         }
-        return selectedCuisineList;
+        return null != selectedCuisineList ? selectedCuisineList : null;
+    }
+
+    public void saveCuisineList(List<Cuisines> rootCuisineList) {
+
+        cuisinePreferencesDao.deleteAll();
+        UserCuisinePreferences cuisinePreferences = null;
+        SharedPreferences preferences = utility.getSharedPreferences();
+        String userId = preferences.getString(mContext.getString(R.string.user_id), "");
+
+        for (Cuisines cuisines : rootCuisineList) {
+            if (cuisines.is_cuisine_like() || cuisines.is_cuisine_favourite()) {
+                cuisinePreferences = new UserCuisinePreferences(cuisines.getCuisine_info_id(),
+                        cuisines.is_cuisine_like(), cuisines.is_cuisine_favourite(), userId);
+                cuisinePreferencesDao.insert(cuisinePreferences);
+            }
+        }
     }
 }
