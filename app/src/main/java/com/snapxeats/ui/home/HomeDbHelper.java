@@ -1,7 +1,9 @@
 package com.snapxeats.ui.home;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
+import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
@@ -12,6 +14,7 @@ import com.snapxeats.common.model.preference.UserFoodPreferences;
 import com.snapxeats.common.model.preference.UserFoodPreferencesDao;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.model.preference.UserPreferenceDao;
+import com.snapxeats.common.utilities.AppUtility;
 
 import java.util.List;
 
@@ -38,11 +41,15 @@ public class HomeDbHelper {
     DbHelper dbHelper;
 
     @Inject
+    AppUtility utility;
+
+    @Inject
     RootUserPreference rootUserPreference;
 
     public void setContext(Context context) {
         this.mContext = context;
         dbHelper.setContext(mContext);
+        utility.setContext(mContext);
     }
 
     UserPreference mapLocalObject(RootUserPreference mRootUserPreference) {
@@ -62,11 +69,14 @@ public class HomeDbHelper {
         cuisineDao = dbHelper.getUserCuisinePreferencesDao();
         foodDao = dbHelper.getUserFoodPreferencesDao();
 
+        SharedPreferences preferences = utility.getSharedPreferences();
+        String userId = preferences.getString(mContext.getString(R.string.user_id), "");
+        rootUserPreference.setUser_Id(userId);
+
         if (userPreferenceDao != null && userPreferenceDao.loadAll().size() != 0) {
 
             UserPreference userPreference = userPreferenceDao.loadAll().get(0);
 
-            rootUserPreference.setUser_Id(userPreference.getId());
             if (null != userPreference.getRestaurant_rating() &&
                     !userPreference.getRestaurant_rating().isEmpty()) {
                 rootUserPreference.setRestaurant_rating(userPreference.getRestaurant_rating());
@@ -110,7 +120,7 @@ public class HomeDbHelper {
             rootUserPreference.setUserFoodPreferences(selectedFoodList);
 
         }
-        return null != rootUserPreference ? rootUserPreference : null;
+        return rootUserPreference;
     }
 
     void saveDataInLocalDb(UserPreference userPreference) {

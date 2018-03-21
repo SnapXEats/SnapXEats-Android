@@ -38,6 +38,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isDirty;
+import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isCuisineDirty;
+import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isFoodDirty;
 
 /**
  * Created by Snehal Tembare on 3/1/18.
@@ -114,7 +116,6 @@ public class HomeActivity extends LocationBaseActivity implements
         utility.setContext(this);
         preferences = utility.getSharedPreferences();
         mNavigationView.setNavigationItemSelectedListener(this);
-
         fragmentManager = getFragmentManager();
         transaction = fragmentManager.beginTransaction();
 
@@ -270,6 +271,8 @@ public class HomeActivity extends LocationBaseActivity implements
             mNavigationView.setCheckedItem(R.id.nav_home);
             mDrawerLayout.closeDrawer(GravityCompat.START);
             isDirty = false;
+            isCuisineDirty = false;
+            isFoodDirty = false;
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean(getString(R.string.isFirstTimeUser), false);
             editor.apply();

@@ -527,6 +527,8 @@ public class NavPrefFragment extends BaseFragment implements
             transaction.replace(R.id.frame_layout, homeFragment);
             mNavigationView.setCheckedItem(R.id.nav_home);
             isDirty = false;
+            isCuisineDirty = false;
+            isFoodDirty = false;
             transaction.commit();
         }
     }
@@ -608,7 +610,6 @@ public class NavPrefFragment extends BaseFragment implements
             }
 
             mUserPreference = helper.mapLocalObject(mRootUserPreference);
-
         }
 
         if (null != cuisinedPrefList && 0 < cuisinedPrefList.size()) {
@@ -664,6 +665,8 @@ public class NavPrefFragment extends BaseFragment implements
             transaction.replace(R.id.frame_layout, homeFragment);
             mNavigationView.setCheckedItem(R.id.nav_home);
             isDirty = false;
+            isCuisineDirty = false;
+            isFoodDirty = false;
             presenter.saveLocalData(mUserPreference);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean(getString(R.string.isFirstTimeUser), false);
