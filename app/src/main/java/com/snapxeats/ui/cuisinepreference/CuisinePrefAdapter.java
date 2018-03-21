@@ -2,6 +2,7 @@ package com.snapxeats.ui.cuisinepreference;
 
 import android.content.Context;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,11 @@ public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.
     }
 
     @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull List<Object> payloads) {
+        super.onBindViewHolder(holder, position, payloads);
+    }
+
+    @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Cuisines cuisines = cuisineArrayList.get(position);
         holder.setItem(position, cuisines);
@@ -56,6 +62,7 @@ public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.
     public int getItemCount() {
         return cuisineArrayList.size();
     }
+
 
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

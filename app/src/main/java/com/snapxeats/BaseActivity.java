@@ -3,6 +3,8 @@ package com.snapxeats;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
+
 import com.snapxeats.common.Router;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
@@ -37,6 +39,10 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
         return (dialogInterface, i) -> button.action();
     }
 
+    public View.OnClickListener setClickListener(AppContract.DialogListenerAction button) {
+        return v -> button.action();
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -67,12 +73,16 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
         mSnapXDialog.dismissProgressSialog();
     }
 
-    public void showResetDialog(DialogInterface.OnClickListener negativeClick ,
+    public void showResetDialog(DialogInterface.OnClickListener negativeClick,
                                 DialogInterface.OnClickListener positiveClick) {
         mSnapXDialog.showResetDialog(negativeClick, positiveClick);
     }
 
     public void showNetworkErrorDialog(DialogInterface.OnClickListener click) {
         mSnapXDialog.showNetworkErrorDialog(click);
+    }
+
+    public void showSnackBar(View view, View.OnClickListener click) {
+        mSnapXDialog.showSnackBar(view, click);
     }
 }

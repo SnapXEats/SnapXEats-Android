@@ -220,7 +220,7 @@ public class NavPrefFragment extends BaseFragment implements
     public static boolean isDirty;
     public static boolean isCuisineDirty;
     public static boolean isFoodDirty;
-    public static UserPreference mUserPreference;
+    public UserPreference mUserPreference;
 
     @Inject
     RootUserPreference mRootUserPreference;
@@ -250,8 +250,6 @@ public class NavPrefFragment extends BaseFragment implements
         SharedPreferences preferences = utility.getSharedPreferences();
         userId = preferences.getString(getString(R.string.user_id), "");
         presenter.saveUserData();
-
-//        mRootUserPreference = presenter.getUserPreferenceFromDb();
     }
 
 
@@ -509,7 +507,7 @@ public class NavPrefFragment extends BaseFragment implements
 
     @OnClick(R.id.txt_pref_apply)
     public void savePreferences() {
-        if (userId != null && !userId.isEmpty()) {
+        if (null != userId && !userId.isEmpty()) {
 
             mUserPreference = new UserPreference(userId, String.valueOf(userRating),
                     String.valueOf(pricing),
@@ -519,16 +517,8 @@ public class NavPrefFragment extends BaseFragment implements
                     mRootUserPreference.getUserFoodPreferences());
 
             setDataToMemoryObject();
+            postOrPutUserPreferences();
 
-            if (null != mUserPreference) {
-                showProgressDialog();
-                presenter.saveLocalData(mUserPreference);
-                if (preferences.getBoolean(getString(R.string.isFirstTimeUser), false)) {
-                    presenter.savePreferences(mUserPreference);
-                } else {
-                    presenter.updatePreferences(mUserPreference);
-                }
-            }
         } else {
             //Non logged in user
             setDataToMemoryObject();
@@ -538,6 +528,17 @@ public class NavPrefFragment extends BaseFragment implements
             mNavigationView.setCheckedItem(R.id.nav_home);
             isDirty = false;
             transaction.commit();
+        }
+    }
+
+    private void postOrPutUserPreferences() {
+        if (null != mUserPreference) {
+            showProgressDialog();
+            if (preferences.getBoolean(getString(R.string.isFirstTimeUser), false)) {
+                presenter.savePreferences(mUserPreference);
+            } else {
+                presenter.updatePreferences(mUserPreference);
+            }
         }
     }
 
@@ -559,22 +560,12 @@ public class NavPrefFragment extends BaseFragment implements
 
     @OnClick(R.id.cardview_cuisine)
     public void showCusinePrefScreen() {
-        if (NetworkUtility.isNetworkAvailable(activity)) {
-            presenter.presentScreen(CUISINE_PREF);
-        } else {
-            showNetworkErrorDialog((dialog, which) -> {
-            });
-        }
+        presenter.presentScreen(CUISINE_PREF);
     }
 
     @OnClick(R.id.cardview_food)
     public void showFoodPrefScreen() {
-        if (NetworkUtility.isNetworkAvailable(activity)) {
-            presenter.presentScreen(FOOD_PREF);
-        } else {
-            showNetworkErrorDialog((dialog, which) -> {
-            });
-        }
+        presenter.presentScreen(FOOD_PREF);
     }
 
     private void checkDataFromDb() {
@@ -673,6 +664,7 @@ public class NavPrefFragment extends BaseFragment implements
             transaction.replace(R.id.frame_layout, homeFragment);
             mNavigationView.setCheckedItem(R.id.nav_home);
             isDirty = false;
+            presenter.saveLocalData(mUserPreference);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean(getString(R.string.isFirstTimeUser), false);
             editor.apply();
@@ -699,7 +691,14 @@ public class NavPrefFragment extends BaseFragment implements
 
     @Override
     public void noNetwork(Object value) {
+        dismissProgressDialog();
         showNetworkErrorDialog((dialog, which) -> {
+            if (!NetworkUtility.isNetworkAvailable(getActivity())) {
+                AppContract.DialogListenerAction click = () -> {
+                    postOrPutUserPreferences();
+                };
+                showSnackBar(mParentLayout, setClickListener(click));
+            }
         });
     }
 

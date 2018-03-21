@@ -137,9 +137,8 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0)
-                    if (resultList != null && mAdapter != null) {
+                    if (null != resultList && null != mAdapter) {
                     resetViews();
-
                     }
             }
         });
@@ -148,10 +147,10 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
             String address = (String) parent.getItemAtPosition(position);
 
             InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (in != null)
+            if (null != in)
                 in.hideSoftInputFromInputMethod(getCurrentFocus().getApplicationWindowToken(), 0);
 
-            if (predictionList != null && predictionList.size() != 0) {
+            if (null != predictionList && predictionList.size() != 0) {
                 locationPresenter.getPlaceDetails(predictionList.get(position).getPlace_id());
             }
         });
@@ -173,7 +172,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     @OnClick(R.id.img_delete_input)
     public void clearText() {
         mAutoCompleteTextView.setText("");
-        if (mAdapter != null) {
+        if (null != mAdapter) {
             resetViews();
         }
     }
@@ -182,7 +181,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     public void onBackPressed() {
         super.onBackPressed();
         InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (in != null)
+        if (null != in)
             in.hideSoftInputFromInputMethod(getCurrentFocus().getApplicationWindowToken(), 0);
     }
 
@@ -209,10 +208,10 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
 
     public void getData() {
         android.location.Location location = getLocation();
-        if (location != null) {
+        if (null != location) {
             selectedLocation = new Location(location.getLatitude(),
                     location.getLongitude(), getPlaceName(location));
-            if (selectedLocation != null) {
+            if (null != selectedLocation) {
                 putData(selectedLocation);
             }
         }
@@ -281,7 +280,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
 
     public void putData(Location location) {
 
-        if (location != null) {
+        if (null != location) {
             Intent intent = new Intent();
             intent.setAction("GET_DATA");
             intent.putExtra(getString(R.string.selected_location), location);
@@ -311,7 +310,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     public void onTaskCompleted(List<Prediction> predictionList) {
         resultList.clear();
         this.predictionList = predictionList;
-        if (predictionList != null
+        if (null != predictionList
                 && predictionList.size() != 0) {
             mImgLoader.setVisibility(View.GONE);
             for (int index = 0; index < predictionList.size(); index++) {

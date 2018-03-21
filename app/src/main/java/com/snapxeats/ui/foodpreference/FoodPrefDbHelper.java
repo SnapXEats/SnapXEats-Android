@@ -1,7 +1,14 @@
 package com.snapxeats.ui.foodpreference;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import com.snapxeats.R;
+import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.preference.FoodPref;
 import com.snapxeats.common.model.preference.UserFoodPreferences;
+import com.snapxeats.common.model.preference.UserFoodPreferencesDao;
+import com.snapxeats.common.utilities.AppUtility;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -13,13 +20,33 @@ import javax.inject.Singleton;
 
 @Singleton
 public class FoodPrefDbHelper {
+    private Context mContext;
+
+    @Inject
+    AppUtility utility;
+
+    @Inject
+    DbHelper dbHelper;
 
     @Inject
     public FoodPrefDbHelper() {
     }
 
-    public List<FoodPref> getFoodPrefData(List<FoodPref> rootFoodPrefList,
-                                          List<UserFoodPreferences> userFoodPreferencesList) {
+    private UserFoodPreferencesDao foodPreferencesDao;
+
+    public void setContext(Context context) {
+        this.mContext = context;
+        utility.setContext(mContext);
+        dbHelper.setContext(mContext);
+    }
+
+    UserFoodPreferencesDao getFoodPreferencesDao() {
+        foodPreferencesDao = dbHelper.getUserFoodPreferencesDao();
+        return foodPreferencesDao;
+    }
+
+    List<FoodPref> getFoodPrefData(List<FoodPref> rootFoodPrefList,
+                                   List<UserFoodPreferences> userFoodPreferencesList) {
         if (null != userFoodPreferencesList && 0 < userFoodPreferencesList.size()) {
             for (int index = 0; index < userFoodPreferencesList.size(); index++) {
                 for (int rootIndex = 0; rootIndex < rootFoodPrefList.size(); rootIndex++) {
@@ -38,7 +65,7 @@ public class FoodPrefDbHelper {
     /**
      * To manage selected food preferences count
      */
-    public List<FoodPref> getSelectedFoodList(List<FoodPref> foodPrefList) {
+    List<FoodPref> getSelectedFoodList(List<FoodPref> foodPrefList) {
 
         List<FoodPref> selectedFoodList = new ArrayList<>();
         if (foodPrefList != null) {
@@ -48,10 +75,10 @@ public class FoodPrefDbHelper {
                 }
             }
         }
-        return selectedFoodList != null ? selectedFoodList : null;
+        return selectedFoodList;
     }
 
-    public List<UserFoodPreferences> getSelectedUserFoodPreferencesList
+    List<UserFoodPreferences> getSelectedUserFoodPreferencesList
             (List<FoodPref> foodPrefList) {
 
         List<UserFoodPreferences> selectedFoodList = new ArrayList<>();
@@ -65,6 +92,21 @@ public class FoodPrefDbHelper {
                 }
             }
         }
-        return selectedFoodList != null ? selectedFoodList : null;
+        return selectedFoodList;
+    }
+
+    void saveFoodPrefList(List<FoodPref> foodPrefList) {
+        foodPreferencesDao.deleteAll();
+        UserFoodPreferences foodPreferences = null;
+        SharedPreferences preferences = utility.getSharedPreferences();
+        String userId = preferences.getString(mContext.getString(R.string.user_id), "");
+
+        for (FoodPref foodPref : foodPrefList) {
+            if (foodPref.is_food_like() || foodPref.is_food_favourite()) {
+                foodPreferences = new UserFoodPreferences(foodPref.getFood_type_info_id(),
+                        foodPref.is_food_like(), foodPref.is_food_favourite(), userId);
+                foodPreferencesDao.insert(foodPreferences);
+            }
+        }
     }
 }

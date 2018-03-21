@@ -1,19 +1,10 @@
 package com.snapxeats.ui.foodstack;
 
-import android.app.Activity;
-import android.util.Log;
-
-import com.snapxeats.SnapXApplication;
-import com.snapxeats.common.constants.SnapXToast;
-import com.snapxeats.common.model.DaoSession;
+import android.content.Context;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SelectedCuisineList;
-import com.snapxeats.common.model.SnapxData;
-import com.snapxeats.common.model.SnapxDataDao;
 import com.snapxeats.common.model.foodGestures.FoodDislikes;
-import com.snapxeats.common.model.foodGestures.FoodDislikesDao;
 import com.snapxeats.common.model.foodGestures.FoodWishlists;
-import com.snapxeats.common.model.foodGestures.FoodWishlistsDao;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
@@ -29,7 +20,6 @@ import javax.inject.Singleton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 /**
@@ -38,8 +28,10 @@ import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 @Singleton
 public class FoodStackInteractor {
 
-    private Activity mContext;
+    private Context mContext;
+
     private FoodStackContract.FoodStackPresenter mFoodStackPresenter;
+
     private FoodStackContract.FoodStackView mFoodStackView;
 
     @Inject
@@ -55,7 +47,6 @@ public class FoodStackInteractor {
     public void setFoodStackPresenter(FoodStackContract.FoodStackPresenter foodStackPresenter) {
         this.mFoodStackPresenter = foodStackPresenter;
     }
-
     public void setContext(FoodStackContract.FoodStackView view) {
         this.mFoodStackView = view;
         this.mContext = view.getActivity();

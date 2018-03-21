@@ -32,7 +32,7 @@ public class LocationAdapter extends ArrayAdapter<String> {
 
     @Override
     public int getCount() {
-        return resultList != null ? resultList.size() : 0;
+        return null != resultList ? resultList.size() : 0;
     }
 
     @Nullable
@@ -47,7 +47,7 @@ public class LocationAdapter extends ArrayAdapter<String> {
         View view;
         ViewHolder viewHolder;
 
-        if (convertView == null) {
+        if (null == convertView) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.item_prediction_layout, null);
         } else {
@@ -55,7 +55,7 @@ public class LocationAdapter extends ArrayAdapter<String> {
         }
         viewHolder = new ViewHolder(view);
 
-        if (resultList != null) {
+        if (null != resultList) {
             viewHolder.mTextView.setText(resultList.get(position));
         }
         return view;

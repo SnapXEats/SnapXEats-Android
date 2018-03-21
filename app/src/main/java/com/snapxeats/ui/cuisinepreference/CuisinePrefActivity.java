@@ -2,9 +2,9 @@ package com.snapxeats.ui.cuisinepreference;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,8 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
-
-import com.NetworkCheckReceiver;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.model.preference.Cuisines;
@@ -22,6 +20,7 @@ import com.snapxeats.common.model.preference.RootCuisine;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserCuisinePreferences;
 import com.snapxeats.common.utilities.AppUtility;
+import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
@@ -36,14 +35,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.SCREENNAMES.CUISINE;
-
 
 /**
  * Created by Snehal Tembare on 13/2/18.
  */
 
-public class CuisinePrefActivity extends BaseActivity implements CuisinePrefContract.CuisinePrefView,
+public class CuisinePrefActivity extends BaseActivity implements
+        CuisinePrefContract.CuisinePrefView,
         AppContract.SnapXResults {
 
     @BindView(R.id.recyclerview_cuisine)
@@ -57,6 +55,9 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
 
     @BindView(R.id.btn_cuisine_pref_save)
     protected TextView mTxtSave;
+
+    @BindView(R.id.parent_layout)
+    protected ConstraintLayout mParentLayout;
 
     @Inject
     CuisinePrefContract.CuisinePrefPresenter prefPresenter;
@@ -74,7 +75,6 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
     RootUserPreference mRootUserPreference;
 
     private CuisinePrefAdapter mCuisinePrefAdapter;
-    private NetworkCheckReceiver networkCheckReceiver;
     private List<Cuisines> rootCuisineList;
     private List<UserCuisinePreferences> selectedCuisineList;
     public static boolean isDirty;
@@ -99,10 +99,10 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
         prefPresenter.addView(this);
         snapXDialog.setContext(this);
         utility.setContext(this);
+        helper.setContext(this);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(getString(R.string.cuisine_preference));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        networkCheckReceiver = new NetworkCheckReceiver();
         selectedCuisineList = new ArrayList<>();
         rootCuisineList = new ArrayList<>();
         preferences = utility.getSharedPreferences();
@@ -144,8 +144,10 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
         rootCuisineList = helper.getCuisinePrefData(selectedCuisineList, rootCuisineList);
     }
 
+
     @OnClick(R.id.txt_reset)
-    public void resetFoodPref() {
+    public void resetCuisinePref() {
+
         AppContract.DialogListenerAction positiveClick = () -> {
             for (int index = 0; index < rootCuisineList.size(); index++) {
                 rootCuisineList.get(index).set_cuisine_favourite(false);
@@ -203,6 +205,7 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
         }
     }
 
+
     @OnClick(R.id.btn_cuisine_pref_save)
     public void saveCusinePref() {
         saveCuisinePrefInDbAndFinish();
@@ -216,11 +219,16 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
     @Override
     public void noNetwork(Object value) {
         dismissProgressDialog();
-        Intent intent = new Intent();
-        intent.putExtra("screen", CUISINE);
-        sendBroadcast(intent);
+
         showNetworkErrorDialog((dialog, which) -> {
+            if (!NetworkUtility.isNetworkAvailable(this) && null != rootCuisineList) {
+                AppContract.DialogListenerAction click = () -> {
+                    prefPresenter.getCuisinePrefList();
+                };
+                showSnackBar(mParentLayout, setClickListener(click));
+            }
         });
+
     }
 
     @Override
@@ -238,6 +246,11 @@ public class CuisinePrefActivity extends BaseActivity implements CuisinePrefCont
             }
         }
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override

@@ -7,9 +7,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.view.View;
 
 import com.snapxeats.R;
+import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.dagger.AppContract;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -105,6 +109,9 @@ public class SnapXDialog {
 
     }
 
+    /**
+     * Show dialog when user denies permissions permanently
+     */
     public void showChangePermissionDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle(context.getString(R.string.change_permissions));
@@ -123,11 +130,12 @@ public class SnapXDialog {
         alertDialog.show();
     }
 
-    public void showSavePreferenceDilog(DialogInterface.OnClickListener positiveClick) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-        alertDialog.setTitle(context.getString(R.string.error))
-                .setMessage(context.getString(R.string.preference_save_message))
-                .setPositiveButton(context.getString(R.string.apply), positiveClick);
-        alertDialog.show();
+    /**
+     * Show snackbar for network error
+     */
+    public void showSnackBar(View view,View.OnClickListener poitiveClick) {
+        Snackbar snackbar = Snackbar.make(view,"No Internet connection!",Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction("RETRY", poitiveClick);
+        snackbar.show();
     }
 }

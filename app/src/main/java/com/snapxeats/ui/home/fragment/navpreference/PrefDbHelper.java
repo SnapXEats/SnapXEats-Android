@@ -1,13 +1,11 @@
 package com.snapxeats.ui.home.fragment.navpreference;
 
+import android.content.Context;
+
+import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.preference.RootUserPreference;
-import com.snapxeats.common.model.preference.UserCuisinePreferences;
-import com.snapxeats.common.model.preference.UserCuisinePreferencesDao;
-import com.snapxeats.common.model.preference.UserFoodPreferences;
-import com.snapxeats.common.model.preference.UserFoodPreferencesDao;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.model.preference.UserPreferenceDao;
-import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -19,38 +17,14 @@ import javax.inject.Singleton;
 @Singleton
 public class PrefDbHelper {
 
-    private RootUserPreference userPreferenceFromDb;
+    @Inject
+    PrefDbHelper() {
+    }
 
     @Inject
-    public PrefDbHelper() {
-    }
+    DbHelper dbHelper;
 
-
-    public List<UserCuisinePreferences> getSelectedCuisineList(UserCuisinePreferencesDao cuisinePreferencesDao) {
-        List<UserCuisinePreferences> selectedCuisineList = cuisinePreferencesDao.queryBuilder().
-                whereOr(UserCuisinePreferencesDao.Properties.Is_cuisine_favourite.eq(1),
-                        (UserCuisinePreferencesDao.Properties.Is_cuisine_like.eq(1))).list();
-        return selectedCuisineList != null ? selectedCuisineList : null;
-    }
-
-    public List<UserFoodPreferences> getSelectedFoodList(UserFoodPreferencesDao foodPreferencesDao) {
-        List<UserFoodPreferences> selectedFoodList = foodPreferencesDao.queryBuilder().
-                whereOr(UserFoodPreferencesDao.Properties.Is_food_favourite.eq(1),
-                        (UserFoodPreferencesDao.Properties.Is_food_like.eq(1))).list();
-        return selectedFoodList != null ? selectedFoodList : null;
-    }
-
-
-    public List<UserPreference> getUserPreferenceList(UserPreferenceDao userPreferenceDao) {
-        return userPreferenceDao.loadAll() != null ? userPreferenceDao.loadAll() : null;
-    }
-
-
-    public RootUserPreference getUserPreferenceFromDb() {
-        return userPreferenceFromDb;
-    }
-
-    public UserPreference mapLocalObject(RootUserPreference mRootUserPreference) {
+    UserPreference mapLocalObject(RootUserPreference mRootUserPreference) {
         UserPreference userPreference = new UserPreference(mRootUserPreference.getUser_Id(),
                 String.valueOf(mRootUserPreference.getRestaurant_rating()),
                 String.valueOf(mRootUserPreference.getRestaurant_price()),
@@ -60,6 +34,11 @@ public class PrefDbHelper {
                 mRootUserPreference.getUserCuisinePreferences(),
                 mRootUserPreference.getUserFoodPreferences());
         return userPreference;
+    }
+
+    public void userPreference(UserPreference userPreference) {
+        UserPreferenceDao userPreferenceDao = dbHelper.getUserPreferenceDao();
+        userPreferenceDao.insertOrReplaceInTx(userPreference);
     }
 }
 

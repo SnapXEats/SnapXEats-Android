@@ -36,7 +36,7 @@ public class CuisinePrefPresenterImpl implements CuisinePrefContract.CuisinePref
 
     @Override
     public void response(SnapXResult result, Object value) {
-        if (cuisinePrefView != null) {
+        if (null != cuisinePrefView) {
             switch (result) {
                 case SUCCESS:
                     cuisinePrefView.success(value);
