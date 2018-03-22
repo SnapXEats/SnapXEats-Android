@@ -29,7 +29,7 @@
     <string name="permission_denied_msg">SnapXEats uses this permission to detect your current location
         and shows you great restaurants around you. Are you sure you want to deny this permission?</string>
     <string name="yes">YES</string>
-    <string name="retry">retry</string>
+    <string name="retry">RETRY</string>
     <string name="network_error">Check Internet connection</string>
     <string name="loading">Loading...</string>
     <string name="instagram">Cancel</string>

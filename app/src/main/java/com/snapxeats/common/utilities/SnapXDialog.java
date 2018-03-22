@@ -134,8 +134,8 @@ public class SnapXDialog {
      * Show snackbar for network error
      */
     public void showSnackBar(View view,View.OnClickListener poitiveClick) {
-        Snackbar snackbar = Snackbar.make(view,"No Internet connection!",Snackbar.LENGTH_INDEFINITE);
-        snackbar.setAction("RETRY", poitiveClick);
+        Snackbar snackbar = Snackbar.make(view,context.getString(R.string.check_network),Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction(context.getString(R.string.retry), poitiveClick);
         snackbar.show();
     }
 }

@@ -24,6 +24,7 @@ import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.utilities.AppUtility;
+import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.home.fragment.home.HomeFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
@@ -38,6 +39,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isDirty;
+import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isCuisineDirty;
+import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isFoodDirty;
 
 /**
  * Created by Snehal Tembare on 3/1/18.
@@ -68,6 +71,9 @@ public class HomeActivity extends LocationBaseActivity implements
     @BindView(R.id.nav_view)
     protected NavigationView mNavigationView;
 
+    @BindView(R.id.parent_layout)
+    protected View mParentLayout;
+
     @Inject
     HomeContract.HomePresenter mPresenter;
 
@@ -94,6 +100,7 @@ public class HomeActivity extends LocationBaseActivity implements
     private TextView txtNotLoggedIn;
     private TextView txtRewards;
     private LinearLayout mLayoutUserData;
+    private UserPreference mUserPreference;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -114,7 +121,6 @@ public class HomeActivity extends LocationBaseActivity implements
         utility.setContext(this);
         preferences = utility.getSharedPreferences();
         mNavigationView.setNavigationItemSelectedListener(this);
-
         fragmentManager = getFragmentManager();
         transaction = fragmentManager.beginTransaction();
 
@@ -233,17 +239,8 @@ public class HomeActivity extends LocationBaseActivity implements
 
                         if (null != userId && !userId.isEmpty()) {
 
-                            UserPreference mUserPreference = homeDbHelper.mapLocalObject(mRootUserPreference);
-
-                            if (null != mUserPreference) {
-                                showProgressDialog();
-                                mPresenter.saveLocalData(mUserPreference);
-                                if (preferences.getBoolean(getString(R.string.isFirstTimeUser), false)) {
-                                    mPresenter.savePreferences(mUserPreference);
-                                } else {
-                                    mPresenter.updatePreferences(mUserPreference);
-                                }
-                            }
+                            mUserPreference = homeDbHelper.mapLocalObject(mRootUserPreference);
+                            postOrPutUserPreferences();
                         } else {
                             //For non logged in user
                             FragmentManager fragmentManager = getFragmentManager();
@@ -252,6 +249,8 @@ public class HomeActivity extends LocationBaseActivity implements
                             mNavigationView.setCheckedItem(R.id.nav_home);
                             mDrawerLayout.closeDrawer(GravityCompat.START);
                             isDirty = false;
+                            isCuisineDirty = false;
+                            isFoodDirty = false;
                             transaction.commit();
                         }
                     });
@@ -270,6 +269,8 @@ public class HomeActivity extends LocationBaseActivity implements
             mNavigationView.setCheckedItem(R.id.nav_home);
             mDrawerLayout.closeDrawer(GravityCompat.START);
             isDirty = false;
+            isCuisineDirty = false;
+            isFoodDirty = false;
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean(getString(R.string.isFirstTimeUser), false);
             editor.apply();
@@ -284,7 +285,27 @@ public class HomeActivity extends LocationBaseActivity implements
 
     @Override
     public void noNetwork(Object value) {
+        dismissProgressDialog();
+        showNetworkErrorDialog((dialog, which) -> {
+            if (!NetworkUtility.isNetworkAvailable(getActivity())) {
+                AppContract.DialogListenerAction click = () -> {
+                    showProgressDialog();
+                    postOrPutUserPreferences();
+                };
+                showSnackBar(mParentLayout, setClickListener(click));
+            }
+        });
+    }
 
+    private void postOrPutUserPreferences() {
+        if (null != mUserPreference) {
+            showProgressDialog();
+            if (preferences.getBoolean(getString(R.string.isFirstTimeUser), false)) {
+                mPresenter.savePreferences(mUserPreference);
+            } else {
+                mPresenter.updatePreferences(mUserPreference);
+            }
+        }
     }
 
     @Override

@@ -14,7 +14,7 @@ public class WebConstants {
     public static final String CUISINE_PHOTOS = "/api/v1/Dishes";
     public static final String SNAPX_TOKEN = "/api/v1/users";
     public static final String PREDICTION_LIST =
-            "/maps/api/place/autocomplete/json?sortby=distance&radius=1609&types=address&components=country:us&key=AIzaSyBE60eBPlcvijgNGHK3X-Odd8zHJ2WksNk";
+            "/maps/api/place/autocomplete/json?types=address&components=country:us&key=AIzaSyBE60eBPlcvijgNGHK3X-Odd8zHJ2WksNk";
     public static final String PLACE_DETAILS =
             "/maps/api/place/details/json?key=AIzaSyBE60eBPlcvijgNGHK3X-Odd8zHJ2WksNk";
     public static final String GOOGLE_BASE_URL = "https://maps.googleapis.com";

@@ -13,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
-
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.model.preference.FoodPref;
@@ -26,18 +25,13 @@ import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.cuisinepreference.OnDoubleTapListenr;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
-import static com.mindorks.placeholderview.Utils.dpToPx;
 
 /**
  * Created by Snehal Tembare on 13/2/17.
@@ -78,8 +72,9 @@ public class FoodPreferenceActivity extends BaseActivity implements
     RootUserPreference mRootUserPreference;
 
     private FoodPrefAdapter mFoodPrefAdapter;
-    private List<FoodPref> rootFoodPrefList;
-    private List<UserFoodPreferences> userFoodPreferencesList;
+    private List<FoodPref> mRootFoodPrefList;
+    private List<FoodPref> selectedFoodPrefList;
+    private List<UserFoodPreferences> mUserFoodPrefList;
     private String userId;
     private SharedPreferences preferences;
 
@@ -106,8 +101,8 @@ public class FoodPreferenceActivity extends BaseActivity implements
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(getString(R.string.food_preference));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        userFoodPreferencesList = new ArrayList<>();
-        rootFoodPrefList = new ArrayList<>();
+        mUserFoodPrefList = new ArrayList<>();
+        mRootFoodPrefList = new ArrayList<>();
         preferences = utility.getSharedPreferences();
         userId = preferences.getString(getString(R.string.user_id), "");
 
@@ -117,9 +112,9 @@ public class FoodPreferenceActivity extends BaseActivity implements
         ViewTreeObserver viewTreeObserver = mRecyclerView.getViewTreeObserver();
         viewTreeObserver.addOnGlobalLayoutListener(() -> {
 
-            List<FoodPref> selectedCuisineList = helper.getSelectedFoodList(rootFoodPrefList);
+            selectedFoodPrefList = helper.getSelectedFoodList(mRootFoodPrefList);
 
-            if (selectedCuisineList.size() > 0) {
+            if (selectedFoodPrefList.size() > 0) {
                 mTxtReset.setClickable(true);
                 mTxtReset.setTextColor(ContextCompat.getColor(FoodPreferenceActivity.this,
                         R.color.text_color_primary));
@@ -149,12 +144,11 @@ public class FoodPreferenceActivity extends BaseActivity implements
 
     @OnClick(R.id.txt_reset)
     public void resetFoodPref() {
-
         AppContract.DialogListenerAction positiveClick = () -> {
-            for (int index = 0; index < rootFoodPrefList.size(); index++) {
-                rootFoodPrefList.get(index).set_food_favourite(false);
-                rootFoodPrefList.get(index).set_food_like(false);
-                userFoodPreferencesList.clear();
+            for (int index = 0; index < mRootFoodPrefList.size(); index++) {
+                mRootFoodPrefList.get(index).set_food_favourite(false);
+                mRootFoodPrefList.get(index).set_food_like(false);
+                selectedFoodPrefList.clear();
                 isDirty = true;
                 mFoodPrefAdapter.notifyDataSetChanged();
             }
@@ -172,8 +166,8 @@ public class FoodPreferenceActivity extends BaseActivity implements
             dismissProgressDialog();
             RootFoodPref rootFoodPref = (RootFoodPref) value;
 
-            rootFoodPrefList = rootFoodPref.getFoodTypeList();
-            Collections.sort(rootFoodPrefList);
+            mRootFoodPrefList = rootFoodPref.getFoodTypeList();
+            Collections.sort(mRootFoodPrefList);
             setUpRecyclerView();
         }
     }
@@ -185,20 +179,20 @@ public class FoodPreferenceActivity extends BaseActivity implements
                 2);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        if (null != rootFoodPrefList) {
-            mFoodPrefAdapter = new FoodPrefAdapter(this, rootFoodPrefList,
+        if (null != mRootFoodPrefList) {
+            mFoodPrefAdapter = new FoodPrefAdapter(this, mRootFoodPrefList,
                     new OnDoubleTapListenr() {
                         @Override
                         public void onSingleTap(int position, boolean isLike) {
                             isDirty = true;
-                            rootFoodPrefList.get(position).set_food_like(isLike);
+                            mRootFoodPrefList.get(position).set_food_like(isLike);
                             mFoodPrefAdapter.notifyItemChanged(position);
                         }
 
                         @Override
                         public void onDoubleTap(int position, boolean isSuperLike) {
                             isDirty = true;
-                            rootFoodPrefList.get(position).set_food_favourite(isSuperLike);
+                            mRootFoodPrefList.get(position).set_food_favourite(isSuperLike);
                             mFoodPrefAdapter.notifyItemChanged(position);
                         }
                     });
@@ -217,8 +211,9 @@ public class FoodPreferenceActivity extends BaseActivity implements
     public void noNetwork(Object value) {
         dismissProgressDialog();
         showNetworkErrorDialog((dialog, which) -> {
-            if (!NetworkUtility.isNetworkAvailable(this) && null != rootFoodPrefList) {
+            if (!NetworkUtility.isNetworkAvailable(this) && null != mRootFoodPrefList) {
                 AppContract.DialogListenerAction click = () -> {
+                    showSavePrefDialog();
                     presenter.getFoodPrefList();
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
@@ -254,8 +249,8 @@ public class FoodPreferenceActivity extends BaseActivity implements
 
 
     private void getFoodPrefDataDb() {
-        userFoodPreferencesList = mRootUserPreference.getUserFoodPreferences();
-        rootFoodPrefList = helper.getFoodPrefData(rootFoodPrefList, userFoodPreferencesList);
+        mUserFoodPrefList = mRootUserPreference.getUserFoodPreferences();
+        mRootFoodPrefList = helper.getFoodPrefData(mRootFoodPrefList, mUserFoodPrefList);
     }
 
     public void showSavePrefDialog() {
@@ -279,11 +274,11 @@ public class FoodPreferenceActivity extends BaseActivity implements
     private void saveFoodPrefInDbAndFinish() {
         NavPrefFragment.isFoodDirty = true;
         isDirty = false;
-        userFoodPreferencesList = helper.getSelectedUserFoodPreferencesList(rootFoodPrefList);
-        mRootUserPreference.setUserFoodPreferences(userFoodPreferencesList);
+        mUserFoodPrefList = helper.getSelectedUserFoodPreferencesList(mRootFoodPrefList);
+        mRootUserPreference.setUserFoodPreferences(mUserFoodPrefList);
 
         if (null != userId && !userId.isEmpty()) {
-            presenter.saveFoodPrefList(rootFoodPrefList);
+            presenter.saveFoodPrefList(mRootFoodPrefList);
         }
         finish();
     }

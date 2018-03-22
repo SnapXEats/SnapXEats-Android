@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -65,6 +66,9 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
 
     @BindView(R.id.txt_version)
     protected TextView mTxtVersion;
+
+    @BindView(R.id.login_parent_layout)
+    protected ConstraintLayout mParentLayout;
 
     private SnapXUserRequest snapXUserRequest;
 
@@ -159,7 +163,15 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
             if (NetworkUtility.isNetworkAvailable(this)) {
                 mBtnFbLogin.performClick();
             } else {
-                showNetworkErrorDialog(null);
+                showNetworkErrorDialog((dialog, which) -> {
+                    if (!NetworkUtility.isNetworkAvailable(getActivity())) {
+                        AppContract.DialogListenerAction click = () -> {
+                            showProgressDialog();
+                            mBtnFbLogin.performClick();
+                        };
+                        showSnackBar(mParentLayout, setClickListener(click));
+                    }
+                });
             }
         }
     }
@@ -170,7 +182,16 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
             mApp.authorize();
 
         } else {
-            showNetworkErrorDialog(null);
+//            showNetworkErrorDialog(null);
+            showNetworkErrorDialog((dialog, which) -> {
+                if (!NetworkUtility.isNetworkAvailable(getActivity())) {
+                    AppContract.DialogListenerAction click = () -> {
+                        showProgressDialog();
+                        mApp.authorize();
+                    };
+                    showSnackBar(mParentLayout, setClickListener(click));
+                }
+            });
         }
     }
 
@@ -224,7 +245,14 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
 
     @Override
     public void noNetwork(Object value) {
-        showNetworkErrorDialog((dialog, which) -> {
+       showNetworkErrorDialog((dialog, which) -> {
+            if (!NetworkUtility.isNetworkAvailable(getActivity())) {
+                AppContract.DialogListenerAction click = () -> {
+                    showProgressDialog();
+                    mLoginPresenter.getUserdata(snapXUserRequest);
+                };
+                showSnackBar(mParentLayout, setClickListener(click));
+            }
         });
     }
 

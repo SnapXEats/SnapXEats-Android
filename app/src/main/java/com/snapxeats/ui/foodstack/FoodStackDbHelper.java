@@ -39,16 +39,20 @@ public class FoodStackDbHelper {
         foodDislikesDao = dbHelper.getFoodDislikesDao();
     }
 
-    public List<FoodWishlists> saveFoodWishlist(List<FoodWishlists> foodWishlists) {
+    void saveFoodWishlist(List<FoodWishlists> foodWishlists) {
         FoodWishlists item;
         for (FoodWishlists wishlists : foodWishlists) {
             item = new FoodWishlists(wishlists.getRestaurant_dish_id());
             foodWishlistsDao.insert(item);
         }
-        return foodWishlists;
     }
 
-    public String saveFoodWishlistCount(String count) {
+    List<FoodWishlists> getFoodWishList() {
+        return foodWishlistsDao.loadAll();
+    }
+
+
+    String saveFoodWishlistCount(String count) {
         if (snapxDataDao.loadAll().size() > 0) {
             List<SnapxData> snapxDataList = snapxDataDao.loadAll();
             snapxDataList.get(0).setFoodWishlistCount(count);
@@ -57,12 +61,16 @@ public class FoodStackDbHelper {
         return count;
     }
 
-    public List<FoodDislikes> saveFoodDislikes(List<FoodDislikes> foodDislikes) {
+
+    void saveFoodDislikes(List<FoodDislikes> foodDislikes) {
         FoodDislikes item;
         for (FoodDislikes foodGestureDislike : foodDislikes) {
             item = new FoodDislikes(foodGestureDislike.getRestaurant_dish_id());
             foodDislikesDao.insert(item);
         }
-        return foodDislikes;
+    }
+
+    List<FoodDislikes> getFoodDislikeList() {
+        return foodDislikesDao.loadAll();
     }
 }

@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
+
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.model.preference.Cuisines;
@@ -23,7 +24,6 @@ import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
-import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +34,8 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isCuisineDirty;
 
 
 /**
@@ -75,8 +77,9 @@ public class CuisinePrefActivity extends BaseActivity implements
     RootUserPreference mRootUserPreference;
 
     private CuisinePrefAdapter mCuisinePrefAdapter;
-    private List<Cuisines> rootCuisineList;
-    private List<UserCuisinePreferences> selectedCuisineList;
+    private List<Cuisines> mRootCuisineList;
+    private List<UserCuisinePreferences> mUserCuisinesList;
+    private List<Cuisines> selectedCuisineList;
     public static boolean isDirty;
     private String userId;
     private SharedPreferences preferences;
@@ -103,8 +106,9 @@ public class CuisinePrefActivity extends BaseActivity implements
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(getString(R.string.cuisine_preference));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mUserCuisinesList = new ArrayList<>();
         selectedCuisineList = new ArrayList<>();
-        rootCuisineList = new ArrayList<>();
+        mRootCuisineList = new ArrayList<>();
         preferences = utility.getSharedPreferences();
         userId = preferences.getString(getString(R.string.user_id), "");
 
@@ -114,7 +118,7 @@ public class CuisinePrefActivity extends BaseActivity implements
         ViewTreeObserver viewTreeObserver = mRecyclerView.getViewTreeObserver();
         viewTreeObserver.addOnGlobalLayoutListener(() -> {
 
-            List<Cuisines> selectedCuisineList = helper.getSelectedCuisineList(rootCuisineList);
+            selectedCuisineList = helper.getSelectedCuisineList(mRootCuisineList);
 
             if (selectedCuisineList.size() > 0) {
                 mTxtReset.setClickable(true);
@@ -140,8 +144,8 @@ public class CuisinePrefActivity extends BaseActivity implements
 
     private void getCuisinePrefDataFromDb() {
         //Load cuisine pref data from local DB
-        selectedCuisineList = mRootUserPreference.getUserCuisinePreferences();
-        rootCuisineList = helper.getCuisinePrefData(selectedCuisineList, rootCuisineList);
+        mUserCuisinesList = mRootUserPreference.getUserCuisinePreferences();
+        mRootCuisineList = helper.getCuisinePrefData(mUserCuisinesList, mRootCuisineList);
     }
 
 
@@ -149,11 +153,12 @@ public class CuisinePrefActivity extends BaseActivity implements
     public void resetCuisinePref() {
 
         AppContract.DialogListenerAction positiveClick = () -> {
-            for (int index = 0; index < rootCuisineList.size(); index++) {
-                rootCuisineList.get(index).set_cuisine_favourite(false);
-                rootCuisineList.get(index).set_cuisine_like(false);
+            for (int index = 0; index < mRootCuisineList.size(); index++) {
+                mRootCuisineList.get(index).set_cuisine_favourite(false);
+                mRootCuisineList.get(index).set_cuisine_like(false);
                 selectedCuisineList.clear();
                 isDirty = true;
+                isCuisineDirty = true;
                 mCuisinePrefAdapter.notifyDataSetChanged();
             }
         };
@@ -170,8 +175,8 @@ public class CuisinePrefActivity extends BaseActivity implements
             if (value instanceof RootCuisine) {
                 dismissProgressDialog();
                 RootCuisine rootCuisine = (RootCuisine) value;
-                rootCuisineList = rootCuisine.getCuisineList();
-                Collections.sort(rootCuisineList);
+                mRootCuisineList = rootCuisine.getCuisineList();
+                Collections.sort(mRootCuisineList);
                 setUpRecyclerView();
             }
         }
@@ -182,21 +187,23 @@ public class CuisinePrefActivity extends BaseActivity implements
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        if (null != rootCuisineList) {
+        if (null != mRootCuisineList) {
             mCuisinePrefAdapter = new CuisinePrefAdapter(this,
-                    rootCuisineList, new OnDoubleTapListenr() {
+                    mRootCuisineList, new OnDoubleTapListenr() {
 
                 @Override
                 public void onSingleTap(int position, boolean isLike) {
                     isDirty = true;
-                    rootCuisineList.get(position).set_cuisine_like(isLike);
+                    isCuisineDirty = true;
+                    mRootCuisineList.get(position).set_cuisine_like(isLike);
                     mCuisinePrefAdapter.notifyItemChanged(position);
                 }
 
                 @Override
                 public void onDoubleTap(int position, boolean isSuperLike) {
                     isDirty = true;
-                    rootCuisineList.get(position).set_cuisine_favourite(isSuperLike);
+                    isCuisineDirty = true;
+                    mRootCuisineList.get(position).set_cuisine_favourite(isSuperLike);
                     mCuisinePrefAdapter.notifyItemChanged(position);
                 }
             });
@@ -221,8 +228,9 @@ public class CuisinePrefActivity extends BaseActivity implements
         dismissProgressDialog();
 
         showNetworkErrorDialog((dialog, which) -> {
-            if (!NetworkUtility.isNetworkAvailable(this) && null != rootCuisineList) {
+            if (!NetworkUtility.isNetworkAvailable(this) && null != mRootCuisineList) {
                 AppContract.DialogListenerAction click = () -> {
+                    showSavePrefDialog();
                     prefPresenter.getCuisinePrefList();
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
@@ -246,11 +254,6 @@ public class CuisinePrefActivity extends BaseActivity implements
             }
         }
         return true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override
@@ -282,12 +285,12 @@ public class CuisinePrefActivity extends BaseActivity implements
     }
 
     private void saveCuisinePrefInDbAndFinish() {
-        NavPrefFragment.isCuisineDirty = true;
+        isCuisineDirty = true;
         isDirty = false;
-        selectedCuisineList = helper.getSelectedUserCuisinePreferencesList(rootCuisineList);
-        mRootUserPreference.setUserCuisinePreferences(selectedCuisineList);
+        mUserCuisinesList = helper.getSelectedUserCuisinePreferencesList(mRootCuisineList);
+        mRootUserPreference.setUserCuisinePreferences(mUserCuisinesList);
         if (userId != null && !userId.isEmpty()) {
-            prefPresenter.saveCuisineList(rootCuisineList);
+            prefPresenter.saveCuisineList(mRootCuisineList);
         }
         finish();
     }

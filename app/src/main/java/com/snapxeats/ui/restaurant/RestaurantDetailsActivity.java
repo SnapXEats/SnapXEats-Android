@@ -26,6 +26,7 @@ import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
 import com.snapxeats.common.model.restaurantDetails.RestaurantSpeciality;
 import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.common.utilities.AppUtility;
+import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.squareup.picasso.Picasso;
@@ -106,7 +107,11 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     @BindView(R.id.txt_rest_details_close)
     protected TextView mTxtRestClose;
 
+    @BindView(R.id.restaurant_details_parent_layout)
+    protected LinearLayout mParentLayout;
+
     private RootGoogleDir mRootGoogleDir;
+    private String restaurantId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,9 +177,9 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         mRestaurantSpecialties = new ArrayList<>();
         mInflater = LayoutInflater.from(this);
         //get restaurant details
-        String id = getIntent().getStringExtra(getString(R.string.intent_foodstackRestDetailsId));
+        restaurantId = getIntent().getStringExtra(getString(R.string.intent_foodstackRestDetailsId));
         showProgressDialog();
-        mRestaurantPresenter.getRestDetails(id);
+        mRestaurantPresenter.getRestDetails(restaurantId);
     }
 
     @Override
@@ -341,9 +346,17 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     @Override
     public void noNetwork(Object value) {
-        showNetworkErrorDialog((dialog, which) -> {
-        });
+
         dismissProgressDialog();
+        showNetworkErrorDialog((dialog, which) -> {
+            if (!NetworkUtility.isNetworkAvailable(getActivity())) {
+                AppContract.DialogListenerAction click = () -> {
+                    showProgressDialog();
+                    mRestaurantPresenter.getRestDetails(restaurantId);
+                };
+                showSnackBar(mParentLayout, setClickListener(click));
+            }
+        });
     }
 
     @Override

@@ -1,9 +1,7 @@
 package com.snapxeats.ui.cuisinepreference;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.preference.Cuisines;
@@ -68,7 +66,7 @@ public class CuisinePrefDbHelper {
                 }
             }
         }
-        return null != rootCuisineList ? rootCuisineList : null;
+        return rootCuisineList;
     }
 
     /**
@@ -84,7 +82,7 @@ public class CuisinePrefDbHelper {
                 }
             }
         }
-        return null != selectedCuisineList ? selectedCuisineList : null;
+        return selectedCuisineList;
     }
 
     List<UserCuisinePreferences> getSelectedUserCuisinePreferencesList
@@ -101,7 +99,7 @@ public class CuisinePrefDbHelper {
                 }
             }
         }
-        return null != selectedCuisineList ? selectedCuisineList : null;
+        return selectedCuisineList;
     }
 
     public void saveCuisineList(List<Cuisines> rootCuisineList) {

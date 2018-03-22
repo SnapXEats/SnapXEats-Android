@@ -1,7 +1,6 @@
 package com.snapxeats.ui.location;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -12,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -61,6 +59,9 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     @BindView(R.id.layout_current_location)
     protected LinearLayout mCurrentLocationLayout;
 
+    @BindView(R.id.location_layout_parent)
+    protected LinearLayout mParentLayout;
+
     @BindView(R.id.search_location)
     protected AutoCompleteTextView mAutoCompleteTextView;
 
@@ -82,6 +83,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
 
     private List<String> resultList;
     private List<Prediction> predictionList;
+    private String placeId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -138,7 +140,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0)
                     if (null != resultList && null != mAdapter) {
-                    resetViews();
+                        resetViews();
                     }
             }
         });
@@ -146,12 +148,10 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
         mListView.setOnItemClickListener((parent, view, position, id) -> {
             String address = (String) parent.getItemAtPosition(position);
 
-            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (null != in)
-                in.hideSoftInputFromInputMethod(getCurrentFocus().getApplicationWindowToken(), 0);
-
+            utility.hideKeyboard();
             if (null != predictionList && predictionList.size() != 0) {
-                locationPresenter.getPlaceDetails(predictionList.get(position).getPlace_id());
+                placeId = predictionList.get(position).getPlace_id();
+                locationPresenter.getPlaceDetails(placeId);
             }
         });
     }
@@ -180,9 +180,7 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (null != in)
-            in.hideSoftInputFromInputMethod(getCurrentFocus().getApplicationWindowToken(), 0);
+        utility.hideKeyboard();
     }
 
     /**
@@ -296,8 +294,16 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
 
     @Override
     public void noNetwork(Object value) {
+        dismissProgressDialog();
         showNetworkErrorDialog((dialog, which) -> {
-
+            if (!NetworkUtility.isNetworkAvailable(getActivity())) {
+                AppContract.DialogListenerAction click = () -> {
+                    showProgressDialog();
+                    locationPresenter.getPlaceDetails(placeId);
+                };
+                utility.hideKeyboard();
+                showSnackBar(mParentLayout, setClickListener(click));
+            }
         });
     }
 
@@ -316,6 +322,8 @@ public class LocationActivity extends LocationBaseActivity implements LocationCo
             for (int index = 0; index < predictionList.size(); index++) {
                 resultList.add(predictionList.get(index).getDescription());
             }
+        } else {
+            resetViews();
         }
         mAdapter = new LocationAdapter(LocationActivity.this,
                 R.layout.item_prediction_layout, resultList);
