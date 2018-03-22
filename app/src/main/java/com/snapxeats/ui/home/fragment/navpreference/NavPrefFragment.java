@@ -698,6 +698,7 @@ public class NavPrefFragment extends BaseFragment implements
         showNetworkErrorDialog((dialog, which) -> {
             if (!NetworkUtility.isNetworkAvailable(getActivity())) {
                 AppContract.DialogListenerAction click = () -> {
+                    showProgressDialog();
                     postOrPutUserPreferences();
                 };
                 showSnackBar(mParentLayout, setClickListener(click));

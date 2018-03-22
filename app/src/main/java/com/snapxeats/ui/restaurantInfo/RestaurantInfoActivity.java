@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ import com.snapxeats.R;
 import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.AppUtility;
+import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 
@@ -79,6 +81,11 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     @BindView(R.id.txt_rest_info_close)
     protected TextView mTxtRestClose;
 
+    @BindView(R.id.restaurant_info_parent_layout)
+    protected LinearLayout mParentLayout;
+
+    private String restaurantId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,9 +115,9 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     public void initRestaurantInfo() {
         mRestaurantPicsList = new ArrayList<>();
         //get restaurant details'
-        String id = getIntent().getStringExtra(getString(R.string.intent_foodstackRestInfoId));
+     restaurantId = getIntent().getStringExtra(getString(R.string.intent_foodstackRestInfoId));
         showProgressDialog();
-        mRestaurantPresenter.getRestInfo(id);
+        mRestaurantPresenter.getRestInfo(restaurantId);
     }
 
     //set restaurant timings
@@ -248,9 +255,17 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
 
     @Override
     public void noNetwork(Object value) {
-        showNetworkErrorDialog((dialog, which) -> {
-        });
+
         dismissProgressDialog();
+        showNetworkErrorDialog((dialog, which) -> {
+            if (!NetworkUtility.isNetworkAvailable(getActivity())) {
+                AppContract.DialogListenerAction click = () -> {
+                    showProgressDialog();
+                    mRestaurantPresenter.getRestInfo(restaurantId);
+                };
+                showSnackBar(mParentLayout, setClickListener(click));
+            }
+        });
     }
 
     @Override

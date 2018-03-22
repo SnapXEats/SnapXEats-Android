@@ -213,6 +213,7 @@ public class FoodPreferenceActivity extends BaseActivity implements
         showNetworkErrorDialog((dialog, which) -> {
             if (!NetworkUtility.isNetworkAvailable(this) && null != mRootFoodPrefList) {
                 AppContract.DialogListenerAction click = () -> {
+                    showSavePrefDialog();
                     presenter.getFoodPrefList();
                 };
                 showSnackBar(mParentLayout, setClickListener(click));

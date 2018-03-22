@@ -25,7 +25,7 @@ import java.util.List;
 
 public class GetPredictionTask extends AsyncTask<String, Void, List<Prediction>> {
 
-    private static final String TAG = "RetriveDataTask";
+    private static final String TAG = "GetPredictionTask";
 
     private static final String PLACES_API_BASE = WebConstants.GOOGLE_BASE_URL +
             WebConstants.PREDICTION_LIST;
