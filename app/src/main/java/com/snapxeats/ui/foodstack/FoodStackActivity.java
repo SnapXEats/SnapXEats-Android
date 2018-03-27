@@ -18,7 +18,6 @@ import com.mindorks.butterknifelite.annotations.OnClick;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.Router;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.DishesInfo;
 import com.snapxeats.common.model.RootCuisinePhotos;
@@ -243,7 +242,7 @@ public class FoodStackActivity extends BaseActivity
                     }
                 }
 
-                if (cardStackView.getTopIndex() == mStackAdapter.getCount()-5) {
+                if (cardStackView.getTopIndex() == mStackAdapter.getCount() - 5) {
                     paginate();
                 }
             }
@@ -352,7 +351,6 @@ public class FoodStackActivity extends BaseActivity
             foodDislikeItem = new FoodDislikes();
             foodDislikeItem.setRestaurant_dish_id(foodStackDataList.get(cardStackView.getTopIndex()).getDishId());
             foodGestureDislike.add(foodDislikeItem);
-//            mRootFoodGestures.setDislike_dish_array(foodGestureDislike);
             mFoodStackPresenter.saveDislikeToDb(foodGestureDislike);
         }
         gestureLeft();
@@ -474,7 +472,7 @@ public class FoodStackActivity extends BaseActivity
 
     @OnClick(R.id.img_cuisine_undo)
     public void imgCuisineUndo() {
-         setUndoDisable();
+        setUndoDisable();
         addFirst();
     }
 

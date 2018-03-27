@@ -22,7 +22,7 @@ import javax.inject.Singleton;
 @Singleton
 public class Router {
     public enum Screen {
-        LOCATION, HOME, FOODSTACK, RESTAURANT_DETAILS, CUISINE_PREF, FOOD_PREF,DIRECTIONS,MAPS
+        LOCATION, HOME, FOODSTACK, RESTAURANT_DETAILS, CUISINE_PREF, FOOD_PREF, DIRECTIONS, MAPS
     }
 
     private Activity mActivity;
@@ -53,9 +53,6 @@ public class Router {
             case RESTAURANT_DETAILS:
                 presentRestaurantDetailsScreen();
                 break;
-          /*  case NAV_PREF:
-                presentPrefScreen();
-                break;*/
 
             case CUISINE_PREF:
                 presentCuisinePrefScreen();

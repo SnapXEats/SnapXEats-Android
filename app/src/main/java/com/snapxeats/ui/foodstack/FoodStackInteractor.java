@@ -126,7 +126,7 @@ public class FoodStackInteractor {
                 @Override
                 public void onResponse(Call<RootFoodGestures> call, Response<RootFoodGestures> response) {
                     if (response.isSuccessful() && response.body() != null) {
-
+                    //success message response
                     }
                 }
 
