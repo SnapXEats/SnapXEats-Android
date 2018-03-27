@@ -2,6 +2,8 @@ package com.snapxeats.dagger;
 
 import com.snapxeats.ui.cuisinepreference.CuisinePrefActivity;
 import com.snapxeats.ui.cuisinepreference.CuisinePrefModule;
+import com.snapxeats.ui.directions.DirectionsActivity;
+import com.snapxeats.ui.directions.DirectionsModule;
 import com.snapxeats.ui.foodpreference.FoodPrefModule;
 import com.snapxeats.ui.foodpreference.FoodPreferenceActivity;
 import com.snapxeats.ui.foodstack.FoodStackActivity;
@@ -12,6 +14,8 @@ import com.snapxeats.ui.location.LocationActivity;
 import com.snapxeats.ui.location.LocationModule;
 import com.snapxeats.ui.home.HomeActivity;
 import com.snapxeats.ui.home.HomeModule;
+import com.snapxeats.ui.maps.MapsActivity;
+import com.snapxeats.ui.maps.MapsModule;
 import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
 import com.snapxeats.ui.restaurant.RestaurantDetailsModule;
 import com.snapxeats.ui.restaurantInfo.RestaurantInfoActivity;
@@ -56,4 +60,10 @@ public abstract class ActivityBuilder {
 
     @ContributesAndroidInjector(modules = RestaurantInfoModule.class)
     abstract RestaurantInfoActivity bindRestaurantInfoActivity();
+
+    @ContributesAndroidInjector(modules = DirectionsModule.class)
+    abstract DirectionsActivity bindDirectionsActivity();
+
+    @ContributesAndroidInjector(modules = MapsModule.class)
+    abstract MapsActivity bindMapsActivity();
 }

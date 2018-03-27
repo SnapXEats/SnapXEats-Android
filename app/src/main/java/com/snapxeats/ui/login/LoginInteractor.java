@@ -8,7 +8,6 @@ import com.facebook.AccessToken;
 import com.facebook.Profile;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.login.RootInstagram;
 import com.snapxeats.common.model.SnapXUser;
 import com.snapxeats.common.model.SnapXUserRequest;

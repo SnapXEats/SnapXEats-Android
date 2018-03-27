@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.model.foodGestures.DaoSession;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;

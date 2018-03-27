@@ -1,5 +1,6 @@
 package com.snapxeats.ui.restaurant;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
+import com.snapxeats.common.Router;
 import com.snapxeats.common.model.googleDirections.GoogleDirDest;
 import com.snapxeats.common.model.googleDirections.GoogleDirOrigin;
 import com.snapxeats.common.model.googleDirections.LocationGoogleDir;
@@ -45,6 +47,8 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.snapxeats.common.Router.Screen.DIRECTIONS;
 
 /**
  * Created by Prajakta Patil on 05/02/18.
@@ -206,10 +210,9 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         mRestaurantPresenter.getGoogleDirections(locationGoogleDir);
     }
 
-
     @OnClick(R.id.img_rest_directions)
     public void imgRestDirections() {
-        //TODO navigate to directions screen
+        mRestaurantPresenter.presentScreen(DIRECTIONS);
     }
 
     @Override
@@ -310,7 +313,8 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             }
             Comparator<String> dateComparator = (s1, s2) -> {
                 try {
-                    SimpleDateFormat format = new SimpleDateFormat("EEEE");
+                    @SuppressLint("SimpleDateFormat")
+                    SimpleDateFormat format = new SimpleDateFormat(getString(R.string.date_format_month));
                     Date d1 = format.parse(s1);
                     Date d2 = format.parse(s2);
                     if (d1.equals(d2)) {

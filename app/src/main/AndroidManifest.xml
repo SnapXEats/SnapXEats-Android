@@ -52,6 +52,7 @@
         <activity android:name=".ui.restaurantInfo.RestaurantInfoActivity" />
         <activity android:name=".ui.foodpreference.FoodPreferenceActivity" />
         <activity android:name=".ui.cuisinepreference.CuisinePrefActivity" />
+        <activity android:name=".ui.directions.DirectionsActivity" />
 
         <receiver
             android:name=".ui.home.fragment.home.HomeFragment$MyReceiver"
@@ -61,12 +62,7 @@
             </intent-filter>
         </receiver>
 
-        <!--<receiver android:name="com.NetworkCheckReceiver">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
-            </intent-filter>
-        </receiver>-->
+        <activity android:name=".ui.maps.MapsActivity"/>
     </application>
 
 </manifest>

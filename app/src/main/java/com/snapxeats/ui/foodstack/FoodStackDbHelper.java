@@ -3,10 +3,11 @@ package com.snapxeats.ui.foodstack;
 import android.content.Context;
 
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
 import com.snapxeats.common.model.foodGestures.FoodDislikes;
 import com.snapxeats.common.model.foodGestures.FoodDislikesDao;
+import com.snapxeats.common.model.foodGestures.FoodLikes;
+import com.snapxeats.common.model.foodGestures.FoodLikesDao;
 import com.snapxeats.common.model.foodGestures.FoodWishlists;
 import com.snapxeats.common.model.foodGestures.FoodWishlistsDao;
 
@@ -24,6 +25,7 @@ public class FoodStackDbHelper {
     private FoodWishlistsDao foodWishlistsDao;
     private SnapxDataDao snapxDataDao;
     private FoodDislikesDao foodDislikesDao;
+    private FoodLikesDao foodLikesDao;
 
     @Inject
     public FoodStackDbHelper() {
@@ -37,28 +39,34 @@ public class FoodStackDbHelper {
         foodWishlistsDao = dbHelper.getFoodWishlistsDao();
         snapxDataDao = dbHelper.getSnapxDataDao();
         foodDislikesDao = dbHelper.getFoodDislikesDao();
+        foodLikesDao = dbHelper.getFoodLikesDao();
     }
 
-    void saveFoodWishlist(List<FoodWishlists> foodWishlists) {
+    public void saveFoodWishlist(List<FoodWishlists> foodWishlists) {
         FoodWishlists item;
+        foodWishlistsDao.deleteAll();
         for (FoodWishlists wishlists : foodWishlists) {
             item = new FoodWishlists(wishlists.getRestaurant_dish_id());
             foodWishlistsDao.insert(item);
         }
     }
 
-    List<FoodWishlists> getFoodWishList() {
+    public void saveFoodLikes(List<FoodLikes> foodLikes) {
+        FoodLikes item;
+        foodLikesDao.deleteAll();
+        for (FoodLikes likes : foodLikes) {
+            item = new FoodLikes(likes.getRestaurant_dish_id());
+            foodLikesDao.insert(item);
+        }
+    }
+
+    public List<FoodWishlists> getFoodWishList() {
+
         return foodWishlistsDao.loadAll();
     }
 
-
-    String saveFoodWishlistCount(String count) {
-        if (snapxDataDao.loadAll().size() > 0) {
-            List<SnapxData> snapxDataList = snapxDataDao.loadAll();
-            snapxDataList.get(0).setFoodWishlistCount(count);
-            snapxDataDao.update(snapxDataList.get(0));
-        }
-        return count;
+    public List<FoodDislikes> getFoodDislikes() {
+        return foodDislikesDao.loadAll();
     }
 
 
@@ -70,7 +78,7 @@ public class FoodStackDbHelper {
         }
     }
 
-    List<FoodDislikes> getFoodDislikeList() {
-        return foodDislikesDao.loadAll();
+    public List<FoodLikes> getFoodLikes() {
+        return foodLikesDao.loadAll();
     }
 }

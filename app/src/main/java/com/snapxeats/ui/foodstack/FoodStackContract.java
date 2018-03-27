@@ -4,8 +4,13 @@ import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.SelectedCuisineList;
+import com.snapxeats.common.model.foodGestures.FoodDislikes;
+import com.snapxeats.common.model.foodGestures.FoodLikes;
+import com.snapxeats.common.model.foodGestures.FoodWishlists;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.dagger.AppContract;
+
+import java.util.List;
 
 /**
  * Created by Prajakta Patil on 30/1/18.
@@ -21,9 +26,11 @@ public class FoodStackContract {
 
         void getCuisinePhotos(SelectedCuisineList selectedCuisineList);
 
-        void saveDislikeToDb(RootFoodGestures rootFoodGestures);
+        void saveDislikeToDb(List<FoodDislikes> foodDislikes);
 
-        void saveWishlistToDb(RootFoodGestures rootFoodGestures);
+        void saveLikesToDb(List<FoodLikes> foodLikes);
+
+        void saveWishlistToDb(List<FoodWishlists> foodGestureWishlist);
 
         void foodstackGestures(RootFoodGestures rootFoodGestures);
     }
