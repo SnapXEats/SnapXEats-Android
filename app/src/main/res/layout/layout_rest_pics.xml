@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@drawable/ic_restaurant_placeholder"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/ic_restaurant_placeholder">
 
     <ImageView
-        android:layout_gravity="center"
         android:id="@+id/img_restaurant_pics"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
 
     <TextView
         android:id="@+id/txt_food_photos_count"
@@ -19,5 +19,4 @@
         android:gravity="center"
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/text_size_14" />
-
 </FrameLayout>

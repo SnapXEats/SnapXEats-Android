@@ -1,6 +1,7 @@
 package com.snapxeats.network;
 
 import com.snapxeats.common.constants.WebConstants;
+import com.snapxeats.common.model.googleDirections.GeocodedWaypoints;
 import com.snapxeats.common.model.location.PlaceDetail;
 import com.snapxeats.common.model.location.PlacesAutoCompleteData;
 import com.snapxeats.common.model.preference.RootCuisine;
@@ -139,8 +140,8 @@ public interface ApiHelper {
      * @return
      */
     @GET(WebConstants.GOOGLE_DIR_API)
-    Call<RootGoogleDir> getGoogleDir(@Query("origin") String source,
-                                     @Query("destination") String dest);
+    Call<List<GeocodedWaypoints>> getGoogleDir(@Query("origin") String source,
+                                               @Query("destination") String dest);
 
     /**
      * Get cuisine preferences

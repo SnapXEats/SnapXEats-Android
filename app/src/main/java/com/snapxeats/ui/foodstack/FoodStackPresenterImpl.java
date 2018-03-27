@@ -4,8 +4,13 @@ import android.support.annotation.Nullable;
 
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.SelectedCuisineList;
+import com.snapxeats.common.model.foodGestures.FoodDislikes;
+import com.snapxeats.common.model.foodGestures.FoodLikes;
+import com.snapxeats.common.model.foodGestures.FoodWishlists;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.utilities.SnapXResult;
+
+import java.util.List;
 
 import javax.inject.Singleton;
 
@@ -51,13 +56,19 @@ public class FoodStackPresenterImpl implements FoodStackContract.FoodStackPresen
     }
 
     @Override
-    public void saveDislikeToDb(RootFoodGestures rootFoodGestures) {
-        mFoodStackInteractor.saveDislikesToDb(rootFoodGestures);
+    public void saveDislikeToDb(List<FoodDislikes> foodDislikes) {
+        mFoodStackInteractor.saveDislikesToDb(foodDislikes);
+
     }
 
     @Override
-    public void saveWishlistToDb(RootFoodGestures rootFoodGestures) {
-        mFoodStackInteractor.saveWishlistToDb(rootFoodGestures);
+    public void saveLikesToDb(List<FoodLikes> foodLikes) {
+        mFoodStackInteractor.saveLikesToDb(foodLikes);
+    }
+
+    @Override
+    public void saveWishlistToDb(List<FoodWishlists> foodGestureWishlist) {
+        mFoodStackInteractor.saveWishlistToDb(foodGestureWishlist);
     }
 
     @Override

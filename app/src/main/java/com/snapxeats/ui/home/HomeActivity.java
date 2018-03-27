@@ -20,12 +20,16 @@ import com.pkmmte.view.CircularImageView;
 
 import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
+import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.foodGestures.FoodWishlists;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.foodstack.FoodStackDbHelper;
 import com.snapxeats.ui.home.fragment.home.HomeFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
 import com.squareup.picasso.Picasso;
@@ -102,6 +106,12 @@ public class HomeActivity extends LocationBaseActivity implements
     private LinearLayout mLayoutUserData;
     private UserPreference mUserPreference;
 
+    @Inject
+    FoodStackDbHelper foodStackDbHelper;
+
+    @Inject
+    DbHelper dbHelper;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,6 +133,7 @@ public class HomeActivity extends LocationBaseActivity implements
         mNavigationView.setNavigationItemSelectedListener(this);
         fragmentManager = getFragmentManager();
         transaction = fragmentManager.beginTransaction();
+        foodStackDbHelper.setContext(this);
 
         List<SnapxData> snapxData = mPresenter.getUserDataFromDb();
         userId = preferences.getString(getString(R.string.user_id), "");
@@ -149,6 +160,8 @@ public class HomeActivity extends LocationBaseActivity implements
             transaction.replace(R.id.frame_layout, homeFragment);
         transaction.commit();
         mNavigationView.setCheckedItem(R.id.nav_home);
+
+
     }
 
     private void setWishlistCount() {
@@ -156,12 +169,16 @@ public class HomeActivity extends LocationBaseActivity implements
                 .getActionView().findViewById(R.id.layout_wishlist_count);
         if (null != mSnapxData && mSnapxData.size() > 0 && isLoggedIn()) {
             linearLayout.setVisibility(View.VISIBLE);
+
             TextView view = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
                     .getActionView().findViewById(R.id.txt_count_wishlist);
+
             view.setText(getString(R.string.zero));
-            if (null != mSnapxData.get(0).getFoodWishlistCount() && !mSnapxData.get(0).getFoodWishlistCount().isEmpty()) {
-                view.setText(mSnapxData.get(0).getFoodWishlistCount());
-            } else {
+
+            dbHelper.setContext(this);
+            if (dbHelper.getFoodWishlistsDao()!=null && !dbHelper.getFoodWishlistsDao().loadAll().isEmpty()) {
+                view.setText(String.valueOf(dbHelper.getFoodWishlistsDao().loadAll().size()));
+             } else {
                 view.setText(getString(R.string.zero));
             }
         } else {

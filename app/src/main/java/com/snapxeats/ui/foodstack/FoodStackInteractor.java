@@ -1,9 +1,11 @@
 package com.snapxeats.ui.foodstack;
 
 import android.content.Context;
+
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.model.foodGestures.FoodDislikes;
+import com.snapxeats.common.model.foodGestures.FoodLikes;
 import com.snapxeats.common.model.foodGestures.FoodWishlists;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.utilities.AppUtility;
@@ -20,6 +22,7 @@ import javax.inject.Singleton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 /**
@@ -47,6 +50,7 @@ public class FoodStackInteractor {
     public void setFoodStackPresenter(FoodStackContract.FoodStackPresenter foodStackPresenter) {
         this.mFoodStackPresenter = foodStackPresenter;
     }
+
     public void setContext(FoodStackContract.FoodStackView view) {
         this.mFoodStackView = view;
         this.mContext = view.getActivity();
@@ -78,7 +82,7 @@ public class FoodStackInteractor {
             listCuisineCall.enqueue(new Callback<RootCuisinePhotos>() {
                 @Override
                 public void onResponse(Call<RootCuisinePhotos> call, Response<RootCuisinePhotos> response) {
-                    if (response.isSuccessful() && null!=response.body()) {
+                    if (response.isSuccessful() && null != response.body()) {
                         RootCuisinePhotos rootCuisine = response.body();
                         mFoodStackPresenter.response(SnapXResult.SUCCESS, rootCuisine);
                     }
@@ -94,19 +98,24 @@ public class FoodStackInteractor {
         }
     }
 
-    public void saveDislikesToDb(RootFoodGestures rootFoodGestures) {
-        List<FoodDislikes> foodGestureDislikes = rootFoodGestures.getDislike_dish_array();
+    public void saveDislikesToDb(List<FoodDislikes> foodDislikes) {
+        List<FoodDislikes> foodGestureDislikes = foodDislikes;
         foodStackDbHelper.saveFoodDislikes(foodGestureDislikes);
     }
 
-    public void saveWishlistToDb(RootFoodGestures rootFoodGestures) {
-        String count = String.valueOf(rootFoodGestures.getWishlist_dish_array().size());
-        List<FoodWishlists> foodGestureWishlists = rootFoodGestures.getWishlist_dish_array();
+    public void saveWishlistToDb(List<FoodWishlists> foodWishlists) {
+        List<FoodWishlists> foodGestureWishlists = foodWishlists;
         foodStackDbHelper.saveFoodWishlist(foodGestureWishlists);
-        foodStackDbHelper.saveFoodWishlistCount(count);
     }
+
+    public void saveLikesToDb(List<FoodLikes> foodLikes) {
+        List<FoodLikes> foodGestureLikes = foodLikes;
+        foodStackDbHelper.saveFoodLikes(foodGestureLikes);
+    }
+
     /**
      * food gestures api
+     *
      * @param rootFoodGestures
      */
     public void foodstackGestures(RootFoodGestures rootFoodGestures) {
@@ -117,8 +126,10 @@ public class FoodStackInteractor {
                 @Override
                 public void onResponse(Call<RootFoodGestures> call, Response<RootFoodGestures> response) {
                     if (response.isSuccessful() && response.body() != null) {
+
                     }
                 }
+
                 @Override
                 public void onFailure(Call<RootFoodGestures> call, Throwable t) {
                     mFoodStackPresenter.response(SnapXResult.ERROR, null);

@@ -19,13 +19,10 @@ public class SnapxData {
     public String userName;
     public String socialPlatform;
     public boolean isFirstTimeUser;
-    public String foodWishlistCount;
-
-    @Generated(hash = 989228510)
+    @Generated(hash = 367889088)
     public SnapxData(String token, String userId, String socialToken,
             String socialUserId, String imageUrl, String userName,
-            String socialPlatform, boolean isFirstTimeUser,
-            String foodWishlistCount) {
+            String socialPlatform, boolean isFirstTimeUser) {
         this.token = token;
         this.userId = userId;
         this.socialToken = socialToken;
@@ -34,7 +31,6 @@ public class SnapxData {
         this.userName = userName;
         this.socialPlatform = socialPlatform;
         this.isFirstTimeUser = isFirstTimeUser;
-        this.foodWishlistCount = foodWishlistCount;
     }
     @Generated(hash = 1830104362)
     public SnapxData() {
@@ -87,10 +83,5 @@ public class SnapxData {
     public void setIsFirstTimeUser(boolean isFirstTimeUser) {
         this.isFirstTimeUser = isFirstTimeUser;
     }
-    public String getFoodWishlistCount() {
-        return this.foodWishlistCount;
-    }
-    public void setFoodWishlistCount(String foodWishlistCount) {
-        this.foodWishlistCount = foodWishlistCount;
-    }
+
 }

@@ -1,5 +1,6 @@
 package com.snapxeats.common.model.googleDirections;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
@@ -16,4 +17,5 @@ public class GeocodedWaypoints {
     private String geocoder_status;
 
     private List<String> types;
+//    private String[] types;
 }

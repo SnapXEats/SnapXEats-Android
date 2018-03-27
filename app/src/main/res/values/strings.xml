@@ -126,5 +126,6 @@
     <string name="zero">0</string>
     <string name="toolbar_rest_info">Restaurant Info</string>
     <string name="toolbar_rest_details">Restaurant Details</string>
+    <string name="date_format_month">EEEE</string>
 
 </resources>

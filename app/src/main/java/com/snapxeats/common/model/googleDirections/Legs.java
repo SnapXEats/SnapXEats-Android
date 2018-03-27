@@ -1,5 +1,6 @@
 package com.snapxeats.common.model.googleDirections;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
@@ -24,10 +25,13 @@ public class Legs {
 
     private StartLocation start_location;
 
+//    private String[] traffic_speed_entry;
     private List<String> traffic_speed_entry;
 
     private List<String> via_waypoint;
+//    private String[] via_waypoint;
 
+//    private Steps[] steps;
     private List<Steps> steps;
 
 }

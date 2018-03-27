@@ -2,6 +2,8 @@ package com.snapxeats.ui.restaurant;
 
 import android.content.Context;
 
+import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.model.googleDirections.GeocodedWaypoints;
 import com.snapxeats.common.model.googleDirections.LocationGoogleDir;
 import com.snapxeats.common.model.googleDirections.RootGoogleDir;
 import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
@@ -9,6 +11,8 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -72,22 +76,23 @@ public class RestaurantDetailsInteractor {
     public void getGoogleDirections(LocationGoogleDir locationGoogleDir) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, GOOGLE_BASE_URL).create(ApiHelper.class);
-            Call<RootGoogleDir> snapXUserCall =
+            Call<List<GeocodedWaypoints>> snapXUserCall =
                     apiHelper.getGoogleDir(locationGoogleDir.getGoogleDirOrigin().getOriginLat()
                                     + "," + locationGoogleDir.getGoogleDirOrigin().getOriginLng(),
                             locationGoogleDir.getGoogleDirDest().getDestinationLat() + ","
                                     + locationGoogleDir.getGoogleDirDest().getDestinationLng());
-            snapXUserCall.enqueue(new Callback<RootGoogleDir>() {
+            snapXUserCall.enqueue(new Callback<List<GeocodedWaypoints>>() {
                 @Override
-                public void onResponse(Call<RootGoogleDir> call, Response<RootGoogleDir> response) {
+                public void onResponse(Call<List<GeocodedWaypoints>> call, Response<List<GeocodedWaypoints>> response) {
                     if (response.isSuccessful() && null!=response.body()) {
-                        RootGoogleDir rootGoogleDir = response.body();
+                        SnapXToast.showToast(mContext,"Yass");
+                        List<GeocodedWaypoints> rootGoogleDir = response.body();
                         mRestaurantDetailsPresenter.response(SnapXResult.SUCCESS, rootGoogleDir);
                     }
                 }
 
                 @Override
-                public void onFailure(Call<RootGoogleDir> call, Throwable t) {
+                public void onFailure(Call<List<GeocodedWaypoints>> call, Throwable t) {
                 }
             });
         }
