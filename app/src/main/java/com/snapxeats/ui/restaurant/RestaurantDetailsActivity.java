@@ -223,7 +223,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     @OnClick(R.id.img_rest_call)
     public void imgRestCall() {
-        if (null!=mRootRestaurantDetails && !restContactNo.isEmpty()) {
+        if (null != mRootRestaurantDetails && !restContactNo.isEmpty()) {
             String contact = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_contact_no();
             Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts(REST_CALL, contact, null));
             startActivity(intent);
@@ -258,7 +258,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     private void setGoogleDirView() {
         mTxtRestDuration.setText(mRootGoogleDir.getRoutes().get(0).getLegs().get(0)
-                .getDuration().getText()+" "+ getString(R.string.away));
+                .getDuration().getText() + " " + getString(R.string.away));
     }
 
     public void setUpRecyclerView() {

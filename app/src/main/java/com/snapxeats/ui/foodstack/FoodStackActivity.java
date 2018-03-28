@@ -400,7 +400,7 @@ public class FoodStackActivity extends BaseActivity
         translateX.setDuration(SET_DURATION);
         translateY.setDuration(SET_DURATION);
         mAnimatorSet.playTogether(rotation, translateX, translateY);
-       // cardStackView.swipe(SwipeDirection.Left, mAnimatorSet);
+        // cardStackView.swipe(SwipeDirection.Left, mAnimatorSet);
     }
 
     private void gestureTop() {
@@ -418,7 +418,7 @@ public class FoodStackActivity extends BaseActivity
         translateY.setDuration(SET_DURATION);
 
         mAnimatorSet.playTogether(rotation, translateX, translateY);
-       // cardStackView.swipe(SwipeDirection.Top, mAnimatorSet);
+        // cardStackView.swipe(SwipeDirection.Top, mAnimatorSet);
     }
 
     @Override

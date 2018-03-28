@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.snapxeats.R;
 import com.snapxeats.common.model.restaurantDetails.RestaurantPics;

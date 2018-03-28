@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -116,7 +115,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     public void initRestaurantInfo() {
         mRestaurantPicsList = new ArrayList<>();
         //get restaurant details'
-     restaurantId = getIntent().getStringExtra(getString(R.string.intent_foodstackRestInfoId));
+        restaurantId = getIntent().getStringExtra(getString(R.string.intent_foodstackRestInfoId));
         showProgressDialog();
         mRestaurantPresenter.getRestInfo(restaurantId);
     }
@@ -215,7 +214,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
-            if (null==row) {
+            if (null == row) {
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
                 row = inflater.inflate(R.layout.list_restaurant_aminities, parent, false);
             }
