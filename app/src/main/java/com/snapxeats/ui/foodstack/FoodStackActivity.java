@@ -153,7 +153,7 @@ public class FoodStackActivity extends BaseActivity
 
         SelectedCuisineList selectedCuisineList = getIntent().getExtras().getParcelable(getString(R.string.data_selectedCuisineList));
         assert null != selectedCuisineList;
-        if (selectedCuisineList.getSelectedCuisineList().size() != 0) {
+        if (0 != selectedCuisineList.getSelectedCuisineList().size()) {
             enableGestureActions();
         }
 
@@ -301,7 +301,7 @@ public class FoodStackActivity extends BaseActivity
     private void setStackAdapter() {
         int rowIndex, colIndex;
         List<DishesInfo> dishInfo = rootCuisinePhotos.getDishesInfo();
-        if (dishInfo.size() != 0) {
+        if (0 != dishInfo.size()) {
             for (rowIndex = 0; rowIndex < dishInfo.size(); rowIndex++) {
                 DishesInfo dish = dishInfo.get(rowIndex);
                 for (colIndex = 0; colIndex < dish.getRestaurantDishes().size(); colIndex++) {
@@ -334,7 +334,7 @@ public class FoodStackActivity extends BaseActivity
         gestureLeft();
     }
 
-    //swipe TOP
+    /*swipe TOP*/
     public void swipeTop(int index) {
         disableUndo();
         List<FoodStackData> data = extractRemainingCards();

@@ -197,18 +197,10 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
             AminitiesAdapter adapter = new AminitiesAdapter(getActivity(),
                     R.id.txt_rest_aminities, strings);
             mListRestAminities.setAdapter(adapter);
-
-           /* String[] mTestArray;
-            mTestArray =   getResources().getStringArray(strings.);
-            Random random = new Random();
-            int maxIndex = mTestArray.length;
-            int generatedIndex = random.nextInt(maxIndex);
-
-            textView.setText(mTestArray[generatedIndex]);*/
         }
     }
 
-    //list adapter for restaurant aminities
+    /*list adapter for restaurant aminities*/
     public class AminitiesAdapter extends ArrayAdapter<String> {
         List<String> list;
         Context mContext;

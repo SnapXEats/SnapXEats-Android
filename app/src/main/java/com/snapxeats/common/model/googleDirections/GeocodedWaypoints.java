@@ -17,5 +17,4 @@ public class GeocodedWaypoints {
     private String geocoder_status;
 
     private List<String> types;
-//    private String[] types;
 }

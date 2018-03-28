@@ -2,7 +2,6 @@ package com.snapxeats.common.model.googleDirections;
 
 import com.google.maps.model.Bounds;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
@@ -20,16 +19,12 @@ public class Routes {
 
     private String copyrights;
 
-//    private String[] waypoint_order;
     private List<String> waypoint_order;
 
     private List<Legs> legs;
-//    private Legs[] legs;
 
     private List<String> warnings;
-//    private String[] warnings;
 
     private OverviewPolyline overview_polyline;
-//    private OverviewPolyline[] overview_polyline;
 
 }
