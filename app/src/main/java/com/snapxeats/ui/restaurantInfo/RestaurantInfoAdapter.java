@@ -46,11 +46,11 @@ public class RestaurantInfoAdapter extends PagerAdapter {
         View itemView = layoutInflater.inflate(R.layout.layout_rest_pics, container, false);
 
         ImageView imageView = itemView.findViewById(R.id.img_restaurant_pics);
-        TextView textView = itemView.findViewById(R.id.txt_food_photos_count);
+        //TextView textView = itemView.findViewById(R.id.txt_food_photos_count);
 
         Picasso.with(mContext).load(restaurantPicsList.get(position).getDish_image_url()).into(imageView);
         container.addView(itemView);
-        textView.setText((position + 1) + "/" + restaurantPicsList.size());
+      //  textView.setText((position + 1) + "/" + restaurantPicsList.size());
         return itemView;
     }
 

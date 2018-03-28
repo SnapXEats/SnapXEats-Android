@@ -18,7 +18,6 @@ import com.mindorks.butterknifelite.annotations.OnClick;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.DishesInfo;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SelectedCuisineList;
@@ -106,10 +105,14 @@ public class FoodStackActivity extends BaseActivity
     AppUtility mAppUtility;
 
     private List<FoodWishlists> foodGestureWishlist;
+
     private List<FoodDislikes> foodGestureDislike;
+
     private List<FoodLikes> foodLikes;
+
     private LinkedList<FoodStackData> foodDataList;
 
+    private AnimatorSet mAnimatorSet;
     @Inject
     DbHelper mDbHelper;
 
@@ -142,7 +145,7 @@ public class FoodStackActivity extends BaseActivity
         foodGestureDislike = new ArrayList<>();
         foodLikes = new ArrayList<>();
         foodDataList = new LinkedList<>();
-
+        mAnimatorSet = new AnimatorSet();
         foodGestureDislike = foodStackDbHelper.getFoodDislikes();
 
         //Api call for saved food preferences
@@ -152,9 +155,8 @@ public class FoodStackActivity extends BaseActivity
         assert null != selectedCuisineList;
         if (selectedCuisineList.getSelectedCuisineList().size() != 0) {
             enableGestureActions();
-        } else {
-            disableGestureActions();
         }
+
         if (NetworkUtility.isNetworkAvailable(this)) {
             showProgressDialog();
             mFoodStackPresenter.getCuisinePhotos(selectedCuisineList);
@@ -207,13 +209,13 @@ public class FoodStackActivity extends BaseActivity
     }
 
     /*Enable Undo button action*/
-    public void setUndoEnable() {
+    public void enableUndo() {
         mImgUndo.setClickable(true);
         mImgUndo.setAlpha((float) 1.0);
     }
 
     /*Disable Undo button action*/
-    public void setUndoDisable() {
+    public void disableUndo() {
         mImgUndo.setClickable(false);
         mImgUndo.setAlpha(SET_ALPHA_DISABLE);
     }
@@ -226,6 +228,13 @@ public class FoodStackActivity extends BaseActivity
 
             @Override
             public void onCardSwiped(SwipeDirection direction) {
+                /*disable gestures buttons if stack is empty*/
+                if (cardStackView.getTopIndex() == foodStackDataList.size()) {
+                    disableGestureActions();
+                }
+                if (0 == foodGestureDislike.size()) {
+                    disableUndo();
+                }
                 switch (direction) {
                     case Top: {
                         swipeTop(cardStackView.getTopIndex() - 1);
@@ -237,14 +246,11 @@ public class FoodStackActivity extends BaseActivity
                         break;
                     }
                     case Left: {
-                        setUndoEnable();
+                        swipeLeft(cardStackView.getTopIndex() - 1);
                         break;
                     }
                 }
 
-                if (cardStackView.getTopIndex() == mStackAdapter.getCount() - 5) {
-                    paginate();
-                }
             }
 
             @Override
@@ -267,7 +273,7 @@ public class FoodStackActivity extends BaseActivity
 
     private void paginate() {
         cardStackView.setPaginationReserved();
-        // mStackAdapter.addAll(getWishlistItems());
+        mStackAdapter.addAll(foodStackDataList);
         mStackAdapter.notifyDataSetChanged();
     }
 
@@ -277,34 +283,6 @@ public class FoodStackActivity extends BaseActivity
             foodDataList.add(foodStackDataList.get(row));
         }
         return foodDataList;
-    }
-
-    //TODO Undo functionality
-    private void addFirst() {
-        LinkedList<FoodStackData> spots = extractRemainingCards();
-        List<FoodStackData> dislikeList = new ArrayList<>();
-        FoodStackData foodStackData;
-        for (int row = 0; row < foodGestureDislike.size(); row++) {
-            for (int col = 0; col < foodStackDataList.size(); col++) {
-                if (foodGestureDislike.get(row).getRestaurant_dish_id().equalsIgnoreCase(foodStackDataList.get(col).getDishId())) {
-
-                    foodStackData = new FoodStackData(foodStackDataList.get(col).getName(),
-                            foodStackDataList.get(col).getId(),
-                            foodStackDataList.get(col).getUrl(),
-                            foodStackDataList.get(col).getDishId());
-
-                    dislikeList.add(foodStackData);
-                }
-            }
-        }
-        for (int row = dislikeList.size(); row > 0; row--) {
-            SnapXToast.showToast(this, dislikeList.get(row).toString());
-            spots.addFirst(foodStackDataList.get(row));
-            mStackAdapter.clear();
-            mStackAdapter.addAll(foodDataList);
-            mStackAdapter.notifyDataSetChanged();
-            return;
-        }
     }
 
     /**
@@ -319,7 +297,7 @@ public class FoodStackActivity extends BaseActivity
         setStackAdapter();
     }
 
-    /*set foodstack adapter*/
+    /*mAnimatorSet foodstack adapter*/
     private void setStackAdapter() {
         int rowIndex, colIndex;
         List<DishesInfo> dishInfo = rootCuisinePhotos.getDishesInfo();
@@ -345,11 +323,11 @@ public class FoodStackActivity extends BaseActivity
         if (data.isEmpty()) {
             return;
         }
-        setUndoEnable();
+        enableUndo();
         FoodDislikes foodDislikeItem;
         if (isLoggedIn()) {
             foodDislikeItem = new FoodDislikes();
-            foodDislikeItem.setRestaurant_dish_id(foodStackDataList.get(cardStackView.getTopIndex()).getDishId());
+            foodDislikeItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
             foodGestureDislike.add(foodDislikeItem);
             mFoodStackPresenter.saveDislikeToDb(foodGestureDislike);
         }
@@ -358,6 +336,7 @@ public class FoodStackActivity extends BaseActivity
 
     //swipe TOP
     public void swipeTop(int index) {
+        disableUndo();
         List<FoodStackData> data = extractRemainingCards();
         if (data.isEmpty()) {
             return;
@@ -365,7 +344,7 @@ public class FoodStackActivity extends BaseActivity
         FoodWishlists foodGestureWishItem;
         if (isLoggedIn()) {
             foodGestureWishItem = new FoodWishlists();
-            foodGestureWishItem.setRestaurant_dish_id(foodStackDataList.get(cardStackView.getTopIndex()).getDishId());
+            foodGestureWishItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
             foodGestureWishlist.add(foodGestureWishItem);
             mFoodStackPresenter.saveWishlistToDb(foodGestureWishlist);
         }
@@ -404,8 +383,7 @@ public class FoodStackActivity extends BaseActivity
         translateY.setStartDelay(SET_START_DELAY);
         translateX.setDuration(SET_DURATION);
         translateY.setDuration(SET_DURATION);
-        AnimatorSet set = new AnimatorSet();
-        set.playTogether(rotation, translateX, translateY);
+        mAnimatorSet.playTogether(rotation, translateX, translateY);
     }
 
     private void gestureLeft() {
@@ -421,9 +399,8 @@ public class FoodStackActivity extends BaseActivity
         translateY.setStartDelay(SET_START_DELAY);
         translateX.setDuration(SET_DURATION);
         translateY.setDuration(SET_DURATION);
-        AnimatorSet set = new AnimatorSet();
-        set.playTogether(rotation, translateX, translateY);
-        cardStackView.swipe(SwipeDirection.Left, set);
+        mAnimatorSet.playTogether(rotation, translateX, translateY);
+       // cardStackView.swipe(SwipeDirection.Left, mAnimatorSet);
     }
 
     private void gestureTop() {
@@ -439,9 +416,9 @@ public class FoodStackActivity extends BaseActivity
         translateY.setStartDelay(SET_START_DELAY);
         translateX.setDuration(SET_DURATION);
         translateY.setDuration(SET_DURATION);
-        AnimatorSet set = new AnimatorSet();
-        set.playTogether(rotation, translateX, translateY);
-        // cardStackView.swipe(SwipeDirection.Top, set);
+
+        mAnimatorSet.playTogether(rotation, translateX, translateY);
+       // cardStackView.swipe(SwipeDirection.Top, mAnimatorSet);
     }
 
     @Override
@@ -462,7 +439,7 @@ public class FoodStackActivity extends BaseActivity
 
     @OnClick(R.id.img_cuisine_dislike)
     public void imgCuisineReject() {
-        swipeLeft(cardStackView.getTopIndex());
+        swipeLeft(cardStackView.getTopIndex() - 1);
     }
 
     @OnClick(R.id.img_cuisine_wishlist)
@@ -472,8 +449,8 @@ public class FoodStackActivity extends BaseActivity
 
     @OnClick(R.id.img_cuisine_undo)
     public void imgCuisineUndo() {
-        setUndoDisable();
-        addFirst();
+        disableUndo();
+        cardStackView.reverse();
     }
 
     @Override

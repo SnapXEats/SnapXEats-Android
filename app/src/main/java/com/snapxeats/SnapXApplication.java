@@ -6,6 +6,7 @@ import com.snapxeats.common.model.DaoMaster;
 import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.dagger.AppComponent;
 import com.snapxeats.dagger.DaggerAppComponent;
+
 import dagger.android.AndroidInjector;
 import dagger.android.DaggerApplication;
 

@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.common.Router;
 import com.snapxeats.common.model.googleDirections.GoogleDirDest;
 import com.snapxeats.common.model.googleDirections.GoogleDirOrigin;
 import com.snapxeats.common.model.googleDirections.LocationGoogleDir;
@@ -60,11 +59,11 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     private static final String UBER_URI = "https://play.google.com/store/apps/details?id=com.ubercab";
     private static final String UBER_PACKAGE = "com.ubercab";
     private static final String REST_CALL = "tel";
-    List<RestaurantPics> mRestaurantPicsList;
+    private List<RestaurantPics> mRestaurantPicsList;
 
-    List<RestaurantSpeciality> mRestaurantSpecialties;
+    private List<RestaurantSpeciality> mRestaurantSpecialties;
 
-    RestImagesAdapter mRestPicsAdapter;
+    private RestImagesAdapter mRestPicsAdapter;
 
     @Inject
     RestaurantDetailsContract.RestaurantDetailsPresenter mRestaurantPresenter;
@@ -115,6 +114,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     protected LinearLayout mParentLayout;
 
     private RootGoogleDir mRootGoogleDir;
+
     private String restaurantId;
 
     @Override
@@ -258,7 +258,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     private void setGoogleDirView() {
         mTxtRestDuration.setText(mRootGoogleDir.getRoutes().get(0).getLegs().get(0)
-                .getDuration().getText() + getString(R.string.away));
+                .getDuration().getText()+" "+ getString(R.string.away));
     }
 
     public void setUpRecyclerView() {

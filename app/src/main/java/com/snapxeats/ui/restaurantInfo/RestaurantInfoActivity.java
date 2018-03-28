@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -196,6 +197,14 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
             AminitiesAdapter adapter = new AminitiesAdapter(getActivity(),
                     R.id.txt_rest_aminities, strings);
             mListRestAminities.setAdapter(adapter);
+
+           /* String[] mTestArray;
+            mTestArray =   getResources().getStringArray(strings.);
+            Random random = new Random();
+            int maxIndex = mTestArray.length;
+            int generatedIndex = random.nextInt(maxIndex);
+
+            textView.setText(mTestArray[generatedIndex]);*/
         }
     }
 
@@ -218,10 +227,9 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
                 row = inflater.inflate(R.layout.list_restaurant_aminities, parent, false);
             }
-            TextView tv = row.findViewById(R.id.txt_rest_aminities);
-            tv.setText(list.get(position));
+            TextView textView = row.findViewById(R.id.txt_rest_aminities);
+            textView.setText(list.get(position));
             return row;
-
         }
     }
 

@@ -29,7 +29,7 @@ public class Routes {
     private List<String> warnings;
 //    private String[] warnings;
 
-    private List<OverviewPolyline> overview_polyline;
+    private OverviewPolyline overview_polyline;
 //    private OverviewPolyline[] overview_polyline;
 
 }
