@@ -17,6 +17,7 @@ import butterknife.ButterKnife;
 
 public class DirectionsActivity extends BaseActivity
         implements DirectionsContract.DirectionsView, AppContract.SnapXResults {
+
     @Inject
     SnapXDialog snapXDialog;
 
@@ -33,6 +34,7 @@ public class DirectionsActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_directions);
+        initView();
     }
 
     @Override

@@ -18,5 +18,7 @@ public class DirectionsContract {
 
     public interface DirectionsRouter {
         void presentScreen(Router.Screen screen);
+
+        void setView(DirectionsContract.DirectionsView view);
     }
 }

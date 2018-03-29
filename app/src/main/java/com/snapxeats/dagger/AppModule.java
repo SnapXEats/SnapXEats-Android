@@ -26,7 +26,8 @@ import dagger.Provides;
  * Created by Prajakta Patil on 28/12/17.
  */
 
-@Module(subcomponents = {LoginComponent.class,
+@Module(subcomponents = {
+        LoginComponent.class,
         HomeComponent.class,
         FoodStackComponent.class,
         LocationComponent.class,

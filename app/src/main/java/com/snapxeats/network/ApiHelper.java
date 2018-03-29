@@ -140,7 +140,7 @@ public interface ApiHelper {
      * @return
      */
     @GET(WebConstants.GOOGLE_DIR_API)
-    Call<List<GeocodedWaypoints>> getGoogleDir(@Query("origin") String source,
+    Call<RootGoogleDir> getGoogleDir(@Query("origin") String source,
                                                @Query("destination") String dest);
 
     /**

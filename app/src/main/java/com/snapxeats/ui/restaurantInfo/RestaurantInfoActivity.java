@@ -115,7 +115,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     public void initRestaurantInfo() {
         mRestaurantPicsList = new ArrayList<>();
         //get restaurant details'
-     restaurantId = getIntent().getStringExtra(getString(R.string.intent_foodstackRestInfoId));
+        restaurantId = getIntent().getStringExtra(getString(R.string.intent_foodstackRestInfoId));
         showProgressDialog();
         mRestaurantPresenter.getRestInfo(restaurantId);
     }
@@ -199,7 +199,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         }
     }
 
-    //list adapter for restaurant aminities
+    /*list adapter for restaurant aminities*/
     public class AminitiesAdapter extends ArrayAdapter<String> {
         List<String> list;
         Context mContext;
@@ -214,14 +214,13 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
-            if (null==row) {
+            if (null == row) {
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
                 row = inflater.inflate(R.layout.list_restaurant_aminities, parent, false);
             }
-            TextView tv = row.findViewById(R.id.txt_rest_aminities);
-            tv.setText(list.get(position));
+            TextView textView = row.findViewById(R.id.txt_rest_aminities);
+            textView.setText(list.get(position));
             return row;
-
         }
     }
 

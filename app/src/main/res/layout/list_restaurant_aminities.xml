@@ -13,7 +13,7 @@
     <TextView
         android:id="@+id/txt_rest_aminities"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginStart="@dimen/common_dimens_20"
         android:layout_marginTop="@dimen/common_dimens_10" />
 </LinearLayout>
