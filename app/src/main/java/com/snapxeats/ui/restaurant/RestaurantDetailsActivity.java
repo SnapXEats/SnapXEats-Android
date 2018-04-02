@@ -181,7 +181,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         mRestaurantSpecialties = new ArrayList<>();
         mInflater = LayoutInflater.from(this);
         //get restaurant details
-        restaurantId = getIntent().getStringExtra(getString(R.string.intent_foodstackRestDetailsId));
+        restaurantId = getIntent().getStringExtra(getString(R.string.intent_restaurant_id));
         showProgressDialog();
         mRestaurantPresenter.getRestDetails(restaurantId);
     }

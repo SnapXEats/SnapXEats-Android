@@ -13,7 +13,7 @@ import com.snapxeats.dagger.AppContract;
 
 public class NavPrefContract {
 
-    public interface NavPrefView extends BaseView<NavPrefPresenter>, AppContract.SnapXResults {
+    interface NavPrefView extends BaseView<NavPrefPresenter>, AppContract.SnapXResults {
 
     }
 

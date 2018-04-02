@@ -1,6 +1,10 @@
 package com.snapxeats.network;
 
 import com.snapxeats.common.constants.WebConstants;
+import com.snapxeats.common.model.foodGestures.FoodWishlists;
+import com.snapxeats.common.model.foodGestures.RootDeleteWishlist;
+import com.snapxeats.common.model.foodGestures.RootWishlist;
+import com.snapxeats.common.model.foodGestures.Wishlist;
 import com.snapxeats.common.model.googleDirections.GeocodedWaypoints;
 import com.snapxeats.common.model.location.PlaceDetail;
 import com.snapxeats.common.model.location.PlacesAutoCompleteData;
@@ -14,14 +18,15 @@ import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
-import com.snapxeats.common.model.googleDirections.RootGoogleDir;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -51,11 +56,11 @@ public interface ApiHelper {
     Call<RootCuisinePhotos> getCuisinePhotos(@Header("Authorization") String token,
                                              @Query("latitude") double latitude,
                                              @Query("longitude") double longitude,
-                                             @Query("restaurant_rating") int restaurant_rating,
-                                             @Query("restaurant_price") int restaurant_price,
-                                             @Query("restaurant_distance") int restaurant_distance,
-                                             @Query("sort_by_distance") int sort_by_distance,
-                                             @Query("sort_by_rating") int sort_by_rating,
+                                             @Query("restaurant_rating") Integer restaurant_rating,
+                                             @Query("restaurant_price") Integer restaurant_price,
+                                             @Query("restaurant_distance") Integer restaurant_distance,
+                                             @Query("sort_by_distance") Integer sort_by_distance,
+                                             @Query("sort_by_rating") Integer sort_by_rating,
                                              @Query("cuisineArray") List<String> cuisineList,
                                              @Query("foodArray") List<String> foodArray);
 
@@ -178,4 +183,32 @@ public interface ApiHelper {
      */
     @GET(WebConstants.USER_PREF)
     Call<RootUserPreference> getUserPreferences(@Header("Authorization") String token);
+
+    /**
+     * Get user's wishlist
+     *
+     * @param token
+     * @return
+     */
+    @GET(WebConstants.USER_WISHLIST)
+    Call<RootWishlist> getUserWishlist(@Header("Authorization") String token);
+
+    /**
+     * Delete user's wishlist
+     *
+     * @param token
+     * @return
+     */
+    @HTTP(method = "DELETE", hasBody = true, path = WebConstants.USER_WISHLIST)
+    Call<RootDeleteWishlist> deleteUserWishlist(@Header("Authorization") String token,
+                                                @Body RootDeleteWishlist foodWishlists);
+
+    /**
+     * User logout
+     *
+     * @param token
+     * @return
+     */
+    @GET(WebConstants.USER_LOGOUT)
+    Call<String> logout(@Header("Authorization") String token);
 }

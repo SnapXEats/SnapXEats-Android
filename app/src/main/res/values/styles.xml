@@ -36,4 +36,7 @@
         <item name="android:paddingRight">5dp</item>
     </style>
 
+    <style name="CustomRatingBar" parent="Theme.AppCompat">
+        <item name="colorControlNormal">@color/recent_searches_color</item>
+    </style>
 </resources>

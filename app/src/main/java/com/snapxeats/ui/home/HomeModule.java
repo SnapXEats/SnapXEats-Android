@@ -12,6 +12,11 @@ import com.snapxeats.ui.home.fragment.home.HomeFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefInteractor;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefPresenterImpl;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefRouterImpl;
+import com.snapxeats.ui.home.fragment.wishlist.WishlistContract;
+import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
+import com.snapxeats.ui.home.fragment.wishlist.WishlistInteractor;
+import com.snapxeats.ui.home.fragment.wishlist.WishlistPresenterImpl;
+import com.snapxeats.ui.home.fragment.wishlist.WishlistRouterImpl;
 
 import dagger.Module;
 import dagger.Provides;
@@ -31,6 +36,10 @@ public abstract class HomeModule {
     @FragmentScoped
     @ContributesAndroidInjector
     abstract NavPrefFragment navPrefFragment();
+
+    @FragmentScoped
+    @ContributesAndroidInjector
+    abstract WishlistFragment wishlistFragment();
 
     @Provides
     static HomeContract.HomePresenter provideHomePresenter(HomeInteractor interactor,
@@ -69,5 +78,20 @@ public abstract class HomeModule {
     static NavPrefRouterImpl provideNavPrefRouter(Router router) {
         NavPrefRouterImpl navPrefRouter = new NavPrefRouterImpl(router);
         return navPrefRouter;
+    }
+
+    @Provides
+    static WishlistContract.WishlistPresenter provideWishlistPresenter(WishlistInteractor interactor,
+                                                                     WishlistRouterImpl router) {
+        WishlistContract.WishlistPresenter wishlistPresenter =
+                new WishlistPresenterImpl(interactor, router);
+        interactor.setWishlistPresenter(wishlistPresenter);
+        return wishlistPresenter;
+    }
+
+    @Provides
+    static WishlistRouterImpl provideWishlistRouter(Router router) {
+        WishlistRouterImpl wishlistRouter = new WishlistRouterImpl(router);
+        return wishlistRouter;
     }
 }

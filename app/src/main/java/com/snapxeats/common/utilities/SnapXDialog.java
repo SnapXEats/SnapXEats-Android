@@ -76,8 +76,7 @@ public class SnapXDialog {
     public void showResetDialog(DialogInterface.OnClickListener negativeClick,
                                 DialogInterface.OnClickListener positiveClick) {
         mDenyDialog = new AlertDialog.Builder(context);
-        mDenyDialog.setTitle(context.getString(R.string.error))
-                .setMessage(context.getString(R.string.preference_reset_message));
+        mDenyDialog.setMessage(context.getString(R.string.preference_reset_message));
 
         mDenyDialog.setNegativeButton(context.getString(R.string.cancel), negativeClick);
 

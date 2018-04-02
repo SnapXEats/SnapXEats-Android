@@ -24,7 +24,7 @@
 
         <item
             android:id="@+id/nav_snap"
-            android:title="Snap-n-share" />
+            android:title="Snap-N-Share" />
         <item
             android:id="@+id/nav_smart_photos"
             android:title="Smart Photos" />

@@ -29,7 +29,6 @@ import android.widget.TextView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserCuisinePreferences;
 import com.snapxeats.common.model.preference.UserFoodPreferences;
@@ -70,9 +69,9 @@ import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.RATIN
 
 
 public class NavPrefFragment extends BaseFragment implements
-        NavPrefContract.NavPrefView, View.OnClickListener, AppContract.SnapXResults {
-
-    private static final int FOOD_PREF_SCREEN = 1;
+        NavPrefContract.NavPrefView,
+        View.OnClickListener,
+        AppContract.SnapXResults {
     private RootUserPreference userPreferenceObject;
 
     public interface RATINGS {
@@ -157,7 +156,7 @@ public class NavPrefFragment extends BaseFragment implements
     protected TextView mTxtDistanceThree;
 
     @BindView(R.id.txt_distance_four)
-    protected TextView mTxtSegDistanceFour;
+    protected TextView mTxtDistanceFour;
 
     @BindView(R.id.txt_pref_apply)
     protected TextView mTxtApply;
@@ -217,6 +216,7 @@ public class NavPrefFragment extends BaseFragment implements
     private List<UserFoodPreferences> foodPrefList;
     private String userId;
     protected NavigationView mNavigationView;
+
     public static boolean isDirty;
     public static boolean isCuisineDirty;
     public static boolean isFoodDirty;
@@ -262,7 +262,7 @@ public class NavPrefFragment extends BaseFragment implements
                 mTxtDistanceOne.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_selected_color));
                 mTxtDistanceTwo.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
                 mTxtDistanceThree.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
-                mTxtSegDistanceFour.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
+                mTxtDistanceFour.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
                 mTxtDistanceFive.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
 
                 mBtnDistanceOne.setBackground(getResources().getDrawable(R.drawable.segmented_fg));
@@ -277,7 +277,7 @@ public class NavPrefFragment extends BaseFragment implements
                 mTxtDistanceOne.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
                 mTxtDistanceTwo.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_selected_color));
                 mTxtDistanceThree.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
-                mTxtSegDistanceFour.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
+                mTxtDistanceFour.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
                 mTxtDistanceFive.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
 
                 mBtnDistanceOne.setBackground(getResources().getDrawable(R.drawable.segmented_bg));
@@ -292,7 +292,7 @@ public class NavPrefFragment extends BaseFragment implements
                 mTxtDistanceOne.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
                 mTxtDistanceTwo.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
                 mTxtDistanceThree.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_selected_color));
-                mTxtSegDistanceFour.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
+                mTxtDistanceFour.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
                 mTxtDistanceFive.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
 
                 mBtnDistanceOne.setBackground(getResources().getDrawable(R.drawable.segmented_bg));
@@ -307,7 +307,7 @@ public class NavPrefFragment extends BaseFragment implements
                 mTxtDistanceOne.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
                 mTxtDistanceTwo.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
                 mTxtDistanceThree.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
-                mTxtSegDistanceFour.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_selected_color));
+                mTxtDistanceFour.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_selected_color));
                 mTxtDistanceFive.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
 
                 mBtnDistanceOne.setBackground(getResources().getDrawable(R.drawable.segmented_bg));
@@ -324,7 +324,7 @@ public class NavPrefFragment extends BaseFragment implements
                 mTxtDistanceOne.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
                 mTxtDistanceTwo.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
                 mTxtDistanceThree.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
-                mTxtSegDistanceFour.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
+                mTxtDistanceFour.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_color));
                 mTxtDistanceFive.setTextColor(ContextCompat.getColor(getActivity(), R.color.pref_txt_selected_color));
 
                 mBtnDistanceOne.setBackground(getResources().getDrawable(R.drawable.segmented_bg));
@@ -442,7 +442,7 @@ public class NavPrefFragment extends BaseFragment implements
         mTxtDistanceOne.setOnClickListener(this);
         mTxtDistanceTwo.setOnClickListener(this);
         mTxtDistanceThree.setOnClickListener(this);
-        mTxtSegDistanceFour.setOnClickListener(this);
+        mTxtDistanceFour.setOnClickListener(this);
         mTxtDistanceFive.setOnClickListener(this);
 
         mBtnDistanceOne.setOnClickListener(this);
@@ -461,11 +461,6 @@ public class NavPrefFragment extends BaseFragment implements
         // Inflate the layout for this fragment
         View view = null;
 
-        if (view != null) {
-            ViewGroup parent = (ViewGroup) view.getParent();
-            if (parent != null)
-                parent.removeView(view);
-        }
         try {
             view = inflater.inflate(R.layout.fragment_nav_pref, container, false);
             ButterKnife.bind(this, view);

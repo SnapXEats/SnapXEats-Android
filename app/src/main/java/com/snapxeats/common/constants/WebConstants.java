@@ -26,5 +26,8 @@ public class WebConstants {
     public static final String RESTAURANT_INFO = "/api/v1/restaurant/restaurantDetails/{restaurantInfoId}";
     public static final String FOODSTACK_GESTURES = "/api/v1/userGesture";
     public static final String USER_PREF = "/api/v1/userPreferences";
+    public static final String USER_WISHLIST = "/api/v1/userGesture/wishlist";
+    public static final String USER_DELETE_WISHLIST = "/api/v1/userGesture/wishlist/";
+    public static final String USER_LOGOUT = "/api/v1/users/logout";
 
 }

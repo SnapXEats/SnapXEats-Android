@@ -146,11 +146,6 @@ public class HomeFragment extends BaseFragment implements
         // Inflate the layout for this fragment
         View view = null;
 
-        if (null != view) {
-            ViewGroup parent = (ViewGroup) view.getParent();
-            if (parent != null)
-                parent.removeView(view);
-        }
         try {
             view = inflater.inflate(R.layout.fragment_home, container, false);
             ButterKnife.bind(this, view);
@@ -270,7 +265,7 @@ public class HomeFragment extends BaseFragment implements
 
         if (selectedList.size() != 0) {
             if (mSelectedLocation != null) {
-                selectedCuisineList = homeFgmtHelper.getSelectedCusine(mLocationCuisine,selectedList);
+                selectedCuisineList = homeFgmtHelper.getSelectedCusine(mLocationCuisine, selectedList);
                 //set selected cuisines data
                 Intent intent = new Intent(activity, FoodStackActivity.class);
                 intent.putExtra(getString(R.string.data_selectedCuisineList), selectedCuisineList);
