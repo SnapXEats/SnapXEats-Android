@@ -47,7 +47,8 @@ public class HomeFgmtHelper {
 
             if (null != rootUserPreference.getRestaurant_distance() &&
                     !rootUserPreference.getRestaurant_distance().isEmpty()) {
-                selectedCuisineList.setRestaurant_distance(Integer.parseInt(rootUserPreference.getRestaurant_distance()));
+                selectedCuisineList.setRestaurant_distance
+                        (Integer.parseInt(rootUserPreference.getRestaurant_distance()));
             } else {
                 selectedCuisineList.setRestaurant_distance(1);
             }

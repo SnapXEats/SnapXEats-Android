@@ -7,6 +7,8 @@ import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
+import com.snapxeats.common.model.foodGestures.FoodWishlists;
+import com.snapxeats.common.model.foodGestures.FoodWishlistsDao;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserCuisinePreferences;
 import com.snapxeats.common.model.preference.UserCuisinePreferencesDao;
@@ -88,7 +90,7 @@ public class HomeDbHelper {
                     !userPreference.getRestaurant_distance().isEmpty()) {
                 rootUserPreference.setRestaurant_distance(userPreference.getRestaurant_distance());
             } else {
-                rootUserPreference.setRestaurant_rating(String.valueOf(1));
+                rootUserPreference.setRestaurant_distance(String.valueOf(1));
             }
 
             if (null != userPreference.getRestaurant_price() &&
@@ -131,5 +133,11 @@ public class HomeDbHelper {
     List<SnapxData> getUserInfoFromDb() {
         SnapxDataDao snapxDataDao = dbHelper.getSnapxDataDao();
         return snapxDataDao.loadAll();
+    }
+
+    public int getWishlistCount() {
+        List<FoodWishlists> usersWishlist = dbHelper.getFoodWishlistsDao().queryBuilder()
+                .where(FoodWishlistsDao.Properties.IsDeleted.eq(0)).list();
+        return usersWishlist.size();
     }
 }

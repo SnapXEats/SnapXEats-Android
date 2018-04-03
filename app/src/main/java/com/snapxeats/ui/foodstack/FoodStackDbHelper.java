@@ -1,7 +1,6 @@
 package com.snapxeats.ui.foodstack;
 
 import android.content.Context;
-
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.SnapxDataDao;
 import com.snapxeats.common.model.foodGestures.FoodDislikes;
@@ -46,7 +45,7 @@ public class FoodStackDbHelper {
         FoodWishlists item;
         foodWishlistsDao.deleteAll();
         for (FoodWishlists wishlists : foodWishlists) {
-            item = new FoodWishlists(wishlists.getRestaurant_dish_id());
+            item = new FoodWishlists(wishlists.getRestaurant_dish_id(),false);
             foodWishlistsDao.insert(item);
         }
     }

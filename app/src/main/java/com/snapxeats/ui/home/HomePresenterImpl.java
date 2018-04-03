@@ -1,6 +1,7 @@
 package com.snapxeats.ui.home;
 
 import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.utilities.SnapXResult;
@@ -56,6 +57,11 @@ public class HomePresenterImpl implements HomeContract.HomePresenter {
     @Override
     public RootUserPreference getUserPreferenceFromDb() {
         return interactor.getUserPreferenceFromDb();
+    }
+
+    @Override
+    public void sendUserGestures(RootFoodGestures foodGestures) {
+        interactor.sendUserGestures(foodGestures);
     }
 
     @Override

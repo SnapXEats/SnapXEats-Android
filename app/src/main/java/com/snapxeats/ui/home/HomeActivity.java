@@ -1,6 +1,7 @@
 package com.snapxeats.ui.home;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -22,6 +23,7 @@ import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.foodGestures.FoodWishlists;
 import com.snapxeats.common.model.preference.RootUserPreference;
@@ -32,6 +34,8 @@ import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.foodstack.FoodStackDbHelper;
 import com.snapxeats.ui.home.fragment.home.HomeFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
+import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
+import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.squareup.picasso.Picasso;
 
 
@@ -42,6 +46,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.snapxeats.ui.home.HomeActivity.PreferenceConstant.DEVICE_LOCATION;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isDirty;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isCuisineDirty;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isFoodDirty;
@@ -64,6 +69,9 @@ public class HomeActivity extends LocationBaseActivity implements
 
     @Inject
     NavPrefFragment navPrefFragment;
+
+    @Inject
+    WishlistFragment wishlistFragment;
 
     @BindView(R.id.drawer_layout)
     protected DrawerLayout mDrawerLayout;
@@ -94,6 +102,9 @@ public class HomeActivity extends LocationBaseActivity implements
 
     @Inject
     HomeDbHelper homeDbHelper;
+
+    @Inject
+    WishlistDbHelper wishlistDbHelper;
 
     @Inject
     RootUserPreference mRootUserPreference;
@@ -129,6 +140,7 @@ public class HomeActivity extends LocationBaseActivity implements
     public void initView() {
         mPresenter.addView(this);
         utility.setContext(this);
+        wishlistDbHelper.setContext(this);
         preferences = utility.getSharedPreferences();
         mNavigationView.setNavigationItemSelectedListener(this);
         fragmentManager = getFragmentManager();
@@ -160,13 +172,12 @@ public class HomeActivity extends LocationBaseActivity implements
             transaction.replace(R.id.frame_layout, homeFragment);
         transaction.commit();
         mNavigationView.setCheckedItem(R.id.nav_home);
-
-
     }
 
     private void setWishlistCount() {
         LinearLayout linearLayout = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
                 .getActionView().findViewById(R.id.layout_wishlist_count);
+
         if (null != mSnapxData && mSnapxData.size() > 0 && isLoggedIn()) {
             linearLayout.setVisibility(View.VISIBLE);
 
@@ -176,9 +187,9 @@ public class HomeActivity extends LocationBaseActivity implements
             view.setText(getString(R.string.zero));
 
             dbHelper.setContext(this);
-            if (dbHelper.getFoodWishlistsDao()!=null && !dbHelper.getFoodWishlistsDao().loadAll().isEmpty()) {
-                view.setText(String.valueOf(dbHelper.getFoodWishlistsDao().loadAll().size()));
-             } else {
+            if (0 != homeDbHelper.getWishlistCount()) {
+                view.setText(String.valueOf(homeDbHelper.getWishlistCount()));
+            } else {
                 view.setText(getString(R.string.zero));
             }
         } else {
@@ -228,6 +239,9 @@ public class HomeActivity extends LocationBaseActivity implements
                     selectedFragment = homeFragment;
                     break;
                 case R.id.nav_wishlist:
+                    if (0 != homeDbHelper.getWishlistCount()) {
+                        selectedFragment = wishlistFragment;
+                    }
                     break;
                 case R.id.nav_preferences:
                     selectedFragment = navPrefFragment;
@@ -237,6 +251,7 @@ public class HomeActivity extends LocationBaseActivity implements
                 case R.id.nav_rewards:
                     break;
                 case R.id.nav_logout:
+                    showLogoutDialog();
                     break;
             }
 
@@ -244,13 +259,12 @@ public class HomeActivity extends LocationBaseActivity implements
                 transaction = fragmentManager.beginTransaction();
                 transaction.replace(R.id.frame_layout, selectedFragment);
                 transaction.commit();
+                mDrawerLayout.closeDrawer(GravityCompat.START);
             }
 
-            mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-            alertDialog.setTitle(getString(R.string.error))
-                    .setMessage(getString(R.string.preference_save_message))
+            alertDialog.setMessage(getString(R.string.preference_save_message))
                     .setCancelable(false)
                     .setPositiveButton(getString(R.string.apply), (dialog, which) -> {
 
@@ -274,6 +288,25 @@ public class HomeActivity extends LocationBaseActivity implements
             alertDialog.show();
         }
         return true;
+    }
+
+    private void showLogoutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.log_out));
+        builder.setMessage(getString(R.string.logout_message));
+
+        builder.setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> {
+            //Clear local db
+            mPresenter.sendUserGestures(wishlistDbHelper.getFoodGestures());
+        });
+
+        builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
+            dialog.cancel();
+        });
+
+        Dialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.show();
     }
 
     @Override

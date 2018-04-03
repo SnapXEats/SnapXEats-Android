@@ -67,5 +67,7 @@
     <dimen name="common_dimens_3">3dp</dimen>
     <dimen name="txt_size_12">12sp</dimen>
     <dimen name="txt_size_18">18sp</dimen>
+    <dimen name="text_size_13">13sp</dimen>
+    <dimen name="dimen_45dp">45dp</dimen>
 
 </resources>

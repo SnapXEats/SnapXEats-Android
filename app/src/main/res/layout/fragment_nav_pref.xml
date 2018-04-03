@@ -47,8 +47,7 @@
                         android:padding="@dimen/common_dimens_10"
                         android:text="@string/apply"
                         android:textColor="@color/text_color_tertiary"
-                        android:textSize="@dimen/text_size_18"
-                        android:textStyle="bold" />
+                        android:textSize="@dimen/text_size_17" />
 
                 </LinearLayout>
             </android.support.v7.widget.Toolbar>
@@ -75,6 +74,7 @@
                         android:text="@string/ratings"
                         android:textColor="@color/text_color_primary"
                         android:textSize="@dimen/text_size_12"
+                        android:textStyle="bold"
                         android:theme="@style/TextViewStyle" />
 
                     <LinearLayout
@@ -84,8 +84,9 @@
 
                         <ImageView
                             android:id="@+id/rating_three"
-                            android:layout_width="120dp"
+                            android:layout_width="0dp"
                             android:layout_height="@dimen/dimen_100"
+                            android:layout_weight="1"
                             android:src="@drawable/three_star_bw" />
 
                         <View
@@ -95,8 +96,9 @@
 
                         <ImageView
                             android:id="@+id/rating_four"
-                            android:layout_width="120dp"
+                            android:layout_width="0dp"
                             android:layout_height="@dimen/dimen_100"
+                            android:layout_weight="1"
                             android:src="@drawable/four_star_bw" />
 
                         <View
@@ -106,8 +108,9 @@
 
                         <ImageView
                             android:id="@+id/rating_five"
-                            android:layout_width="120dp"
+                            android:layout_width="0dp"
                             android:layout_height="@dimen/dimen_100"
+                            android:layout_weight="1"
                             android:src="@drawable/five_star_bw" />
                     </LinearLayout>
                 </LinearLayout>
@@ -125,6 +128,7 @@
                         android:text="@string/pricing"
                         android:textColor="@color/text_color_primary"
                         android:textSize="@dimen/text_size_12"
+                        android:textStyle="bold"
                         android:theme="@style/TextViewStyle" />
 
                     <LinearLayout
@@ -252,6 +256,7 @@
                         android:text="@string/distance"
                         android:textColor="@color/text_color_primary"
                         android:textSize="@dimen/text_size_12"
+                        android:textStyle="bold"
                         android:theme="@style/TextViewStyle" />
 
                     <LinearLayout
@@ -388,6 +393,7 @@
                         android:text="@string/sort_by"
                         android:textColor="@color/text_color_primary"
                         android:textSize="@dimen/text_size_12"
+                        android:textStyle="bold"
                         android:theme="@style/TextViewStyle" />
 
                     <LinearLayout
@@ -409,7 +415,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="0.5"
                                 android:checked="true"
-                                android:text="@string/distance" />
+                                android:text="@string/distance_sort_by" />
 
                             <RadioButton
                                 android:id="@+id/radio_ratings"
@@ -435,6 +441,7 @@
                         android:text="@string/set_preferences"
                         android:textColor="@color/text_color_primary"
                         android:textSize="@dimen/text_size_12"
+                        android:textStyle="bold"
                         android:theme="@style/TextViewStyle" />
 
                     <LinearLayout

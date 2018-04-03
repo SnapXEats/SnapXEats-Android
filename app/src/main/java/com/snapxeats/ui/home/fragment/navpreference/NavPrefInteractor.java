@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
@@ -30,7 +29,6 @@ public class NavPrefInteractor {
     private NavPrefContract.NavPrefPresenter navPrefPresenter;
     private NavPrefContract.NavPrefView view;
     private Context mContext;
-    private DaoSession daoSession;
 
     @Inject
     AppUtility utility;
@@ -57,7 +55,6 @@ public class NavPrefInteractor {
         mContext = context.getActivity();
         utility.setContext(mContext);
         dbHelper.setContext(mContext);
-        daoSession = dbHelper.getDaoSesion();
     }
 
     /**
@@ -147,7 +144,7 @@ public class NavPrefInteractor {
     }
 
     void saveUserData() {
-        SnapxDataDao snapxDataDao = daoSession.getSnapxDataDao();
+        SnapxDataDao snapxDataDao = dbHelper.getSnapxDataDao();
         if (snapxDataDao.loadAll().size() > 0) {
             List<SnapxData> snapxDataList = snapxDataDao.loadAll();
             snapxDataList.get(0).setIsFirstTimeUser(false);

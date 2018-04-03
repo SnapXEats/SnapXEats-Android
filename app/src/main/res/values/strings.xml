@@ -67,7 +67,8 @@
     <string name="four_stars">4 Stars</string>
     <string name="five_stars">5 Stars</string>
     <string name="sort_by">Sort by</string>
-    <string name="distance">Distance(mi)</string>
+    <string name="distance">Distance (miles)</string>
+    <string name="distance_sort_by">Distance</string>
     <string name="set_preferences">Set Preferences</string>
     <string name="cuisines">Cuisines</string>
     <string name="food">Food</string>
@@ -89,9 +90,14 @@
     <string name="food_preference">Food Preferences</string>
     <string name="save">Save</string>
     <string name="preference">Preference</string>
-    <string name="preference_save_message">You have made some changes to your preferences, You need to save them first.</string>
-    <string name="preference_reset_message">Do you really want to reset your preferences. Please press Ok or Cancel</string>
-    <string name="save_pref_msg">Do you want to apply recent Preferences?</string>
+    <string name="preference_save_message">You have made some changes to your preferences, You need to save them</string>
+    <string name="preference_reset_message">Do you want to reset your preferences?</string>
+    <string name="preference_apply_message">You have made some changes to your preferences, you need to apply to continue</string>
+    <string name="delete_wishlist_message">Do you want to delete your selected wishlist item?</string>
+    <string name="delete">Delete</string>
+    <string name="wishlist_non_logged_in_user">Please login to check the Wishlist</string>
+    <string name="logout_message">Are you sure you want to logout?</string>
+
     <string name="discard">Discard</string>
     <string name="rootFoodPrefList">rootFoodPrefList</string>
     <string name="instaInfoIntent">instaInfoIntent</string>
@@ -125,7 +131,14 @@
     <string name="nav_login">Log-In to SnapXEats and Earn Reward Points</string>
     <string name="zero">0</string>
     <string name="toolbar_rest_info">Restaurant Info</string>
+    <string name="restaurant_name">Restaurant Name</string>
     <string name="toolbar_rest_details">Restaurant Details</string>
     <string name="date_format_month">EEEE</string>
+    <string name="wishlist">Wishlist</string>
+    <string name="edit">Edit</string>
+    <string name="intent_restaurant_id">restaurant_id</string>
+    <string name="yyyy_MM_dd">yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'</string>
+    <string name="dd_MMM_yyyy">dd MMM yyyy</string>
+    <string name="log_out">LogOut</string>
 
 </resources>

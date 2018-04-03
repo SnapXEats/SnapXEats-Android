@@ -2,8 +2,8 @@ package com.snapxeats;
 
 import android.database.sqlite.SQLiteDatabase;
 
-import com.snapxeats.common.model.DaoMaster;
-import com.snapxeats.common.model.DaoSession;
+import com.snapxeats.common.model.foodGestures.DaoMaster;
+import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.dagger.AppComponent;
 import com.snapxeats.dagger.DaggerAppComponent;
 

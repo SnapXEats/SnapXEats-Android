@@ -97,8 +97,6 @@ public class FoodStackActivity extends BaseActivity
 
     private List<FoodStackData> foodStackDataList;
 
-    private RootFoodGestures mRootFoodGestures;
-
     private List<String> stringsUrl;
 
     @Inject
@@ -134,7 +132,6 @@ public class FoodStackActivity extends BaseActivity
 
     public void initView() {
         mFoodStackPresenter.addView(this);
-        mRootFoodGestures = new RootFoodGestures();
         stringsUrl = new ArrayList<>();
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -151,7 +148,9 @@ public class FoodStackActivity extends BaseActivity
         //Api call for saved food preferences
         foodGestures();
 
-        SelectedCuisineList selectedCuisineList = getIntent().getExtras().getParcelable(getString(R.string.data_selectedCuisineList));
+        SelectedCuisineList selectedCuisineList = getIntent().getExtras()
+                .getParcelable(getString(R.string.data_selectedCuisineList));
+
         assert null != selectedCuisineList;
         if (0 != selectedCuisineList.getSelectedCuisineList().size()) {
             enableGestureActions();
@@ -168,10 +167,18 @@ public class FoodStackActivity extends BaseActivity
 
     private void foodGestures() {
         foodGestureWishlist.addAll(foodStackDbHelper.getFoodWishList());
+
+        RootFoodGestures mRootFoodGestures = new RootFoodGestures();
         mRootFoodGestures.setWishlist_dish_array(foodStackDbHelper.getFoodWishList());
         mRootFoodGestures.setDislike_dish_array(foodStackDbHelper.getFoodDislikes());
         mRootFoodGestures.setLike_dish_array(foodStackDbHelper.getFoodLikes());
-        mFoodStackPresenter.foodstackGestures(mRootFoodGestures);
+
+        //If all list are empty API shouldn't call
+        if (0 != mRootFoodGestures.getDislike_dish_array().size()
+                || 0 != mRootFoodGestures.getWishlist_dish_array().size()
+                || 0 != mRootFoodGestures.getLike_dish_array().size()) {
+            mFoodStackPresenter.foodstackGestures(mRootFoodGestures);
+        }
     }
 
     @Override
@@ -365,7 +372,7 @@ public class FoodStackActivity extends BaseActivity
             mFoodStackPresenter.saveLikesToDb(foodLikes);
         }
         Intent intent = new Intent(FoodStackActivity.this, RestaurantDetailsActivity.class);
-        intent.putExtra(getString(R.string.intent_foodstackRestDetailsId), foodStackDataList.get(index).getId());
+        intent.putExtra(getString(R.string.intent_restaurant_id), foodStackDataList.get(index).getId());
         startActivity(intent);
         gestureRight();
     }
@@ -444,7 +451,7 @@ public class FoodStackActivity extends BaseActivity
 
     @OnClick(R.id.img_cuisine_wishlist)
     public void imgCuisineWishlist() {
-        swipeTop(cardStackView.getTopIndex() - 1);
+        swipeTop(cardStackView.getTopIndex());
     }
 
     @OnClick(R.id.img_cuisine_undo)
