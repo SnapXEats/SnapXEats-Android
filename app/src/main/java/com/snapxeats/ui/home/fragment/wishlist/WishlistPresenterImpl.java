@@ -1,6 +1,5 @@
 package com.snapxeats.ui.home.fragment.wishlist;
 
-import com.snapxeats.common.model.foodGestures.RootDeleteWishlist;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.utilities.SnapXResult;
 
@@ -54,10 +53,5 @@ public class WishlistPresenterImpl implements WishlistContract.WishlistPresenter
     @Override
     public void sendUsersGestures(RootFoodGestures rootFoodGestures) {
         interactor.sendUsersGestures(rootFoodGestures);
-    }
-
-    @Override
-    public void sendDeletedWishlist(RootDeleteWishlist deletedWishlistObject) {
-        interactor.sendDeletedWishlist(deletedWishlistObject);
     }
 }

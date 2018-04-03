@@ -1,7 +1,6 @@
 package com.snapxeats.ui.home;
 
 import android.content.Context;
-
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.foodGestures.RootDeleteWishlist;
@@ -14,15 +13,11 @@ import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
-
 import java.util.List;
-
 import javax.inject.Inject;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 /**
@@ -138,6 +133,8 @@ public class HomeInteractor {
                         if (response.isSuccessful()) {
                             if (0 != wishlistDbHelper.getDeletedWishlist().size()) {
                                 sendDeletedWishlist(wishlistDbHelper.getDeletedWishlistObject());
+                            } else {
+                                logout();
                             }
                         }
                     }
@@ -190,6 +187,7 @@ public class HomeInteractor {
                 public void onResponse(Call<String> call, Response<String> response) {
                     //Delete local db
                     clearLocalDb();
+
                 }
 
                 @Override
@@ -205,6 +203,9 @@ public class HomeInteractor {
     }
 
     private void clearLocalDb() {
+        dbHelper.getDaoSesion().getSnapxDataDao().deleteAll();
+        dbHelper.getDaoSesion().getFoodWishlistsDao().deleteAll();
         dbHelper.getDaoSesion().getFoodDislikesDao().deleteAll();
+        dbHelper.getDaoSesion().getFoodLikesDao().deleteAll();
     }
 }

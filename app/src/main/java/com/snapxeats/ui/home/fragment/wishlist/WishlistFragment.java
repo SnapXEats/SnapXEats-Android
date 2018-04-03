@@ -4,30 +4,30 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.OnRecyclerItemClickListener;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.foodGestures.RootWishlist;
 import com.snapxeats.common.model.foodGestures.Wishlist;
@@ -37,15 +37,13 @@ import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.foodstack.FoodStackDbHelper;
 import com.snapxeats.ui.home.HomeDbHelper;
 import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import static com.baoyz.swipemenulistview.SwipeMenuListView.DIRECTION_LEFT;
 
 /**
  * Created by Snehal Tembare on 22/3/18.
@@ -54,14 +52,17 @@ import butterknife.OnClick;
 public class WishlistFragment extends BaseFragment implements WishlistContract.WishlistView,
         AppContract.SnapXResults {
 
+    private static final String DELETE = "Delete";
+    private static final String EDIT = "Edit";
+
     @BindView(R.id.layout_parent)
     protected LinearLayout mParentLayout;
 
     @Inject
     WishlistContract.WishlistPresenter wishlistPresenter;
 
-    @BindView(R.id.recyclerview_wishlist)
-    protected RecyclerView mRecyclerView;
+    @BindView(R.id.swipe_listview)
+    protected SwipeMenuListView mSwipeMenuList;
 
     @BindView(R.id.txt_wishlist_edit)
     protected TextView mTxtWishlistEdit;
@@ -170,61 +171,57 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
 
     @OnClick(R.id.txt_wishlist_edit)
     public void deleteWishlist() {
-        if ((mTxtWishlistEdit.getText()).equals("Edit")) {
+        if ((mTxtWishlistEdit.getText()).equals(EDIT)) {
+
             mTxtWishlistEdit.setText(getString(R.string.delete));
             toggle.setDrawerIndicatorEnabled(false);
             toggle.setHomeAsUpIndicator(R.drawable.close);
             isMultipleDeleted = true;
-        } else if ((mTxtWishlistEdit.getText()).equals("Delete")) {
-
+            mSwipeMenuList.setSwipeDirection(0);
+        } else if ((mTxtWishlistEdit.getText()).equals(DELETE)) {
             showWishlistDialog();
         }
-
-       /* mTxtWishlistEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if ((mTxtWishlistEdit.getText()).equals("Delete")) {
-                    for (int index = 0; index < mWishlist.size(); index++) {
-                        wishlistDbHelper.setWishlistItemStatus(mWishlist.get(index).getRestaurant_dish_id());
-                        mAdapter.wishlists.remove(index);
-                        mAdapter.notifyItemRemoved(index);
-                        mAdapter.notifyItemRangeChanged(index, mAdapter.getItemCount());
-                    }
-                    showWishlistDialog();
-                }
-            }
-        });*/
-
-
     }
 
     private void showWishlistDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.wishlist));
         builder.setMessage(getString(R.string.delete_wishlist_message));
+        mSwipeMenuList.setSwipeDirection(DIRECTION_LEFT);
 
         builder.setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> {
             //Clear local db
             for (int index = 0; index < mWishlist.size(); index++) {
-                wishlistDbHelper.setWishlistItemStatus(mWishlist.get(index).getRestaurant_dish_id());
-                mAdapter.wishlists.remove(index);
-                mAdapter.notifyItemRemoved(index);
-                mAdapter.notifyItemRangeChanged(index, mAdapter.getItemCount());
+                if (mWishlist.get(index).isDeleted()) {
+                    wishlistDbHelper.setWishlistItemStatus(mWishlist.get(index).getRestaurant_dish_id());
+                    mAdapter.wishlist.remove(index);
+                    mAdapter.notifyDataSetChanged();
+                }
             }
-
-            showProgressDialog();
-            isMultipleDeleted = false;
-            wishlistPresenter.sendDeletedWishlist(wishlistDbHelper.getDeletedWishlistObject());
-
+            setInitWishlistView();
         });
 
         builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
+            for (int index = 0; index < mWishlist.size(); index++) {
+                if (mWishlist.get(index).isDeleted()) {
+                    mWishlist.get(index).setDeleted(false);
+                }
+                mAdapter.notifyDataSetChanged();
+            }
+
+            setInitWishlistView();
             dialog.cancel();
         });
 
         Dialog alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
+    }
+
+    private void setInitWishlistView() {
+        mTxtWishlistEdit.setText(getString(R.string.edit));
+        toggle.setDrawerIndicatorEnabled(true);
+        isMultipleDeleted = false;
     }
 
     @Override
@@ -242,13 +239,12 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
 
         mToolbar.setNavigationOnClickListener(v -> {
             if ((mTxtWishlistEdit.getText()).equals("Delete")) {
-                mTxtWishlistEdit.setText(getString(R.string.edit));
-                toggle.setDrawerIndicatorEnabled(true);
-                isMultipleDeleted = false;
+                setInitWishlistView();
+                mSwipeMenuList.setSwipeDirection(DIRECTION_LEFT);
                 for (int index = 0; index < mWishlist.size(); index++) {
                     if (mWishlist.get(index).isDeleted()) {
                         mWishlist.get(index).setDeleted(false);
-                        mAdapter.notifyItemChanged(index);
+                        mAdapter.notifyDataSetChanged();
                     }
                 }
             } else {
@@ -256,7 +252,15 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
             }
         });
 
-
+        ViewTreeObserver viewTreeObserver = mSwipeMenuList.getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener(() -> {
+            if (0 == mWishlist.size()) {
+                mTxtWishlistEdit.setVisibility(View.INVISIBLE);
+            } else {
+                mTxtWishlistEdit.setVisibility(View.VISIBLE);
+            }
+        });
+        createSwipeMenu();
     }
 
     @Override
@@ -267,9 +271,7 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
     @Override
     public void success(Object value) {
         dismissProgressDialog();
-        mTxtWishlistEdit.setText(getString(R.string.edit));
-        toggle.setDrawerIndicatorEnabled(true);
-        isMultipleDeleted = false;
+        setInitWishlistView();
 
         if (value instanceof RootWishlist) {
             mWishlist = ((RootWishlist) value).getUser_wishlist();
@@ -279,52 +281,71 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
 
     private void setupRecyclerview() {
 
-        mAdapter = new WishlistAdapter(getActivity(), mWishlist, new OnRecyclerItemClickListener() {
-            @Override
-            public void onClickToDelete(int position, Object object) {
+        mAdapter = new WishlistAdapter(getActivity(), mWishlist);
+        mSwipeMenuList.setAdapter(mAdapter);
+        mSwipeMenuList.setSwipeDirection(DIRECTION_LEFT);
 
-                if (((Wishlist) object).isDeleted()) {
+        mSwipeMenuList.setOnItemClickListener((parent, view, position, id) -> {
+            if (isMultipleDeleted) {
+                if (mWishlist.get(position).isDeleted()) {
                     mWishlist.get(position).setDeleted(false);
-                    mAdapter.notifyItemChanged(position);
+                    mAdapter.notifyDataSetChanged();
 
                 } else {
                     mWishlist.get(position).setDeleted(true);
-                    mAdapter.notifyItemChanged(position);
+                    mAdapter.notifyDataSetChanged();
                 }
-            }
-
-            @Override
-            public void onClick(Object object) {
+            } else {
                 Intent intent = new Intent(getActivity(), RestaurantDetailsActivity.class);
                 intent.putExtra(activity.getString(R.string.intent_restaurant_id),
-                        ((Wishlist) object).getRestaurant_info_id());
+                        mWishlist.get(position).getRestaurant_info_id());
                 startActivity(intent);
             }
-        });
-        LinearLayoutManager layoutManager = new LinearLayoutManager(activity);
-        mRecyclerView.setLayoutManager(layoutManager);
 
-        SwipeController swipeController = new SwipeController(new SwipeControllerActions() {
-            @Override
-            void onRightClicked(int position) {
-                super.onRightClicked(position);
-                wishlistDbHelper.setWishlistItemStatus(mWishlist.get(position).getRestaurant_dish_id());
-                mAdapter.wishlists.remove(position);
-                mAdapter.notifyItemRemoved(position);
-                mAdapter.notifyItemRangeChanged(position, mAdapter.getItemCount());
-            }
         });
-        swipeController.setmContext(getActivity());
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeController);
-        itemTouchHelper.attachToRecyclerView(mRecyclerView);
+    }
 
-        mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+    /**
+     * Create swipe right menu for delete action
+     */
+    private void createSwipeMenu() {
+        SwipeMenuCreator swipeMenuCreator = new SwipeMenuCreator() {
             @Override
-            public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
-                swipeController.onDraw(c);
+            public void create(SwipeMenu menu) {
+                createMenu(menu);
             }
+
+            private void createMenu(SwipeMenu menu) {
+                SwipeMenuItem item = new SwipeMenuItem(getActivity());
+                item.setWidth(dp2px(80));
+                item.setIcon(R.drawable.ic_delete);
+                menu.addMenuItem(item);
+            }
+        };
+        mSwipeMenuList.setMenuCreator(swipeMenuCreator);
+
+        handleSwipeMenuItemClick();
+    }
+
+    /**
+     * Swipe menu item click
+     */
+    private void handleSwipeMenuItemClick() {
+        mSwipeMenuList.setOnMenuItemClickListener((position, menu, index) -> {
+            switch (index) {
+                case 0:
+                    wishlistDbHelper.setWishlistItemStatus(mWishlist.get(position).getRestaurant_dish_id());
+                    mAdapter.wishlist.remove(position);
+                    mAdapter.notifyDataSetChanged();
+                    break;
+            }
+            return true;
         });
-        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private int dp2px(int dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                getResources().getDisplayMetrics());
     }
 
     @Override

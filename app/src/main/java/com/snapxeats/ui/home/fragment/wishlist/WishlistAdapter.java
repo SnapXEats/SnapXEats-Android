@@ -1,16 +1,13 @@
 package com.snapxeats.ui.home.fragment.wishlist;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.snapxeats.R;
-import com.snapxeats.common.OnRecyclerItemClickListener;
 import com.snapxeats.common.model.foodGestures.Wishlist;
 import com.squareup.picasso.Picasso;
 import java.text.DateFormat;
@@ -21,45 +18,49 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.snapxeats.ui.home.fragment.wishlist.WishlistFragment.isMultipleDeleted;
-
 /**
- * Created by Snehal Tembare on 27/3/18.
+ * Created by Snehal Tembare on 2/4/18.
  */
 
-public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHolder> {
+public class WishlistAdapter extends BaseAdapter {
 
-    private Context mContext;
-    List<Wishlist> wishlists;
-    private OnRecyclerItemClickListener clickListener;
+    Context mContext;
+    List<Wishlist> wishlist;
 
-    WishlistAdapter(Context mContext,
-                    List<Wishlist> wishlists,
-                    OnRecyclerItemClickListener clickListener) {
-        this.mContext = mContext;
-        this.wishlists = wishlists;
-        this.clickListener = clickListener;
-    }
-
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View row = LayoutInflater.from(mContext).inflate(R.layout.item_wishlist, parent,
-                false);
-        return new ViewHolder(row);
+    WishlistAdapter(Context context,
+                    List<Wishlist> wishlist) {
+        this.mContext = context;
+        this.wishlist = wishlist;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.setItem(wishlists.get(position));
+    public int getCount() {
+        return wishlist.size();
     }
 
     @Override
-    public int getItemCount() {
-        return wishlists.size();
+    public Object getItem(int position) {
+        return wishlist.get(position);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (null == convertView) {
+            convertView = View.inflate(mContext,
+                    R.layout.item_wishlist, null);
+            new ViewHolder(convertView);
+        }
+        ViewHolder holder = (ViewHolder) convertView.getTag();
+        holder.setItem(wishlist.get(position));
+        return convertView;
+    }
+
+    class ViewHolder {
         @BindView(R.id.view_foreground)
         LinearLayout mLayoutFg;
 
@@ -73,9 +74,8 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
         TextView mTxtLocationDate;
 
         ViewHolder(View itemView) {
-            super(itemView);
             ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener(this);
+            itemView.setTag(this);
         }
 
         void setItem(Wishlist item) {
@@ -99,16 +99,6 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
             }
 
             mTxtLocationDate.setText(item.getRestaurant_address() + "  |  " + stringDate);
-        }
-
-        @Override
-        public void onClick(View v) {
-            int position = getAdapterPosition();
-            if (isMultipleDeleted) {
-                clickListener.onClickToDelete(position, wishlists.get(position));
-            } else {
-                clickListener.onClick(wishlists.get(position));
-            }
         }
     }
 }

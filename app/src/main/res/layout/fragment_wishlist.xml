@@ -50,12 +50,15 @@
                 </LinearLayout>
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerview_wishlist"
+
+        <com.baoyz.swipemenulistview.SwipeMenuListView
+            android:id="@+id/swipe_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical">
-        </android.support.v7.widget.RecyclerView>
+            android:dividerHeight="@dimen/common_dimens_5"
+            android:divider="@android:color/transparent"
+            android:padding="@dimen/common_dimens_10"
+            android:elevation="@dimen/common_dimens_2"/>
     </LinearLayout>
 
 </FrameLayout>

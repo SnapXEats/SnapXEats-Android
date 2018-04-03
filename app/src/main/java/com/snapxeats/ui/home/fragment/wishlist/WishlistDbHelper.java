@@ -1,26 +1,18 @@
 package com.snapxeats.ui.home.fragment.wishlist;
 
 import android.content.Context;
-
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.model.SnapxData;
-import com.snapxeats.common.model.SnapxDataDao;
 import com.snapxeats.common.model.foodGestures.FoodDislikes;
 import com.snapxeats.common.model.foodGestures.FoodLikes;
 import com.snapxeats.common.model.foodGestures.FoodWishlists;
 import com.snapxeats.common.model.foodGestures.FoodWishlistsDao;
 import com.snapxeats.common.model.foodGestures.RootDeleteWishlist;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
-import com.snapxeats.common.model.foodGestures.RootWishlist;
 import com.snapxeats.common.model.foodGestures.UserWishlist;
-import com.snapxeats.common.model.foodGestures.Wishlist;
 import com.snapxeats.ui.foodstack.FoodStackDbHelper;
-
 import org.greenrobot.greendao.query.DeleteQuery;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -30,6 +22,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public class WishlistDbHelper {
+
     private Context mContext;
     private RootFoodGestures mRootFoodGestures;
 
