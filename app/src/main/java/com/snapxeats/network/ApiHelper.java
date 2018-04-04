@@ -1,10 +1,9 @@
 package com.snapxeats.network;
 
 import com.snapxeats.common.constants.WebConstants;
-import com.snapxeats.common.model.foodGestures.FoodWishlists;
+import com.snapxeats.common.model.Logout;
 import com.snapxeats.common.model.foodGestures.RootDeleteWishlist;
 import com.snapxeats.common.model.foodGestures.RootWishlist;
-import com.snapxeats.common.model.foodGestures.Wishlist;
 import com.snapxeats.common.model.googleDirections.GeocodedWaypoints;
 import com.snapxeats.common.model.location.PlaceDetail;
 import com.snapxeats.common.model.location.PlacesAutoCompleteData;
@@ -19,12 +18,9 @@ import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
-
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Header;
@@ -210,5 +206,5 @@ public interface ApiHelper {
      * @return
      */
     @GET(WebConstants.USER_LOGOUT)
-    Call<String> logout(@Header("Authorization") String token);
+    Call<Logout> logout(@Header("Authorization") String token);
 }

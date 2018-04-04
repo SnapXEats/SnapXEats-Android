@@ -41,12 +41,12 @@ public class FoodStackDbHelper {
         foodLikesDao = dbHelper.getFoodLikesDao();
     }
 
-    public void saveFoodWishlist(List<FoodWishlists> foodWishlists) {
+    void saveFoodWishlist(List<FoodWishlists> foodWishlists) {
         FoodWishlists item;
         foodWishlistsDao.deleteAll();
         for (FoodWishlists wishlists : foodWishlists) {
             item = new FoodWishlists(wishlists.getRestaurant_dish_id(),false);
-            foodWishlistsDao.insert(item);
+            foodWishlistsDao.insertOrReplace(item);
         }
     }
 

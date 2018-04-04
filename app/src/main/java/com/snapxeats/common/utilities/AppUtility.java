@@ -83,7 +83,7 @@ public class AppUtility {
             token = app.getToken();
             if (null != token && !token.isEmpty()) {
                 //TODO: fetch it from DB, assign it to app.token & return that token
-                if (snapxData != null) {
+                if (snapxData != null && !snapxData.getToken().isEmpty()) {
                     token = snapxData.getToken(); // fetch it from DB
                 }
                 app.setToken(token);
@@ -92,11 +92,7 @@ public class AppUtility {
     }
 
     public void hideKeyboard() {
-       /* InputMethodManager in = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (null != in)
-            in.hideSoftInputFromInputMethod(((Activity) mContext).getCurrentFocus().getApplicationWindowToken(), 0);*/
-
-        View view = ((Activity) mContext).getCurrentFocus();
+              View view = ((Activity) mContext).getCurrentFocus();
         if (view != null) {
             InputMethodManager imm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

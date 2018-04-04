@@ -1,5 +1,6 @@
 package com.snapxeats.ui.home;
 
+import com.snapxeats.common.Router;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.preference.RootUserPreference;
@@ -15,12 +16,12 @@ public class HomePresenterImpl implements HomeContract.HomePresenter {
 
     private HomeInteractor interactor;
     private HomeContract.HomeView homeView;
-    private HomeRouterImpl homeRouter;
+    private HomeRouterImpl router;
 
     public HomePresenterImpl(HomeInteractor interactor,
                              HomeRouterImpl homeRouter) {
         this.interactor = interactor;
-        this.homeRouter = homeRouter;
+        this.router = homeRouter;
     }
 
     @Override
@@ -62,6 +63,11 @@ public class HomePresenterImpl implements HomeContract.HomePresenter {
     @Override
     public void sendUserGestures(RootFoodGestures foodGestures) {
         interactor.sendUserGestures(foodGestures);
+    }
+
+    @Override
+    public void presentScreen(Router.Screen screen) {
+        router.presentScreen(screen);
     }
 
     @Override

@@ -122,9 +122,8 @@ public class NavPrefInteractor {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             SharedPreferences preferences = utility.getSharedPreferences();
-            String token = preferences.getString(mContext.getString(R.string.user_token), "");
 
-            Call<RootUserPreference> userPreferenceCall = apiHelper.getUserPreferences("Bearer " + token);
+            Call<RootUserPreference> userPreferenceCall = apiHelper.getUserPreferences(utility.getAuthToken(mContext));
 
             userPreferenceCall.enqueue(new Callback<RootUserPreference>() {
                 @Override

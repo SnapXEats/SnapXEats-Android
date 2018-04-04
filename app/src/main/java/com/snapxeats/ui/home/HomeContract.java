@@ -31,6 +31,8 @@ public class HomeContract {
         RootUserPreference getUserPreferenceFromDb();
 
         void sendUserGestures(RootFoodGestures foodGestures);
+
+        void presentScreen(Router.Screen screen);
     }
 
     public interface HomeRouter {

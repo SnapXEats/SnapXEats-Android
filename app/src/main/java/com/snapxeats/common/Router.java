@@ -9,6 +9,7 @@ import com.snapxeats.ui.foodpreference.FoodPreferenceActivity;
 import com.snapxeats.ui.foodstack.FoodStackActivity;
 import com.snapxeats.ui.home.HomeActivity;
 import com.snapxeats.ui.location.LocationActivity;
+import com.snapxeats.ui.login.LoginActivity;
 import com.snapxeats.ui.maps.MapsActivity;
 import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
 
@@ -22,7 +23,7 @@ import javax.inject.Singleton;
 @Singleton
 public class Router {
     public enum Screen {
-        LOCATION, HOME, FOODSTACK, RESTAURANT_DETAILS, CUISINE_PREF, FOOD_PREF, DIRECTIONS, MAPS
+        LOCATION, HOME, FOODSTACK, RESTAURANT_DETAILS, CUISINE_PREF, FOOD_PREF, DIRECTIONS, MAPS, LOGIN
     }
 
     private Activity mActivity;
@@ -68,6 +69,10 @@ public class Router {
             case MAPS:
                 presentMapsScreen();
                 break;
+
+            case LOGIN:
+                presentLogInScreen();
+                break;
         }
     }
 
@@ -101,5 +106,11 @@ public class Router {
 
     private void presentMapsScreen() {
         mActivity.startActivity(new Intent(mActivity, MapsActivity.class));
+    }
+
+    private void presentLogInScreen() {
+        Intent intent = new Intent(mActivity, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        mActivity.startActivity(intent);
     }
 }

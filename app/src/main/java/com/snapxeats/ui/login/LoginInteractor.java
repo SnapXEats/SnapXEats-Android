@@ -19,6 +19,7 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
+import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -26,6 +27,7 @@ import javax.inject.Singleton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 /**
@@ -50,6 +52,9 @@ public class LoginInteractor {
     DbHelper dbHelper;
 
     @Inject
+    WishlistDbHelper wishlistDbHelper;
+
+    @Inject
     public LoginInteractor() {
     }
 
@@ -61,6 +66,7 @@ public class LoginInteractor {
         this.mContext = view.getActivity();
         appUtility.setContext(view.getActivity());
         dbHelper.setContext(mContext);
+        wishlistDbHelper.setContext(mContext);
         snapxDataDao = dbHelper.getSnapxDataDao();
         snapxData = new SnapxData();
     }
@@ -73,7 +79,7 @@ public class LoginInteractor {
         snapXUserCall.enqueue(new Callback<RootInstagram>() {
             @Override
             public void onResponse(Call<RootInstagram> call, Response<RootInstagram> response) {
-                if (response.isSuccessful() && null!=response.body()) {
+                if (response.isSuccessful() && null != response.body()) {
                     rootInstagram = response.body();
                     SnapXUserRequest snapXUserRequest = new SnapXUserRequest(rootInstagram.getInstagramToken(),
                             mContext.getString(R.string.platform_instagram), rootInstagram.getData().getId());
@@ -100,7 +106,7 @@ public class LoginInteractor {
             snapXUserCall.enqueue(new Callback<SnapXUserResponse>() {
                 @Override
                 public void onResponse(Call<SnapXUserResponse> call, Response<SnapXUserResponse> response) {
-                    if (response.isSuccessful() && null!=response.body()) {
+                    if (response.isSuccessful() && null != response.body()) {
                         SnapXUserResponse snapXUser = response.body();
                         /** save userId to shared preferences **/
                         SharedPreferences settings = appUtility.getSharedPreferences();
@@ -147,7 +153,7 @@ public class LoginInteractor {
         }
     }
 
-    public void saveServerDataInDb(SnapXUser snapXUser) {
+    private void saveServerDataInDb(SnapXUser snapXUser) {
         snapxData.setUserId(snapXUser.getUser_id());
         snapxData.setToken(snapXUser.getToken());
         snapxData.setSocialPlatform(snapXUser.getSocial_platform());
@@ -169,14 +175,23 @@ public class LoginInteractor {
         }
     }
 
-    public void saveFbDataInDb(SnapXUser snapXUser) {
+    private void saveFbDataInDb(SnapXUser snapXUser) {
         saveServerDataInDb(snapXUser);
+        saveWishlistDataInDb(snapXUser);
+
         snapxData.setUserId(AccessToken.getCurrentAccessToken().getUserId());
         snapxData.setSocialToken(AccessToken.getCurrentAccessToken().getToken());
         if (snapxDataDao.loadAll().size() == 0) {
             snapxDataDao.insert(snapxData);
         } else {
             snapxDataDao.update(snapxData);
+        }
+    }
+
+    private void saveWishlistDataInDb(SnapXUser snapXUser) {
+        if (null != snapXUser.getUserWishList() &&
+                0 != snapXUser.getUserWishList().size()) {
+            wishlistDbHelper.saveWishlistDataInDb(snapXUser.getUserWishList());
         }
     }
 }
