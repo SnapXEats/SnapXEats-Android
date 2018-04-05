@@ -113,35 +113,6 @@ public class NavPrefInteractor {
         }
     }
 
-    /**
-     * TODO- Relogin user
-     * GET- Get user preferences
-     */
-    public void getUserPreferences() {
-
-        if (NetworkUtility.isNetworkAvailable(mContext)) {
-            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
-            SharedPreferences preferences = utility.getSharedPreferences();
-
-            Call<RootUserPreference> userPreferenceCall = apiHelper.getUserPreferences(utility.getAuthToken(mContext));
-
-            userPreferenceCall.enqueue(new Callback<RootUserPreference>() {
-                @Override
-                public void onResponse(Call<RootUserPreference> call, Response<RootUserPreference> response) {
-                    if (response.isSuccessful() && null != response.body())
-                        navPrefPresenter.response(SnapXResult.SUCCESS, response.body());
-                }
-
-                @Override
-                public void onFailure(Call<RootUserPreference> call, Throwable t) {
-                    navPrefPresenter.response(SnapXResult.ERROR, null);
-                }
-            });
-        } else {
-            navPrefPresenter.response(SnapXResult.NONETWORK, null);
-        }
-    }
-
     void saveUserData() {
         SnapxDataDao snapxDataDao = dbHelper.getSnapxDataDao();
         if (snapxDataDao.loadAll().size() > 0) {

@@ -106,7 +106,7 @@ public class WishlistDbHelper {
         for (int index = 0; index < userWishList.size(); index++) {
             wishlistItem.setRestaurant_dish_id(userWishList.get(index).getRestaurant_dish_id());
             wishlistItem.setIsDeleted(false);
-            dbHelper.getFoodWishlistsDao().insert(wishlistItem);
+            dbHelper.getFoodWishlistsDao().insertOrReplace(wishlistItem);
         }
     }
 }

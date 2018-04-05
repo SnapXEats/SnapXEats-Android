@@ -14,6 +14,8 @@ import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
+import com.snapxeats.common.model.preference.SnapXPreference;
+import com.snapxeats.common.model.preference.UserPreferences;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
@@ -55,6 +57,9 @@ public class LoginInteractor {
     WishlistDbHelper wishlistDbHelper;
 
     @Inject
+    LoginDbHelper loginDbHelper;
+
+    @Inject
     public LoginInteractor() {
     }
 
@@ -66,6 +71,7 @@ public class LoginInteractor {
         this.mContext = view.getActivity();
         appUtility.setContext(view.getActivity());
         dbHelper.setContext(mContext);
+        loginDbHelper.setContext(mContext);
         wishlistDbHelper.setContext(mContext);
         snapxDataDao = dbHelper.getSnapxDataDao();
         snapxData = new SnapxData();
@@ -118,11 +124,13 @@ public class LoginInteractor {
                         if (snapXUser.getUserInfo().getSocial_platform().
                                 equalsIgnoreCase(mContext.getString(R.string.platform_instagram))) {
                             saveInstaDataInDb(snapXUser.getUserInfo(), token, rootInstagram);
+                            getUserPreferences(snapXUser.getUserInfo().getToken());
                         }
                         /** save facebook data **/
                         if (snapXUser.getUserInfo().getSocial_platform().
                                 equalsIgnoreCase(mContext.getString(R.string.platform_facebook))) {
                             saveFbDataInDb(snapXUser.getUserInfo());
+                            getUserPreferences(snapXUser.getUserInfo().getToken());
                         }
                         mLoginPresenter.response(SnapXResult.SUCCESS, snapXUser);
                     }
@@ -138,10 +146,43 @@ public class LoginInteractor {
         }
     }
 
+    /**
+     * TODO- Relogin user
+     * GET- Get user preferences
+     */
+    public void getUserPreferences(String token) {
+
+        if (NetworkUtility.isNetworkAvailable(mContext)) {
+            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            Call<SnapXPreference> userPreferenceCall = apiHelper.getUserPreferences("Bearer "+token);
+
+            userPreferenceCall.enqueue(new Callback<SnapXPreference>() {
+                @Override
+                public void onResponse(Call<SnapXPreference> call, Response<SnapXPreference> response) {
+                    if (response.isSuccessful() && null != response.body())
+//                        mLoginPresenter.response(SnapXResult.SUCCESS, response.body());
+                        savePreferenceDataInDb(response.body().getUserPreferences());
+                }
+
+                @Override
+                public void onFailure(Call<SnapXPreference> call, Throwable t) {
+                    mLoginPresenter.response(SnapXResult.ERROR, null);
+                }
+            });
+        } else {
+            mLoginPresenter.response(SnapXResult.NONETWORK, null);
+        }
+    }
+
+    private void savePreferenceDataInDb(UserPreferences rootUserPreference) {
+        loginDbHelper.saveUserPrefDataInDb(rootUserPreference);
+    }
+
     //save data to db
     private void saveInstaDataInDb(SnapXUser snapXUser, String token, RootInstagram rootInstagram) {
         //User data from server
         saveServerDataInDb(snapXUser);
+        saveWishlistDataInDb(snapXUser);
         snapxData.setSocialToken(token);
         snapxData.setSocialUserId(rootInstagram.getData().getId());
         snapxData.setUserName(rootInstagram.getData().getFull_name());
