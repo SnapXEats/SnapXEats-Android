@@ -7,12 +7,12 @@ import com.snapxeats.common.model.foodGestures.RootWishlist;
 import com.snapxeats.common.model.googleDirections.GeocodedWaypoints;
 import com.snapxeats.common.model.location.PlaceDetail;
 import com.snapxeats.common.model.location.PlacesAutoCompleteData;
+import com.snapxeats.common.model.preference.SnapXPreference;
 import com.snapxeats.common.model.preference.RootCuisine;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.common.model.preference.RootFoodPref;
 import com.snapxeats.common.model.login.RootInstagram;
-import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.model.preference.UserPreference;
@@ -178,7 +178,7 @@ public interface ApiHelper {
      * @return
      */
     @GET(WebConstants.USER_PREF)
-    Call<RootUserPreference> getUserPreferences(@Header("Authorization") String token);
+    Call<SnapXPreference> getUserPreferences(@Header("Authorization") String token);
 
     /**
      * Get user's wishlist
