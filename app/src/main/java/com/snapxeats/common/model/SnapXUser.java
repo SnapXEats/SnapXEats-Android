@@ -3,8 +3,14 @@ package com.snapxeats.common.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.snapxeats.common.model.foodGestures.FoodWishlists;
+import com.snapxeats.common.model.foodGestures.UserWishlist;
+import com.snapxeats.common.model.foodGestures.Wishlist;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
+
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,12 +27,15 @@ public class SnapXUser implements Parcelable{
     private String user_id;
     private String social_platform;
     private boolean first_time_login;
+    private List<UserWishlist> userWishList;
+    private String userRewardPoint;
 
     protected SnapXUser(Parcel in) {
         token = in.readString();
         user_id = in.readString();
         social_platform = in.readString();
         first_time_login = in.readByte() != 0;
+        userRewardPoint = in.readString();
     }
 
     public static final Creator<SnapXUser> CREATOR = new Creator<SnapXUser>() {
@@ -52,5 +61,6 @@ public class SnapXUser implements Parcelable{
         dest.writeString(user_id);
         dest.writeString(social_platform);
         dest.writeByte((byte) (first_time_login ? 1 : 0));
+        dest.writeString(userRewardPoint);
     }
 }

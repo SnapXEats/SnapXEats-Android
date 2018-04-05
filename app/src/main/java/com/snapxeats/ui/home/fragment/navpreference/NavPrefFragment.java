@@ -101,7 +101,9 @@ public class NavPrefFragment extends BaseFragment implements
     private SharedPreferences preferences;
     private int userRating;
     private int pricing;
-    private int distance;
+
+    //Default distance
+    private int distance = DISTANCE_ONE;
     private boolean isSortByDistance;
     private boolean isSortByRating;
 

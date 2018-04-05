@@ -21,6 +21,7 @@ import com.pkmmte.view.CircularImageView;
 
 import com.snapxeats.LocationBaseActivity;
 import com.snapxeats.R;
+import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.SnapXToast;
@@ -46,6 +47,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.snapxeats.common.Router.Screen.LOGIN;
 import static com.snapxeats.ui.home.HomeActivity.PreferenceConstant.DEVICE_LOCATION;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isDirty;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isCuisineDirty;
@@ -297,6 +299,7 @@ public class HomeActivity extends LocationBaseActivity implements
 
         builder.setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> {
             //Clear local db
+            showProgressDialog();
             mPresenter.sendUserGestures(wishlistDbHelper.getFoodGestures());
         });
 
@@ -325,6 +328,11 @@ public class HomeActivity extends LocationBaseActivity implements
             editor.putBoolean(getString(R.string.isFirstTimeUser), false);
             editor.apply();
             transaction.commit();
+        } else if (value instanceof Boolean) {
+            if ((boolean) value) {
+                mPresenter.presentScreen(LOGIN);
+            }
+            dbHelper.getDaoSesion();
         }
     }
 
@@ -337,6 +345,7 @@ public class HomeActivity extends LocationBaseActivity implements
     public void noNetwork(Object value) {
         dismissProgressDialog();
         showNetworkErrorDialog((dialog, which) -> {
+
             if (!NetworkUtility.isNetworkAvailable(getActivity())) {
                 AppContract.DialogListenerAction click = () -> {
                     showProgressDialog();
