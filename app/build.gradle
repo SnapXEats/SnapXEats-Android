@@ -86,9 +86,9 @@ dependencies {
     implementation 'com.squareup:android-times-square:1.6.5@aar'
 
     //Google API's
-    implementation 'com.google.android.gms:play-services-maps:10.2.0'
-    implementation 'com.google.android.gms:play-services-places:10.2.0'
-    implementation 'com.google.android.gms:play-services-location:10.2.0'
+    implementation 'com.google.android.gms:play-services-maps:12.0.1'
+    implementation 'com.google.android.gms:play-services-places:12.0.1'
+    implementation 'com.google.android.gms:play-services-location:12.0.1'
 
     //facebook sdk
     implementation 'com.facebook.android:facebook-android-sdk:4.29.0'

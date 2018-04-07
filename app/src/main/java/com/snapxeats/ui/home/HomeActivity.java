@@ -16,17 +16,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.pkmmte.view.CircularImageView;
-
-import com.snapxeats.LocationBaseActivity;
+import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.constants.SnapXToast;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.SnapxData;
-import com.snapxeats.common.model.foodGestures.FoodWishlists;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.utilities.AppUtility;
@@ -38,17 +32,11 @@ import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.squareup.picasso.Picasso;
-
-
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import static com.snapxeats.common.Router.Screen.LOGIN;
-import static com.snapxeats.ui.home.HomeActivity.PreferenceConstant.DEVICE_LOCATION;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isDirty;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isCuisineDirty;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isFoodDirty;
@@ -57,7 +45,7 @@ import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isFoo
  * Created by Snehal Tembare on 3/1/18.
  */
 
-public class HomeActivity extends LocationBaseActivity implements
+public class HomeActivity extends BaseActivity implements
         NavigationView.OnNavigationItemSelectedListener, HomeContract.HomeView,
         AppContract.SnapXResults {
 
@@ -332,7 +320,6 @@ public class HomeActivity extends LocationBaseActivity implements
             if ((boolean) value) {
                 mPresenter.presentScreen(LOGIN);
             }
-            dbHelper.getDaoSesion();
         }
     }
 

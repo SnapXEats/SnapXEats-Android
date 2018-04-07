@@ -7,9 +7,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,8 +33,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.facebook.AccessToken;
 import com.google.gson.Gson;
 import com.snapxeats.BaseActivity;
@@ -52,17 +54,13 @@ import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.cuisinepreference.OnDoubleTapListenr;
 import com.snapxeats.ui.foodstack.FoodStackActivity;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import static com.snapxeats.common.Router.Screen.LOCATION;
 import static com.snapxeats.ui.home.HomeActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
 import static com.snapxeats.ui.home.HomeActivity.PreferenceConstant.DEVICE_LOCATION;
@@ -78,6 +76,9 @@ public class HomeFragment extends BaseFragment implements
     @BindView(R.id.txt_place_name)
     protected TextView mTxtPlaceName;
 
+    @BindView(R.id.layout_parent)
+    protected LinearLayout mParentLayout;
+
     @Inject
     HomeFgmtContract.HomeFgmtPresenter presenter;
 
@@ -91,7 +92,7 @@ public class HomeFragment extends BaseFragment implements
     private Location mCurrentLocation;
 
     //Selected Location
-    public static com.snapxeats.common.model.location.Location mSelectedLocation;
+    public com.snapxeats.common.model.location.Location mSelectedLocation;
 
     private String mPlacename;
 
@@ -111,6 +112,7 @@ public class HomeFragment extends BaseFragment implements
     private List<String> selectedList;
     private HomeAdapter adapter;
     private LocationCuisine mLocationCuisine;
+    private LocationManager locationManager;
 
     @Inject
     public HomeFragment() {
@@ -121,6 +123,22 @@ public class HomeFragment extends BaseFragment implements
 
     @Inject
     HomeFgmtHelper homeFgmtHelper;
+    MyReceiver receiver;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        receiver = new MyReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("GET_DATA");
+        getActivity().registerReceiver(receiver, intentFilter);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unregisterReceiver(receiver);
+    }
 
     @Override
     public void initView() {
@@ -131,13 +149,10 @@ public class HomeFragment extends BaseFragment implements
         mTxtPlaceName.setSingleLine();
         cuisinesList = new ArrayList<>();
         selectedList = new ArrayList<>();
-        buildGoogleAPIClient();
-
-        if (checkPermissions()) {
-            mSelectedLocation = getSelectedLocation();
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        if (null == mSelectedLocation) {
+            mSelectedLocation = detectCurrentLocation();
         }
-
-
     }
 
     @Override
@@ -159,7 +174,6 @@ public class HomeFragment extends BaseFragment implements
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initView();
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         mRecyclerView.setNestedScrollingEnabled(false);
 
@@ -189,6 +203,7 @@ public class HomeFragment extends BaseFragment implements
         Gson gson = new Gson();
         String json = preferences.getString(getString(R.string.selected_location), "");
         mSelectedLocation = gson.fromJson(json, com.snapxeats.common.model.location.Location.class);
+        initView();
 
         //Modifying done button color
         ViewTreeObserver treeObserver = mRecyclerView.getViewTreeObserver();
@@ -219,7 +234,6 @@ public class HomeFragment extends BaseFragment implements
         if (NetworkUtility.isNetworkAvailable(activity)) {
             presenter.presentScreen(LOCATION);
         } else {
-
             showNetworkErrorDialog((dialog, which) -> {
             });
         }
@@ -237,21 +251,18 @@ public class HomeFragment extends BaseFragment implements
     public void onResume() {
         super.onResume();
         selectedList.clear();
+
         if (NetworkUtility.isNetworkAvailable(activity)) {
-
-            if (mSelectedLocation != null) {
-                //set latitude and longitude for selected cuisines
-                mLocationCuisine = new LocationCuisine();
-                mLocationCuisine.setLatitude(mSelectedLocation.getLat());
-                mLocationCuisine.setLongitude(mSelectedLocation.getLng());
-
-                //Save data in shared preferences
-                utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
-
-                mTxtPlaceName.setText(mSelectedLocation.getName());
-                showProgressDialog();
-                presenter.getCuisineList(mLocationCuisine);
-            }
+            setLocation();
+        } else {
+            showNetworkErrorDialog((dialog, which) -> {
+                if (!NetworkUtility.isNetworkAvailable(activity)) {
+                    AppContract.DialogListenerAction click = () -> {
+                        mSelectedLocation = detectCurrentLocation();
+                    };
+                    showSnackBar(mParentLayout, setClickListener(click));
+                }
+            });
         }
     }
 
@@ -282,7 +293,6 @@ public class HomeFragment extends BaseFragment implements
     @Override
     public void success(Object value) {
         dismissProgressDialog();
-
         if (value instanceof RootCuisine) {
             mRootCuisine = (RootCuisine) value;
             cuisinesList = mRootCuisine.getCuisineList();
@@ -290,7 +300,6 @@ public class HomeFragment extends BaseFragment implements
             setRecyclerView();
         } else if (value instanceof SnapXUser) {
             SnapXUser snapXUser = (SnapXUser) value;
-
             SharedPreferences preferences = utility.getSharedPreferences();
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(getString(R.string.user_id), snapXUser.getUser_id());
@@ -342,7 +351,6 @@ public class HomeFragment extends BaseFragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
         activity = (Activity) context;
     }
 
@@ -356,7 +364,7 @@ public class HomeFragment extends BaseFragment implements
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case DEVICE_LOCATION:
-                checkLocalPermissions();
+                mSelectedLocation = detectCurrentLocation();
                 break;
         }
     }
@@ -377,19 +385,15 @@ public class HomeFragment extends BaseFragment implements
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
         for (int index = 0; index < permissions.length; index++) {
-
             if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
-
-                if (checkPermissions()) {
-                    mSelectedLocation = getSelectedLocation();
+                if (utility.checkPermissions()) {
+                    mSelectedLocation = detectCurrentLocation();
                 }
-
             } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
                 snapXDialog.showChangePermissionDialog();
             } else {
                 presenter.presentScreen(LOCATION);
             }
-
         }
     }
 
@@ -398,32 +402,6 @@ public class HomeFragment extends BaseFragment implements
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION}, ACCESS_FINE_LOCATION);
-        }
-    }
-
-    private void checkLocalPermissions() {
-        //Check device level location permission
-        if (LocationHelper.isGpsEnabled(activity)) {
-            if (LocationHelper.checkPermission(activity)) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    requestPermission();
-                }
-            } else if (NetworkUtility.isNetworkAvailable(activity)) {
-                mCurrentLocation = getLocation();
-                if (mCurrentLocation != null) {
-
-                    mPlacename = getPlaceName(mCurrentLocation);
-                    mSelectedLocation =
-                            new com.snapxeats.common.model.location.Location(mCurrentLocation.getLatitude(),
-                                    mCurrentLocation.getLongitude(),
-                                    mPlacename);
-                }
-            } else {
-                showNetworkErrorDialog((dialog, which) -> {
-                });
-            }
-        } else {
-            checkGpsPermission();
         }
     }
 
@@ -436,7 +414,6 @@ public class HomeFragment extends BaseFragment implements
     public void noNetwork(Object value) {
         dismissProgressDialog();
         showNetworkErrorDialog((dialog, which) -> {
-
         });
     }
 
@@ -444,7 +421,6 @@ public class HomeFragment extends BaseFragment implements
     public void networkError(Object value) {
         dismissProgressDialog();
         showNetworkErrorDialog((dialog, which) -> {
-
         });
     }
 
@@ -453,39 +429,54 @@ public class HomeFragment extends BaseFragment implements
         return null;
     }
 
-    private com.snapxeats.common.model.location.Location getSelectedLocation() {
-
-        mCurrentLocation = getLocation();
-        if (mCurrentLocation != null) {
-
-            mPlacename = getPlaceName(mCurrentLocation);
-            mSelectedLocation = new com.snapxeats.common.model.location.Location(
-                    mCurrentLocation.getLatitude(),
-                    mCurrentLocation.getLongitude(),
-                    mPlacename);
-        }
-        return mSelectedLocation;
-    }
-
-    public boolean checkPermissions() {
-
-        //Check device level location permission
+    private com.snapxeats.common.model.location.Location detectCurrentLocation() {
         if (LocationHelper.isGpsEnabled(activity)) {
             if (LocationHelper.checkPermission(activity)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     requestPermission();
                 }
             } else if (NetworkUtility.isNetworkAvailable(activity)) {
-                return true;
+                showProgressDialog();
+                mCurrentLocation = utility.getLocation();
+                if (mCurrentLocation != null) {
+                    dismissProgressDialog();
+                    mPlacename = utility.getPlaceName(mCurrentLocation);
+                    mSelectedLocation = new com.snapxeats.common.model.location.Location(
+                            mCurrentLocation.getLatitude(),
+                            mCurrentLocation.getLongitude(),
+                            mPlacename);
+                    setLocation();
+                }
             } else {
                 showNetworkErrorDialog((dialog, which) -> {
+                    if (!NetworkUtility.isNetworkAvailable(activity)) {
+                        AppContract.DialogListenerAction click = () -> {
+                            mSelectedLocation = detectCurrentLocation();
+                        };
+                        showSnackBar(mParentLayout, setClickListener(click));
+                    }
                 });
-                return false;
             }
         } else {
             checkGpsPermission();
         }
-        return false;
+        return mSelectedLocation;
+    }
+
+    private void setLocation() {
+        if (mSelectedLocation != null) {
+            //set latitude and longitude for selected cuisines
+            mLocationCuisine = new LocationCuisine();
+            mLocationCuisine.setLatitude(mSelectedLocation.getLat());
+            mLocationCuisine.setLongitude(mSelectedLocation.getLng());
+
+            //Save data in shared preferences
+            utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
+
+            mTxtPlaceName.setText(mSelectedLocation.getName());
+            showProgressDialog();
+            presenter.getCuisineList(mLocationCuisine);
+        }
     }
 
     /**
@@ -507,7 +498,7 @@ public class HomeFragment extends BaseFragment implements
         builder.setPositiveButton(getActivity().getString(R.string.action_settings), (dialogInterface, i) -> {
             getActivity().startActivityFromFragment(this,
                     new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),
-                    ACCESS_FINE_LOCATION);
+                    DEVICE_LOCATION);
         });
 
         builder.setNegativeButton(getActivity().getString(R.string.cancel), (dialog, which) -> {
@@ -537,12 +528,15 @@ public class HomeFragment extends BaseFragment implements
         }
     }
 
-    public static class MyReceiver extends BroadcastReceiver {
+    public class MyReceiver extends BroadcastReceiver {
+
+        public MyReceiver() {
+        }
 
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent != null) {
-                mSelectedLocation = intent.getParcelableExtra(context.getString(R.string.selected_location));
+                HomeFragment.this.mSelectedLocation = intent.getParcelableExtra(context.getString(R.string.selected_location));
             }
         }
     }

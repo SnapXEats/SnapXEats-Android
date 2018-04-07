@@ -179,7 +179,15 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
             isMultipleDeleted = true;
             mSwipeMenuList.setSwipeDirection(0);
         } else if ((mTxtWishlistEdit.getText()).equals(DELETE)) {
-            showWishlistDialog();
+            boolean isItemDeleted = false;
+            for (Wishlist wishlist : mWishlist) {
+                if (wishlist.isDeleted()) {
+                    isItemDeleted = true;
+                }
+            }
+            if (isItemDeleted) {
+                showWishlistDialog();
+            }
         }
     }
 
@@ -195,6 +203,7 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
                 if (mWishlist.get(index).isDeleted()) {
                     wishlistDbHelper.setWishlistItemStatus(mWishlist.get(index).getRestaurant_dish_id());
                     mAdapter.wishlist.remove(index);
+                    index--;
                     mAdapter.notifyDataSetChanged();
                 }
             }
@@ -202,6 +211,7 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
         });
 
         builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
+            //TODO-Comment following code to save delete items state on cancel action
             for (int index = 0; index < mWishlist.size(); index++) {
                 if (mWishlist.get(index).isDeleted()) {
                     mWishlist.get(index).setDeleted(false);
