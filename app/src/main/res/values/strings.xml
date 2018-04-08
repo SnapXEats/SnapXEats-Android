@@ -139,5 +139,10 @@
     <string name="yyyy_MM_dd">yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'</string>
     <string name="dd_MMM_yyyy">dd MMM yyyy</string>
     <string name="log_out">LogOut</string>
+    <string name="chek_in">Check In</string>
+    <string name="food_journey">Food Journey</string>
+    <string name="rewards">Rewards</string>
+    <string name="smart_photos">Smart Photos</string>
+    <string name="snap_share">Snap-N-Share</string>
 
 </resources>

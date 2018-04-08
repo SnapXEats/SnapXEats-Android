@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
@@ -27,15 +28,24 @@ import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.foodstack.FoodStackDbHelper;
+import com.snapxeats.ui.home.fragment.checkin.CheckInFragment;
+import com.snapxeats.ui.home.fragment.foodjourney.FoodJourneyFragment;
 import com.snapxeats.ui.home.fragment.home.HomeFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
+import com.snapxeats.ui.home.fragment.rewards.RewardsFragment;
+import com.snapxeats.ui.home.fragment.smartphotos.SmartPhotoFragment;
+import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.squareup.picasso.Picasso;
+
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 import static com.snapxeats.common.Router.Screen.LOGIN;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isDirty;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isCuisineDirty;
@@ -62,6 +72,21 @@ public class HomeActivity extends BaseActivity implements
 
     @Inject
     WishlistFragment wishlistFragment;
+
+    @Inject
+    CheckInFragment checkInFragment;
+
+    @Inject
+    FoodJourneyFragment foodJourneyFragment;
+
+    @Inject
+    SmartPhotoFragment smartPhotoFragment;
+
+    @Inject
+    SnapShareFragment snapShareFragment;
+
+    @Inject
+    RewardsFragment rewardsFragment;
 
     @BindView(R.id.drawer_layout)
     protected DrawerLayout mDrawerLayout;
@@ -237,8 +262,18 @@ public class HomeActivity extends BaseActivity implements
                     selectedFragment = navPrefFragment;
                     break;
                 case R.id.nav_food_journey:
+                    selectedFragment = foodJourneyFragment;
                     break;
+
+                case R.id.nav_smart_photos:
+                    selectedFragment = smartPhotoFragment;
+                    break;
+                case R.id.nav_snap:
+                    selectedFragment = snapShareFragment;
+                    break;
+
                 case R.id.nav_rewards:
+                    selectedFragment = rewardsFragment;
                     break;
                 case R.id.nav_logout:
                     showLogoutDialog();
