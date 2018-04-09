@@ -10,7 +10,7 @@
         android:id="@+id/toolbar_directions"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:paddingRight="@dimen/common_dimens_5"
+        android:paddingEnd="@dimen/common_dimens_5"
         app:theme="@style/ToolBarTheme"
         android:elevation="@dimen/dimens_4">
 
@@ -22,6 +22,7 @@
             android:textColor="@color/colorBlack"
             android:textSize="@dimen/txt_size_16"
             android:textStyle="bold" />
+
         <ImageView
             android:id="@+id/img_dir_share"
             android:layout_width="wrap_content"
@@ -29,5 +30,6 @@
             android:layout_gravity="end"
             android:layout_marginEnd="@dimen/common_dimens_20"
             android:src="@drawable/ic_dir_share" />
+
     </android.support.v7.widget.Toolbar>
 </LinearLayout>

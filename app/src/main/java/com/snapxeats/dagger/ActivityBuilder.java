@@ -1,3 +1,4 @@
+/*
 package com.snapxeats.dagger;
 
 import com.snapxeats.ui.cuisinepreference.CuisinePrefActivity;
@@ -25,9 +26,11 @@ import com.snapxeats.ui.splash.SplashModule;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 
+*/
 /**
  * Created by Prajakta Patil on 28/12/17.
- */
+ *//*
+
 
 @Module
 public abstract class ActivityBuilder {
@@ -66,4 +69,4 @@ public abstract class ActivityBuilder {
 
     @ContributesAndroidInjector(modules = MapsModule.class)
     abstract MapsActivity bindMapsActivity();
-}
+}*/
