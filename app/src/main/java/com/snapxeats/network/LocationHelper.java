@@ -4,13 +4,9 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
-
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.snapxeats.ui.home.HomeActivity;
-
 import static android.content.Context.LOCATION_SERVICE;
 
 /**
@@ -18,9 +14,7 @@ import static android.content.Context.LOCATION_SERVICE;
  */
 public class LocationHelper {
     private static LocationManager mLocationManager;
-     private Context mContext;
-     private static Location mLastLocation;
-    private GoogleApiClient mGoogleApiClient;
+    private Context mContext;
 
     public LocationHelper(Context mContext) {
         this.mContext = mContext;

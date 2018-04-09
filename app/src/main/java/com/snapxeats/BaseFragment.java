@@ -1,15 +1,16 @@
 package com.snapxeats;
 
 import android.content.DialogInterface;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.snapxeats.common.Router;
+import com.snapxeats.common.utilities.SnapXDialog;
+import com.snapxeats.dagger.AppContract;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -27,7 +28,6 @@ import com.snapxeats.dagger.AppContract;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-
 import javax.inject.Inject;
 
 import dagger.android.DaggerFragment;
@@ -36,13 +36,9 @@ import dagger.android.DaggerFragment;
  * Created by Snehal Tembare on 16/2/18.
  */
 
-public class BaseFragment extends DaggerFragment implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class BaseFragment extends DaggerFragment {
 
     private static final String TAG = "BaseFragment";
-    private GoogleApiClient mGoogleApiClient;
-    private Location mLastLocation;
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
 
     @Inject
     Router router;
@@ -88,103 +84,4 @@ public class BaseFragment extends DaggerFragment implements
         return v -> button.action();
     }
 
-    public void buildGoogleAPIClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(mLocationRequest);
-
-        PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
-
-        result.setResultCallback(locationSettingsResult -> {
-
-            final Status status = locationSettingsResult.getStatus();
-
-            switch (status.getStatusCode()) {
-                case LocationSettingsStatusCodes.SUCCESS:
-                    // All location settings are satisfied. The client can initialize location requests here
-                    getLocation();
-                    break;
-                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-
-                    break;
-                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                    break;
-            }
-        });
-
-    }
-
-    /**
-     * Method to display the location on UI
-     */
-
-    public Location getLocation() {
-        try {
-            mLastLocation = LocationServices.FusedLocationApi
-                    .getLastLocation(mGoogleApiClient);
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        }
-        return mLastLocation != null ? mLastLocation : null;
-    }
-
-    public String getPlaceName(Location location) {
-        String placeName = "";
-        Address locationAddress = getAddress(location.getLatitude(), location.getLongitude());
-//        Address locationAddress = getAddress(location.getLatitude(), location.getLongitude());
-
-        if (locationAddress != null) {
-
-            if (locationAddress.getSubLocality() != null) {
-                placeName = locationAddress.getSubLocality();
-            } else if (locationAddress.getThoroughfare() != null) {
-                placeName = locationAddress.getThoroughfare();
-            }
-        }
-        return placeName;
-
-    }
-
-
-    public Address getAddress(double latitude, double longitude) {
-        Geocoder geocoder;
-        List<Address> addresses;
-        geocoder = new Geocoder(getActivity(), Locale.getDefault());
-        try {
-            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-
-            return addresses.get(0);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
 }

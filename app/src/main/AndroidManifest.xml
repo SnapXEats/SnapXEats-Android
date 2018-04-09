@@ -53,15 +53,6 @@
         <activity android:name=".ui.foodpreference.FoodPreferenceActivity" />
         <activity android:name=".ui.cuisinepreference.CuisinePrefActivity" />
         <activity android:name=".ui.directions.DirectionsActivity" />
-
-        <receiver
-            android:name=".ui.home.fragment.home.HomeFragment$MyReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="GET_DATA" />
-            </intent-filter>
-        </receiver>
-
         <activity android:name=".ui.maps.MapsActivity"/>
     </application>
 

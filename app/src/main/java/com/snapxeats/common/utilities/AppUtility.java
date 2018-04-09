@@ -1,32 +1,25 @@
 package com.snapxeats.common.utilities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.LocationManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.gson.Gson;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
 import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.location.Location;
-
+import com.snapxeats.network.LocationHelper;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -35,24 +28,25 @@ import javax.inject.Singleton;
  */
 
 @Singleton
-public class AppUtility implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class AppUtility {
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
     private Context mContext;
     private DaoSession daoSession;
     private SnapxDataDao snapxDataDao;
     private SnapxData snapxData;
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
-
-    private GoogleApiClient mGoogleApiClient;
-    private android.location.Location mLastLocation;
+    private ProgressDialog mDialog;
 
     @Inject
     public AppUtility() {
     }
 
+    @Inject
+    SnapXDialog snapXDialog;
+
     public void setContext(Context context) {
         this.mContext = context;
+        snapXDialog.setContext((Activity) context);
         daoSession = ((SnapXApplication) context.getApplicationContext()).getDaoSession();
         snapxDataDao = daoSession.getSnapxDataDao();
         if (snapxDataDao.loadAll() != null && snapxDataDao.loadAll().size() > 0) {
@@ -109,74 +103,124 @@ public class AppUtility implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     }
 
     public void hideKeyboard() {
-              View view = ((Activity) mContext).getCurrentFocus();
+        View view = ((Activity) mContext).getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
-    public void buildGoogleAPIClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
 
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    /**
+     * Show Progress dialog
+     */
+    public void createProgressDialog() {
+        mDialog = new ProgressDialog(mContext);
+        mDialog.setMessage(mContext.getString(R.string.please_wait));
+        mDialog.setCanceledOnTouchOutside(false);
+        mDialog.show();
+    }
 
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(mLocationRequest);
+    /**
+     * Dismiss Progress dialog
+     */
+    public void dismissProgressSialog() {
+        if (mDialog != null) {
+            mDialog.dismiss();
+        }
+    }
 
-        PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
-
-        result.setResultCallback(locationSettingsResult -> {
-
-            final Status status = locationSettingsResult.getStatus();
-
-            switch (status.getStatusCode()) {
-                case LocationSettingsStatusCodes.SUCCESS:
-                    // All location settings are satisfied. The client can initialize location requests here
-                    getLocation();
-                    break;
-                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-
-                    break;
-                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                    break;
+    public boolean checkPermissions() {
+        //Check device level location permission
+        if (LocationHelper.isGpsEnabled(mContext)) {
+            if (LocationHelper.checkPermission(mContext)) {
+                LocationHelper.requestPermission((Activity) mContext);
+            } else if (NetworkUtility.isNetworkAvailable(mContext)) {
+                return true;
+            } else {
+                snapXDialog.showNetworkErrorDialog((dialog, which) -> {
+                });
+                return false;
             }
-        });
+        } else {
+            checkGpsPermission();
+        }
+        return false;
+    }
 
+    /**
+     * Show Enable Gps Permission dialog
+     */
+    public void checkGpsPermission() {
+        if (!LocationHelper.isGpsEnabled(mContext)) {
+            snapXDialog.showGpsPermissionDialog();
+        }
     }
 
     public android.location.Location getLocation() {
+        android.location.Location mCurrentLocation = null;
+        LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+
+        LocationHelper.checkPermission(mContext);
+
+        // Getting network status
+        boolean isNetworkEnabled = locationManager
+                .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        // Getting passive status
+        boolean isPassiveEnabled = locationManager
+                .isProviderEnabled(LocationManager.PASSIVE_PROVIDER);
+
+        // Getting GPS status
+        boolean isGPSEnabled = locationManager
+                .isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+
+        if (locationManager != null) {
+            if (isNetworkEnabled) {
+                mCurrentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            } else if (isPassiveEnabled) {
+                mCurrentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            } else if (isGPSEnabled) {
+                mCurrentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            }
+
+            if (mCurrentLocation != null) {
+                double lat = mCurrentLocation.getLatitude();
+                double lng = mCurrentLocation.getLongitude();
+            }
+
+        }
+        return mCurrentLocation;
+    }
+
+    public String getPlaceName(android.location.Location location) {
+        String placeName = "";
+        Address locationAddress = getAddress(location.getLatitude(), location.getLongitude());
+
+        if (locationAddress != null) {
+
+            if (locationAddress.getSubLocality() != null) {
+                placeName = locationAddress.getSubLocality();
+            } else if (locationAddress.getThoroughfare() != null) {
+                placeName = locationAddress.getThoroughfare();
+            }
+        }
+        return placeName;
+    }
+
+    private Address getAddress(double latitude, double longitude) {
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(mContext, Locale.getDefault());
         try {
-            mLastLocation = LocationServices.FusedLocationApi
-                    .getLastLocation(mGoogleApiClient);
-        } catch (SecurityException e) {
+            // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            return addresses.get(0);
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return mLastLocation != null ? mLastLocation : null;
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        getLocation();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        SnapXToast.error("Connection failed: ConnectionResult.getErrorCode() = "
-                + connectionResult.getErrorCode());
+        return null;
     }
 }
