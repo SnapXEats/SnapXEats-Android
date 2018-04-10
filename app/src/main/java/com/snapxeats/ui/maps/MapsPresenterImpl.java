@@ -19,8 +19,7 @@ public class MapsPresenterImpl implements MapsContract.MapsPresenter {
     @Nullable
     private MapsContract.MapsView mMapsView;
 
-    public MapsPresenterImpl(MapsInteractor mapsInteractor,
-                                   MapsRouterImpl mapsRouter) {
+    public MapsPresenterImpl(MapsInteractor mapsInteractor, MapsRouterImpl mapsRouter) {
         this.mMapsInteractor = mapsInteractor;
         this.mMapsRouter = mapsRouter;
     }
@@ -40,6 +39,11 @@ public class MapsPresenterImpl implements MapsContract.MapsPresenter {
     @Override
     public void presentScreen(Router.Screen screen) {
         mMapsRouter.presentScreen(screen);
+    }
+
+    @Override
+    public void getUserPreferences() {
+        mMapsInteractor.getUserPreferences();
     }
 
     @Override

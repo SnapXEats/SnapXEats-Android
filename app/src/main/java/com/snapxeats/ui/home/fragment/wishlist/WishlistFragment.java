@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
@@ -37,12 +38,16 @@ import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.foodstack.FoodStackDbHelper;
 import com.snapxeats.ui.home.HomeDbHelper;
 import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static com.baoyz.swipemenulistview.SwipeMenuListView.DIRECTION_LEFT;
 
 /**
@@ -207,7 +212,9 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
                     mAdapter.notifyDataSetChanged();
                 }
             }
-            setInitWishlistView();
+            if (null != getActivity() && isAdded()) {
+                setInitWishlistView();
+            }
         });
 
         builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
@@ -218,8 +225,9 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
                 }
                 mAdapter.notifyDataSetChanged();
             }
-
-            setInitWishlistView();
+            if (null != getActivity() && isAdded()) {
+                setInitWishlistView();
+            }
             dialog.cancel();
         });
 
@@ -249,7 +257,9 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
 
         mToolbar.setNavigationOnClickListener(v -> {
             if ((mTxtWishlistEdit.getText()).equals("Delete")) {
-                setInitWishlistView();
+                if (null != getActivity() && isAdded()) {
+                    setInitWishlistView();
+                }
                 mSwipeMenuList.setSwipeDirection(DIRECTION_LEFT);
                 for (int index = 0; index < mWishlist.size(); index++) {
                     if (mWishlist.get(index).isDeleted()) {
@@ -281,7 +291,9 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
     @Override
     public void success(Object value) {
         dismissProgressDialog();
-        setInitWishlistView();
+        if (null != getActivity() && isAdded()) {
+            setInitWishlistView();
+        }
 
         if (value instanceof RootWishlist) {
             mWishlist = ((RootWishlist) value).getUser_wishlist();

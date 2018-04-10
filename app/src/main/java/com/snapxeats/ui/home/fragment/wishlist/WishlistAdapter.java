@@ -51,8 +51,7 @@ public class WishlistAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (null == convertView) {
-            convertView = View.inflate(mContext,
-                    R.layout.item_wishlist, null);
+            convertView = View.inflate(mContext, R.layout.item_wishlist, null);
             new ViewHolder(convertView);
         }
         ViewHolder holder = (ViewHolder) convertView.getTag();

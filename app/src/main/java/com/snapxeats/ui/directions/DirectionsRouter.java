@@ -15,8 +15,8 @@ public class DirectionsRouter {
     private Activity mActivity;
     private Router mRouter;
 
-    public DirectionsRouter(Router mRouter){
-        this.mRouter=mRouter;
+    public DirectionsRouter(Router mRouter) {
+        this.mRouter = mRouter;
     }
 
     public void presentScreen(Router.Screen screen) {

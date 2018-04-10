@@ -30,6 +30,7 @@ import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.directions.DirectionsActivity;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -47,8 +48,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.snapxeats.common.Router.Screen.DIRECTIONS;
-
 /**
  * Created by Prajakta Patil on 05/02/18.
  */
@@ -62,8 +61,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     private List<RestaurantPics> mRestaurantPicsList;
 
     private List<RestaurantSpeciality> mRestaurantSpecialties;
-
-    private RestImagesAdapter mRestPicsAdapter;
 
     @Inject
     RestaurantDetailsContract.RestaurantDetailsPresenter mRestaurantPresenter;
@@ -212,7 +209,12 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     @OnClick(R.id.img_rest_directions)
     public void imgRestDirections() {
-        mRestaurantPresenter.presentScreen(DIRECTIONS);
+        if (null != mRootRestaurantDetails && mRootGoogleDir != null) {
+            Intent intent = new Intent(RestaurantDetailsActivity.this, DirectionsActivity.class);
+            intent.putExtra(getString(R.string.intent_rest_details), mRootRestaurantDetails);
+            intent.putExtra(getString(R.string.intent_google_dir), mRootGoogleDir);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -243,13 +245,13 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     @Override
     public void success(Object value) {
-        dismissProgressDialog();
         if (value instanceof RootRestaurantDetails) {
             mRootRestaurantDetails = (RootRestaurantDetails) value;
             setUpRecyclerView();
             restaurantTimingsList();
             setGoogleDir();
         } else if (value instanceof RootGoogleDir) {
+            dismissProgressDialog();
             mRootGoogleDir = (RootGoogleDir) value;
             setGoogleDirView();
         }
@@ -297,8 +299,8 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             mLayoutRestSpecialties.addView(view);
         }
 
-        //set adapter for restaurant images
-        mRestPicsAdapter = new RestImagesAdapter(RestaurantDetailsActivity.this, mRestaurantPicsList);
+        /*set adapter for restaurant images*/
+        RestImagesAdapter mRestPicsAdapter = new RestImagesAdapter(RestaurantDetailsActivity.this, mRestaurantPicsList);
         mRestviewPager.setAdapter(mRestPicsAdapter);
     }
 

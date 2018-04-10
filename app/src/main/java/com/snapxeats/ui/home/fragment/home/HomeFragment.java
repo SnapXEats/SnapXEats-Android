@@ -36,6 +36,7 @@ import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.facebook.AccessToken;
+import com.facebook.FacebookSdk;
 import com.google.gson.Gson;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
@@ -103,7 +104,6 @@ public class HomeFragment extends BaseFragment implements
     protected TextView mTxtCuisineDone;
 
     private SelectedCuisineList selectedCuisineList;
-
     private Activity activity;
     private DrawerLayout mDrawerLayout;
     public SharedPreferences preferences;
@@ -142,7 +142,8 @@ public class HomeFragment extends BaseFragment implements
 
     @Override
     public void initView() {
-
+        FacebookSdk.setApplicationId(getString(R.string.facebook_app_id));
+        FacebookSdk.sdkInitialize(getActivity());
         snapXDialog.setContext(getActivity());
         utility.setContext(getActivity());
         presenter.addView(this);
@@ -187,7 +188,6 @@ public class HomeFragment extends BaseFragment implements
         ((BaseActivity) getActivity()).setSupportActionBar(toolbar);
         ((BaseActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
         ((BaseActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
         toolbar.setNavigationOnClickListener(v -> mDrawerLayout.openDrawer(Gravity.START));
 

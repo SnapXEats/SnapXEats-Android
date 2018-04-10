@@ -7,8 +7,12 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -18,6 +22,7 @@ import com.mindorks.butterknifelite.annotations.OnClick;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.DishesInfo;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SelectedCuisineList;
@@ -29,6 +34,8 @@ import com.snapxeats.common.model.restaurantDetails.RestaurantDishes;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.directions.DirectionsActivity;
+import com.snapxeats.ui.maps.MapsActivity;
 import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
 import com.snapxeats.ui.restaurantInfo.RestaurantInfoActivity;
 import com.yuyakaido.android.cardstackview.CardStackView;
@@ -40,8 +47,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import static com.snapxeats.common.Router.Screen.MAPS;
-
 /**
  * Created by Prajakta Patil on 30/1/18.
  */
@@ -51,7 +56,7 @@ import static com.snapxeats.common.Router.Screen.MAPS;
  */
 
 public class FoodStackActivity extends BaseActivity
-        implements FoodStackContract.FoodStackView, AppContract.SnapXResults {
+        implements FoodStackContract.FoodStackView, AppContract.SnapXResults/*,View.OnClickListener*/ {
 
     private static final long SET_START_DELAY = 100;
     private static final long SET_DURATION = 500;
@@ -95,9 +100,12 @@ public class FoodStackActivity extends BaseActivity
     @BindView(R.id.img_cuisine_wishlist)
     protected ImageView mImgWishlist;
 
-    private List<FoodStackData> foodStackDataList;
+    private ArrayList<FoodStackData> foodStackDataList;
 
     private List<String> stringsUrl;
+
+    @BindView(R.id.img_foodstack_map)
+    protected ImageView mImgMaps;
 
     @Inject
     AppUtility mAppUtility;
@@ -111,12 +119,14 @@ public class FoodStackActivity extends BaseActivity
     private LinkedList<FoodStackData> foodDataList;
 
     private AnimatorSet mAnimatorSet;
+
     @Inject
     DbHelper mDbHelper;
 
     @Inject
     FoodStackDbHelper foodStackDbHelper;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -258,6 +268,9 @@ public class FoodStackActivity extends BaseActivity
                     }
                 }
 
+                if (cardStackView.getTopIndex() == mStackAdapter.getCount()-5) {
+                    paginate();
+                }
             }
 
             @Override
@@ -270,7 +283,8 @@ public class FoodStackActivity extends BaseActivity
 
             @Override
             public void onCardClicked(int index) {
-                Intent intent = new Intent(FoodStackActivity.this, RestaurantInfoActivity.class);
+                Intent intent = new Intent(FoodStackActivity.this,
+                        RestaurantInfoActivity.class);
                 intent.putExtra(getString(R.string.intent_foodstackRestInfoId), foodStackDataList.get(index).getId());
                 startActivity(intent);
             }
@@ -280,7 +294,6 @@ public class FoodStackActivity extends BaseActivity
 
     private void paginate() {
         cardStackView.setPaginationReserved();
-        mStackAdapter.addAll(foodStackDataList);
         mStackAdapter.notifyDataSetChanged();
     }
 
@@ -303,8 +316,7 @@ public class FoodStackActivity extends BaseActivity
         rootCuisinePhotos = (RootCuisinePhotos) value;
         setStackAdapter();
     }
-
-    /*mAnimatorSet foodstack adapter*/
+    /*set foodstack adapter*/
     private void setStackAdapter() {
         int rowIndex, colIndex;
         List<DishesInfo> dishInfo = rootCuisinePhotos.getDishesInfo();
@@ -315,6 +327,7 @@ public class FoodStackActivity extends BaseActivity
                     RestaurantDishes restaurantDishes = dish.getRestaurantDishes().get(colIndex);
                     stringsUrl.add(restaurantDishes.getDish_image_url());
                     FoodStackData foodStackData = new FoodStackData(dish.getRestaurant_name(),
+                            dish.getLocation_lat(),dish.getLocation_long(),
                             dish.getRestaurant_info_id(), stringsUrl, dish.getRestaurantDishes().get(colIndex).getRestaurant_dish_id());
                     foodStackDataList.add(foodStackData);
                 }
@@ -323,7 +336,6 @@ public class FoodStackActivity extends BaseActivity
             cardStackView.setAdapter(mStackAdapter);
         }
     }
-
     /*swipe LEFT*/
     public void swipeLeft(int index) {
         List<FoodStackData> data = extractRemainingCards();
@@ -367,7 +379,8 @@ public class FoodStackActivity extends BaseActivity
         FoodLikes foodGestureLikesItem;
         if (isLoggedIn()) {
             foodGestureLikesItem = new FoodLikes();
-            foodGestureLikesItem.setRestaurant_dish_id(foodStackDataList.get(cardStackView.getTopIndex()).getDishId());
+            foodGestureLikesItem.
+                    setRestaurant_dish_id(foodStackDataList.get(cardStackView.getTopIndex()).getDishId());
             foodLikes.add(foodGestureLikesItem);
             mFoodStackPresenter.saveLikesToDb(foodLikes);
         }
@@ -383,9 +396,11 @@ public class FoodStackActivity extends BaseActivity
                 target, PropertyValuesHolder.ofFloat(getString(R.string.rotation), RIGHT_ROTATION));
         rotation.setDuration(SET_ROTATION_DURATION);
         ValueAnimator translateX = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat(getString(R.string.translationX), DEFAULT_TRANSLATION, RIGHT_X_TRANSLATION));
+                target, PropertyValuesHolder.ofFloat(getString(R.string.translationX), DEFAULT_TRANSLATION,
+                        RIGHT_X_TRANSLATION));
         ValueAnimator translateY = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat(getString(R.string.translationY), DEFAULT_TRANSLATION, RIGHT_Y_TRANSLATION));
+                target, PropertyValuesHolder.ofFloat(getString(R.string.translationY), DEFAULT_TRANSLATION,
+                        RIGHT_Y_TRANSLATION));
         translateX.setStartDelay(SET_START_DELAY);
         translateY.setStartDelay(SET_START_DELAY);
         translateX.setDuration(SET_DURATION);
@@ -399,15 +414,16 @@ public class FoodStackActivity extends BaseActivity
                 target, PropertyValuesHolder.ofFloat(getString(R.string.rotation), LEFT_ROTATION));
         rotation.setDuration(SET_ROTATION_DURATION);
         ValueAnimator translateX = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat(getString(R.string.translationX), DEFAULT_TRANSLATION, LEFT_X_TRANSLATION));
+                target, PropertyValuesHolder.ofFloat(getString(R.string.translationX), DEFAULT_TRANSLATION,
+                        LEFT_X_TRANSLATION));
         ValueAnimator translateY = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat(getString(R.string.translationY), DEFAULT_TRANSLATION, LEFT_Y_TRANSLATION));
+                target, PropertyValuesHolder.ofFloat(getString(R.string.translationY), DEFAULT_TRANSLATION,
+                        LEFT_Y_TRANSLATION));
         translateX.setStartDelay(SET_START_DELAY);
         translateY.setStartDelay(SET_START_DELAY);
         translateX.setDuration(SET_DURATION);
         translateY.setDuration(SET_DURATION);
         mAnimatorSet.playTogether(rotation, translateX, translateY);
-        // cardStackView.swipe(SwipeDirection.Left, mAnimatorSet);
     }
 
     private void gestureTop() {
@@ -416,16 +432,16 @@ public class FoodStackActivity extends BaseActivity
                 target, PropertyValuesHolder.ofFloat(getString(R.string.rotation), DEFAULT_TRANSLATION));
         rotation.setDuration(SET_ROTATION_DURATION);
         ValueAnimator translateX = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat(getString(R.string.translationX), DEFAULT_TRANSLATION, DEFAULT_TRANSLATION));
+                target, PropertyValuesHolder.ofFloat(getString(R.string.translationX), DEFAULT_TRANSLATION,
+                        DEFAULT_TRANSLATION));
         ValueAnimator translateY = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat(getString(R.string.translationY), DEFAULT_TRANSLATION, TOP_Y_TRANSLATION));
+                target, PropertyValuesHolder.ofFloat(getString(R.string.translationY), DEFAULT_TRANSLATION,
+                        TOP_Y_TRANSLATION));
         translateX.setStartDelay(SET_START_DELAY);
         translateY.setStartDelay(SET_START_DELAY);
         translateX.setDuration(SET_DURATION);
         translateY.setDuration(SET_DURATION);
-
         mAnimatorSet.playTogether(rotation, translateX, translateY);
-        // cardStackView.swipe(SwipeDirection.Top, mAnimatorSet);
     }
 
     @Override
@@ -436,7 +452,9 @@ public class FoodStackActivity extends BaseActivity
 
     @OnClick(R.id.img_foodstack_map)
     public void imgMaps() {
-        mFoodStackPresenter.presentScreen(MAPS);
+        Intent intent=new Intent(FoodStackActivity.this, MapsActivity.class);
+        intent.putExtra(getString(R.string.intent_root_cuisine), rootCuisinePhotos);
+        startActivity(intent);
     }
 
     @OnClick(R.id.img_cuisine_like)
@@ -456,7 +474,6 @@ public class FoodStackActivity extends BaseActivity
 
     @OnClick(R.id.img_cuisine_undo)
     public void imgCuisineUndo() {
-        disableUndo();
         cardStackView.reverse();
     }
 

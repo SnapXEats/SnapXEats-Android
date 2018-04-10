@@ -12,8 +12,6 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 
 import com.snapxeats.R;
-import com.snapxeats.common.model.SnapxData;
-import com.snapxeats.dagger.AppContract;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -65,7 +63,6 @@ public class SnapXDialog {
     public void showNetworkErrorDialog(DialogInterface.OnClickListener click) {
         mNetworkErrorDialog = new AlertDialog.Builder(context);
         mNetworkErrorDialog.setMessage(context.getString(R.string.network_error));
-
         mNetworkErrorDialog.setPositiveButton(context.getString(R.string.ok), click);
         mNetworkErrorDialog.show();
     }
@@ -79,7 +76,6 @@ public class SnapXDialog {
         mDenyDialog.setMessage(context.getString(R.string.preference_reset_message));
 
         mDenyDialog.setNegativeButton(context.getString(R.string.cancel), negativeClick);
-
         mDenyDialog.setPositiveButton(context.getString(R.string.ok), positiveClick);
         mDenyDialog.show();
     }
@@ -132,8 +128,8 @@ public class SnapXDialog {
     /**
      * Show snackbar for network error
      */
-    public void showSnackBar(View view,View.OnClickListener poitiveClick) {
-        Snackbar snackbar = Snackbar.make(view,context.getString(R.string.check_network),Snackbar.LENGTH_INDEFINITE);
+    public void showSnackBar(View view, View.OnClickListener poitiveClick) {
+        Snackbar snackbar = Snackbar.make(view, context.getString(R.string.check_network), Snackbar.LENGTH_INDEFINITE);
         snackbar.setAction(context.getString(R.string.retry), poitiveClick);
         snackbar.show();
     }

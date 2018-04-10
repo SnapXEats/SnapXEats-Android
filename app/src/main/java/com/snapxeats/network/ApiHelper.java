@@ -15,8 +15,17 @@ import com.snapxeats.common.model.preference.RootFoodPref;
 import com.snapxeats.common.model.login.RootInstagram;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
-import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
+import com.snapxeats.common.model.googleDirections.RootGoogleDir;
+import com.snapxeats.common.model.location.PlaceDetail;
+import com.snapxeats.common.model.location.PlacesAutoCompleteData;
+import com.snapxeats.common.model.login.RootInstagram;
+import com.snapxeats.common.model.preference.RootCuisine;
+import com.snapxeats.common.model.preference.RootFoodPref;
+import com.snapxeats.common.model.preference.RootUserPreference;
+import com.snapxeats.common.model.preference.RootUserPreferences;
+import com.snapxeats.common.model.preference.UserPreference;
+import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import java.util.List;
 import retrofit2.Call;
@@ -142,7 +151,7 @@ public interface ApiHelper {
      */
     @GET(WebConstants.GOOGLE_DIR_API)
     Call<RootGoogleDir> getGoogleDir(@Query("origin") String source,
-                                               @Query("destination") String dest);
+                                     @Query("destination") String dest);
 
     /**
      * Get cuisine preferences

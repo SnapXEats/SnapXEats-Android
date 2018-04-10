@@ -63,8 +63,6 @@ public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.
         return cuisineArrayList.size();
     }
 
-
-
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private static final long TIME_DELAY = 250;
 

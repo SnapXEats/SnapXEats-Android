@@ -9,17 +9,20 @@ import android.location.Geocoder;
 import android.location.LocationManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+
 import com.google.gson.Gson;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
-import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.location.Location;
 import com.snapxeats.network.LocationHelper;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -95,7 +98,7 @@ public class AppUtility {
             if (null != token && !token.isEmpty()) {
                 //TODO: fetch it from DB, assign it to app.token & return that token
                 if (snapxData != null && !snapxData.getToken().isEmpty()) {
-                    token = snapxData.getToken(); // fetch it from DB
+                    token = snapxData.getToken();
                 }
                 app.setToken(token);
             }

@@ -1,3 +1,4 @@
+
 apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
 
@@ -7,10 +8,12 @@ android {
         applicationId "com.snapxeats"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 403
-        versionName "0.4"
+        versionCode 501
+        versionName "0.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         resValue "string", "HOCKEYAPP_APP_ID", HOCKEYAPP_APP_key
+        resValue "string", "FACEBOOK_APP_ID", "240700273135016"
+
     }
     buildTypes {
         release {
@@ -21,6 +24,7 @@ android {
 
         debug {
             buildConfigField 'boolean', 'BUILD_CAPTION', 'true'
+
         }
     }
 
@@ -132,4 +136,6 @@ dependencies {
 
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
     implementation project(':cardstackviewlibrary')
+    //horizantal scrollview library
+    compile 'com.yarolegovich:discrete-scrollview:1.4.6'
 }

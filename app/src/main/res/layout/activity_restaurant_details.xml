@@ -17,13 +17,13 @@
             android:elevation="@dimen/dimens_4">
 
             <TextView
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/toolbar_rest_details"
                 android:textColor="@color/colorBlack"
-                android:textSize="@dimen/txt_size_16" />
+                android:textSize="@dimen/txt_size_16"
+                android:textStyle="bold" />
         </android.support.v7.widget.Toolbar>
 
         <android.support.v4.view.ViewPager

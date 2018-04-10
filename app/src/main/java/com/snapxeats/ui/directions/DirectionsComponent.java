@@ -1,6 +1,7 @@
 package com.snapxeats.ui.directions;
 
 import com.snapxeats.dagger.ActivityScoped;
+
 import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
 

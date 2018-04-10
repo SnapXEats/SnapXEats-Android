@@ -17,7 +17,7 @@
     <string name="insta_redirect_uri">redirect_uri</string>
     <string name="insta_response_type">response_type</string>
     <string name="insta_token">user_id</string>
-
+    <string name="intent_rest_details">intent_rest_details</string>
     <string name="done">Done</string>
     <string name="select_cuisines">Select Cuisines</string>
     <string name="please_wait">Please wait...</string>
@@ -30,6 +30,7 @@
         and shows you great restaurants around you. Are you sure you want to deny this permission?</string>
     <string name="yes">YES</string>
     <string name="retry">RETRY</string>
+    <string name="intent_google_dir">intent_google_dir</string>
     <string name="network_error">Check Internet connection</string>
     <string name="loading">Loading...</string>
     <string name="instagram">Cancel</string>
@@ -105,7 +106,8 @@
     <string name="check_specialties">Check Specialties</string>
     <string name="get_uber_ride">Get A Ride</string>
     <string name="call">Call</string>
-    <string name="directions">Directions</string>
+    <string name="directions">Direction</string>
+    <string name="user_token">user_token</string>
     <string name="user_id">user_id</string>
     <string name="book_uber_ride">Are you sure you want to book a uber ride?</string>
     <string name="confirm_uber">Yes,confirm</string>
@@ -138,11 +140,21 @@
     <string name="intent_restaurant_id">restaurant_id</string>
     <string name="yyyy_MM_dd">yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'</string>
     <string name="dd_MMM_yyyy">dd MMM yyyy</string>
+    <string name="date_rest_info">dd MMM yyyy</string>
     <string name="log_out">LogOut</string>
     <string name="chek_in">Check In</string>
     <string name="food_journey">Food Journey</string>
     <string name="rewards">Rewards</string>
     <string name="smart_photos">Smart Photos</string>
     <string name="snap_share">Snap-N-Share</string>
+    <string name="intent_foodstack">intent_foodstack</string>
+    <string name="intent_root_cuisine">intent_root_cuisine</string>
+    <string name="within">Within</string>
+    <string name="miles">miles</string>
+    <string name="price_one">$</string>
+    <string name="price_two">$$</string>
+    <string name="price_three">$$$</string>
+    <string name="price_four">$$$$</string>
+    <string name="mi">mi</string>
 
 </resources>

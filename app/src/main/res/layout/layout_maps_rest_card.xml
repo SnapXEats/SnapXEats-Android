@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/map_cardview_height"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="@dimen/common_dimens_10">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/img_rest_maps"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_160"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/txt_rest_maps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_dimens_10"
+            android:layout_marginTop="@dimen/common_dimens_10"
+            android:textColor="@color/colorCuisine"
+            android:textSize="@dimen/txt_size_18"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/common_dimens_10"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txt_price_maps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/common_dimens_10" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/common_dimens_10"
+                android:layout_marginStart="@dimen/common_dimens_10"
+                android:src="@drawable/ic_dot" />
+
+            <TextView
+                android:id="@+id/txt_distance_maps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorCuisine"
+                android:text="0.00"
+                android:textSize="@dimen/txt_size_16" />
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

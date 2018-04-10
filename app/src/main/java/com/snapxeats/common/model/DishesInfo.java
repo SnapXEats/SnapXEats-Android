@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 import com.snapxeats.common.model.restaurantDetails.RestaurantDishes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
@@ -24,6 +23,11 @@ public class DishesInfo implements Parcelable {
 
     private String restaurant_name;
 
+    private String location_lat;
+    private String location_long;
+    private String restaurant_price;
+    private String restaurant_rating;
+
     @Override
     public int describeContents() {
         return 0;
@@ -31,19 +35,26 @@ public class DishesInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeList(restaurantDishes);
+        dest.writeTypedList(restaurantDishes);
         dest.writeString(restaurant_info_id);
         dest.writeString(restaurant_name);
+        dest.writeString(location_lat);
+        dest.writeString(location_long);
+        dest.writeString(restaurant_price);
+        dest.writeString(restaurant_rating);
     }
 
     public DishesInfo() {
     }
 
     protected DishesInfo(Parcel in) {
-        restaurantDishes = new ArrayList<RestaurantDishes>();
-        in.readList(restaurantDishes, RestaurantDishes.class.getClassLoader());
+        restaurantDishes = in.createTypedArrayList(RestaurantDishes.CREATOR);
         restaurant_info_id = in.readString();
         restaurant_name = in.readString();
+        location_lat = in.readString();
+        location_long = in.readString();
+        restaurant_price = in.readString();
+        restaurant_rating = in.readString();
     }
 
     public static final Parcelable.Creator<DishesInfo> CREATOR = new Parcelable.Creator<DishesInfo>() {

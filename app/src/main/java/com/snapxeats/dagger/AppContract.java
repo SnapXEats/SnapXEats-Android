@@ -12,8 +12,7 @@ public class AppContract {
         void action();
     }
 
-
-   public interface DialogView {
+    public interface DialogView {
 
         void showProgressDialog();
 
@@ -22,20 +21,23 @@ public class AppContract {
         void showNetworkErrorDialog(DialogInterface.OnClickListener click);
 
         void showResetDialog(DialogInterface.OnClickListener positiveClick,
-                            DialogInterface.OnClickListener negativeClick);
+                             DialogInterface.OnClickListener negativeClick);
 
         DialogInterface.OnClickListener setListener(AppContract.DialogListenerAction button);
 
     }
 
     public interface SnapXResponse {
-        void response(SnapXResult result,Object value);
+        void response(SnapXResult result, Object value);
     }
 
     public interface SnapXResults {
         void success(Object value);
+
         void error(Object value);
+
         void noNetwork(Object value);
+
         void networkError(Object value);
     }
 }

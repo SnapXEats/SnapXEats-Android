@@ -27,7 +27,7 @@
             android:layout_width="@dimen/dimen_267"
             android:layout_height="@dimen/dimen_61"
             android:layout_marginBottom="@dimen/dimen_118"
-            android:src="@drawable/ic_snapx_logo" />
+            android:src="@drawable/ic_snap_logo" />
 
         <FrameLayout
             android:layout_width="match_parent"

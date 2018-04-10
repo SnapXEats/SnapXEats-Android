@@ -3,7 +3,6 @@ package com.snapxeats.common.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
@@ -15,14 +14,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SelectedCuisineList implements Parcelable {
-    LocationCuisine location;
-    int restaurant_distance;
-    int restaurant_price;
-    int restaurant_rating;
-    int sort_by_rating;
-    int sort_by_distance;
-    List<String> selectedCuisineList;
-    List<String> selectedFoodList;
+    private LocationCuisine location;
+    private int restaurant_distance;
+    private int restaurant_price;
+    private int restaurant_rating;
+    private int sort_by_rating;
+    private int sort_by_distance;
+    private List<String> selectedCuisineList;
+    private List<String> selectedFoodList;
 
     public SelectedCuisineList() {
     }

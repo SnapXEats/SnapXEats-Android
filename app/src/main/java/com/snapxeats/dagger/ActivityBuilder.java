@@ -1,4 +1,3 @@
-/*
 package com.snapxeats.dagger;
 
 import com.snapxeats.ui.cuisinepreference.CuisinePrefActivity;
@@ -9,12 +8,12 @@ import com.snapxeats.ui.foodpreference.FoodPrefModule;
 import com.snapxeats.ui.foodpreference.FoodPreferenceActivity;
 import com.snapxeats.ui.foodstack.FoodStackActivity;
 import com.snapxeats.ui.foodstack.FoodStackModule;
-import com.snapxeats.ui.login.LoginActivity;
-import com.snapxeats.ui.login.LoginModule;
-import com.snapxeats.ui.location.LocationActivity;
-import com.snapxeats.ui.location.LocationModule;
 import com.snapxeats.ui.home.HomeActivity;
 import com.snapxeats.ui.home.HomeModule;
+import com.snapxeats.ui.location.LocationActivity;
+import com.snapxeats.ui.location.LocationModule;
+import com.snapxeats.ui.login.LoginActivity;
+import com.snapxeats.ui.login.LoginModule;
 import com.snapxeats.ui.maps.MapsActivity;
 import com.snapxeats.ui.maps.MapsModule;
 import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
@@ -23,14 +22,13 @@ import com.snapxeats.ui.restaurantInfo.RestaurantInfoActivity;
 import com.snapxeats.ui.restaurantInfo.RestaurantInfoModule;
 import com.snapxeats.ui.splash.SplashActivity;
 import com.snapxeats.ui.splash.SplashModule;
+
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 
-*/
 /**
  * Created by Prajakta Patil on 28/12/17.
- *//*
-
+ */
 
 @Module
 public abstract class ActivityBuilder {
@@ -69,4 +67,4 @@ public abstract class ActivityBuilder {
 
     @ContributesAndroidInjector(modules = MapsModule.class)
     abstract MapsActivity bindMapsActivity();
-}*/
+}

@@ -1,15 +1,14 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fontFamily="Roboto-Medium"
     tools:mContext=".ui.home.fragment.navpreference.NavPrefFragment">
 
     <LinearLayout
         android:id="@+id/layout_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fontFamily="Roboto-Medium"
         android:orientation="vertical">
 
         <android.support.design.widget.AppBarLayout
@@ -27,7 +26,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/common_dimens_0"
                         android:layout_height="match_parent"
                         android:layout_weight="0.4"
                         android:ellipsize="end"
@@ -39,7 +38,7 @@
 
                     <TextView
                         android:id="@+id/txt_pref_apply"
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/common_dimens_0"
                         android:layout_height="match_parent"
                         android:layout_marginRight="@dimen/common_dimens_10"
                         android:layout_weight="0.2"
@@ -59,7 +58,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -84,31 +83,31 @@
 
                         <ImageView
                             android:id="@+id/rating_three"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="@dimen/dimen_100"
                             android:layout_weight="1"
                             android:src="@drawable/three_star_bw" />
 
                         <View
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.06" />
 
                         <ImageView
                             android:id="@+id/rating_four"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="@dimen/dimen_100"
                             android:layout_weight="1"
                             android:src="@drawable/four_star_bw" />
 
                         <View
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.06" />
 
                         <ImageView
                             android:id="@+id/rating_five"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="@dimen/dimen_100"
                             android:layout_weight="1"
                             android:src="@drawable/five_star_bw" />
@@ -142,36 +141,36 @@
                         <RadioButton
                             android:id="@+id/btn_price_auto"
                             style="@style/RadioButton"
-                            android:background="@drawable/segmented_fg"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="match_parent"
-                            android:layout_weight="1" />
+                            android:layout_weight="1"
+                            android:background="@drawable/segmented_fg" />
 
                         <RadioButton
                             android:id="@+id/btn_price_one"
                             style="@style/RadioButton"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="match_parent"
                             android:layout_weight="1" />
 
                         <RadioButton
                             android:id="@+id/rd_price_two"
                             style="@style/RadioButton"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="match_parent"
                             android:layout_weight="1" />
 
                         <RadioButton
                             android:id="@+id/btn_price_three"
                             style="@style/RadioButton"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="match_parent"
                             android:layout_weight="1" />
 
                         <RadioButton
                             android:id="@+id/btn_price_four"
                             style="@style/RadioButton"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="match_parent"
                             android:layout_weight="1" />
 
@@ -185,7 +184,7 @@
 
                         <TextView
                             android:id="@+id/txt_price_auto"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:clickable="true"
@@ -197,7 +196,7 @@
 
                         <TextView
                             android:id="@+id/txt_price_one"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:clickable="true"
@@ -209,7 +208,7 @@
 
                         <TextView
                             android:id="@+id/txt_price_two"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:clickable="true"
@@ -220,7 +219,7 @@
 
                         <TextView
                             android:id="@+id/txt_price_three"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:clickable="true"
@@ -231,7 +230,7 @@
 
                         <TextView
                             android:id="@+id/txt_price_four"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:clickable="true"
@@ -270,7 +269,7 @@
                         <RadioButton
                             android:id="@+id/btn_distance_one"
                             style="@style/RadioButton"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@drawable/segmented_fg"
@@ -279,7 +278,7 @@
                         <RadioButton
                             android:id="@+id/btn_distance_two"
                             style="@style/RadioButton"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@drawable/segmented_bg"
@@ -288,7 +287,7 @@
                         <RadioButton
                             android:id="@+id/btn_distance_three"
                             style="@style/RadioButton"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@drawable/segmented_bg"
@@ -297,7 +296,7 @@
                         <RadioButton
                             android:id="@+id/btn_distance_four"
                             style="@style/RadioButton"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@drawable/segmented_bg"
@@ -306,13 +305,11 @@
                         <RadioButton
                             android:id="@+id/btn_distance_five"
                             style="@style/RadioButton"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@drawable/segmented_bg"
                             android:buttonTint="@color/pref_slider_background" />
-
-
                     </LinearLayout>
 
                     <LinearLayout
@@ -322,7 +319,7 @@
 
                         <TextView
                             android:id="@+id/txt_distance_one"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:clickable="true"
@@ -333,7 +330,7 @@
 
                         <TextView
                             android:id="@+id/txt_distance_two"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:clickable="true"
@@ -344,7 +341,7 @@
 
                         <TextView
                             android:id="@+id/txt_distance_three"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:clickable="true"
@@ -355,7 +352,7 @@
 
                         <TextView
                             android:id="@+id/txt_distance_four"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:clickable="true"
@@ -366,7 +363,7 @@
 
                         <TextView
                             android:id="@+id/txt_distance_five"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:clickable="true"
@@ -411,7 +408,7 @@
 
                             <RadioButton
                                 android:id="@+id/radio_distance"
-                                android:layout_width="0dp"
+                                android:layout_width="@dimen/common_dimens_0"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="0.5"
                                 android:checked="true"
@@ -441,7 +438,6 @@
                         android:text="@string/set_preferences"
                         android:textColor="@color/text_color_primary"
                         android:textSize="@dimen/text_size_12"
-                        android:textStyle="bold"
                         android:theme="@style/TextViewStyle" />
 
                     <LinearLayout
@@ -452,7 +448,7 @@
 
                         <android.support.v7.widget.CardView
                             android:id="@+id/cardview_cuisine"
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="100dp"
                             android:layout_weight="0.3">
 
@@ -495,14 +491,14 @@
 
 
                         <View
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.05" />
 
                         <android.support.v7.widget.CardView
                             android:id="@+id/cardview_food"
-                            android:layout_width="0dp"
-                            android:layout_height="100dp"
+                            android:layout_width="@dimen/common_dimens_0"
+                            android:layout_height="@dimen/dimen_100"
                             android:layout_weight="0.3">
 
                             <RelativeLayout
@@ -538,15 +534,10 @@
                                     android:textColor="@color/check_box_text_color"
                                     android:visibility="gone" />
                             </RelativeLayout>
-
                         </android.support.v7.widget.CardView>
-
                     </LinearLayout>
                 </LinearLayout>
-
-
             </LinearLayout>
-
         </ScrollView>
     </LinearLayout>
 
