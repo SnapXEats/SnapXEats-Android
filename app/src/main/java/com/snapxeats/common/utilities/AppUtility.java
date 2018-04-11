@@ -178,22 +178,21 @@ public class AppUtility {
         boolean isGPSEnabled = locationManager
                 .isProviderEnabled(LocationManager.GPS_PROVIDER);
 
+        if (isPassiveEnabled) {
+            mCurrentLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
 
-        if (locationManager != null) {
-            if (isNetworkEnabled) {
-                mCurrentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            } else if (isPassiveEnabled) {
-                mCurrentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            } else if (isGPSEnabled) {
-                mCurrentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            }
+        } else if (isNetworkEnabled) {
+            mCurrentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
-            if (mCurrentLocation != null) {
-                double lat = mCurrentLocation.getLatitude();
-                double lng = mCurrentLocation.getLongitude();
-            }
-
+        } else if (isGPSEnabled) {
+            mCurrentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
+
+        if (mCurrentLocation != null) {
+            double lat = mCurrentLocation.getLatitude();
+            double lng = mCurrentLocation.getLongitude();
+        }
+
         return mCurrentLocation;
     }
 

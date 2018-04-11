@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.preference.SnapXPreference;
 import com.snapxeats.common.utilities.AppUtility;
@@ -48,7 +49,9 @@ public class MapsActivity extends BaseActivity
     private static final int MAP_FILL_COLOR = 0x55AAAAAA;
     private static final float MAP_STROKE = 5;
     private static final float MAP_MARKER_ZOOM = 13;
-    private static final double MAP_RADIUS = 1609;
+    private static final float SCROLL_MIN_SCALE = 0.8f;
+    private static final float DIST_IN_MILES = (float) 1609.34;
+
     @Inject
     SnapXDialog snapXDialog;
 
@@ -66,10 +69,10 @@ public class MapsActivity extends BaseActivity
 
     private GoogleMap mMap;
     private SnapXPreference mPreferences;
-    private RootCuisinePhotos rootCuisinePhotos;
-    private InfiniteScrollAdapter infiniteAdapter;
-    private MarkerOptions markerOptions;
-    private Marker marker;
+    private RootCuisinePhotos mRootCuisine;
+    private InfiniteScrollAdapter mInfiniteAdapter;
+    private MarkerOptions mMarkerOptions;
+    private Marker mMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,12 +87,12 @@ public class MapsActivity extends BaseActivity
         mPresenter.addView(this);
         snapXDialog.setContext(this);
         utility.setContext(this);
-        markerOptions = new MarkerOptions();
+        mMarkerOptions = new MarkerOptions();
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setMapView();
         mPresenter.getUserPreferences();
-        rootCuisinePhotos = getIntent().getExtras().getParcelable(getString(R.string.intent_root_cuisine));
+        mRootCuisine = getIntent().getExtras().getParcelable(getString(R.string.intent_root_cuisine));
         setScrollview();
     }
 
@@ -103,22 +106,26 @@ public class MapsActivity extends BaseActivity
     }
 
     private void setScrollview() {
-        infiniteAdapter = InfiniteScrollAdapter.wrap(new MapsRestAdapter(this, rootCuisinePhotos));
+        mInfiniteAdapter = InfiniteScrollAdapter.wrap(new MapsRestAdapter(this, mRootCuisine));
         mScrollView.addOnItemChangedListener(this);
-        if (0 != rootCuisinePhotos.getDishesInfo().size()) {
-            mScrollView.setAdapter(new MapsRestAdapter(this, rootCuisinePhotos));
+        if (0 != mRootCuisine.getDishesInfo().size()) {
+            mScrollView.setAdapter(new MapsRestAdapter(this, mRootCuisine));
         }
-        mScrollView.setItemTransformer(new ScaleTransformer.Builder().setMinScale(0.8f).build());
+        mScrollView.setItemTransformer(new ScaleTransformer.Builder().setMinScale(SCROLL_MIN_SCALE).build());
     }
 
     private void drawMapCircle() {
+        if (null != mPreferences.getUserPreferences() && null != mPreferences.getUserPreferences().getRestaurant_distance()) {
+            getSupportActionBar().setTitle(getString(R.string.within) + " " +
+                    mPreferences.getUserPreferences().getRestaurant_distance() + " " + getString(R.string.miles));
+        }
         //TODO latlng are hardcoded for now
         LatLng currentLatLon = new LatLng(Double.parseDouble(LATITUDE),
                 Double.parseDouble(LONGITUDE));
 
         mMap.addCircle(new CircleOptions()
                 .center(currentLatLon)
-                .radius(MAP_RADIUS)
+                .radius(Integer.parseInt(mPreferences.getUserPreferences().getRestaurant_distance()) * DIST_IN_MILES)
                 .strokeWidth(MAP_STROKE)
                 .strokeColor(MAP_FILL_COLOR)
                 .fillColor(MAP_FILL_COLOR));
@@ -132,25 +139,26 @@ public class MapsActivity extends BaseActivity
     }
 
     private void placeRestMarkers() {
-        if (0 != rootCuisinePhotos.getDishesInfo().size()) {
-            for (int row = 0; row < rootCuisinePhotos.getDishesInfo().size(); row++) {
-                Double lat = Double.parseDouble(rootCuisinePhotos.getDishesInfo().get(row).getLocation_lat());
-                Double lng = Double.parseDouble(rootCuisinePhotos.getDishesInfo().get(row).getLocation_long());
+        if (0 != mRootCuisine.getDishesInfo().size()) {
+            for (int row = 0; row < mRootCuisine.getDishesInfo().size(); row++) {
+                Double lat = Double.parseDouble(mRootCuisine.getDishesInfo().get(row).getLocation_lat());
+                Double lng = Double.parseDouble(mRootCuisine.getDishesInfo().get(row).getLocation_long());
                 LatLng latLng = new LatLng(lat, lng);
-                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_grey));
-                markerOptions.position(latLng);
-                mMap.addMarker(markerOptions);
+                mMarkerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_grey));
+                mMarkerOptions.position(latLng);
+                mMap.addMarker(mMarkerOptions);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(MAP_MARKER_ZOOM));
             }
         }
-        drawMapCircle();
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.mMap = googleMap;
         placeRestMarkers();
+        drawMapCircle();
+
         LatLng latLng = new LatLng(Double.parseDouble(LATITUDE), Double.parseDouble(LONGITUDE));
         mMap.addMarker(new MarkerOptions()
                 .position(latLng)
@@ -183,18 +191,16 @@ public class MapsActivity extends BaseActivity
 
     @Override
     public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
-        int positionInDataSet = infiniteAdapter.getRealPosition(adapterPosition);
-        Double lat = Double.parseDouble(rootCuisinePhotos.getDishesInfo().get(positionInDataSet)
-                .getLocation_lat());
-        Double lng = Double.parseDouble(rootCuisinePhotos.getDishesInfo().get(positionInDataSet)
-                .getLocation_long());
+        int positionInDataSet = mInfiniteAdapter.getRealPosition(adapterPosition);
+        Double lat = Double.parseDouble(mRootCuisine.getDishesInfo().get(positionInDataSet).getLocation_lat());
+        Double lng = Double.parseDouble(mRootCuisine.getDishesInfo().get(positionInDataSet).getLocation_long());
         LatLng latLng = new LatLng(lat, lng);
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_selected));
-        markerOptions.position(latLng);
-        if (null != marker) {
-            marker.remove();
+        mMarkerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_selected));
+        mMarkerOptions.position(latLng);
+        if (null != mMarker) {
+            mMarker.remove();
         }
-        marker = mMap.addMarker(markerOptions);
+        mMarker = mMap.addMarker(mMarkerOptions);
     }
 
     @Override

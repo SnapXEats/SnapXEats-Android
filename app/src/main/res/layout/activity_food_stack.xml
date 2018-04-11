@@ -89,7 +89,7 @@
             android:layout_marginStart="@dimen/common_dimens_30"
             android:layout_marginTop="@dimen/common_dimens_40"
             android:clipToPadding="false"
-            android:elevation="@dimen/common_dimens_10"
+            android:elevation="@dimen/common_dimens_40"
             android:paddingBottom="@dimen/dimen_32"
             android:paddingLeft="@dimen/dimen_16"
             android:paddingRight="@dimen/dimen_16"
@@ -104,6 +104,6 @@
             app:swipeThreshold="0.75"
             app:topOverlay="@layout/food_overlay_wishlist"
             app:translationDiff="12"
-            app:visibleCount="5" />
+            app:visibleCount="3" />
     </FrameLayout>
 </LinearLayout>

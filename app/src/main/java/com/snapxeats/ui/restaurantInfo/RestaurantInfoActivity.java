@@ -106,8 +106,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         utility.setContext(this);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setTitle(getString(R.string.toolbar_rest_info));
         initRestaurantInfo();
     }
 
@@ -213,7 +212,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        mTxtPhotoTaken.setText("Photo taken on " + stringDate);
+        mTxtPhotoTaken.setText(getString(R.string.photo_taken) + " " + stringDate);
     }
 
     /*set restaurant data*/

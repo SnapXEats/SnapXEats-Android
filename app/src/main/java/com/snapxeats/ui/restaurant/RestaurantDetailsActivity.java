@@ -25,6 +25,7 @@ import com.snapxeats.common.model.googleDirections.LocationGoogleDir;
 import com.snapxeats.common.model.googleDirections.RootGoogleDir;
 import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
 import com.snapxeats.common.model.restaurantDetails.RestaurantSpeciality;
+import com.snapxeats.common.model.restaurantDetails.RestaurantTimings;
 import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
@@ -59,7 +60,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     private static final String UBER_PACKAGE = "com.ubercab";
     private static final String REST_CALL = "tel";
     private List<RestaurantPics> mRestaurantPicsList;
-
     private List<RestaurantSpeciality> mRestaurantSpecialties;
 
     @Inject
@@ -111,8 +111,9 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     protected LinearLayout mParentLayout;
 
     private RootGoogleDir mRootGoogleDir;
-
     private String restaurantId;
+    private static final String LATITUDE = "40.4862157";
+    private static final String LONGITUDE = "-74.4518188";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,18 +122,16 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         initView();
     }
 
-    //initialize views
+    /*initialize views*/
     @Override
     public void initView() {
         mRestaurantPresenter.addView(this);
         snapXDialog.setContext(this);
         ButterKnife.bind(this);
         utility.setContext(this);
-        //set mToolbar
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setTitle(getString(R.string.toolbar_rest_details));
         initRestaurantData();
     }
 
@@ -177,7 +176,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         mRestaurantPicsList = new ArrayList<>();
         mRestaurantSpecialties = new ArrayList<>();
         mInflater = LayoutInflater.from(this);
-        //get restaurant details
         restaurantId = getIntent().getStringExtra(getString(R.string.intent_restaurant_id));
         showProgressDialog();
         mRestaurantPresenter.getRestDetails(restaurantId);
@@ -189,16 +187,13 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     }
 
     private void setGoogleDir() {
-        //get google directions
         //TODO latlng are hardcoded for now
-        final String srcLat = "40.4862157";
-        final String srcLng = "-74.4518188";
         final String destLat = mRootRestaurantDetails.getRestaurantDetails().getLocation_lat();
         final String destLng = mRootRestaurantDetails.getRestaurantDetails().getLocation_long();
         LocationGoogleDir locationGoogleDir = new LocationGoogleDir();
         GoogleDirOrigin googleDirOrigin = new GoogleDirOrigin();
-        googleDirOrigin.setOriginLat(srcLat);
-        googleDirOrigin.setOriginLng(srcLng);
+        googleDirOrigin.setOriginLat(LATITUDE);
+        googleDirOrigin.setOriginLng(LONGITUDE);
         GoogleDirDest googleDirDest = new GoogleDirDest();
         googleDirDest.setDestinationLat(destLat);
         googleDirDest.setDestinationLng(destLng);
@@ -264,7 +259,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     }
 
     public void setUpRecyclerView() {
-        //restaurants details
         if (!mRootRestaurantDetails.getRestaurantDetails().getRestaurant_name().isEmpty()) {
             String restName = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_name();
             mTxtRestName.setText(restName);
@@ -281,15 +275,15 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             mImgCall.setAlpha((float) 0.5);
         }
 
+        List<RestaurantPics> restPics = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_pics();
         for (int INDEX_REST_PICS = 0;
-             INDEX_REST_PICS < mRootRestaurantDetails.getRestaurantDetails().getRestaurant_pics().size();
+             INDEX_REST_PICS < restPics.size();
              INDEX_REST_PICS++) {
-            mRestaurantPicsList.add(mRootRestaurantDetails.getRestaurantDetails().getRestaurant_pics().get(INDEX_REST_PICS));
+            mRestaurantPicsList.add(restPics.get(INDEX_REST_PICS));
         }
-        for (int INDEX_REST_SPECIALTIES = 0;
-             INDEX_REST_SPECIALTIES < mRootRestaurantDetails.getRestaurantDetails().getRestaurant_speciality().size();
-             INDEX_REST_SPECIALTIES++) {
-            mRestaurantSpecialties.add(mRootRestaurantDetails.getRestaurantDetails().getRestaurant_speciality().get(INDEX_REST_SPECIALTIES));
+        List<RestaurantSpeciality> restSpecialty = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_speciality();
+        for (int INDEX_REST_SPECIALTIES = 0; INDEX_REST_SPECIALTIES < restSpecialty.size(); INDEX_REST_SPECIALTIES++) {
+            mRestaurantSpecialties.add(restSpecialty.get(INDEX_REST_SPECIALTIES));
             View view = mInflater.inflate(R.layout.layout_rest_specialties,
                     mLayoutRestSpecialties, false);
             ImageView imageView = view.findViewById(R.id.img_restaurant_specialties);
@@ -306,12 +300,11 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     private void restaurantTimingsList() {
         List<String> listTimings = new ArrayList<>();
+        List<RestaurantTimings> restTimingList = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_timings();
         String isOpenNow = mRootRestaurantDetails.getRestaurantDetails().getIsOpenNow();
-        if (mRootRestaurantDetails.getRestaurantDetails().getRestaurant_timings().size() != 0) {
-            for (int i = 0; i < mRootRestaurantDetails.getRestaurantDetails().getRestaurant_timings().size(); i++) {
-                listTimings.add(mRootRestaurantDetails.getRestaurantDetails().getRestaurant_timings().get(i).getDay_of_week() +
-                        "         " +
-                        mRootRestaurantDetails.getRestaurantDetails().getRestaurant_timings().get(i).getRestaurant_open_close_time());
+        if (0 != mRootRestaurantDetails.getRestaurantDetails().getRestaurant_timings().size()) {
+            for (int row = 0; row < restTimingList.size(); row++) {
+                listTimings.add(restTimingList.get(row).getDay_of_week() + " " + restTimingList.get(row).getRestaurant_open_close_time());
             }
             Comparator<String> dateComparator = (s1, s2) -> {
                 try {

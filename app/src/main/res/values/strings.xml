@@ -156,5 +156,6 @@
     <string name="price_three">$$$</string>
     <string name="price_four">$$$$</string>
     <string name="mi">mi</string>
+    <string name="photo_taken">Photo taken on</string>
 
 </resources>

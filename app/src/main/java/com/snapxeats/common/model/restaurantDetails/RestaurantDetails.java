@@ -36,6 +36,7 @@ public class RestaurantDetails implements Parcelable {
 
     private String location_long;
 
+    private String restaurant_price;
 
     @Override
     public int describeContents() {
@@ -44,34 +45,36 @@ public class RestaurantDetails implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(location_lat);
-        dest.writeTypedList(restaurant_timings);
-        dest.writeString(isOpenNow);
-        dest.writeString(restaurant_info_id);
-        dest.writeTypedList(restaurant_speciality);
-        dest.writeTypedList(restaurant_pics);
-        dest.writeString(restaurant_address);
-        dest.writeString(restaurant_rating);
-        dest.writeString(restaurant_name);
-        dest.writeString(restaurant_contact_no);
-        dest.writeString(location_long);
+        dest.writeString(this.location_lat);
+        dest.writeTypedList(this.restaurant_timings);
+        dest.writeString(this.isOpenNow);
+        dest.writeString(this.restaurant_info_id);
+        dest.writeTypedList(this.restaurant_speciality);
+        dest.writeTypedList(this.restaurant_pics);
+        dest.writeString(this.restaurant_address);
+        dest.writeString(this.restaurant_rating);
+        dest.writeString(this.restaurant_name);
+        dest.writeString(this.restaurant_contact_no);
+        dest.writeString(this.location_long);
+        dest.writeString(this.restaurant_price);
     }
 
     public RestaurantDetails() {
     }
 
     protected RestaurantDetails(Parcel in) {
-        location_lat = in.readString();
-        restaurant_timings = in.createTypedArrayList(RestaurantTimings.CREATOR);
-        isOpenNow = in.readString();
-        restaurant_info_id = in.readString();
-        restaurant_speciality = in.createTypedArrayList(RestaurantSpeciality.CREATOR);
-        restaurant_pics = in.createTypedArrayList(RestaurantPics.CREATOR);
-        restaurant_address = in.readString();
-        restaurant_rating = in.readString();
-        restaurant_name = in.readString();
-        restaurant_contact_no = in.readString();
-        location_long = in.readString();
+        this.location_lat = in.readString();
+        this.restaurant_timings = in.createTypedArrayList(RestaurantTimings.CREATOR);
+        this.isOpenNow = in.readString();
+        this.restaurant_info_id = in.readString();
+        this.restaurant_speciality = in.createTypedArrayList(RestaurantSpeciality.CREATOR);
+        this.restaurant_pics = in.createTypedArrayList(RestaurantPics.CREATOR);
+        this.restaurant_address = in.readString();
+        this.restaurant_rating = in.readString();
+        this.restaurant_name = in.readString();
+        this.restaurant_contact_no = in.readString();
+        this.location_long = in.readString();
+        this.restaurant_price = in.readString();
     }
 
     public static final Parcelable.Creator<RestaurantDetails> CREATOR = new Parcelable.Creator<RestaurantDetails>() {

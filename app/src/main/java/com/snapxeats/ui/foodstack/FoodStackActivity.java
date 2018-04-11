@@ -452,9 +452,11 @@ public class FoodStackActivity extends BaseActivity
 
     @OnClick(R.id.img_foodstack_map)
     public void imgMaps() {
-        Intent intent=new Intent(FoodStackActivity.this, MapsActivity.class);
-        intent.putExtra(getString(R.string.intent_root_cuisine), rootCuisinePhotos);
-        startActivity(intent);
+        if(mStackAdapter.getCount()!=0) {
+            Intent intent = new Intent(FoodStackActivity.this, MapsActivity.class);
+            intent.putExtra(getString(R.string.intent_root_cuisine), rootCuisinePhotos);
+            startActivity(intent);
+        }
     }
 
     @OnClick(R.id.img_cuisine_like)

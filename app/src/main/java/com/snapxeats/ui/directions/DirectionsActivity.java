@@ -62,6 +62,7 @@ public class DirectionsActivity extends BaseActivity
     private static final double DIST_IN_MILES = 1609;
     private static final String LATITUDE = "40.4862157";
     private static final String LONGITUDE = "-74.4518188";
+
     @Inject
     SnapXDialog snapXDialog;
 
@@ -80,14 +81,15 @@ public class DirectionsActivity extends BaseActivity
     @BindView(R.id.txtDirRating)
     protected TextView mTxtRating;
 
+    @BindView(R.id.txt_price_maps)
+    protected TextView mTxtPrice;
+
     @BindView(R.id.txt_distance_maps)
     protected TextView mTxtRestDist;
 
     private RootRestaurantDetails mDetails;
 
     private GoogleMap mMap;
-
-    private RootGoogleDir mGoogleDir;
 
     private List<LatLng> list;
 
@@ -144,10 +146,32 @@ public class DirectionsActivity extends BaseActivity
             mTxtRestName.setText(String.valueOf(mDetails.getRestaurantDetails().getRestaurant_name()));
             mTxtRestAddr.setText(mDetails.getRestaurantDetails().getRestaurant_address());
             mTxtRating.setText(mDetails.getRestaurantDetails().getRestaurant_rating());
-            //TODO latlng are hardcoded
-            distInMiles(40.4862157, -74.4518188, Double.valueOf(mDetails.getRestaurantDetails().getLocation_lat()),
+            distInMiles(Double.valueOf(LATITUDE),
+                    Double.valueOf(LONGITUDE),
+                    Double.valueOf(mDetails.getRestaurantDetails().getLocation_lat()),
                     Double.valueOf(mDetails.getRestaurantDetails().getLocation_long()));
             setRestTimings();
+            setRestPrice();
+        }
+    }
+
+    private void setRestPrice() {
+        String price=mDetails.getRestaurantDetails().getRestaurant_price();
+        switch (price) {
+            case "1":
+                mTxtPrice.setText(getString(R.string.price_one));
+                break;
+            case "2":
+                mTxtPrice.setText(getString(R.string.price_two));
+                break;
+            case "3":
+                mTxtPrice.setText(getString(R.string.price_three));
+                break;
+            case "4":
+                mTxtPrice.setText(getString(R.string.price_four));
+                break;
+            default:
+                mTxtPrice.setText(getString(R.string.price_one));
         }
     }
 
@@ -196,7 +220,7 @@ public class DirectionsActivity extends BaseActivity
      * Set route on google map
      **/
     public void setGoogleRoute() {
-        mGoogleDir = getIntent().getExtras().getParcelable(getString(R.string.intent_google_dir));
+        RootGoogleDir mGoogleDir = getIntent().getExtras().getParcelable(getString(R.string.intent_google_dir));
         //TODO latlng are hardcoded
         LatLng src = new LatLng(Double.parseDouble(LATITUDE), Double.parseDouble(LONGITUDE));
 
@@ -334,8 +358,8 @@ public class DirectionsActivity extends BaseActivity
         dist = Math.acos(dist);
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515 / DIST_IN_MILES;
-        String distance = String.valueOf(dist).substring(0,3);
-        mTxtRestDist.setText(distance+" "+getString(R.string.mi));
+        String distance = String.valueOf(dist).substring(0, 3);
+        mTxtRestDist.setText(distance + " " + getString(R.string.mi));
     }
 
     private double deg2rad(double deg) {
