@@ -19,7 +19,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.preference.SnapXPreference;

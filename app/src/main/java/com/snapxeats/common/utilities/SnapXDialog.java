@@ -16,8 +16,8 @@ import com.snapxeats.R;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static com.snapxeats.ui.home.HomeActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
-import static com.snapxeats.ui.home.HomeActivity.PreferenceConstant.DEVICE_LOCATION;
+import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
+import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
 
 /**
  * Created by Snehal Tembare on 11/1/18.

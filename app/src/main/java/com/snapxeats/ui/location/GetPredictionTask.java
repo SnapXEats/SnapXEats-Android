@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.snapxeats.common.constants.UIConstants;
-import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.location.Prediction;
 
 import org.json.JSONArray;
@@ -97,10 +96,10 @@ public class GetPredictionTask extends AsyncTask<String, Void, List<Prediction>>
                 jsonResults.append(buff, 0, read);
             }
         } catch (MalformedURLException e) {
-            Log.e(UIConstants.TAG, "Error processing Places API URL", e);
+            Log.e(UIConstants.TAG_PREDICTION, "Error processing Places API URL", e);
 
         } catch (IOException e) {
-            Log.e(UIConstants.TAG, "Nw Error connecting to Places API", e);
+            Log.e(UIConstants.TAG_PREDICTION, "Nw Error connecting to Places API", e);
         } finally {
             if (null != conn) {
                 conn.disconnect();

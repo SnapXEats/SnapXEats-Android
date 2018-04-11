@@ -78,9 +78,10 @@ public class AppUtility {
             token = app.getToken();
             if (null != token && !token.isEmpty()) {
                 return String.format("Bearer %s", token);
+
             } else {
                 //TODO: fetch it from DB, assign it to app.token & return that token
-                if (snapxData != null) {
+                if (null != snapxData) {
                     token = snapxData.getToken(); // fetch it from DB}
                     app.setToken(token);
                 }

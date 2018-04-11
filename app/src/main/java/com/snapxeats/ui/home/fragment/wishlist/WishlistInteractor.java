@@ -1,6 +1,8 @@
 package com.snapxeats.ui.home.fragment.wishlist;
 
 import android.content.Context;
+import android.util.Log;
+
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.foodGestures.RootDeleteWishlist;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
@@ -26,7 +28,6 @@ public class WishlistInteractor {
 
     private WishlistContract.WishlistPresenter wishlistPresenter;
     private Context mContext;
-    private List<Wishlist> wishlist;
 
     @Inject
     AppUtility utility;

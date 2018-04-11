@@ -1,6 +1,8 @@
 package com.snapxeats.ui.home;
 
 import android.content.Context;
+import android.util.Log;
+
 import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.Logout;

@@ -37,6 +37,8 @@ import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -351,8 +353,8 @@ public class DirectionsActivity extends BaseActivity
                 * Math.cos(deg2rad(theta));
         dist = Math.acos(dist);
         dist = rad2deg(dist);
-        dist = dist * 60 * 1.1515 / UIConstants.DIST_IN_MILES;
-        mTxtRestDist.setText(dist + " " + getString(R.string.mi));
+        NumberFormat distance = new DecimalFormat(UIConstants.DIST_FORMAT);
+        mTxtRestDist.setText(distance.format(dist) + " " + getString(R.string.mi));
     }
 
     private double deg2rad(double deg) {

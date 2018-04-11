@@ -10,9 +10,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.snapxeats.R;
+import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.ui.restaurantInfo.RestaurantInfoActivity;
 import com.squareup.picasso.Picasso;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 /**
  * Created by Prajakta Patil on 1/4/18.
@@ -21,9 +25,6 @@ public class MapsRestAdapter extends RecyclerView.Adapter<MapsRestAdapter.ViewHo
 
     private RootCuisinePhotos stackData;
     private Context mContext;
-    private static final double DIST_IN_MILES = 1609;
-    private static final String LATITUDE = "40.4862157";
-    private static final String LONGITUDE = "-74.4518188";
 
     MapsRestAdapter(Context context, RootCuisinePhotos stackData) {
         this.mContext = context;
@@ -32,7 +33,7 @@ public class MapsRestAdapter extends RecyclerView.Adapter<MapsRestAdapter.ViewHo
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.layout_maps_rest_card, parent, false);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.item_maps_rest_card, parent, false);
         return new ViewHolder(v);
     }
 
@@ -44,6 +45,7 @@ public class MapsRestAdapter extends RecyclerView.Adapter<MapsRestAdapter.ViewHo
                     .placeholder(R.drawable.foodstack_placeholder)
                     .into(holder.imgRestaurant);
         }
+
         holder.txtRestName.setText(stackData.getDishesInfo().get(position).getRestaurant_name());
         String price = stackData.getDishesInfo().get(position).getRestaurant_price();
 
@@ -65,11 +67,13 @@ public class MapsRestAdapter extends RecyclerView.Adapter<MapsRestAdapter.ViewHo
         }
 
         //TODO latlng are hardcoded for now
-        double distVal = distInMiles(Double.parseDouble(LATITUDE),
-                Double.parseDouble(LONGITUDE)
+        double distVal = distInMiles(Double.parseDouble(UIConstants.LATITUDE),
+                Double.parseDouble(UIConstants.LONGITUDE)
                 , Double.parseDouble(stackData.getDishesInfo().get(position).getLocation_lat())
                 , Double.parseDouble(stackData.getDishesInfo().get(position).getLocation_long()));
-        holder.txtDistance.setText(distVal + " " + mContext.getString(R.string.mi));
+        NumberFormat distance = new DecimalFormat(UIConstants.DIST_FORMAT);
+        holder.txtDistance.setText(distance.format(distVal) + " " + mContext.getString(R.string.mi));
+
     }
 
     /*calculate distance in miles*/
@@ -82,7 +86,6 @@ public class MapsRestAdapter extends RecyclerView.Adapter<MapsRestAdapter.ViewHo
                 * Math.cos(deg2rad(theta));
         dist = Math.acos(dist);
         dist = rad2deg(dist);
-        dist = dist * 60 * 1.1515 / DIST_IN_MILES;
         return dist;
     }
 

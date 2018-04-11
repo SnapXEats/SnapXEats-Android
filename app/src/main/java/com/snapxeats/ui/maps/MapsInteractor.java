@@ -1,6 +1,7 @@
 package com.snapxeats.ui.maps;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.preference.RootUserPreferences;

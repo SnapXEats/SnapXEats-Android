@@ -35,8 +35,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.facebook.AccessToken;
-import com.facebook.FacebookSdk;
 import com.google.gson.Gson;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
@@ -55,16 +55,20 @@ import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.cuisinepreference.OnDoubleTapListenr;
 import com.snapxeats.ui.foodstack.FoodStackActivity;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static com.snapxeats.common.Router.Screen.LOCATION;
-import static com.snapxeats.ui.home.HomeActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
-import static com.snapxeats.ui.home.HomeActivity.PreferenceConstant.DEVICE_LOCATION;
+import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
+import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
 
 /**
  * Created by Snehal Tembare on 3/1/18.
@@ -112,7 +116,6 @@ public class HomeFragment extends BaseFragment implements
     private List<String> selectedList;
     private HomeAdapter adapter;
     private LocationCuisine mLocationCuisine;
-    private LocationManager locationManager;
 
     @Inject
     public HomeFragment() {
@@ -142,15 +145,13 @@ public class HomeFragment extends BaseFragment implements
 
     @Override
     public void initView() {
-        FacebookSdk.setApplicationId(getString(R.string.facebook_app_id));
-        FacebookSdk.sdkInitialize(getActivity());
         snapXDialog.setContext(getActivity());
         utility.setContext(getActivity());
         presenter.addView(this);
         mTxtPlaceName.setSingleLine();
         cuisinesList = new ArrayList<>();
         selectedList = new ArrayList<>();
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         if (null == mSelectedLocation) {
             mSelectedLocation = detectCurrentLocation();
         }
@@ -275,7 +276,7 @@ public class HomeFragment extends BaseFragment implements
         }
 
         if (selectedList.size() != 0) {
-            if (mSelectedLocation != null) {
+            if (null != mSelectedLocation) {
                 selectedCuisineList = homeFgmtHelper.getSelectedCusine(mLocationCuisine, selectedList);
                 //set selected cuisines data
                 Intent intent = new Intent(activity, FoodStackActivity.class);
@@ -338,7 +339,7 @@ public class HomeFragment extends BaseFragment implements
 
     private List<Cuisines> getSelectedCuisineList() {
         List<Cuisines> selectedCuisineList = new ArrayList<>();
-        if (cuisinesList != null) {
+        if (null != cuisinesList) {
             for (Cuisines cuisines : cuisinesList) {
                 if (cuisines.is_cuisine_favourite() || cuisines.is_cuisine_like()) {
                     selectedCuisineList.add(cuisines);
@@ -438,7 +439,7 @@ public class HomeFragment extends BaseFragment implements
             } else if (NetworkUtility.isNetworkAvailable(activity)) {
                 showProgressDialog();
                 mCurrentLocation = utility.getLocation();
-                if (mCurrentLocation != null) {
+                if (null != mCurrentLocation) {
                     dismissProgressDialog();
                     mPlacename = utility.getPlaceName(mCurrentLocation);
                     mSelectedLocation = new com.snapxeats.common.model.location.Location(
@@ -464,7 +465,7 @@ public class HomeFragment extends BaseFragment implements
     }
 
     private void setLocation() {
-        if (mSelectedLocation != null) {
+        if (null != mSelectedLocation) {
             //set latitude and longitude for selected cuisines
             mLocationCuisine = new LocationCuisine();
             mLocationCuisine.setLatitude(mSelectedLocation.getLat());
@@ -474,7 +475,6 @@ public class HomeFragment extends BaseFragment implements
             utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
 
             mTxtPlaceName.setText(mSelectedLocation.getName());
-            showProgressDialog();
             presenter.getCuisineList(mLocationCuisine);
         }
     }
