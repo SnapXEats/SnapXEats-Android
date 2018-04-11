@@ -358,8 +358,7 @@ public class DirectionsActivity extends BaseActivity
         dist = Math.acos(dist);
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515 / DIST_IN_MILES;
-        String distance = String.valueOf(dist).substring(0, 3);
-        mTxtRestDist.setText(distance + " " + getString(R.string.mi));
+        mTxtRestDist.setText(dist + " " + getString(R.string.mi));
     }
 
     private double deg2rad(double deg) {

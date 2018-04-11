@@ -14,6 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RestaurantDetails implements Parcelable {
+
     private String location_lat;
 
     private List<RestaurantTimings> restaurant_timings;
