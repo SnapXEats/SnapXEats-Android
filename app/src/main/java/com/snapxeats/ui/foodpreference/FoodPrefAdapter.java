@@ -8,10 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.snapxeats.R;
+import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.preference.FoodPref;
 import com.snapxeats.ui.cuisinepreference.OnDoubleTapListenr;
 import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -23,8 +26,6 @@ import butterknife.ButterKnife;
 
 public class FoodPrefAdapter extends RecyclerView.Adapter<FoodPrefAdapter.ViewHolder> {
 
-    private static final int SINGLE_TAP = 1;
-    private static final int DOUBLE_TAP = 2;
     private List<FoodPref> rootFoodPrefList;
     private Context mContext;
     private OnDoubleTapListenr onDoubleTapListenr;
@@ -47,7 +48,7 @@ public class FoodPrefAdapter extends RecyclerView.Adapter<FoodPrefAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         FoodPref foodPref = rootFoodPrefList.get(position);
-        holder.setItem(position,foodPref);
+        holder.setItem(position, foodPref);
     }
 
     @Override
@@ -69,7 +70,7 @@ public class FoodPrefAdapter extends RecyclerView.Adapter<FoodPrefAdapter.ViewHo
 
         ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
+            ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
         }
 
@@ -77,13 +78,13 @@ public class FoodPrefAdapter extends RecyclerView.Adapter<FoodPrefAdapter.ViewHo
         public void onClick(View v) {
             int position = getAdapterPosition();
             tapCount++;
-            if (tapCount == SINGLE_TAP) {
+            if (tapCount == UIConstants.SINGLE_TAP) {
                 new Handler().postDelayed(() -> {
-                    if (tapCount == SINGLE_TAP) {
+                    if (tapCount == UIConstants.SINGLE_TAP) {
                         //Single click
                         onDoubleTapListenr.onSingleTap(position, true);
 
-                    } else if (tapCount == DOUBLE_TAP) {
+                    } else if (tapCount == UIConstants.DOUBLE_TAP) {
                         //Double click
                         onDoubleTapListenr.onDoubleTap(position, true);
                         tapCount = 0;

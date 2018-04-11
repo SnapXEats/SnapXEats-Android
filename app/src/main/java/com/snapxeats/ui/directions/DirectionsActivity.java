@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
+import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.googleDirections.RootGoogleDir;
 import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.common.utilities.AppUtility;
@@ -55,13 +56,6 @@ import butterknife.ButterKnife;
  */
 public class DirectionsActivity extends BaseActivity
         implements DirectionsContract.DirectionsView, OnMapReadyCallback {
-
-    private static final float ROUTE_WIDTH = 10;
-    private static final int ROUTE_COLOR = 93;
-    private static final long DURATION_MARKER = 30000;
-    private static final double DIST_IN_MILES = 1609;
-    private static final String LATITUDE = "40.4862157";
-    private static final String LONGITUDE = "-74.4518188";
 
     @Inject
     SnapXDialog snapXDialog;
@@ -146,8 +140,8 @@ public class DirectionsActivity extends BaseActivity
             mTxtRestName.setText(String.valueOf(mDetails.getRestaurantDetails().getRestaurant_name()));
             mTxtRestAddr.setText(mDetails.getRestaurantDetails().getRestaurant_address());
             mTxtRating.setText(mDetails.getRestaurantDetails().getRestaurant_rating());
-            distInMiles(Double.valueOf(LATITUDE),
-                    Double.valueOf(LONGITUDE),
+            distInMiles(Double.valueOf(UIConstants.LATITUDE),
+                    Double.valueOf(UIConstants.LONGITUDE),
                     Double.valueOf(mDetails.getRestaurantDetails().getLocation_lat()),
                     Double.valueOf(mDetails.getRestaurantDetails().getLocation_long()));
             setRestTimings();
@@ -156,7 +150,7 @@ public class DirectionsActivity extends BaseActivity
     }
 
     private void setRestPrice() {
-        String price=mDetails.getRestaurantDetails().getRestaurant_price();
+        String price = mDetails.getRestaurantDetails().getRestaurant_price();
         switch (price) {
             case "1":
                 mTxtPrice.setText(getString(R.string.price_one));
@@ -222,7 +216,7 @@ public class DirectionsActivity extends BaseActivity
     public void setGoogleRoute() {
         RootGoogleDir mGoogleDir = getIntent().getExtras().getParcelable(getString(R.string.intent_google_dir));
         //TODO latlng are hardcoded
-        LatLng src = new LatLng(Double.parseDouble(LATITUDE), Double.parseDouble(LONGITUDE));
+        LatLng src = new LatLng(Double.parseDouble(UIConstants.LATITUDE), Double.parseDouble(UIConstants.LONGITUDE));
 
         mMap.addMarker(new MarkerOptions().position(src)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_pin)));
@@ -240,8 +234,8 @@ public class DirectionsActivity extends BaseActivity
 
             mMap.addPolyline(new PolylineOptions()
                     .addAll(list)
-                    .width(ROUTE_WIDTH)
-                    .color(Color.rgb(ROUTE_COLOR, ROUTE_COLOR, ROUTE_COLOR))
+                    .width(UIConstants.ROUTE_WIDTH)
+                    .color(Color.rgb(UIConstants.ROUTE_COLOR, UIConstants.ROUTE_COLOR, UIConstants.ROUTE_COLOR))
                     .geodesic(true));
             zoomRoute(mMap, list);
         }
@@ -306,7 +300,7 @@ public class DirectionsActivity extends BaseActivity
             public void run() {
                 long elapsed = SystemClock.uptimeMillis() - start;
                 float t = interpolator.getInterpolation((float) elapsed
-                        / DURATION_MARKER);
+                        / UIConstants.DURATION_MARKER);
                 if (point < directionPoint.size())
                     marker.setPosition(directionPoint.get(point));
                 point++;
@@ -357,8 +351,9 @@ public class DirectionsActivity extends BaseActivity
                 * Math.cos(deg2rad(theta));
         dist = Math.acos(dist);
         dist = rad2deg(dist);
-        dist = dist * 60 * 1.1515 / DIST_IN_MILES;
-        mTxtRestDist.setText(dist + " " + getString(R.string.mi));
+        dist = dist * 60 * 1.1515 / UIConstants.DIST_IN_MILES;
+        String distance = String.valueOf(dist).substring(0, 3);
+        mTxtRestDist.setText(distance + " " + getString(R.string.mi));
     }
 
     private double deg2rad(double deg) {

@@ -70,7 +70,8 @@ public class MapsRestAdapter extends RecyclerView.Adapter<MapsRestAdapter.ViewHo
                 , Double.parseDouble(stackData.getDishesInfo().get(position).getLocation_lat())
                 , Double.parseDouble(stackData.getDishesInfo().get(position).getLocation_long()));
 
-        holder.txtDistance.setText(distVal + " " + mContext.getString(R.string.mi));
+        String distance = String.valueOf(distVal).substring(0, 3);
+        holder.txtDistance.setText(distance + " " + mContext.getString(R.string.mi));
     }
 
     /*calculate distance in miles*/

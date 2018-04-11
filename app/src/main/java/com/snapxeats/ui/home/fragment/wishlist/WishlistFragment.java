@@ -29,6 +29,7 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.foodGestures.RootWishlist;
 import com.snapxeats.common.model.foodGestures.Wishlist;
@@ -56,9 +57,6 @@ import static com.baoyz.swipemenulistview.SwipeMenuListView.DIRECTION_LEFT;
 
 public class WishlistFragment extends BaseFragment implements WishlistContract.WishlistView,
         AppContract.SnapXResults {
-
-    private static final String DELETE = "Delete";
-    private static final String EDIT = "Edit";
 
     @BindView(R.id.layout_parent)
     protected LinearLayout mParentLayout;
@@ -143,9 +141,7 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
-                if (null != getActivity() && isAdded()) {
-                    setWishlistCount();
-                }
+                setWishlistCount();
             }
         };
 
@@ -156,34 +152,36 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
     }
 
     private void setWishlistCount() {
-        LinearLayout linearLayout = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
-                .getActionView().findViewById(R.id.layout_wishlist_count);
+        if (null != getActivity() && isAdded()) {
 
-        linearLayout.setVisibility(View.VISIBLE);
+            LinearLayout linearLayout = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
+                    .getActionView().findViewById(R.id.layout_wishlist_count);
 
-        TextView view = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
-                .getActionView().findViewById(R.id.txt_count_wishlist);
+            linearLayout.setVisibility(View.VISIBLE);
 
-        view.setText(getString(R.string.zero));
+            TextView view = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
+                    .getActionView().findViewById(R.id.txt_count_wishlist);
 
-        dbHelper.setContext(getActivity());
-        if (0 != homeDbHelper.getWishlistCount()) {
-            view.setText(String.valueOf(homeDbHelper.getWishlistCount()));
-        } else {
             view.setText(getString(R.string.zero));
+
+            dbHelper.setContext(getActivity());
+            if (0 != homeDbHelper.getWishlistCount()) {
+                view.setText(String.valueOf(homeDbHelper.getWishlistCount()));
+            } else {
+                view.setText(getString(R.string.zero));
+            }
         }
     }
 
     @OnClick(R.id.txt_wishlist_edit)
     public void deleteWishlist() {
-        if ((mTxtWishlistEdit.getText()).equals(EDIT)) {
-
+        if ((mTxtWishlistEdit.getText()).equals(UIConstants.EDIT)) {
             mTxtWishlistEdit.setText(getString(R.string.delete));
             toggle.setDrawerIndicatorEnabled(false);
             toggle.setHomeAsUpIndicator(R.drawable.close);
             isMultipleDeleted = true;
             mSwipeMenuList.setSwipeDirection(0);
-        } else if ((mTxtWishlistEdit.getText()).equals(DELETE)) {
+        } else if ((mTxtWishlistEdit.getText()).equals(UIConstants.DELETE)) {
             boolean isItemDeleted = false;
             for (Wishlist wishlist : mWishlist) {
                 if (wishlist.isDeleted()) {
@@ -212,9 +210,7 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
                     mAdapter.notifyDataSetChanged();
                 }
             }
-            if (null != getActivity() && isAdded()) {
-                setInitWishlistView();
-            }
+            setInitWishlistView();
         });
 
         builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
@@ -225,9 +221,7 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
                 }
                 mAdapter.notifyDataSetChanged();
             }
-            if (null != getActivity() && isAdded()) {
-                setInitWishlistView();
-            }
+            setInitWishlistView();
             dialog.cancel();
         });
 
@@ -237,9 +231,11 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
     }
 
     private void setInitWishlistView() {
-        mTxtWishlistEdit.setText(getString(R.string.edit));
-        toggle.setDrawerIndicatorEnabled(true);
-        isMultipleDeleted = false;
+        if (null != getActivity() && isAdded()) {
+            mTxtWishlistEdit.setText(getString(R.string.edit));
+            toggle.setDrawerIndicatorEnabled(true);
+            isMultipleDeleted = false;
+        }
     }
 
     @Override
@@ -257,9 +253,7 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
 
         mToolbar.setNavigationOnClickListener(v -> {
             if ((mTxtWishlistEdit.getText()).equals("Delete")) {
-                if (null != getActivity() && isAdded()) {
-                    setInitWishlistView();
-                }
+                setInitWishlistView();
                 mSwipeMenuList.setSwipeDirection(DIRECTION_LEFT);
                 for (int index = 0; index < mWishlist.size(); index++) {
                     if (mWishlist.get(index).isDeleted()) {
@@ -291,9 +285,8 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
     @Override
     public void success(Object value) {
         dismissProgressDialog();
-        if (null != getActivity() && isAdded()) {
-            setInitWishlistView();
-        }
+        setInitWishlistView();
+
 
         if (value instanceof RootWishlist) {
             mWishlist = ((RootWishlist) value).getUser_wishlist();

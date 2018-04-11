@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.preference.SnapXPreference;
 import com.snapxeats.common.utilities.AppUtility;
@@ -40,17 +41,6 @@ import butterknife.ButterKnife;
 public class MapsActivity extends BaseActivity
         implements MapsContract.MapsView, AppContract.SnapXResults, DiscreteScrollView.OnItemChangedListener
         , OnMapReadyCallback, GoogleMap.OnCameraIdleListener {
-
-    private static final String LATITUDE = "40.4862157";
-    private static final String LONGITUDE = "-74.4518188";
-    private static final float DEFAULT = 0;
-    private static final float MAP_SCOLL_BY = 370;
-    private static final float MAP_ZOOM = 13.6f;
-    private static final int MAP_FILL_COLOR = 0x55AAAAAA;
-    private static final float MAP_STROKE = 5;
-    private static final float MAP_MARKER_ZOOM = 13;
-    private static final float SCROLL_MIN_SCALE = 0.8f;
-    private static final float DIST_IN_MILES = (float) 1609.34;
 
     @Inject
     SnapXDialog snapXDialog;
@@ -111,7 +101,7 @@ public class MapsActivity extends BaseActivity
         if (0 != mRootCuisine.getDishesInfo().size()) {
             mScrollView.setAdapter(new MapsRestAdapter(this, mRootCuisine));
         }
-        mScrollView.setItemTransformer(new ScaleTransformer.Builder().setMinScale(SCROLL_MIN_SCALE).build());
+        mScrollView.setItemTransformer(new ScaleTransformer.Builder().setMinScale(UIConstants.SCROLL_MIN_SCALE).build());
     }
 
     private void drawMapCircle() {
@@ -120,21 +110,21 @@ public class MapsActivity extends BaseActivity
                     mPreferences.getUserPreferences().getRestaurant_distance() + " " + getString(R.string.miles));
         }
         //TODO latlng are hardcoded for now
-        LatLng currentLatLon = new LatLng(Double.parseDouble(LATITUDE),
-                Double.parseDouble(LONGITUDE));
+        LatLng currentLatLon = new LatLng(Double.parseDouble(UIConstants.LATITUDE),
+                Double.parseDouble(UIConstants.LONGITUDE));
 
         mMap.addCircle(new CircleOptions()
                 .center(currentLatLon)
-                .radius(Integer.parseInt(mPreferences.getUserPreferences().getRestaurant_distance()) * DIST_IN_MILES)
-                .strokeWidth(MAP_STROKE)
-                .strokeColor(MAP_FILL_COLOR)
-                .fillColor(MAP_FILL_COLOR));
+                .radius(Integer.parseInt(mPreferences.getUserPreferences().getRestaurant_distance()) * UIConstants.DIST_IN_MILES)
+                .strokeWidth(UIConstants.MAP_STROKE)
+                .strokeColor(UIConstants.MAP_FILL_COLOR)
+                .fillColor(UIConstants.MAP_FILL_COLOR));
 
         CameraUpdateAnimator animator = new CameraUpdateAnimator(mMap, this);
-        animator.add(CameraUpdateFactory.newLatLngZoom(currentLatLon, MAP_ZOOM),
-                false, (long) DEFAULT);
-        animator.add(CameraUpdateFactory.scrollBy(DEFAULT, MAP_SCOLL_BY),
-                false, (long) DEFAULT);
+        animator.add(CameraUpdateFactory.newLatLngZoom(currentLatLon, UIConstants.MAP_ZOOM),
+                false, (long) UIConstants.DEFAULT);
+        animator.add(CameraUpdateFactory.scrollBy(UIConstants.DEFAULT, UIConstants.MAP_SCOLL_BY),
+                false, (long) UIConstants.DEFAULT);
         animator.execute();
     }
 
@@ -148,7 +138,7 @@ public class MapsActivity extends BaseActivity
                 mMarkerOptions.position(latLng);
                 mMap.addMarker(mMarkerOptions);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(MAP_MARKER_ZOOM));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(UIConstants.MAP_MARKER_ZOOM));
             }
         }
     }
@@ -159,7 +149,7 @@ public class MapsActivity extends BaseActivity
         placeRestMarkers();
         drawMapCircle();
 
-        LatLng latLng = new LatLng(Double.parseDouble(LATITUDE), Double.parseDouble(LONGITUDE));
+        LatLng latLng = new LatLng(Double.parseDouble(UIConstants.LATITUDE), Double.parseDouble(UIConstants.LONGITUDE));
         mMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_current)));

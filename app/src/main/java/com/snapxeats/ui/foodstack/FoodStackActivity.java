@@ -9,10 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -22,7 +20,7 @@ import com.mindorks.butterknifelite.annotations.OnClick;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.DishesInfo;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SelectedCuisineList;
@@ -34,7 +32,6 @@ import com.snapxeats.common.model.restaurantDetails.RestaurantDishes;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.dagger.AppContract;
-import com.snapxeats.ui.directions.DirectionsActivity;
 import com.snapxeats.ui.maps.MapsActivity;
 import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
 import com.snapxeats.ui.restaurantInfo.RestaurantInfoActivity;
@@ -57,20 +54,6 @@ import javax.inject.Inject;
 
 public class FoodStackActivity extends BaseActivity
         implements FoodStackContract.FoodStackView, AppContract.SnapXResults/*,View.OnClickListener*/ {
-
-    private static final long SET_START_DELAY = 100;
-    private static final long SET_DURATION = 500;
-    private static final long SET_ROTATION_DURATION = 200;
-    private static final float SET_ALPHA = (float) 1.0;
-    private static final float LEFT_ROTATION = -10f;
-    private static final float LEFT_X_TRANSLATION = -2000f;
-    private static final float LEFT_Y_TRANSLATION = 500f;
-    private static final float DEFAULT_TRANSLATION = 0f;
-    private static final float TOP_Y_TRANSLATION = -500f;
-    private static final float SET_ALPHA_DISABLE = (float) 0.5;
-    private static final float RIGHT_ROTATION = 10f;
-    private static final float RIGHT_X_TRANSLATION = 2000f;
-    private static final float RIGHT_Y_TRANSLATION = 500f;
 
     @BindView(R.id.activity_main_card_stack_view)
     protected CardStackView cardStackView;
@@ -205,24 +188,24 @@ public class FoodStackActivity extends BaseActivity
 
     public void enableGestureActions() {
         mImgLike.setClickable(true);
-        mImgLike.setAlpha(SET_ALPHA);
+        mImgLike.setAlpha(UIConstants.SET_ALPHA);
 
         mImgDislike.setClickable(true);
-        mImgDislike.setAlpha(SET_ALPHA);
+        mImgDislike.setAlpha(UIConstants.SET_ALPHA);
 
         mImgWishlist.setClickable(true);
-        mImgWishlist.setAlpha(SET_ALPHA);
+        mImgWishlist.setAlpha(UIConstants.SET_ALPHA);
     }
 
     public void disableGestureActions() {
         mImgLike.setClickable(false);
-        mImgLike.setAlpha(SET_ALPHA_DISABLE);
+        mImgLike.setAlpha(UIConstants.SET_ALPHA_DISABLE);
 
         mImgDislike.setClickable(false);
-        mImgDislike.setAlpha(SET_ALPHA_DISABLE);
+        mImgDislike.setAlpha(UIConstants.SET_ALPHA_DISABLE);
 
         mImgWishlist.setClickable(false);
-        mImgWishlist.setAlpha(SET_ALPHA_DISABLE);
+        mImgWishlist.setAlpha(UIConstants.SET_ALPHA_DISABLE);
     }
 
     /*Enable Undo button action*/
@@ -234,7 +217,7 @@ public class FoodStackActivity extends BaseActivity
     /*Disable Undo button action*/
     public void disableUndo() {
         mImgUndo.setClickable(false);
-        mImgUndo.setAlpha(SET_ALPHA_DISABLE);
+        mImgUndo.setAlpha(UIConstants.SET_ALPHA_DISABLE);
     }
 
     private void setupFoodStack() {
@@ -268,7 +251,7 @@ public class FoodStackActivity extends BaseActivity
                     }
                 }
 
-                if (cardStackView.getTopIndex() == mStackAdapter.getCount()-5) {
+                if (cardStackView.getTopIndex() == mStackAdapter.getCount() - UIConstants.CARD_COUNT) {
                     paginate();
                 }
             }
@@ -316,6 +299,7 @@ public class FoodStackActivity extends BaseActivity
         rootCuisinePhotos = (RootCuisinePhotos) value;
         setStackAdapter();
     }
+
     /*set foodstack adapter*/
     private void setStackAdapter() {
         int rowIndex, colIndex;
@@ -327,8 +311,8 @@ public class FoodStackActivity extends BaseActivity
                     RestaurantDishes restaurantDishes = dish.getRestaurantDishes().get(colIndex);
                     stringsUrl.add(restaurantDishes.getDish_image_url());
                     FoodStackData foodStackData = new FoodStackData(dish.getRestaurant_name(),
-                            dish.getLocation_lat(),dish.getLocation_long(),
-                            dish.getRestaurant_info_id(), stringsUrl, dish.getRestaurantDishes().get(colIndex).getRestaurant_dish_id());
+                            dish.getRestaurant_info_id(), stringsUrl,
+                            dish.getRestaurantDishes().get(colIndex).getRestaurant_dish_id());
                     foodStackDataList.add(foodStackData);
                 }
             }
@@ -336,6 +320,7 @@ public class FoodStackActivity extends BaseActivity
             cardStackView.setAdapter(mStackAdapter);
         }
     }
+
     /*swipe LEFT*/
     public void swipeLeft(int index) {
         List<FoodStackData> data = extractRemainingCards();
@@ -393,54 +378,54 @@ public class FoodStackActivity extends BaseActivity
     private void gestureRight() {
         View target = cardStackView.getTopView();
         ValueAnimator rotation = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat(getString(R.string.rotation), RIGHT_ROTATION));
-        rotation.setDuration(SET_ROTATION_DURATION);
+                target, PropertyValuesHolder.ofFloat(getString(R.string.rotation), UIConstants.RIGHT_ROTATION));
+        rotation.setDuration(UIConstants.SET_ROTATION_DURATION);
         ValueAnimator translateX = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat(getString(R.string.translationX), DEFAULT_TRANSLATION,
-                        RIGHT_X_TRANSLATION));
+                target, PropertyValuesHolder.ofFloat(getString(R.string.translationX), UIConstants.DEFAULT_TRANSLATION,
+                        UIConstants.RIGHT_X_TRANSLATION));
         ValueAnimator translateY = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat(getString(R.string.translationY), DEFAULT_TRANSLATION,
-                        RIGHT_Y_TRANSLATION));
-        translateX.setStartDelay(SET_START_DELAY);
-        translateY.setStartDelay(SET_START_DELAY);
-        translateX.setDuration(SET_DURATION);
-        translateY.setDuration(SET_DURATION);
+                target, PropertyValuesHolder.ofFloat(getString(R.string.translationY), UIConstants.DEFAULT_TRANSLATION,
+                        UIConstants.RIGHT_Y_TRANSLATION));
+        translateX.setStartDelay(UIConstants.SET_START_DELAY);
+        translateY.setStartDelay(UIConstants.SET_START_DELAY);
+        translateX.setDuration(UIConstants.SET_DURATION);
+        translateY.setDuration(UIConstants.SET_DURATION);
         mAnimatorSet.playTogether(rotation, translateX, translateY);
     }
 
     private void gestureLeft() {
         View target = cardStackView.getTopView();
         ValueAnimator rotation = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat(getString(R.string.rotation), LEFT_ROTATION));
-        rotation.setDuration(SET_ROTATION_DURATION);
+                target, PropertyValuesHolder.ofFloat(getString(R.string.rotation), UIConstants.LEFT_ROTATION));
+        rotation.setDuration(UIConstants.SET_ROTATION_DURATION);
         ValueAnimator translateX = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat(getString(R.string.translationX), DEFAULT_TRANSLATION,
-                        LEFT_X_TRANSLATION));
+                target, PropertyValuesHolder.ofFloat(getString(R.string.translationX), UIConstants.DEFAULT_TRANSLATION,
+                        UIConstants.LEFT_X_TRANSLATION));
         ValueAnimator translateY = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat(getString(R.string.translationY), DEFAULT_TRANSLATION,
-                        LEFT_Y_TRANSLATION));
-        translateX.setStartDelay(SET_START_DELAY);
-        translateY.setStartDelay(SET_START_DELAY);
-        translateX.setDuration(SET_DURATION);
-        translateY.setDuration(SET_DURATION);
+                target, PropertyValuesHolder.ofFloat(getString(R.string.translationY), UIConstants.DEFAULT_TRANSLATION,
+                        UIConstants.LEFT_Y_TRANSLATION));
+        translateX.setStartDelay(UIConstants.SET_START_DELAY);
+        translateY.setStartDelay(UIConstants.SET_START_DELAY);
+        translateX.setDuration(UIConstants.SET_DURATION);
+        translateY.setDuration(UIConstants.SET_DURATION);
         mAnimatorSet.playTogether(rotation, translateX, translateY);
     }
 
     private void gestureTop() {
         View target = cardStackView.getTopView();
         ValueAnimator rotation = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat(getString(R.string.rotation), DEFAULT_TRANSLATION));
-        rotation.setDuration(SET_ROTATION_DURATION);
+                target, PropertyValuesHolder.ofFloat(getString(R.string.rotation), UIConstants.DEFAULT_TRANSLATION));
+        rotation.setDuration(UIConstants.SET_ROTATION_DURATION);
         ValueAnimator translateX = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat(getString(R.string.translationX), DEFAULT_TRANSLATION,
-                        DEFAULT_TRANSLATION));
+                target, PropertyValuesHolder.ofFloat(getString(R.string.translationX), UIConstants.DEFAULT_TRANSLATION,
+                        UIConstants.DEFAULT_TRANSLATION));
         ValueAnimator translateY = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat(getString(R.string.translationY), DEFAULT_TRANSLATION,
-                        TOP_Y_TRANSLATION));
-        translateX.setStartDelay(SET_START_DELAY);
-        translateY.setStartDelay(SET_START_DELAY);
-        translateX.setDuration(SET_DURATION);
-        translateY.setDuration(SET_DURATION);
+                target, PropertyValuesHolder.ofFloat(getString(R.string.translationY), UIConstants.DEFAULT_TRANSLATION,
+                        UIConstants.TOP_Y_TRANSLATION));
+        translateX.setStartDelay(UIConstants.SET_START_DELAY);
+        translateY.setStartDelay(UIConstants.SET_START_DELAY);
+        translateX.setDuration(UIConstants.SET_DURATION);
+        translateY.setDuration(UIConstants.SET_DURATION);
         mAnimatorSet.playTogether(rotation, translateX, translateY);
     }
 
@@ -452,7 +437,7 @@ public class FoodStackActivity extends BaseActivity
 
     @OnClick(R.id.img_foodstack_map)
     public void imgMaps() {
-        if(mStackAdapter.getCount()!=0) {
+        if (mStackAdapter.getCount() != 0) {
             Intent intent = new Intent(FoodStackActivity.this, MapsActivity.class);
             intent.putExtra(getString(R.string.intent_root_cuisine), rootCuisinePhotos);
             startActivity(intent);
