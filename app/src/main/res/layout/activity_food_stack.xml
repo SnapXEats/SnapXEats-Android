@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:elevation="@dimen/common_dimens_2"
-        android:paddingRight="@dimen/common_dimens_5"
+        android:paddingEnd="@dimen/common_dimens_5"
         app:theme="@style/ToolBarTheme">
 
         <ImageView
@@ -39,6 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:layout_marginBottom="@dimen/common_dimens_20"
             android:gravity="center"
             android:orientation="horizontal"
             android:padding="@dimen/common_dimens_10">
@@ -83,11 +84,12 @@
             android:id="@+id/activity_main_card_stack_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="150dp"
+            android:layout_marginBottom="@dimen/dimen_151"
             android:layout_marginEnd="@dimen/common_dimens_30"
             android:layout_marginStart="@dimen/common_dimens_30"
             android:layout_marginTop="@dimen/common_dimens_40"
             android:clipToPadding="false"
+            android:elevation="@dimen/common_dimens_40"
             android:paddingBottom="@dimen/dimen_32"
             android:paddingLeft="@dimen/dimen_16"
             android:paddingRight="@dimen/dimen_16"
@@ -102,7 +104,6 @@
             app:swipeThreshold="0.75"
             app:topOverlay="@layout/food_overlay_wishlist"
             app:translationDiff="12"
-            app:visibleCount="5" />
+            app:visibleCount="3" />
     </FrameLayout>
-
 </LinearLayout>

@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
@@ -28,6 +29,7 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.foodGestures.RootWishlist;
 import com.snapxeats.common.model.foodGestures.Wishlist;
@@ -37,12 +39,16 @@ import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.foodstack.FoodStackDbHelper;
 import com.snapxeats.ui.home.HomeDbHelper;
 import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static com.baoyz.swipemenulistview.SwipeMenuListView.DIRECTION_LEFT;
 
 /**
@@ -51,9 +57,6 @@ import static com.baoyz.swipemenulistview.SwipeMenuListView.DIRECTION_LEFT;
 
 public class WishlistFragment extends BaseFragment implements WishlistContract.WishlistView,
         AppContract.SnapXResults {
-
-    private static final String DELETE = "Delete";
-    private static final String EDIT = "Edit";
 
     @BindView(R.id.layout_parent)
     protected LinearLayout mParentLayout;
@@ -138,9 +141,7 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
-                if (null != getActivity() && isAdded()) {
-                    setWishlistCount();
-                }
+                setWishlistCount();
             }
         };
 
@@ -151,34 +152,36 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
     }
 
     private void setWishlistCount() {
-        LinearLayout linearLayout = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
-                .getActionView().findViewById(R.id.layout_wishlist_count);
+        if (null != getActivity() && isAdded()) {
 
-        linearLayout.setVisibility(View.VISIBLE);
+            LinearLayout linearLayout = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
+                    .getActionView().findViewById(R.id.layout_wishlist_count);
 
-        TextView view = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
-                .getActionView().findViewById(R.id.txt_count_wishlist);
+            linearLayout.setVisibility(View.VISIBLE);
 
-        view.setText(getString(R.string.zero));
+            TextView view = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
+                    .getActionView().findViewById(R.id.txt_count_wishlist);
 
-        dbHelper.setContext(getActivity());
-        if (0 != homeDbHelper.getWishlistCount()) {
-            view.setText(String.valueOf(homeDbHelper.getWishlistCount()));
-        } else {
             view.setText(getString(R.string.zero));
+
+            dbHelper.setContext(getActivity());
+            if (0 != homeDbHelper.getWishlistCount()) {
+                view.setText(String.valueOf(homeDbHelper.getWishlistCount()));
+            } else {
+                view.setText(getString(R.string.zero));
+            }
         }
     }
 
     @OnClick(R.id.txt_wishlist_edit)
     public void deleteWishlist() {
-        if ((mTxtWishlistEdit.getText()).equals(EDIT)) {
-
+        if ((mTxtWishlistEdit.getText()).equals(UIConstants.EDIT)) {
             mTxtWishlistEdit.setText(getString(R.string.delete));
             toggle.setDrawerIndicatorEnabled(false);
             toggle.setHomeAsUpIndicator(R.drawable.close);
             isMultipleDeleted = true;
             mSwipeMenuList.setSwipeDirection(0);
-        } else if ((mTxtWishlistEdit.getText()).equals(DELETE)) {
+        } else if ((mTxtWishlistEdit.getText()).equals(UIConstants.DELETE)) {
             boolean isItemDeleted = false;
             for (Wishlist wishlist : mWishlist) {
                 if (wishlist.isDeleted()) {
@@ -218,7 +221,6 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
                 }
                 mAdapter.notifyDataSetChanged();
             }
-
             setInitWishlistView();
             dialog.cancel();
         });
@@ -229,9 +231,11 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
     }
 
     private void setInitWishlistView() {
-        mTxtWishlistEdit.setText(getString(R.string.edit));
-        toggle.setDrawerIndicatorEnabled(true);
-        isMultipleDeleted = false;
+        if (null != getActivity() && isAdded()) {
+            mTxtWishlistEdit.setText(getString(R.string.edit));
+            toggle.setDrawerIndicatorEnabled(true);
+            isMultipleDeleted = false;
+        }
     }
 
     @Override
@@ -282,6 +286,7 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
     public void success(Object value) {
         dismissProgressDialog();
         setInitWishlistView();
+
 
         if (value instanceof RootWishlist) {
             mWishlist = ((RootWishlist) value).getUser_wishlist();

@@ -1,8 +1,10 @@
 package com.snapxeats.ui.directions;
 
 import android.support.annotation.Nullable;
+
 import com.snapxeats.common.Router;
 import com.snapxeats.common.utilities.SnapXResult;
+
 import javax.inject.Singleton;
 
 /**

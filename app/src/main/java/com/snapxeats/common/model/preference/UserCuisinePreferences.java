@@ -1,15 +1,8 @@
 package com.snapxeats.common.model.preference;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.Expose;
 
 import org.greenrobot.greendao.annotation.Entity;
-
-import lombok.Getter;
-import lombok.Setter;
-
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.NotNull;
@@ -35,7 +28,7 @@ public class UserCuisinePreferences {
 
     @Generated(hash = 1644924845)
     public UserCuisinePreferences(String cuisine_info_id, boolean is_cuisine_like,
-            boolean is_cuisine_favourite, @NotNull String userPreferenceId) {
+                                  boolean is_cuisine_favourite, @NotNull String userPreferenceId) {
         this.cuisine_info_id = cuisine_info_id;
         this.is_cuisine_like = is_cuisine_like;
         this.is_cuisine_favourite = is_cuisine_favourite;

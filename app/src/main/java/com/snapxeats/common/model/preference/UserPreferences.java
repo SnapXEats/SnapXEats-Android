@@ -6,13 +6,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Created by Snehal Tembare on 4/4/18.
+ * Created by Prajakta Patil on 4/4/18.
  */
-
-
 @Getter
 @Setter
-
 public class UserPreferences {
     private String restaurant_rating;
     private String restaurant_price;

@@ -47,8 +47,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.snapxeats.common.Router.Screen.LOGIN;
-import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isDirty;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isCuisineDirty;
+import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isDirty;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isFoodDirty;
 
 /**
@@ -58,11 +58,6 @@ import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isFoo
 public class HomeActivity extends BaseActivity implements
         NavigationView.OnNavigationItemSelectedListener, HomeContract.HomeView,
         AppContract.SnapXResults {
-
-    public interface PreferenceConstant {
-        int ACCESS_FINE_LOCATION = 1;
-        int DEVICE_LOCATION = 2;
-    }
 
     @Inject
     HomeFragment homeFragment;

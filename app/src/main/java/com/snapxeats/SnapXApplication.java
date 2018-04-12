@@ -1,9 +1,11 @@
 package com.snapxeats;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 
-import com.snapxeats.common.model.foodGestures.DaoMaster;
-import com.snapxeats.common.model.foodGestures.DaoSession;
+import com.snapxeats.common.model.DaoMaster;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.dagger.AppComponent;
 import com.snapxeats.dagger.DaggerAppComponent;
 
@@ -18,7 +20,7 @@ public final class SnapXApplication extends DaggerApplication {
     public DaoSession daoSession;
     private String token;
 
-
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onCreate() {
         super.onCreate();
@@ -26,7 +28,6 @@ public final class SnapXApplication extends DaggerApplication {
         SQLiteDatabase db = helper.getWritableDatabase();
         daoSession = new DaoMaster(db).newSession();
     }
-
     public DaoSession getDaoSession() {
         return daoSession;
     }

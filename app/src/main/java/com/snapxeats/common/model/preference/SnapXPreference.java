@@ -12,5 +12,5 @@ import lombok.Setter;
 @Setter
 
 public class SnapXPreference {
-private UserPreferences userPreferences;
+    private UserPreferences userPreferences;
 }

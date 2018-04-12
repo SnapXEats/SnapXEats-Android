@@ -1,22 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:mContext="com.snapxeats.ui.maps.MapsActivity">
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_maps"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:elevation="@dimen/dimens_4">
+    android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/layout_maps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_maps"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:elevation="@dimen/common_dimens_2"
+            android:paddingEnd="@dimen/common_dimens_5"
+            app:theme="@style/ToolBarTheme">
+
+        </android.support.v7.widget.Toolbar>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/frame_layout_maps"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layout_maps">
+
+        <fragment
+            android:id="@+id/maps_view"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="com.snapxeats.ui.maps.MapsActivity" />
+
+        <com.yarolegovich.discretescrollview.DiscreteScrollView
+            android:id="@+id/maps_scrollview"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Maps"
-            android:textColor="@color/colorBlack"
-            android:textSize="@dimen/txt_size_16"
-            android:textStyle="bold" />
-    </android.support.v7.widget.Toolbar>
-</LinearLayout>
+            android:layout_gravity="bottom"
+            android:layout_margin="@dimen/common_dimens_20" />
+    </FrameLayout>
+
+</RelativeLayout>

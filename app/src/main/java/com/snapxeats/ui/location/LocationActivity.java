@@ -15,6 +15,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
@@ -26,15 +27,18 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.LocationHelper;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import static com.snapxeats.ui.home.HomeActivity.PreferenceConstant.ACCESS_FINE_LOCATION;
-import static com.snapxeats.ui.home.HomeActivity.PreferenceConstant.DEVICE_LOCATION;
 
+import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
+import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
 
 /**
  * Created by Snehal Tembare on 5/1/18.
@@ -205,9 +209,7 @@ public class LocationActivity extends BaseActivity implements
             dismissProgressDialog();
             selectedLocation = new Location(location.getLatitude(),
                     location.getLongitude(), utility.getPlaceName(location));
-            if (null != selectedLocation) {
-                putData(selectedLocation);
-            }
+            putData(selectedLocation);
         }
     }
 

@@ -3,7 +3,7 @@ package com.snapxeats.ui.location;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.snapxeats.common.constants.WebConstants;
+import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.location.Prediction;
 
 import org.json.JSONArray;
@@ -24,11 +24,6 @@ import java.util.List;
  */
 
 public class GetPredictionTask extends AsyncTask<String, Void, List<Prediction>> {
-
-    private static final String TAG = "GetPredictionTask";
-
-    private static final String PLACES_API_BASE = WebConstants.GOOGLE_BASE_URL +
-            WebConstants.PREDICTION_LIST;
 
     HttpURLConnection conn = null;
     StringBuilder jsonResults = new StringBuilder();
@@ -87,7 +82,7 @@ public class GetPredictionTask extends AsyncTask<String, Void, List<Prediction>>
 
     StringBuilder getData(String input) {
         try {
-            StringBuilder sb = new StringBuilder(PLACES_API_BASE);
+            StringBuilder sb = new StringBuilder(UIConstants.PLACES_API_BASE);
             sb.append("&input=" + URLEncoder.encode(input, "utf8"));
 
             URL url = new URL(sb.toString());
@@ -101,10 +96,10 @@ public class GetPredictionTask extends AsyncTask<String, Void, List<Prediction>>
                 jsonResults.append(buff, 0, read);
             }
         } catch (MalformedURLException e) {
-            Log.e(TAG, "Error processing Places API URL", e);
+            Log.e(UIConstants.TAG_PREDICTION, "Error processing Places API URL", e);
 
         } catch (IOException e) {
-            Log.e(TAG, "Nw Error connecting to Places API", e);
+            Log.e(UIConstants.TAG_PREDICTION, "Nw Error connecting to Places API", e);
         } finally {
             if (null != conn) {
                 conn.disconnect();

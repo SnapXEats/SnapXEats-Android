@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.model.preference.Cuisines;
-import com.snapxeats.common.model.preference.FoodPref;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserCuisinePreferences;
 import com.snapxeats.common.model.preference.UserCuisinePreferencesDao;
@@ -53,9 +51,6 @@ public class LoginDbHelper {
     void saveUserPrefDataInDb(UserPreferences userPreferences) {
         SharedPreferences preferences = utility.getSharedPreferences();
         String userId = preferences.getString(mContext.getString(R.string.user_id), "");
-//        mRootUserPreference.setUser_Id(userId);
-
-        //Insert UserPreference in local database
         UserPreference userPreference = new UserPreference(userId,
                 String.valueOf(userPreferences.getRestaurant_rating()),
                 String.valueOf(userPreferences.getRestaurant_price()),

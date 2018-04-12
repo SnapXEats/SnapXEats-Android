@@ -2,16 +2,12 @@ package com.snapxeats.ui.restaurantInfo;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -24,6 +20,7 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -72,9 +69,6 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     @BindView(R.id.spinner_rest_info_timings)
     protected Spinner mSpinner;
 
-    @BindView(R.id.list_rest_aminities)
-    protected ListView mListRestAminities;
-
     @BindView(R.id.txt_rest_info_open)
     protected TextView mTxtRestOpen;
 
@@ -85,6 +79,12 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     protected LinearLayout mParentLayout;
 
     private String restaurantId;
+
+    @BindView(R.id.txt_rest_aminities)
+    protected TextView mTxtRestAminities;
+
+    @BindView(R.id.txt_photo_taken)
+    protected TextView mTxtPhotoTaken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,33 +104,30 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         snapXDialog.setContext(this);
         ButterKnife.bind(this);
         utility.setContext(this);
-        //set mToolbar
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setTitle(getString(R.string.toolbar_rest_info));
         initRestaurantInfo();
     }
 
     public void initRestaurantInfo() {
         mRestaurantPicsList = new ArrayList<>();
-        //get restaurant details'
         restaurantId = getIntent().getStringExtra(getString(R.string.intent_foodstackRestInfoId));
         showProgressDialog();
         mRestaurantPresenter.getRestInfo(restaurantId);
     }
 
-    //set restaurant timings
+    /*set restaurant timings*/
     private void setRestaurantTimingsList() {
         ArrayAdapter<String> adapter;
         List<String> listTimings = new ArrayList<>();
         String isOpenNow = mRootRestaurantInfo.getRestaurantDetails().getIsOpenNow();
 
-        if (mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size() != 0) {
-            for (int i = 0; i < mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size(); i++) {
-                listTimings.add(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().get(i).getDay_of_week()
+        if (0 != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size()) {
+            for (int row = 0; row < mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size(); row++) {
+                listTimings.add(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().get(row).getDay_of_week()
                         + " - " +
-                        mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().get(i).getRestaurant_open_close_time());
+                        mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().get(row).getRestaurant_open_close_time());
             }
             Comparator<String> dateComparator = (s1, s2) -> {
                 try {
@@ -186,47 +183,40 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         setRestaurantAminities();
     }
 
-    //set restaurant aminities
+    /*set restaurant aminities values*/
     public void setRestaurantAminities() {
-        List<String> strings = new ArrayList<>();
-        if (mRootRestaurantInfo.getRestaurantDetails().getRestaurant_aminities().size() != 0) {
-            for (int i = 0; i < mRootRestaurantInfo.getRestaurantDetails().getRestaurant_aminities().size(); i++) {
-                strings.add(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_aminities().get(i));
+        List<String> list = new ArrayList<>();
+        if (0 != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_aminities().size()) {
+            for (int row = 0; row < mRootRestaurantInfo.getRestaurantDetails().getRestaurant_aminities().size(); row++) {
+                list.add(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_aminities().get(row));
             }
-            AminitiesAdapter adapter = new AminitiesAdapter(getActivity(),
-                    R.id.txt_rest_aminities, strings);
-            mListRestAminities.setAdapter(adapter);
+
+            StringBuilder builder = new StringBuilder();
+            for (String details : mRootRestaurantInfo.getRestaurantDetails().getRestaurant_aminities()) {
+                builder.append(details + "\n");
+            }
+            mTxtRestAminities.setText(builder.toString());
+            setRestPhotoDate();
         }
     }
 
-    /*list adapter for restaurant aminities*/
-    public class AminitiesAdapter extends ArrayAdapter<String> {
-        List<String> list;
-        Context mContext;
+    private void setRestPhotoDate() {
+        DateFormat simpleDateFormat = new SimpleDateFormat(getString(R.string.yyyy_MM_dd));
+        Date date = null;
+        String stringDate = null;
+        try {
+            date = simpleDateFormat.parse(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_pics().get(0).getCreated_date());
+            SimpleDateFormat dateFormat = new SimpleDateFormat(getString(R.string.dd_MMM_yyyy));
+            stringDate = dateFormat.format(date);
 
-        public AminitiesAdapter(Context context, int textViewResourceId,
-                                List<String> objects) {
-            super(context, textViewResourceId, objects);
-            this.mContext = context;
-            list = objects;
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            if (null == row) {
-                LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-                row = inflater.inflate(R.layout.list_restaurant_aminities, parent, false);
-            }
-            TextView textView = row.findViewById(R.id.txt_rest_aminities);
-            textView.setText(list.get(position));
-            return row;
-        }
+        mTxtPhotoTaken.setText(getString(R.string.photo_taken) + " " + stringDate);
     }
 
-    //set restaurant data
+    /*set restaurant data*/
     public void setUpRestaurantData() {
-        //restaurants details
         if (!mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name().isEmpty()) {
             String restName = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name();
             mTxtRestName.setText(restName);
@@ -242,7 +232,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
             mRestaurantPicsList.add(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_pics().get(INDEX_REST_PICS));
         }
 
-        //set adapter for restaurant images
+        /*set adapter for restaurant images*/
         RestaurantInfoAdapter mRestInfoAdapter = new RestaurantInfoAdapter(RestaurantInfoActivity.this, mRestaurantPicsList);
         mRestInfoViewPager.setAdapter(mRestInfoAdapter);
     }

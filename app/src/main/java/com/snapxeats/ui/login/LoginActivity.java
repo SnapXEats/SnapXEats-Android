@@ -134,10 +134,10 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                            snapXUserRequest = new SnapXUserRequest(AccessToken.getCurrentAccessToken().getToken(),
-                                    getString(R.string.platform_facebook), AccessToken.getCurrentAccessToken().getUserId());
-                            showProgressDialog();
-                            mLoginPresenter.getUserdata(snapXUserRequest);
+                        snapXUserRequest = new SnapXUserRequest(AccessToken.getCurrentAccessToken().getToken(),
+                                getString(R.string.platform_facebook), AccessToken.getCurrentAccessToken().getUserId());
+                        showProgressDialog();
+                        mLoginPresenter.getUserdata(snapXUserRequest);
                     }
 
                     @Override
@@ -182,7 +182,6 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
             mApp.authorize();
 
         } else {
-//            showNetworkErrorDialog(null);
             showNetworkErrorDialog((dialog, which) -> {
                 if (!NetworkUtility.isNetworkAvailable(getActivity())) {
                     AppContract.DialogListenerAction click = () -> {
@@ -245,7 +244,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
 
     @Override
     public void noNetwork(Object value) {
-       showNetworkErrorDialog((dialog, which) -> {
+        showNetworkErrorDialog((dialog, which) -> {
             if (!NetworkUtility.isNetworkAvailable(getActivity())) {
                 AppContract.DialogListenerAction click = () -> {
                     showProgressDialog();
