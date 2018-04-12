@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:padding="@dimen/common_dimens_10">
+
+        <com.pkmmte.view.CircularImageView
+            android:id="@+id/img_restaurant"
+            android:layout_width="@dimen/dimens_54dp"
+            android:layout_height="@dimen/dimens_54dp"
+            android:src="@drawable/user_image"
+            app:border="true"
+            app:border_width="@dimen/common_1"
+            app:shadow="true" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:layout_marginLeft="@dimen/text_size_15">
+
+            <TextView
+                android:id="@+id/txt_rest_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Restaurant Name"
+                android:textColor="@color/text_color_primary"
+                android:textSize="@dimen/text_size_15"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_food_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Food category"
+                android:textColor="@color/text_color_primary"
+                android:textSize="@dimen/text_size_11" />
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

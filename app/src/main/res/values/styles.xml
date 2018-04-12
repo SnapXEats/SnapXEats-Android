@@ -39,4 +39,9 @@
     <style name="CustomRatingBar" parent="Theme.AppCompat">
         <item name="colorControlNormal">@color/recent_searches_color</item>
     </style>
+
+    <style name="CheckInActivityTheme" parent="@android:style/Theme.Dialog">
+     <item name="android:windowFrame">@null</item>
+        <item name="android:windowBackground">@color/colorWhite</item>
+    </style>
 </resources>

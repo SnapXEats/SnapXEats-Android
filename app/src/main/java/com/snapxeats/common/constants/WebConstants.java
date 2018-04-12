@@ -29,5 +29,7 @@ public class WebConstants {
     public static final String USER_WISHLIST = "/api/v1/userGesture/wishlist";
     public static final String USER_DELETE_WISHLIST = "/api/v1/userGesture/wishlist/";
     public static final String USER_LOGOUT = "/api/v1/users/logout";
+    public static final String CHECKIN_RESTAURANTS = "/api/v1/restaurant/checkIn/getRestaurants";
+    public static final String CHECKIN = "/api/v1/restaurant/checkIn";
 
 }

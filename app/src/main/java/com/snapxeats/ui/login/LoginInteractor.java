@@ -200,11 +200,14 @@ public class LoginInteractor {
         snapxData.setSocialPlatform(snapXUser.getSocial_platform());
         snapxData.setIsFirstTimeUser(snapXUser.isFirst_time_login());
         if (snapXUser.getSocial_platform().equalsIgnoreCase(mContext.getString(R.string.platform_facebook))) {
-            String userName = Profile.getCurrentProfile().getFirstName() + " "
-                    + Profile.getCurrentProfile().getLastName();
-            Uri profileUri = Profile.getCurrentProfile().getProfilePictureUri(50, 50);
-            snapxData.setUserName(userName);
-            snapxData.setImageUrl(profileUri.toString());
+            if (null != Profile.getCurrentProfile()) {
+                String userName = Profile.getCurrentProfile().getFirstName() + " "
+                        + Profile.getCurrentProfile().getLastName();
+                Uri profileUri = Profile.getCurrentProfile().getProfilePictureUri(50, 50);
+                snapxData.setUserName(userName);
+                snapxData.setImageUrl(profileUri.toString());
+            }
+
         } else if (snapXUser.getSocial_platform().equalsIgnoreCase(mContext.getString(R.string.platform_instagram))) {
             snapxData.setImageUrl(rootInstagram.getData().getProfile_picture());
             snapxData.setUserName(rootInstagram.getData().getFull_name());

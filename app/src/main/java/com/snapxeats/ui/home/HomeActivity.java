@@ -12,8 +12,15 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -21,7 +28,13 @@ import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.OnRecyclerItemClickListener;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.checkin.CheckInRequest;
+import com.snapxeats.common.model.checkin.CheckInResponse;
+import com.snapxeats.common.model.checkin.CheckInRestaurants;
+import com.snapxeats.common.model.checkin.RestaurantInfo;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.utilities.AppUtility;
@@ -34,6 +47,7 @@ import com.snapxeats.ui.home.fragment.home.HomeFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
 import com.snapxeats.ui.home.fragment.rewards.RewardsFragment;
 import com.snapxeats.ui.home.fragment.smartphotos.SmartPhotoFragment;
+import com.snapxeats.ui.home.fragment.snapnshare.CheckInAdapter;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
@@ -57,7 +71,8 @@ import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isFoo
 
 public class HomeActivity extends BaseActivity implements
         NavigationView.OnNavigationItemSelectedListener, HomeContract.HomeView,
-        AppContract.SnapXResults {
+        AppContract.SnapXResults, View.OnClickListener {
+
 
     @Inject
     HomeFragment homeFragment;
@@ -96,6 +111,17 @@ public class HomeActivity extends BaseActivity implements
     @BindView(R.id.parent_layout)
     protected View mParentLayout;
 
+    //CheckIndialog
+    protected LinearLayout mSingleRestLayout;
+    protected LinearLayout mNoRestLayout;
+    protected LinearLayout mBtnLayout;
+    protected LinearLayout mMultipleRestLayout;
+    protected RecyclerView mRecyclerView;
+    protected CircularImageView mImgRestaurant;
+    protected TextView mTxtRestName;
+    protected TextView mTxtCancel;
+    protected Button mBtnCheckIn;
+
     @Inject
     HomeContract.HomePresenter mPresenter;
 
@@ -126,6 +152,15 @@ public class HomeActivity extends BaseActivity implements
     private TextView txtRewards;
     private LinearLayout mLayoutUserData;
     private UserPreference mUserPreference;
+    private boolean isCheckIn = true;
+    private Dialog mCheckInDialog;
+    private Dialog mRewardDialog;
+
+    private double lattitude = 40.7014;
+    private double longitude = -74.0151;
+    private List<RestaurantInfo> mRestaurantList;
+
+    private CheckInAdapter mAdapter;
 
     @Inject
     FoodStackDbHelper foodStackDbHelper;
@@ -182,6 +217,16 @@ public class HomeActivity extends BaseActivity implements
             transaction.replace(R.id.frame_layout, homeFragment);
         transaction.commit();
         mNavigationView.setCheckedItem(R.id.nav_home);
+
+        changeItems();
+    }
+
+    private void changeItems() {
+        if (isCheckIn) {
+            Menu menu = mNavigationView.getMenu();
+            MenuItem menuItem = menu.findItem(R.id.nav_snap);
+            menuItem.setTitle(getString(R.string.check_in));
+        }
     }
 
     private void setWishlistCount() {
@@ -230,12 +275,21 @@ public class HomeActivity extends BaseActivity implements
         } else {
             mLayoutUserData.setVisibility(View.GONE);
             txtNotLoggedIn.setVisibility(View.VISIBLE);
+            if (!isLoggedIn()) {
+                Menu menu = mNavigationView.getMenu();
+                MenuItem menuItem = menu.findItem(R.id.nav_logout);
+                menuItem.setTitle(getString(R.string.log_in));
+            }
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        WindowManager.LayoutParams params = getWindow().getAttributes();
+        params.alpha = (float) 1.0;
+        this.getWindow().setAttributes(params);
+
         setWishlistCount();
     }
 
@@ -264,14 +318,27 @@ public class HomeActivity extends BaseActivity implements
                     selectedFragment = smartPhotoFragment;
                     break;
                 case R.id.nav_snap:
-                    selectedFragment = snapShareFragment;
-                    break;
+                   /* mDrawerLayout.closeDrawer(GravityCompat.START);
+                    WindowManager.LayoutParams params = this.getWindow().getAttributes();
+                    params.alpha = (float) 0.2;
+                   this.getWindow().setAttributes(params);
+                    mPresenter.presentScreen(CHECKIN);*/
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                    showCheckInDialog();
 
+
+                    break;
                 case R.id.nav_rewards:
                     selectedFragment = rewardsFragment;
                     break;
                 case R.id.nav_logout:
+                  /*  Menu menu = mNavigationView.getMenu();
+                    MenuItem menuItem = menu.findItem(R.id.nav_logout);
+                    if (menuItem.getTitle().equals("Log out")) {*/
                     showLogoutDialog();
+                   /* } else {
+                        mPresenter.presentScreen(LOGIN);
+                    }*/
                     break;
             }
 
@@ -310,6 +377,26 @@ public class HomeActivity extends BaseActivity implements
         return true;
     }
 
+    public void checkIn() {
+        showProgressDialog();
+        CheckInRequest checkInRequest = null;
+        for (RestaurantInfo restaurantInfo : mRestaurantList) {
+            if (restaurantInfo.isSelected()) {
+                checkInRequest = new CheckInRequest();
+                checkInRequest.setRestaurant_info_id(restaurantInfo.getRestaurant_info_id());
+                checkInRequest.setReward_type(getString(R.string.reward_type_check_in));
+            }
+        }
+        mPresenter.checkIn(checkInRequest);
+    }
+
+    public void dismissCheckInDialog() {
+        mCheckInDialog.dismiss();
+    }
+
+    /**
+     * Show logout dialog
+     */
     private void showLogoutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.log_out));
@@ -350,6 +437,148 @@ public class HomeActivity extends BaseActivity implements
             if ((boolean) value) {
                 mPresenter.presentScreen(LOGIN);
             }
+        } else if (value instanceof CheckInRestaurants) {
+            mCheckInDialog.show();
+            mRestaurantList = ((CheckInRestaurants) value).getRestaurants_info();
+            if (1 == mRestaurantList.size()) {
+                mNoRestLayout.setVisibility(View.GONE);
+                mSingleRestLayout.setVisibility(View.VISIBLE);
+                mMultipleRestLayout.setVisibility(View.GONE);
+                mBtnLayout.setVisibility(View.VISIBLE);
+                setSingleCheckInView(mRestaurantList.get(0));
+            } else if (0 < mRestaurantList.size()) {
+                mNoRestLayout.setVisibility(View.GONE);
+                mSingleRestLayout.setVisibility(View.GONE);
+                mMultipleRestLayout.setVisibility(View.VISIBLE);
+                mBtnLayout.setVisibility(View.VISIBLE);
+                setupRecyclerView();
+            } else {
+                mNoRestLayout.setVisibility(View.VISIBLE);
+                mBtnLayout.setVisibility(View.GONE);
+                mSingleRestLayout.setVisibility(View.GONE);
+                mMultipleRestLayout.setVisibility(View.GONE);
+            }
+        } else if (value instanceof CheckInResponse) {
+            mRewardDialog = new Dialog(this);
+            mRewardDialog.setContentView(R.layout.layout_reward_message);
+            Window window = mRewardDialog.getWindow();
+            if (null != window) {
+                window.setLayout(800, 1100);
+                window.setBackgroundDrawable(getDrawable(R.drawable.checkin_background));
+            }
+            mCheckInDialog.dismiss();
+            mRewardDialog.show();
+            TextView mTxtRewards = mRewardDialog.findViewById(R.id.txt_reward_points);
+            String rewards = ((CheckInResponse) value).getReward_point() + " " + getString(R.string.reward_points);
+            mTxtRewards.setText(rewards);
+        }
+    }
+
+
+    /**
+     * Show check-In dialog
+     */
+    private void showCheckInDialog() {
+        mCheckInDialog = new Dialog(this);
+        mCheckInDialog.setContentView(R.layout.manual_checkin_dialog);
+        mCheckInDialog.setCancelable(true);
+        mCheckInDialog.onBackPressed();
+        Window window = mCheckInDialog.getWindow();
+        if (null != window) {
+            window.setLayout(950, 1250);
+            window.setBackgroundDrawable(getDrawable(R.drawable.checkin_background));
+        }
+
+        mSingleRestLayout = mCheckInDialog.findViewById(R.id.single_restaurant_layout);
+        mNoRestLayout = mCheckInDialog.findViewById(R.id.layout_no_restaurants);
+        mBtnLayout = mCheckInDialog.findViewById(R.id.buttons_layout);
+        mMultipleRestLayout = mCheckInDialog.findViewById(R.id.multiple_restaurants_layout);
+        mRecyclerView = mCheckInDialog.findViewById(R.id.recyclerview);
+
+        mImgRestaurant = mCheckInDialog.findViewById(R.id.img_restaurant);
+        mTxtRestName = mCheckInDialog.findViewById(R.id.txt_rest_name);
+        mTxtCancel = mCheckInDialog.findViewById(R.id.txt_cancel);
+        mBtnCheckIn = mCheckInDialog.findViewById(R.id.btn_check_in);
+
+        mCheckInDialog.findViewById(R.id.btn_check_in).setOnClickListener(this);
+        mCheckInDialog.findViewById(R.id.txt_cancel).setOnClickListener(this);
+        mCheckInDialog.findViewById(R.id.btn_okay).setOnClickListener(this);
+
+        ViewTreeObserver viewTreeObserver = mRecyclerView.getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener(() -> {
+            for (RestaurantInfo restaurantInfo : mRestaurantList) {
+                if (restaurantInfo.isSelected()) {
+                    mBtnCheckIn.setBackground(getDrawable(R.drawable.custom_button_selected));
+                    mBtnCheckIn.setEnabled(true);
+                }
+            }
+        });
+
+        showProgressDialog();
+        mPresenter.getNearByRestaurantToCheckIn(lattitude, longitude);
+
+        /**
+         Check In button
+         */
+        mBtnCheckIn.setOnClickListener(v -> {
+            showProgressDialog();
+            CheckInRequest checkInRequest = null;
+            for (RestaurantInfo restaurantInfo : mRestaurantList) {
+                if (restaurantInfo.isSelected()) {
+                    checkInRequest = new CheckInRequest();
+                    checkInRequest.setRestaurant_info_id(restaurantInfo.getRestaurant_info_id());
+                    checkInRequest.setReward_type(getString(R.string.reward_type_check_in));
+                }
+            }
+            mPresenter.checkIn(checkInRequest);
+        });
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_check_in:
+                checkIn();
+                break;
+            case R.id.txt_cancel:
+                dismissCheckInDialog();
+                break;
+            case R.id.btn_okay:
+                dismissCheckInDialog();
+                break;
+        }
+    }
+
+    private void setupRecyclerView() {
+
+        if (null != mRestaurantList) {
+            mAdapter = new CheckInAdapter(this, mRestaurantList, (position, isSelected) -> {
+                for (RestaurantInfo restaurantInfo : mRestaurantList) {
+                    restaurantInfo.setSelected(false);
+                }
+                mRestaurantList.get(position).setSelected(isSelected);
+                mAdapter.notifyDataSetChanged();
+            });
+
+            LinearLayoutManager manager = new LinearLayoutManager(this);
+            mRecyclerView.setLayoutManager(manager);
+            mRecyclerView.setAdapter(mAdapter);
+        }
+
+    }
+
+    /**
+     * Set view if only one restaurant is available
+     */
+    private void setSingleCheckInView(RestaurantInfo restaurantInfo) {
+        if (null != restaurantInfo) {
+            if (null != restaurantInfo.getRestaurant_logo() && !restaurantInfo.getRestaurant_logo().isEmpty()) {
+                Picasso.with(this).load(restaurantInfo.getRestaurant_logo())
+                        .placeholder(R.drawable.user_image).into(mImgRestaurant);
+            }
+            if (null != restaurantInfo.getRestaurant_name() && !restaurantInfo.getRestaurant_name().isEmpty()) {
+                mTxtRestName.setText(restaurantInfo.getRestaurant_name());
+            }
         }
     }
 
@@ -365,7 +594,6 @@ public class HomeActivity extends BaseActivity implements
 
             if (!NetworkUtility.isNetworkAvailable(getActivity())) {
                 AppContract.DialogListenerAction click = () -> {
-                    showProgressDialog();
                     postOrPutUserPreferences();
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
@@ -397,6 +625,7 @@ public class HomeActivity extends BaseActivity implements
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }

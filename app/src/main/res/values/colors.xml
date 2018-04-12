@@ -20,6 +20,7 @@
     <color name="colorUber">#FFEDDC</color>
     <color name="colorLightGrey">#E2E2E2</color>
     <color name="delete_bg_color">#b30b0b</color>
+    <color name="check_in_rest_selected">#FFEDDC</color>
 
 </resources>
 

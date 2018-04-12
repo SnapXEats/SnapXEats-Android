@@ -9,7 +9,7 @@ public class UIConstants {
     public static final String LONGITUDE = "-74.4518188";
     public static final float DEFAULT = 0;
     public static final float MAP_SCOLL_BY = 370;
-    public static final float MAP_ZOOM = 13.3f;
+    public static final float MAP_ZOOM = 12.3f;
     public static final int MAP_FILL_COLOR = 0x55AAAAAA;
     public static final float MAP_STROKE = 5;
     public static final float MAP_MARKER_ZOOM = 13;

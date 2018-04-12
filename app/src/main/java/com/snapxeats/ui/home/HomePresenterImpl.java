@@ -2,6 +2,7 @@ package com.snapxeats.ui.home;
 
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserPreference;
@@ -68,6 +69,16 @@ public class HomePresenterImpl implements HomeContract.HomePresenter {
     @Override
     public void presentScreen(Router.Screen screen) {
         router.presentScreen(screen);
+    }
+
+    @Override
+    public void getNearByRestaurantToCheckIn(double lattitude, double longitude) {
+        interactor.getNearByRestaurantToCheckIn(lattitude,longitude);
+    }
+
+    @Override
+    public void checkIn(CheckInRequest checkInRequest) {
+        interactor.checkIn(checkInRequest);
     }
 
     @Override

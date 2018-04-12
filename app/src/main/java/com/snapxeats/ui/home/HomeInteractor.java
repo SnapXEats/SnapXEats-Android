@@ -7,6 +7,9 @@ import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.Logout;
 import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.checkin.CheckInRequest;
+import com.snapxeats.common.model.checkin.CheckInResponse;
+import com.snapxeats.common.model.checkin.CheckInRestaurants;
 import com.snapxeats.common.model.foodGestures.RootDeleteWishlist;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.preference.RootUserPreference;
@@ -222,9 +225,54 @@ public class HomeInteractor {
         dbHelper.getDaoSesion().getUserFoodPreferencesDao().deleteAll();
         dbHelper.getDaoSesion().getUserCuisinePreferencesDao().deleteAll();
         dbHelper.getDaoSesion().getUserPreferenceDao().deleteAll();
+        dbHelper.getDaoSesion().clear();
 
         SnapXApplication app = (SnapXApplication) mContext.getApplicationContext();
         app.setToken(null);
         rootUserPreference = null;
+    }
+
+    void getNearByRestaurantToCheckIn(double lat, double lng) {
+        if (NetworkUtility.isNetworkAvailable(mContext)) {
+            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            Call<CheckInRestaurants> checkInRestaurantsCall = apiHelper.getRestaurantsForCheckIn(lat, lng);
+            checkInRestaurantsCall.enqueue(new Callback<CheckInRestaurants>() {
+                @Override
+                public void onResponse(Call<CheckInRestaurants> call, Response<CheckInRestaurants> response) {
+                    if (response.isSuccessful() && null != response.body() && null != response.body().getRestaurants_info()) {
+                        homePresenter.response(SnapXResult.SUCCESS, response.body());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<CheckInRestaurants> call, Throwable t) {
+                    homePresenter.response(SnapXResult.FAILURE, null);
+                }
+            });
+
+        } else {
+            homePresenter.response(SnapXResult.NONETWORK, null);
+        }
+    }
+
+    void checkIn(CheckInRequest checkInRequest) {
+        if (NetworkUtility.isNetworkAvailable(mContext)) {
+            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            Call<CheckInResponse> checkInPostCall = apiHelper.checkIn(utility.getAuthToken(mContext), checkInRequest);
+
+            checkInPostCall.enqueue(new Callback<CheckInResponse>() {
+                @Override
+                public void onResponse(Call<CheckInResponse> call, Response<CheckInResponse> response) {
+                    homePresenter.response(SnapXResult.SUCCESS, response.body());
+                }
+
+                @Override
+                public void onFailure(Call<CheckInResponse> call, Throwable t) {
+                    homePresenter.response(SnapXResult.ERROR, null);
+                }
+            });
+        } else {
+            homePresenter.response(SnapXResult.NONETWORK, null);
+        }
     }
 }

@@ -23,7 +23,6 @@ android {
 
         debug {
             buildConfigField 'boolean', 'BUILD_CAPTION', 'true'
-
         }
     }
 

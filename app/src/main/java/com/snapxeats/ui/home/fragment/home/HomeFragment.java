@@ -11,7 +11,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -35,7 +34,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.facebook.AccessToken;
 import com.google.gson.Gson;
 import com.snapxeats.BaseActivity;
@@ -55,17 +53,13 @@ import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.cuisinepreference.OnDoubleTapListenr;
 import com.snapxeats.ui.foodstack.FoodStackActivity;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import static com.snapxeats.common.Router.Screen.LOCATION;
 import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
 import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
@@ -108,6 +102,7 @@ public class HomeFragment extends BaseFragment implements
     protected TextView mTxtCuisineDone;
 
     private SelectedCuisineList selectedCuisineList;
+
     private Activity activity;
     private DrawerLayout mDrawerLayout;
     public SharedPreferences preferences;
@@ -151,7 +146,6 @@ public class HomeFragment extends BaseFragment implements
         mTxtPlaceName.setSingleLine();
         cuisinesList = new ArrayList<>();
         selectedList = new ArrayList<>();
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         if (null == mSelectedLocation) {
             mSelectedLocation = detectCurrentLocation();
         }
@@ -475,6 +469,7 @@ public class HomeFragment extends BaseFragment implements
             utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
 
             mTxtPlaceName.setText(mSelectedLocation.getName());
+            showProgressDialog();
             presenter.getCuisineList(mLocationCuisine);
         }
     }

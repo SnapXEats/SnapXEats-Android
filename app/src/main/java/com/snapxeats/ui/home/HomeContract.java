@@ -4,6 +4,7 @@ import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserPreference;
@@ -33,6 +34,10 @@ public class HomeContract {
         void sendUserGestures(RootFoodGestures foodGestures);
 
         void presentScreen(Router.Screen screen);
+
+        void getNearByRestaurantToCheckIn(double lattitude, double longitude);
+
+        void checkIn(CheckInRequest checkInRequest);
     }
 
     public interface HomeRouter {

@@ -60,7 +60,7 @@
         <activity android:name=".ui.foodpreference.FoodPreferenceActivity" />
         <activity android:name=".ui.cuisinepreference.CuisinePrefActivity" />
         <activity android:name=".ui.directions.DirectionsActivity" />
-        <activity android:name=".ui.maps.MapsActivity"/>
+        <activity android:name=".ui.maps.MapsActivity" />
     </application>
 
 </manifest>

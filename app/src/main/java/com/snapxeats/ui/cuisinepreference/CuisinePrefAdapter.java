@@ -19,14 +19,15 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.snapxeats.common.constants.UIConstants.DOUBLE_TAP;
+import static com.snapxeats.common.constants.UIConstants.SINGLE_TAP;
+
 /**
  * Created by Snehal Tembare on 13/2/18.
  */
 
 public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.ViewHolder> {
 
-    private static final int SINGLE_TAP = 1;
-    private static final int DOUBLE_TAP = 2;
     private List<Cuisines> cuisineArrayList;
     private Context mContext;
     private OnDoubleTapListenr onDoubleTapListenr;

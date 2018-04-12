@@ -104,10 +104,10 @@ public class MapsActivity extends BaseActivity
     }
 
     private void drawMapCircle() {
-        if (null != mPreferences.getUserPreferences() && null != mPreferences.getUserPreferences().getRestaurant_distance()) {
+        if (null != mPreferences && null != mPreferences.getUserPreferences() && null != mPreferences.getUserPreferences().getRestaurant_distance()) {
             getSupportActionBar().setTitle(getString(R.string.within) + " " +
                     mPreferences.getUserPreferences().getRestaurant_distance() + " " + getString(R.string.miles));
-        }
+
         //TODO latlng are hardcoded for now
         LatLng currentLatLon = new LatLng(Double.parseDouble(UIConstants.LATITUDE),
                 Double.parseDouble(UIConstants.LONGITUDE));
@@ -125,6 +125,7 @@ public class MapsActivity extends BaseActivity
         animator.add(CameraUpdateFactory.scrollBy(UIConstants.DEFAULT, UIConstants.MAP_SCOLL_BY),
                 false, (long) UIConstants.DEFAULT);
         animator.execute();
+        }
     }
 
     private void placeRestMarkers() {
@@ -146,7 +147,7 @@ public class MapsActivity extends BaseActivity
     public void onMapReady(GoogleMap googleMap) {
         this.mMap = googleMap;
         placeRestMarkers();
-        drawMapCircle();
+//        drawMapCircle();
 
         LatLng latLng = new LatLng(Double.parseDouble(UIConstants.LATITUDE), Double.parseDouble(UIConstants.LONGITUDE));
         mMap.addMarker(new MarkerOptions()
@@ -163,7 +164,10 @@ public class MapsActivity extends BaseActivity
 
     @Override
     public void success(Object value) {
-        mPreferences = (SnapXPreference) value;
+        if (value instanceof SnapXPreference) {
+            mPreferences = (SnapXPreference) value;
+            drawMapCircle();
+        }
     }
 
     @Override

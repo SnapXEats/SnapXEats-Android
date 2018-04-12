@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/checkin_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_margin="@dimen/common_dimens_30"
+            android:src="@drawable/ic_reward_box" />
+
+        <TextView
+            style="@style/TextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/common_dimens_5"
+            android:text="@string/congratulations"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/text_size_15" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/common_dimens_5"
+            android:text="@string/you_have_earned" />
+
+        <TextView
+            android:id="@+id/txt_reward_points"
+            style="@style/TextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/common_dimens_5"
+            android:text="@string/reward_points" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Continue"
+            android:textColor="@color/colorPrimary"
+            android:layout_margin="@dimen/common_dimens_25"
+            android:paddingLeft="@dimen/common_dimens_30"
+            android:paddingRight="@dimen/common_dimens_30"
+            android:background="@drawable/continue_button"/>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
