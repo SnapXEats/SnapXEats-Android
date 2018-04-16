@@ -3,7 +3,6 @@ package com.snapxeats.ui.login;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-
 import com.facebook.AccessToken;
 import com.facebook.Profile;
 import com.snapxeats.R;
@@ -22,14 +21,13 @@ import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
+import static com.snapxeats.common.constants.UIConstants.PROFILE_WIDTH_HEIGHT;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 /**
@@ -154,7 +152,7 @@ public class LoginInteractor {
 
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
-            Call<SnapXPreference> userPreferenceCall = apiHelper.getUserPreferences("Bearer "+token);
+            Call<SnapXPreference> userPreferenceCall = apiHelper.getUserPreferences("Bearer " + token);
 
             userPreferenceCall.enqueue(new Callback<SnapXPreference>() {
                 @Override
@@ -187,7 +185,7 @@ public class LoginInteractor {
         snapxData.setSocialUserId(rootInstagram.getData().getId());
         snapxData.setUserName(rootInstagram.getData().getFull_name());
         snapxData.setImageUrl(rootInstagram.getData().getProfile_picture());
-        if (snapxDataDao.loadAll().size() == 0) {
+        if (snapxDataDao.loadAll().size() == ZERO) {
             snapxDataDao.insert(snapxData);
         } else {
             snapxDataDao.update(snapxData);
@@ -203,7 +201,8 @@ public class LoginInteractor {
             if (null != Profile.getCurrentProfile()) {
                 String userName = Profile.getCurrentProfile().getFirstName() + " "
                         + Profile.getCurrentProfile().getLastName();
-                Uri profileUri = Profile.getCurrentProfile().getProfilePictureUri(50, 50);
+                Uri profileUri = Profile.getCurrentProfile().getProfilePictureUri(PROFILE_WIDTH_HEIGHT,
+                        PROFILE_WIDTH_HEIGHT);
                 snapxData.setUserName(userName);
                 snapxData.setImageUrl(profileUri.toString());
             }
@@ -212,7 +211,7 @@ public class LoginInteractor {
             snapxData.setImageUrl(rootInstagram.getData().getProfile_picture());
             snapxData.setUserName(rootInstagram.getData().getFull_name());
         }
-        if (snapxDataDao.loadAll().size() == 0) {
+        if (snapxDataDao.loadAll().size() == ZERO) {
             snapxDataDao.insert(snapxData);
         } else {
             snapxDataDao.update(snapxData);
@@ -225,7 +224,7 @@ public class LoginInteractor {
 
         snapxData.setUserId(AccessToken.getCurrentAccessToken().getUserId());
         snapxData.setSocialToken(AccessToken.getCurrentAccessToken().getToken());
-        if (snapxDataDao.loadAll().size() == 0) {
+        if (snapxDataDao.loadAll().size() == ZERO) {
             snapxDataDao.insert(snapxData);
         } else {
             snapxDataDao.update(snapxData);
@@ -234,7 +233,7 @@ public class LoginInteractor {
 
     private void saveWishlistDataInDb(SnapXUser snapXUser) {
         if (null != snapXUser.getUserWishList() &&
-                0 != snapXUser.getUserWishList().size()) {
+                ZERO != snapXUser.getUserWishList().size()) {
             wishlistDbHelper.saveWishlistDataInDb(snapXUser.getUserWishList());
         }
     }

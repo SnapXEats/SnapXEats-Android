@@ -19,17 +19,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.OnRecyclerItemClickListener;
-import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.model.checkin.CheckInResponse;
@@ -52,15 +49,15 @@ import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.squareup.picasso.Picasso;
-
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import static com.snapxeats.common.Router.Screen.LOGIN;
+import static com.snapxeats.common.constants.UIConstants.LAT;
+import static com.snapxeats.common.constants.UIConstants.LNG;
+import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isCuisineDirty;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isDirty;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isFoodDirty;
@@ -155,9 +152,6 @@ public class HomeActivity extends BaseActivity implements
     private boolean isCheckIn = true;
     private Dialog mCheckInDialog;
     private Dialog mRewardDialog;
-
-    private double lattitude = 40.7014;
-    private double longitude = -74.0151;
     private List<RestaurantInfo> mRestaurantList;
 
     private CheckInAdapter mAdapter;
@@ -196,8 +190,8 @@ public class HomeActivity extends BaseActivity implements
         userId = preferences.getString(getString(R.string.user_id), "");
         mRootUserPreference = mPresenter.getUserPreferenceFromDb();
 
-        if (null != snapxData && snapxData.size() > 0) {
-            if (snapxData.get(0).getIsFirstTimeUser()) {
+        if (null != snapxData && snapxData.size() > ZERO) {
+            if (snapxData.get(ZERO).getIsFirstTimeUser()) {
                 transaction.replace(R.id.frame_layout, navPrefFragment);
             } else {
                 transaction.replace(R.id.frame_layout, homeFragment);
@@ -207,8 +201,8 @@ public class HomeActivity extends BaseActivity implements
         }
         mSnapxData = mPresenter.getUserDataFromDb();
         setUserInfo();
-        if (null != mSnapxData && mSnapxData.size() > 0) {
-            if (mSnapxData.get(0).getIsFirstTimeUser()) {
+        if (null != mSnapxData && mSnapxData.size() > ZERO) {
+            if (mSnapxData.get(ZERO).getIsFirstTimeUser()) {
                 transaction.replace(R.id.frame_layout, navPrefFragment);
             } else {
                 transaction.replace(R.id.frame_layout, homeFragment);
@@ -233,7 +227,7 @@ public class HomeActivity extends BaseActivity implements
         LinearLayout linearLayout = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
                 .getActionView().findViewById(R.id.layout_wishlist_count);
 
-        if (null != mSnapxData && mSnapxData.size() > 0 && isLoggedIn()) {
+        if (null != mSnapxData && mSnapxData.size() > ZERO && isLoggedIn()) {
             linearLayout.setVisibility(View.VISIBLE);
 
             TextView view = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
@@ -242,7 +236,7 @@ public class HomeActivity extends BaseActivity implements
             view.setText(getString(R.string.zero));
 
             dbHelper.setContext(this);
-            if (0 != homeDbHelper.getWishlistCount()) {
+            if (ZERO != homeDbHelper.getWishlistCount()) {
                 view.setText(String.valueOf(homeDbHelper.getWishlistCount()));
             } else {
                 view.setText(getString(R.string.zero));
@@ -259,7 +253,7 @@ public class HomeActivity extends BaseActivity implements
     }
 
     public void initNavHeaderViews() {
-        mNavHeader = mNavigationView.getHeaderView(0);
+        mNavHeader = mNavigationView.getHeaderView(ZERO);
         imgUser = mNavHeader.findViewById(R.id.img_user);
         txtUserName = mNavHeader.findViewById(R.id.txt_user_name);
         txtNotLoggedIn = mNavHeader.findViewById(R.id.txt_nav_not_logged_in);
@@ -269,9 +263,9 @@ public class HomeActivity extends BaseActivity implements
 
     private void setUserInfo() {
         initNavHeaderViews();
-        if (isLoggedIn() && null != mSnapxData && mSnapxData.size() > 0) {
-            Picasso.with(this).load(mSnapxData.get(0).getImageUrl()).into(imgUser);
-            txtUserName.setText(mSnapxData.get(0).getUserName());
+        if (isLoggedIn() && null != mSnapxData && mSnapxData.size() > ZERO) {
+            Picasso.with(this).load(mSnapxData.get(ZERO).getImageUrl()).into(imgUser);
+            txtUserName.setText(mSnapxData.get(ZERO).getUserName());
         } else {
             mLayoutUserData.setVisibility(View.GONE);
             txtNotLoggedIn.setVisibility(View.VISIBLE);
@@ -286,10 +280,6 @@ public class HomeActivity extends BaseActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        WindowManager.LayoutParams params = getWindow().getAttributes();
-        params.alpha = (float) 1.0;
-        this.getWindow().setAttributes(params);
-
         setWishlistCount();
     }
 
@@ -303,7 +293,7 @@ public class HomeActivity extends BaseActivity implements
                     selectedFragment = homeFragment;
                     break;
                 case R.id.nav_wishlist:
-                    if (0 != homeDbHelper.getWishlistCount()) {
+                    if (ZERO != homeDbHelper.getWishlistCount()) {
                         selectedFragment = wishlistFragment;
                     }
                     break;
@@ -318,27 +308,14 @@ public class HomeActivity extends BaseActivity implements
                     selectedFragment = smartPhotoFragment;
                     break;
                 case R.id.nav_snap:
-                   /* mDrawerLayout.closeDrawer(GravityCompat.START);
-                    WindowManager.LayoutParams params = this.getWindow().getAttributes();
-                    params.alpha = (float) 0.2;
-                   this.getWindow().setAttributes(params);
-                    mPresenter.presentScreen(CHECKIN);*/
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                     showCheckInDialog();
-
-
                     break;
                 case R.id.nav_rewards:
                     selectedFragment = rewardsFragment;
                     break;
                 case R.id.nav_logout:
-                  /*  Menu menu = mNavigationView.getMenu();
-                    MenuItem menuItem = menu.findItem(R.id.nav_logout);
-                    if (menuItem.getTitle().equals("Log out")) {*/
                     showLogoutDialog();
-                   /* } else {
-                        mPresenter.presentScreen(LOGIN);
-                    }*/
                     break;
             }
 
@@ -440,13 +417,13 @@ public class HomeActivity extends BaseActivity implements
         } else if (value instanceof CheckInRestaurants) {
             mCheckInDialog.show();
             mRestaurantList = ((CheckInRestaurants) value).getRestaurants_info();
-            if (1 == mRestaurantList.size()) {
+            if (ONE == mRestaurantList.size()) {
                 mNoRestLayout.setVisibility(View.GONE);
                 mSingleRestLayout.setVisibility(View.VISIBLE);
                 mMultipleRestLayout.setVisibility(View.GONE);
                 mBtnLayout.setVisibility(View.VISIBLE);
-                setSingleCheckInView(mRestaurantList.get(0));
-            } else if (0 < mRestaurantList.size()) {
+                setSingleCheckInView(mRestaurantList.get(ZERO));
+            } else if (ZERO < mRestaurantList.size()) {
                 mNoRestLayout.setVisibility(View.GONE);
                 mSingleRestLayout.setVisibility(View.GONE);
                 mMultipleRestLayout.setVisibility(View.VISIBLE);
@@ -463,14 +440,23 @@ public class HomeActivity extends BaseActivity implements
             mRewardDialog.setContentView(R.layout.layout_reward_message);
             Window window = mRewardDialog.getWindow();
             if (null != window) {
-                window.setLayout(800, 1100);
+                window.setLayout(UIConstants.REWARD_DIALOG_WIDTH, UIConstants.REWARD_DIALOG_HEIGHT);
                 window.setBackgroundDrawable(getDrawable(R.drawable.checkin_background));
             }
-            mCheckInDialog.dismiss();
+            dismissCheckInDialog();
             mRewardDialog.show();
             TextView mTxtRewards = mRewardDialog.findViewById(R.id.txt_reward_points);
             String rewards = ((CheckInResponse) value).getReward_point() + " " + getString(R.string.reward_points);
             mTxtRewards.setText(rewards);
+
+            mRewardDialog.findViewById(R.id.btn_continue).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    transaction = fragmentManager.beginTransaction();
+                    transaction.replace(R.id.frame_layout, snapShareFragment);
+                    transaction.commit();
+                }
+            });
         }
     }
 
@@ -485,7 +471,7 @@ public class HomeActivity extends BaseActivity implements
         mCheckInDialog.onBackPressed();
         Window window = mCheckInDialog.getWindow();
         if (null != window) {
-            window.setLayout(950, 1250);
+            window.setLayout(UIConstants.CHECKIN_DIALOG_WIDTH, UIConstants.CHECKIN_DIALOG_HEIGHT);
             window.setBackgroundDrawable(getDrawable(R.drawable.checkin_background));
         }
 
@@ -515,7 +501,7 @@ public class HomeActivity extends BaseActivity implements
         });
 
         showProgressDialog();
-        mPresenter.getNearByRestaurantToCheckIn(lattitude, longitude);
+        mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
 
         /**
          Check In button

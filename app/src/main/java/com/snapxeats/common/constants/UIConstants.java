@@ -4,9 +4,20 @@ package com.snapxeats.common.constants;
  * Created by Prajakta Patil on 11/4/18.
  */
 public class UIConstants {
+
+    public static final int ZERO = 0;
+    public static final int ONE = 1;
+
+    public static final int PROFILE_WIDTH_HEIGHT = 50;
+    public static final int PROFILE_HEIGHT = 50;
+
     /*Maps Screen*/
     public static final String LATITUDE = "40.4862157";
     public static final String LONGITUDE = "-74.4518188";
+
+    public static final double LAT =  40.7014;
+    public static final double LNG = -74.0151;
+
     public static final float DEFAULT = 0;
     public static final float MAP_SCOLL_BY = 370;
     public static final float MAP_ZOOM = 12.3f;
@@ -53,4 +64,11 @@ public class UIConstants {
     /*HomeInteractor*/
     public static final int ACCESS_FINE_LOCATION = 1;
     public static final int DEVICE_LOCATION = 2;
+    public static final int ROUTE_PADDING = (int) 0.80;
+    public static final int CHECKIN_DIALOG_WIDTH = 950;
+    public static final int CHECKIN_DIALOG_HEIGHT = 1250;
+    public static final int REWARD_DIALOG_WIDTH = 800;
+    public static final int REWARD_DIALOG_HEIGHT = 1100;
+
+
 }

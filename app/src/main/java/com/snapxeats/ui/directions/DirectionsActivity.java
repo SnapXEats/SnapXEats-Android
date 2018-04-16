@@ -241,7 +241,6 @@ public class DirectionsActivity extends BaseActivity
                     .geodesic(true));
             zoomRoute(mMap, list);
         }
-        setAnimation(mMap, list, BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_src));
     }
 
     /* Fetch latlng list of points for setting route */
@@ -340,7 +339,7 @@ public class DirectionsActivity extends BaseActivity
                 boundsBuilder.include(latLngPoint);
             int routePadding = 100;
             LatLngBounds latLngBounds = boundsBuilder.build();
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, routePadding));
+            mMap.setOnMapLoadedCallback(() -> googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, routePadding)));
         }
     }
 
