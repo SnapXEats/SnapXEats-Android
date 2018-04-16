@@ -25,6 +25,7 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.BuildConfig;
 import com.snapxeats.R;
 import com.snapxeats.common.Router;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
@@ -113,6 +114,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
                 String key = new String(Base64.encode(md.digest(), 0));
+                SnapXToast.debug("HashKey"+key);
             }
         } catch (Exception ignored) {
         }

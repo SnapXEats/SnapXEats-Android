@@ -241,7 +241,6 @@ public class DirectionsActivity extends BaseActivity
                     .geodesic(true));
             zoomRoute(mMap, list);
         }
-        setAnimation(mMap, list, BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_src));
     }
 
     /* Fetch latlng list of points for setting route */
@@ -334,13 +333,14 @@ public class DirectionsActivity extends BaseActivity
 
     /* Zoom over google direction route to fit screen */
     public void zoomRoute(GoogleMap googleMap, List<LatLng> lstLatLngRoute) {
-        if (googleMap == null || lstLatLngRoute == null || lstLatLngRoute.isEmpty()) return;
-        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-        for (LatLng latLngPoint : lstLatLngRoute)
-            boundsBuilder.include(latLngPoint);
-        int routePadding = 100;
-        LatLngBounds latLngBounds = boundsBuilder.build();
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, routePadding));
+        if (null != googleMap || null != lstLatLngRoute || !lstLatLngRoute.isEmpty()) {
+            LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+            for (LatLng latLngPoint : lstLatLngRoute)
+                boundsBuilder.include(latLngPoint);
+            int routePadding = 100;
+            LatLngBounds latLngBounds = boundsBuilder.build();
+            mMap.setOnMapLoadedCallback(() -> googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, routePadding)));
+        }
     }
 
     //calculate distance in miles

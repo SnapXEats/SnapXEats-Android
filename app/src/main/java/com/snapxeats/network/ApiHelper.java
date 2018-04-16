@@ -2,9 +2,12 @@ package com.snapxeats.network;
 
 import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.Logout;
+import com.snapxeats.common.model.checkin.CheckInRequest;
+import com.snapxeats.common.model.checkin.CheckInResponse;
+import com.snapxeats.common.model.checkin.CheckInRestaurants;
 import com.snapxeats.common.model.foodGestures.RootDeleteWishlist;
 import com.snapxeats.common.model.foodGestures.RootWishlist;
-import com.snapxeats.common.model.googleDirections.GeocodedWaypoints;
+import com.snapxeats.common.model.googleDirections.RootGoogleDir;
 import com.snapxeats.common.model.location.PlaceDetail;
 import com.snapxeats.common.model.location.PlacesAutoCompleteData;
 import com.snapxeats.common.model.preference.SnapXPreference;
@@ -27,7 +30,9 @@ import com.snapxeats.common.model.preference.RootUserPreferences;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
+
 import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -207,6 +212,28 @@ public interface ApiHelper {
     @HTTP(method = "DELETE", hasBody = true, path = WebConstants.USER_WISHLIST)
     Call<RootDeleteWishlist> deleteUserWishlist(@Header("Authorization") String token,
                                                 @Body RootDeleteWishlist foodWishlists);
+
+    /**
+     * Get nearby restaurants to check in
+     *
+     * @param latitude
+     * @param longitude
+     * @return
+     */
+    @GET(WebConstants.CHECKIN_RESTAURANTS)
+    Call<CheckInRestaurants> getRestaurantsForCheckIn(@Query("latitude") double latitude,
+                                                      @Query("longitude") double longitude);
+
+    /**
+     * Get nearby restaurants to check in
+     *
+     * @param token
+     * @param checkInRequest-CheckIn data
+     * @return
+     */
+    @POST(WebConstants.CHECKIN)
+    Call<CheckInResponse> checkIn(@Header("Authorization") String token,
+                                  @Body CheckInRequest checkInRequest);
 
     /**
      * User logout

@@ -5,6 +5,5 @@ package com.snapxeats.common;
  */
 
 public interface OnRecyclerItemClickListener {
-    void onClickToDelete(int position,Object object);
-    void onClick(Object object);
+    void onClick(int position, boolean object);
 }

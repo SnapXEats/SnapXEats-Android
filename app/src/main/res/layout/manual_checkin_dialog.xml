@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/multiple_restaurants_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:padding="@dimen/common_dimens_20"
+                    android:text="@string/select_restaurant_to_checkin"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/text_size_17"
+                    android:textStyle="bold" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/common_dimens_210"
+                    android:paddingBottom="@dimen/common_dimens_10"
+                    android:scrollbars="vertical"
+                    android:layout_marginBottom="@dimen/common_dimens_10" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/single_restaurant_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.pkmmte.view.CircularImageView
+                    android:id="@+id/img_restaurant"
+                    android:layout_width="@dimen/dimens_95dp"
+                    android:layout_height="@dimen/dimens_95dp"
+                    android:src="@drawable/user_image"
+                    app:border="true"
+                    app:border_width="@dimen/common_1"
+                    app:shadow="true" />
+
+                <TextView
+                    android:id="@+id/txt_rest_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/common_dimens_10"
+                    android:gravity="center_horizontal"
+                    android:text="Restaurant Name"
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="@dimen/text_size_15"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/common_dimens_10"
+                    android:gravity="center_horizontal"
+                    android:text="@string/check_and_earn"
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="@dimen/text_size_12" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/buttons_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/btn_check_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_button"
+                android:paddingLeft="@dimen/common_dimens_30"
+                android:paddingRight="@dimen/common_dimens_30"
+                android:text="@string/check_in"
+                android:textColor="@color/colorWhite"
+                android:enabled="false"/>
+
+            <TextView
+                android:id="@+id/txt_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/common_dimens_20"
+                android:paddingLeft="@dimen/common_dimens_30"
+                android:paddingRight="@dimen/common_dimens_30"
+                android:text="@string/cancel"
+                android:textColor="@color/text_color_primary" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layout_no_restaurants"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_no_restaurants" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/common_dimens_10"
+                android:text="@string/whoops"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/text_size_24"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/common_dimens_10"
+                android:text="@string/no_restaurant_near_you"
+                android:textColor="@color/text_color_primary"
+                android:textSize="@dimen/text_size_17" />
+
+            <Button
+                android:id="@+id/btn_okay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_dimens_10"
+                android:background="@drawable/custom_button_selected"
+                android:paddingLeft="@dimen/common_dimens_40"
+                android:paddingRight="@dimen/common_dimens_40"
+                android:text="@string/okay"
+                android:textColor="@color/colorWhite" />
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>

@@ -36,6 +36,7 @@
     <dimen name="dimens_7dp">7dp</dimen>
     <dimen name="dimen_4dp">4dp</dimen>
     <dimen name="dimens_50dp">50dp</dimen>
+    <dimen name="dimens_54dp">54dp</dimen>
     <dimen name="common_dimens_12">12dp</dimen>
     <dimen name="dimens_80dp">80dp</dimen>
     <dimen name="dimens_350dp">350dp</dimen>
@@ -78,5 +79,8 @@
     <dimen name="dimen_160">160dp</dimen>
     <dimen name="map_card_img_height">115dp</dimen>
     <dimen name="map_cardview_height">180dp</dimen>
+    <dimen name="text_size_11">11sp</dimen>
+    <dimen name="dimens_95dp">95dp</dimen>
+    <dimen name="common_dimens_210">210dp</dimen>
 
 </resources>

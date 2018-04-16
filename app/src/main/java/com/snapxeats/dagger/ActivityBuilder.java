@@ -22,13 +22,14 @@ import com.snapxeats.ui.restaurantInfo.RestaurantInfoActivity;
 import com.snapxeats.ui.restaurantInfo.RestaurantInfoModule;
 import com.snapxeats.ui.splash.SplashActivity;
 import com.snapxeats.ui.splash.SplashModule;
-
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
+
 
 /**
  * Created by Prajakta Patil on 28/12/17.
  */
+
 
 @Module
 public abstract class ActivityBuilder {
