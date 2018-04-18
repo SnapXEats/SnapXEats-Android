@@ -146,6 +146,7 @@ public class HomeFragment extends BaseFragment implements
         mTxtPlaceName.setSingleLine();
         cuisinesList = new ArrayList<>();
         selectedList = new ArrayList<>();
+
         if (null == mSelectedLocation) {
             mSelectedLocation = detectCurrentLocation();
         }

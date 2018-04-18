@@ -91,7 +91,15 @@
             android:layout_gravity="bottom"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="visible">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/common_dimens_10"
+                android:text="@string/check_in_and_earn"
+                android:textSize="@dimen/text_size_12"
+                android:textColor="@color/text_color_secondary" />
 
             <Button
                 android:id="@+id/btn_check_in"

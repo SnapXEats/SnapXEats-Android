@@ -167,5 +167,7 @@
     <string name="congratulations">Congratulations!!</string>
     <string name="you_have_earned">You\'ve earned</string>
     <string name="Continue">Continue</string>
+    <string name="from_the_menu">From the menu</string>
+    <string name="check_in_and_earn">Check in and earn reward point</string>
 
 </resources>

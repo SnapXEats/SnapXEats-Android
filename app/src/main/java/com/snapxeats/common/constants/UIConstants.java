@@ -70,5 +70,6 @@ public class UIConstants {
     public static final int REWARD_DIALOG_WIDTH = 800;
     public static final int REWARD_DIALOG_HEIGHT = 1100;
 
-
+    /*Snap N Share*/
+    public static final int MARGIN = 8;
 }

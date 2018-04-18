@@ -110,26 +110,6 @@ public class AppUtility {
         }
     }
 
-
-    /**
-     * Show Progress dialog
-     */
-    public void createProgressDialog() {
-        mDialog = new ProgressDialog(mContext);
-        mDialog.setMessage(mContext.getString(R.string.please_wait));
-        mDialog.setCanceledOnTouchOutside(false);
-        mDialog.show();
-    }
-
-    /**
-     * Dismiss Progress dialog
-     */
-    public void dismissProgressSialog() {
-        if (mDialog != null) {
-            mDialog.dismiss();
-        }
-    }
-
     public boolean checkPermissions() {
         //Check device level location permission
         if (LocationHelper.isGpsEnabled(mContext)) {
@@ -220,5 +200,11 @@ public class AppUtility {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public boolean isLoggedIn() {
+        SharedPreferences preferences = getSharedPreferences();
+        String serverUserId = preferences.getString(mContext.getString(R.string.user_id), "");
+        return !serverUserId.isEmpty();
     }
 }

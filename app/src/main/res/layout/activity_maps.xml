@@ -33,7 +33,7 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context="com.snapxeats.ui.maps.MapsActivity" />
+            tools:mContext="com.snapxeats.ui.maps.MapsActivity" />
 
         <com.yarolegovich.discretescrollview.DiscreteScrollView
             android:id="@+id/maps_scrollview"
