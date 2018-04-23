@@ -598,11 +598,11 @@ public class NavPrefFragment extends BaseFragment implements
                     mRdSortByRatings.setChecked(true);
                     mRdSortByDistance.setChecked(false);
                 }
-                if (mRootUserPreference.getUserCuisinePreferences() != null) {
+                if (null != mRootUserPreference.getUserCuisinePreferences()) {
                     cuisinedPrefList = mRootUserPreference.getUserCuisinePreferences();
                 }
 
-                if (mRootUserPreference.getUserFoodPreferences() != null) {
+                if (null != mRootUserPreference.getUserFoodPreferences()) {
                     foodPrefList = mRootUserPreference.getUserFoodPreferences();
                 }
             }

@@ -72,4 +72,8 @@ public class UIConstants {
 
     /*Snap N Share*/
     public static final int MARGIN = 8;
+
+    public static final  int CAMERA_REQUEST_PERMISSION = 3;
+    public static final  int EXTERNAL_STORAGE_PERMISSION = 5;
+    public static final  int CAMERA_REQUEST = 4;
 }
