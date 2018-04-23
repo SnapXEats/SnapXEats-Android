@@ -41,7 +41,7 @@ import static com.snapxeats.common.constants.UIConstants.MARGIN;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
- * Created by Snehal Tembare on 8/3/18.
+ * Created by Snehal Tembare on 8/4/18.
  */
 
 public class SnapShareFragment extends BaseFragment implements SnapShareContract.SnapShareView,
