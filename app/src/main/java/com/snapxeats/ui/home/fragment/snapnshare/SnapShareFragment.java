@@ -2,10 +2,12 @@ package com.snapxeats.ui.home.fragment.snapnshare;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -14,24 +16,56 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
-
+import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.model.restaurantDetails.RestaurantDetails;
+import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
+import com.snapxeats.common.model.restaurantDetails.RestaurantSpeciality;
+import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
+import com.snapxeats.dagger.AppContract;
+import com.squareup.picasso.Picasso;
+import java.util.List;
 import javax.inject.Inject;
-
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import static com.facebook.FacebookSdk.getApplicationContext;
+import static com.snapxeats.common.constants.UIConstants.MARGIN;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Snehal Tembare on 8/3/18.
  */
 
-public class SnapShareFragment extends BaseFragment {
+public class SnapShareFragment extends BaseFragment implements SnapShareContract.SnapShareView,
+        AppContract.SnapXResults {
+
     private Toolbar mToolbar;
     protected NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
     private Activity activity;
+    private int dotsCount;
+    private ImageView[] dots;
+
+    @BindView(R.id.txt_rest_name)
+    protected TextView mTxtRestName;
+
+    @BindView(R.id.layout_rest_specialties)
+    protected LinearLayout mLayoutRestSpecialties;
+
+    @BindView(R.id.view_pager)
+    protected ViewPager mViewPager;
+
+    @BindView(R.id.layout_dots)
+    protected LinearLayout mSliderDotsPanel;
+
+    @Inject
+    SnapShareContract.SnapSharePresenter mPresenter;
+    private RootRestaurantDetails mRootRestaurantDetails;
 
     @Inject
     public SnapShareFragment() {
@@ -41,7 +75,7 @@ public class SnapShareFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity=getActivity();
+        activity = getActivity();
     }
 
     @Override
@@ -78,6 +112,34 @@ public class SnapShareFragment extends BaseFragment {
 
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+        initView();
+    }
+
+    public void initView() {
+        mPresenter.addView(this);
+        String restaurantId = getArguments().getString(getString(R.string.intent_restaurant_id));
+        showProgressDialog();
+        mPresenter.getRestaurantInfo(restaurantId);
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                for (int index = ZERO; index < dotsCount; index++) {
+                    dots[index].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.non_active_dot));
+                }
+                dots[position].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.active_dot));
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
     }
 
     @Override
@@ -88,5 +150,71 @@ public class SnapShareFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public DialogInterface.OnClickListener setListener(AppContract.DialogListenerAction button) {
+        return null;
+    }
+
+    @Override
+    public void success(Object value) {
+        dismissProgressDialog();
+        if (value instanceof RootRestaurantDetails) {
+            mRootRestaurantDetails = (RootRestaurantDetails) value;
+            setView(mRootRestaurantDetails.getRestaurantDetails());
+        }
+    }
+
+    private void setView(RestaurantDetails restaurantDetails) {
+        mTxtRestName.setText(restaurantDetails.getRestaurant_name());
+
+        setViewPager(restaurantDetails.getRestaurant_pics());
+        setMenusView(restaurantDetails.getRestaurant_speciality());
+    }
+
+    private void setMenusView(List<RestaurantSpeciality> restaurant_speciality) {
+        for (int index = ZERO; index < restaurant_speciality.size(); index++) {
+            LayoutInflater mInflater = LayoutInflater.from(getActivity());
+            View view = mInflater.inflate(R.layout.layout_rest_specialties,
+                    mLayoutRestSpecialties, false);
+            ImageView imageView = view.findViewById(R.id.img_restaurant_specialties);
+
+            Picasso.with(getActivity()).load(restaurant_speciality.get(index).getDish_image_url())
+                    .placeholder(R.drawable.ic_cuisine_placeholder).into(imageView);
+            mLayoutRestSpecialties.addView(view);
+        }
+    }
+
+    private void setViewPager(List<RestaurantPics> restaurant_pics) {
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getActivity(), restaurant_pics);
+        mViewPager.setAdapter(viewPagerAdapter);
+        dotsCount = viewPagerAdapter.getCount();
+        dots = new ImageView[dotsCount];
+
+        for (int index = ZERO; index < dotsCount; index++) {
+            dots[index] = new ImageView(getActivity());
+            dots[index].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.non_active_dot));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.setMargins(MARGIN, ZERO, MARGIN, ZERO);
+            mSliderDotsPanel.addView(dots[index], params);
+        }
+        dots[ZERO].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+    }
+
+    @Override
+    public void error(Object value) {
+
+    }
+
+    @Override
+    public void noNetwork(Object value) {
+
+    }
+
+    @Override
+    public void networkError(Object value) {
+
     }
 }

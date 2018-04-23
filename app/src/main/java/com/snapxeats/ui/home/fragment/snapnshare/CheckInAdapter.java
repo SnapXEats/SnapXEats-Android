@@ -9,15 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.R;
 import com.snapxeats.common.OnRecyclerItemClickListener;
 import com.snapxeats.common.model.checkin.RestaurantInfo;
 import com.squareup.picasso.Picasso;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -26,13 +23,14 @@ import butterknife.ButterKnife;
  */
 
 public class CheckInAdapter extends RecyclerView.Adapter<CheckInAdapter.ViewHolder> {
+
     private Context mContext;
     private List<RestaurantInfo> mRestaurantList;
     private OnRecyclerItemClickListener mOnRecyclerItemClickListener;
 
-   public CheckInAdapter(Context mContext,
-                   List<RestaurantInfo> mRestaurantList,
-                   OnRecyclerItemClickListener onRecyclerItemClickListener) {
+    public CheckInAdapter(Context mContext,
+                          List<RestaurantInfo> mRestaurantList,
+                          OnRecyclerItemClickListener onRecyclerItemClickListener) {
         this.mContext = mContext;
         this.mRestaurantList = mRestaurantList;
         this.mOnRecyclerItemClickListener = onRecyclerItemClickListener;
@@ -47,7 +45,8 @@ public class CheckInAdapter extends RecyclerView.Adapter<CheckInAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.setItem(mRestaurantList.get(position));
+        RestaurantInfo restaurantInfo = mRestaurantList.get(position);
+        holder.setItem(restaurantInfo);
     }
 
     @Override
@@ -69,7 +68,6 @@ public class CheckInAdapter extends RecyclerView.Adapter<CheckInAdapter.ViewHold
         @BindView(R.id.txt_food_category)
         TextView mTxtFoodCategory;
 
-
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -78,16 +76,14 @@ public class CheckInAdapter extends RecyclerView.Adapter<CheckInAdapter.ViewHold
 
         void setItem(RestaurantInfo restaurantInfo) {
             if (restaurantInfo.isSelected()) {
-                mParentLayout.setBackgroundColor(ContextCompat.getColor(mContext,R.color.check_in_rest_selected));
-                Picasso.with(mContext).load(restaurantInfo.getRestaurant_logo()).placeholder(R.drawable.user_image).into(mImgRestaurant);
-                mTxtRestName.setText(restaurantInfo.getRestaurant_name());
-                mTxtFoodCategory.setText(restaurantInfo.getRestaurant_type());
+                mParentLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.check_in_rest_selected));
             } else {
-                mParentLayout.setBackgroundColor(ContextCompat.getColor(mContext,R.color.colorWhite));
-                Picasso.with(mContext).load(restaurantInfo.getRestaurant_logo()).placeholder(R.drawable.user_image).into(mImgRestaurant);
-                mTxtRestName.setText(restaurantInfo.getRestaurant_name());
-                mTxtFoodCategory.setText(restaurantInfo.getRestaurant_type());
+                mParentLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorWhite));
             }
+            Picasso.with(mContext).load(restaurantInfo.getRestaurant_logo()).placeholder(R.drawable.ic_cuisine_placeholder).into(mImgRestaurant);
+            mTxtRestName.setText(restaurantInfo.getRestaurant_name());
+            mTxtFoodCategory.setText(restaurantInfo.getRestaurant_type());
+
         }
 
         @Override

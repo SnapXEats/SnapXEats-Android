@@ -569,43 +569,43 @@ public class NavPrefFragment extends BaseFragment implements
 
     private void checkDataFromDb() {
 
-        if (mRootUserPreference != null) {
+        if (null != mRootUserPreference) {
 
-            if (mRootUserPreference.getUser_Id() != null) {
+            if (null != mRootUserPreference.getUser_Id()) {
                 userId = mRootUserPreference.getUser_Id();
-            }
-            if (mRootUserPreference.getRestaurant_price() != null) {
-                pricing = Integer.parseInt(mRootUserPreference.getRestaurant_price());
-                updatePricingUI(pricing);
-            }
 
-            if (mRootUserPreference.getRestaurant_rating() != null) {
-                userRating = Integer.parseInt(mRootUserPreference.getRestaurant_rating());
-                updateRatingUI(userRating);
-            }
+                if (null != mRootUserPreference.getRestaurant_price()) {
+                    pricing = Integer.parseInt(mRootUserPreference.getRestaurant_price());
+                    updatePricingUI(pricing);
+                }
 
-            if (mRootUserPreference.getRestaurant_distance() != null) {
-                distance = Integer.parseInt(mRootUserPreference.getRestaurant_distance());
-                updateDistanceUI(distance);
-            }
+                if (null != mRootUserPreference.getRestaurant_rating()) {
+                    userRating = Integer.parseInt(mRootUserPreference.getRestaurant_rating());
+                    updateRatingUI(userRating);
+                }
 
-            if (mRootUserPreference.isSort_by_distance()) {
-                isSortByDistance = true;
-                mRdSortByDistance.setChecked(true);
-                mRdSortByRatings.setChecked(false);
-            } else if (mRootUserPreference.isSort_by_rating()) {
-                isSortByRating = true;
-                mRdSortByRatings.setChecked(true);
-                mRdSortByDistance.setChecked(false);
-            }
-            if (mRootUserPreference.getUserCuisinePreferences() != null) {
-                cuisinedPrefList = mRootUserPreference.getUserCuisinePreferences();
-            }
+                if (null != mRootUserPreference.getRestaurant_distance()) {
+                    distance = Integer.parseInt(mRootUserPreference.getRestaurant_distance());
+                    updateDistanceUI(distance);
+                }
 
-            if (mRootUserPreference.getUserFoodPreferences() != null) {
-                foodPrefList = mRootUserPreference.getUserFoodPreferences();
-            }
+                if (mRootUserPreference.isSort_by_distance()) {
+                    isSortByDistance = true;
+                    mRdSortByDistance.setChecked(true);
+                    mRdSortByRatings.setChecked(false);
+                } else if (mRootUserPreference.isSort_by_rating()) {
+                    isSortByRating = true;
+                    mRdSortByRatings.setChecked(true);
+                    mRdSortByDistance.setChecked(false);
+                }
+                if (mRootUserPreference.getUserCuisinePreferences() != null) {
+                    cuisinedPrefList = mRootUserPreference.getUserCuisinePreferences();
+                }
 
+                if (mRootUserPreference.getUserFoodPreferences() != null) {
+                    foodPrefList = mRootUserPreference.getUserFoodPreferences();
+                }
+            }
             mUserPreference = helper.mapLocalObject(mRootUserPreference);
         }
 

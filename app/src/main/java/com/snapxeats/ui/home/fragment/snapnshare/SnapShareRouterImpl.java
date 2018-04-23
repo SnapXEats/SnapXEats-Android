@@ -8,7 +8,13 @@ import com.snapxeats.common.Router;
 
 public class SnapShareRouterImpl {
 
+    private SnapShareContract.SnapShareView view;
+
     public SnapShareRouterImpl(Router router) {
 
+    }
+
+    public void setView(SnapShareContract.SnapShareView view) {
+        this.view = view;
     }
 }

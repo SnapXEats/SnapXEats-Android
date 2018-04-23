@@ -5,5 +5,5 @@ package com.snapxeats.common;
  */
 
 public interface OnRecyclerItemClickListener {
-    void onClick(int position, boolean object);
+    void onClick(int position, boolean isSelected);
 }

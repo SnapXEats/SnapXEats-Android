@@ -4,46 +4,110 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.snapxeats.ui.home.fragment.checkin.CheckInFragment">
-
     <LinearLayout
         android:id="@+id/layout_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fontFamily="Roboto-Medium"
         android:orientation="vertical">
-
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/CustomAppBar">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
-
-            <LinearLayout
+            android:layout_height="wrap_content"
+            android:theme="@style/CustomAppBar">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.4"
-                    android:gravity="center"
-                    android:text="@string/snap_share"
-                    android:textColor="@color/colorCuisine"
-                    android:textSize="@dimen/text_size_16"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-        </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Snap n share" />
+                android:layout_height="?attr/actionBarSize">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.4"
+                        android:paddingLeft="@dimen/common_dimens_30"
+                        android:text="@string/snap_share"
+                        android:textColor="@color/colorCuisine"
+                        android:textSize="@dimen/text_size_16"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
+        <!-- TODO: Update blank fragment layout -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <android.support.v4.view.ViewPager
+                android:id="@+id/view_pager"
+                android:layout_width="400dp"
+                android:layout_height="180dp" />
+            <LinearLayout
+                android:id="@+id/layout_dots"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_dimens_5"
+                android:layout_marginBottom="@dimen/common_dimens_10"
+                android:gravity="center"
+                android:orientation="horizontal" />
+            <TextView
+                android:id="@+id/txt_rest_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Restaurant name"
+                android:textSize="@dimen/text_size_18"
+                android:textStyle="bold"
+                android:textColor="@color/text_color_primary"
+                android:paddingLeft="@dimen/common_dimens_20" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Closes in 50 mins"
+                android:paddingLeft="@dimen/common_dimens_20"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Checked in 10 mins ago"
+                android:drawableLeft="@drawable/checkin_background"
+                android:paddingLeft="@dimen/common_dimens_20"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/from_the_menu"
+                android:textStyle="bold"
+                android:textColor="@color/text_color_primary"
+                android:drawableLeft="@drawable/checkin_background"
+                android:paddingLeft="@dimen/common_dimens_10"
+                android:layout_marginTop="@dimen/common_dimens_10"
+                android:layout_marginLeft="@dimen/common_dimens_10"
+                android:layout_marginRight="@dimen/common_dimens_10"/>
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_115"
+                android:layout_marginBottom="@dimen/common_dimens_10"
+                android:layout_marginLeft="@dimen/common_dimens_20"
+                android:layout_marginRight="@dimen/common_dimens_20"
+                android:layout_marginTop="@dimen/common_dimens_10">
+                <LinearLayout
+                    android:id="@+id/layout_rest_specialties"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
+            <ImageView
+                android:layout_width="@dimen/dimens_60"
+                android:layout_height="@dimen/dimens_60"
+                android:src="@drawable/ic_camera"
+                android:layout_gravity="center_horizontal|bottom"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/snap_share"
+                android:gravity="center_horizontal"
+                android:textColor="@color/text_color_primary"
+                android:textSize="@dimen/text_size_12"
+                android:layout_marginBottom="@dimen/common_dimens_5"
+                android:layout_marginTop="@dimen/common_dimens_5"/>
+        </LinearLayout>
     </LinearLayout>
-
 </FrameLayout>

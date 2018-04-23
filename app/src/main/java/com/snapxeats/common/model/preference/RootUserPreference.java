@@ -28,4 +28,17 @@ public class RootUserPreference{
     @Inject
     public RootUserPreference() {
     }
+
+    public void resetRootUserPreference() {
+        setUser_Id("");
+        setRestaurant_rating("");
+        setRestaurant_price("");
+        setRestaurant_distance("");
+        setSort_by_rating(false);
+        setSort_by_distance(false);
+        setSort_by_distance(false);
+        setUserCuisinePreferences(null);
+        setUserFoodPreferences(null);
+    }
+
 }

@@ -14,9 +14,9 @@ public class SnapShareContract {
     }
 
     public interface SnapSharePresenter extends BasePresenter<SnapShareView> {
+        void getRestaurantInfo(String restaurantId);
     }
 
     public interface SnapShareRouter {
-
     }
 }

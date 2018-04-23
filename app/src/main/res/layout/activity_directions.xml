@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="@dimen/common_dimens_10"
-    tools:context="com.snapxeats.ui.directions.DirectionsActivity">
+    tools:mContext="com.snapxeats.ui.directions.DirectionsActivity">
 
     <FrameLayout
         android:layout_width="match_parent"

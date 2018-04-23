@@ -14,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,10 +23,13 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.OnRecyclerItemClickListener;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.checkin.CheckInRequest;
@@ -118,6 +122,7 @@ public class HomeActivity extends BaseActivity implements
     protected TextView mTxtRestName;
     protected TextView mTxtCancel;
     protected Button mBtnCheckIn;
+    private String restaurantId;
 
     @Inject
     HomeContract.HomePresenter mPresenter;
@@ -449,13 +454,20 @@ public class HomeActivity extends BaseActivity implements
             String rewards = ((CheckInResponse) value).getReward_point() + " " + getString(R.string.reward_points);
             mTxtRewards.setText(rewards);
 
-            mRewardDialog.findViewById(R.id.btn_continue).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    transaction = fragmentManager.beginTransaction();
-                    transaction.replace(R.id.frame_layout, snapShareFragment);
-                    transaction.commit();
+            mRewardDialog.findViewById(R.id.btn_continue).setOnClickListener(v -> {
+                String restaurantId = null;
+                for (RestaurantInfo restaurantInfo : mRestaurantList) {
+                    if (restaurantInfo.isSelected()) {
+                        restaurantId = restaurantInfo.getRestaurant_info_id();
+                    }
                 }
+                mRewardDialog.dismiss();
+                transaction = fragmentManager.beginTransaction();
+                Bundle bundle = new Bundle();
+                bundle.putString(getString(R.string.intent_restaurant_id), restaurantId);
+                snapShareFragment.setArguments(bundle);
+                transaction.replace(R.id.frame_layout, snapShareFragment);
+                transaction.commit();
             });
         }
     }
@@ -507,16 +519,26 @@ public class HomeActivity extends BaseActivity implements
          Check In button
          */
         mBtnCheckIn.setOnClickListener(v -> {
-            showProgressDialog();
-            CheckInRequest checkInRequest = null;
-            for (RestaurantInfo restaurantInfo : mRestaurantList) {
-                if (restaurantInfo.isSelected()) {
-                    checkInRequest = new CheckInRequest();
-                    checkInRequest.setRestaurant_info_id(restaurantInfo.getRestaurant_info_id());
-                    checkInRequest.setReward_type(getString(R.string.reward_type_check_in));
+            if (utility.isLoggedIn()) {
+                showProgressDialog();
+                CheckInRequest checkInRequest = null;
+                for (RestaurantInfo restaurantInfo : mRestaurantList) {
+                    if (restaurantInfo.isSelected()) {
+                        checkInRequest = new CheckInRequest();
+                        checkInRequest.setRestaurant_info_id(restaurantInfo.getRestaurant_info_id());
+                        checkInRequest.setReward_type(getString(R.string.reward_type_check_in));
+                    }
                 }
+                mPresenter.checkIn(checkInRequest);
+            }else {
+                mCheckInDialog.dismiss();
+                transaction = fragmentManager.beginTransaction();
+                Bundle bundle = new Bundle();
+                bundle.putString(getString(R.string.intent_restaurant_id), restaurantId);
+                snapShareFragment.setArguments(bundle);
+                transaction.replace(R.id.frame_layout, snapShareFragment);
+                transaction.commit();
             }
-            mPresenter.checkIn(checkInRequest);
         });
     }
 
@@ -542,6 +564,7 @@ public class HomeActivity extends BaseActivity implements
                 for (RestaurantInfo restaurantInfo : mRestaurantList) {
                     restaurantInfo.setSelected(false);
                 }
+                restaurantId = mRestaurantList.get(position).getRestaurant_info_id();
                 mRestaurantList.get(position).setSelected(isSelected);
                 mAdapter.notifyDataSetChanged();
             });
@@ -621,5 +644,11 @@ public class HomeActivity extends BaseActivity implements
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mRootUserPreference.resetRootUserPreference();
     }
 }

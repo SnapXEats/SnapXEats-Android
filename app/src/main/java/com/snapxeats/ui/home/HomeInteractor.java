@@ -1,8 +1,6 @@
 package com.snapxeats.ui.home;
 
 import android.content.Context;
-import android.util.Log;
-
 import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.Logout;
@@ -229,7 +227,7 @@ public class HomeInteractor {
 
         SnapXApplication app = (SnapXApplication) mContext.getApplicationContext();
         app.setToken(null);
-        rootUserPreference = null;
+        rootUserPreference.resetRootUserPreference();
     }
 
     void getNearByRestaurantToCheckIn(double lat, double lng) {
