@@ -16,8 +16,6 @@
             android:id="@+id/img_restaurant"
             android:layout_width="@dimen/dimens_54dp"
             android:layout_height="@dimen/dimens_54dp"
-            android:src="@drawable/ic_restaurant_placeholder"
-            android:scaleType="centerCrop"
             app:border="true"
             app:border_width="@dimen/common_1"
             app:shadow="true" />

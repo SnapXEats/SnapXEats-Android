@@ -3,7 +3,6 @@ package com.snapxeats.ui.cuisinepreference;
 import android.content.Context;
 import com.snapxeats.common.model.preference.Cuisines;
 import com.snapxeats.common.model.preference.RootCuisine;
-import com.snapxeats.common.model.preference.UserCuisinePreferencesDao;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
@@ -25,7 +24,6 @@ public class CuisinePrefInteractor {
     private CuisinePrefContract.CuisinePrefPresenter presenter;
     private Context mContext;
     private CuisinePrefContract.CuisinePrefView view;
-    private UserCuisinePreferencesDao cuisinePreferencesDao;
 
     @Inject
     AppUtility utility;
@@ -46,10 +44,9 @@ public class CuisinePrefInteractor {
         mContext = view.getActivity();
         utility.setContext(mContext);
         helper.setContext(mContext);
-        cuisinePreferencesDao = helper.getCuisinePreferencesDao();
     }
 
-    public void getCuisinePref() {
+    void getCuisinePref() {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
 

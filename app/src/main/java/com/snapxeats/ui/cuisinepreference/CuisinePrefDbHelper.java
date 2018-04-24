@@ -33,18 +33,10 @@ public class CuisinePrefDbHelper {
     @Inject
     DbHelper dbHelper;
 
-    private UserCuisinePreferencesDao cuisinePreferencesDao;
-
-
     public void setContext(Context context) {
         this.mContext = context;
         utility.setContext(mContext);
         dbHelper.setContext(mContext);
-    }
-
-    UserCuisinePreferencesDao getCuisinePreferencesDao() {
-        cuisinePreferencesDao = dbHelper.getUserCuisinePreferencesDao();
-        return cuisinePreferencesDao;
     }
 
     /**
@@ -102,8 +94,9 @@ public class CuisinePrefDbHelper {
         return selectedCuisineList;
     }
 
-    public void saveCuisineList(List<Cuisines> rootCuisineList) {
+    void saveCuisineList(List<Cuisines> rootCuisineList) {
 
+        UserCuisinePreferencesDao cuisinePreferencesDao = dbHelper.getUserCuisinePreferencesDao();
         cuisinePreferencesDao.deleteAll();
         UserCuisinePreferences cuisinePreferences = null;
         SharedPreferences preferences = utility.getSharedPreferences();

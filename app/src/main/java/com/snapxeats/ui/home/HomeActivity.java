@@ -443,10 +443,11 @@ public class HomeActivity extends BaseActivity implements
         } else if (value instanceof CheckInResponse) {
             mRewardDialog = new Dialog(this);
             mRewardDialog.setContentView(R.layout.layout_reward_message);
+
             Window window = mRewardDialog.getWindow();
             if (null != window) {
                 window.setLayout(UIConstants.REWARD_DIALOG_WIDTH, UIConstants.REWARD_DIALOG_HEIGHT);
-                window.setBackgroundDrawable(getDrawable(R.drawable.checkin_background));
+                window.setBackgroundDrawable(getDrawable(R.drawable.reward_background));
             }
             dismissCheckInDialog();
             mRewardDialog.show();

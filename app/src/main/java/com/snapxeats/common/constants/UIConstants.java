@@ -67,9 +67,13 @@ public class UIConstants {
     public static final int ROUTE_PADDING = (int) 0.80;
     public static final int CHECKIN_DIALOG_WIDTH = 950;
     public static final int CHECKIN_DIALOG_HEIGHT = 1250;
+    public static final int PHOTO_DIALOG_HEIGHT = 1300;
     public static final int REWARD_DIALOG_WIDTH = 800;
     public static final int REWARD_DIALOG_HEIGHT = 1100;
 
     /*Snap N Share*/
     public static final int MARGIN = 8;
+
+    public static final  int CAMERA_REQUEST_PERMISSION = 3;
+    public static final  int CAMERA_REQUEST = 4;
 }

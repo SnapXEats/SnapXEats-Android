@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 
 /**
- * Created by Snehal Tembare on 8/3/18.
+ * Created by Snehal Tembare on 8/4/18.
  */
 
 public class RewardsFragment extends BaseFragment {

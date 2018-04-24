@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/reward_bg" />
+    <item>
+        <shape android:shape="rectangle">
+            <stroke
+                android:width="3dp"
+                android:color="#FFFFFF" />
+            <corners
+                android:bottomLeftRadius="@dimen/common_dimens_15"
+                android:bottomRightRadius="@dimen/common_dimens_15"
+                android:topRightRadius="@dimen/common_dimens_15"
+                android:topLeftRadius="@dimen/common_dimens_15" />
+        </shape>
+    </item>
+</layer-list>
