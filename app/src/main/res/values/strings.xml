@@ -175,5 +175,7 @@
     <string name="date_time_pattern">yyyyMMdd_HHmmss</string>
     <string name="img">IMG_</string>
     <string name="image_extension">.jpg</string>
+    <string name="take_photo">Take photo</string>
+    <string name="remind_me_later">Remind me later</string>
 
 </resources>

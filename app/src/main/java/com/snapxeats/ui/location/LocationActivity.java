@@ -15,7 +15,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
@@ -27,16 +26,12 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.LocationHelper;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
 import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
 
@@ -137,7 +132,7 @@ public class LocationActivity extends BaseActivity implements
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0)
-                    if (null != resultList && null != mAdapter) {
+                    if (null != resultList) {
                         resetViews();
                     }
             }
@@ -158,8 +153,10 @@ public class LocationActivity extends BaseActivity implements
         resultList.clear();
         predictionList.clear();
         mListView.setVisibility(View.GONE);
-        mImgLoader.setVisibility(View.GONE);
-        mAdapter.notifyDataSetChanged();
+        mImgLoader.setVisibility(View.INVISIBLE);
+        if (null != mAdapter) {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -170,9 +167,7 @@ public class LocationActivity extends BaseActivity implements
     @OnClick(R.id.img_delete_input)
     public void clearText() {
         mAutoCompleteTextView.setText("");
-        if (null != mAdapter) {
-            resetViews();
-        }
+        resetViews();
     }
 
     @Override
@@ -188,7 +183,7 @@ public class LocationActivity extends BaseActivity implements
         if (sequence.length() > 0) {
             mImgeClearText.setVisibility(View.VISIBLE);
         } else {
-            mImgeClearText.setVisibility(View.GONE);
+            mImgeClearText.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -316,7 +311,7 @@ public class LocationActivity extends BaseActivity implements
         this.predictionList = predictionList;
         if (null != predictionList
                 && predictionList.size() != 0) {
-            mImgLoader.setVisibility(View.GONE);
+            mImgLoader.setVisibility(View.INVISIBLE);
             for (int index = 0; index < predictionList.size(); index++) {
                 resultList.add(predictionList.get(index).getDescription());
             }

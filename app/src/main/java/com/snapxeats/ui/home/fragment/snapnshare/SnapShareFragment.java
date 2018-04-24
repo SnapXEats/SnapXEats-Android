@@ -1,6 +1,7 @@
 package com.snapxeats.ui.home.fragment.snapnshare;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +18,8 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,6 +27,7 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.restaurantDetails.RestaurantDetails;
 import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
 import com.snapxeats.common.model.restaurantDetails.RestaurantSpeciality;
@@ -183,6 +187,32 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
         setViewPager(restaurantDetails.getRestaurant_pics());
         setMenusView(restaurantDetails.getRestaurant_speciality());
+
+        showPhotoReminderDialog();
+    }
+
+    /**
+     * Dialog for Take photo as a Reminder
+     */
+    private void showPhotoReminderDialog() {
+        Dialog mDialog = new Dialog(getActivity());
+        mDialog.setContentView(R.layout.share_photo_dialog);
+        Window window = mDialog.getWindow();
+        if (null != window) {
+            window.setLayout(UIConstants.CHECKIN_DIALOG_WIDTH, UIConstants.CHECKIN_DIALOG_HEIGHT);
+            window.setBackgroundDrawable(getActivity().getDrawable(R.drawable.checkin_background));
+        }
+        mDialog.show();
+
+        Button mBtnTakePhoto = mDialog.findViewById(R.id.btn_take_photo);
+        TextView mTxtRemindMeLater = mDialog.findViewById(R.id.txt_remind_me_later);
+
+        mBtnTakePhoto.setOnClickListener(v -> {
+                    startActivity(new Intent(getActivity(), CameraActivity.class));
+                    mDialog.dismiss();
+                });
+
+        mTxtRemindMeLater.setOnClickListener(v -> mDialog.dismiss());
     }
 
     private void setMenusView(List<RestaurantSpeciality> restaurant_speciality) {
