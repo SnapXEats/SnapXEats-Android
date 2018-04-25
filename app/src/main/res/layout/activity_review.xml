@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_main_review"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="1"
+    tools:context=".ui.review.ReviewActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_review"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="@dimen/common_dimens_2"
+        app:theme="@style/ToolBarTheme">
+
+        <ImageView
+            android:id="@+id/img_share_review"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|end"
+            android:layout_marginEnd="@dimen/common_dimens_10"
+            android:layout_marginStart="@dimen/common_dimens_20"
+            android:padding="@dimen/common_dimens_10"
+            android:src="@drawable/ic_dir_share" />
+    </android.support.v7.widget.Toolbar>
+
+    <ImageView
+        android:id="@+id/img_rest_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.6"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_restaurant_placeholder" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_dimens_0"
+        android:layout_weight="0.2"
+        android:orientation="horizontal"
+        android:weightSum="4">
+
+        <EditText
+            android:id="@+id/edt_txt_review"
+            android:layout_width="@dimen/common_dimens_0"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/common_dimens_10"
+            android:layout_weight="3"
+            android:background="@android:color/transparent"
+            android:hint="@string/hint_txt_review" />
+
+        <View
+            android:layout_width="@dimen/common_dimens_1"
+            android:layout_height="match_parent"
+            android:background="@color/colorLightGrey" />
+
+        <LinearLayout
+
+            android:layout_width="@dimen/common_dimens_0"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/layout_record"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:foregroundGravity="center">
+
+                <ImageView
+                    android:id="@+id/img_audio_review"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:padding="@dimen/common_dimens_10"
+                    android:src="@drawable/ic_audio_review"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/img_play_review"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_play_audio"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+            <Chronometer
+                android:id="@+id/timer_audio_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_dimens_10"
+                android:gravity="center"
+                android:textSize="@dimen/text_size_12"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_dimens_1"
+        android:layout_gravity="center"
+        android:background="@color/colorLightGrey" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.2"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/rate_ur_experience"
+            android:textColor="@color/text_color_secondary"
+            android:textSize="@dimen/txt_size_22" />
+
+        <RatingBar
+            android:id="@+id/rating_review"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/common_dimens_10"
+            android:numStars="5"
+            android:stepSize="1"
+            android:theme="@style/RatingBar" />
+    </LinearLayout>
+</LinearLayout>

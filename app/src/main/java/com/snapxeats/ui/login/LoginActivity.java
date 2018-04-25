@@ -114,7 +114,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
                 String key = new String(Base64.encode(md.digest(), 0));
-                SnapXToast.debug("HashKey"+key);
+                SnapXToast.debug("HashKey" + key);
             }
         } catch (Exception ignored) {
         }

@@ -44,6 +44,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import static com.snapxeats.common.constants.UIConstants.SET_ALPHA;
+
 /**
  * Created by Prajakta Patil on 30/1/18.
  */
@@ -53,7 +55,7 @@ import javax.inject.Inject;
  */
 
 public class FoodStackActivity extends BaseActivity
-        implements FoodStackContract.FoodStackView, AppContract.SnapXResults/*,View.OnClickListener*/ {
+        implements FoodStackContract.FoodStackView, AppContract.SnapXResults {
 
     @BindView(R.id.activity_main_card_stack_view)
     protected CardStackView cardStackView;
@@ -87,9 +89,6 @@ public class FoodStackActivity extends BaseActivity
 
     private List<String> stringsUrl;
 
-    @BindView(R.id.img_foodstack_map)
-    protected ImageView mImgMaps;
-
     @Inject
     AppUtility mAppUtility;
 
@@ -108,6 +107,9 @@ public class FoodStackActivity extends BaseActivity
 
     @Inject
     FoodStackDbHelper foodStackDbHelper;
+
+    @BindView(R.id.img_foodstack_map)
+    protected ImageView mImgMap;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -188,13 +190,13 @@ public class FoodStackActivity extends BaseActivity
 
     public void enableGestureActions() {
         mImgLike.setClickable(true);
-        mImgLike.setAlpha(UIConstants.SET_ALPHA);
+        mImgLike.setAlpha(SET_ALPHA);
 
         mImgDislike.setClickable(true);
-        mImgDislike.setAlpha(UIConstants.SET_ALPHA);
+        mImgDislike.setAlpha(SET_ALPHA);
 
         mImgWishlist.setClickable(true);
-        mImgWishlist.setAlpha(UIConstants.SET_ALPHA);
+        mImgWishlist.setAlpha(SET_ALPHA);
     }
 
     public void disableGestureActions() {
@@ -238,7 +240,6 @@ public class FoodStackActivity extends BaseActivity
                 switch (direction) {
                     case Top: {
                         swipeTop(cardStackView.getTopIndex() - 1);
-                        paginate();
                         break;
                     }
                     case Right: {
@@ -246,13 +247,8 @@ public class FoodStackActivity extends BaseActivity
                         break;
                     }
                     case Left: {
-                        swipeLeft(cardStackView.getTopIndex() - 1);
                         break;
                     }
-                }
-
-                if (cardStackView.getTopIndex() == mStackAdapter.getCount() - UIConstants.CARD_COUNT) {
-                    paginate();
                 }
             }
 
@@ -272,12 +268,6 @@ public class FoodStackActivity extends BaseActivity
                 startActivity(intent);
             }
         });
-    }
-
-
-    private void paginate() {
-        cardStackView.setPaginationReserved();
-        mStackAdapter.notifyDataSetChanged();
     }
 
     private LinkedList<FoodStackData> extractRemainingCards() {
@@ -409,6 +399,7 @@ public class FoodStackActivity extends BaseActivity
         translateX.setDuration(UIConstants.SET_DURATION);
         translateY.setDuration(UIConstants.SET_DURATION);
         mAnimatorSet.playTogether(rotation, translateX, translateY);
+        cardStackView.swipe(SwipeDirection.Left, mAnimatorSet);
     }
 
     private void gestureTop() {
@@ -438,6 +429,7 @@ public class FoodStackActivity extends BaseActivity
     @OnClick(R.id.img_foodstack_map)
     public void imgMaps() {
         if (mStackAdapter.getCount() != 0) {
+            mImgMap.setAlpha(SET_ALPHA);
             Intent intent = new Intent(FoodStackActivity.this, MapsActivity.class);
             intent.putExtra(getString(R.string.intent_root_cuisine), rootCuisinePhotos);
             startActivity(intent);
@@ -451,7 +443,7 @@ public class FoodStackActivity extends BaseActivity
 
     @OnClick(R.id.img_cuisine_dislike)
     public void imgCuisineReject() {
-        swipeLeft(cardStackView.getTopIndex() - 1);
+        swipeLeft(cardStackView.getTopIndex());
     }
 
     @OnClick(R.id.img_cuisine_wishlist)

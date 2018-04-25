@@ -23,6 +23,7 @@
     <style name="TextViewStyle">
         <item name="android:textAllCaps">true</item>
     </style>
+
     <style name="HomeActivityTheme" parent="Theme.AppCompat"></style>
 
 
@@ -36,12 +37,14 @@
         <item name="android:paddingRight">5dp</item>
     </style>
 
-    <style name="CustomRatingBar" parent="Theme.AppCompat">
-        <item name="colorControlNormal">@color/recent_searches_color</item>
+    <!--Review rating bar-->
+    <style name="RatingBar" parent="Theme.AppCompat">
+        <item name="colorControlNormal">@color/text_color_secondary</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
     </style>
 
     <style name="CheckInActivityTheme" parent="@android:style/Theme.Dialog">
-     <item name="android:windowFrame">@null</item>
+        <item name="android:windowFrame">@null</item>
         <item name="android:windowBackground">@color/colorWhite</item>
     </style>
 </resources>

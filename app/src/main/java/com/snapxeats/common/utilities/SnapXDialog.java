@@ -128,9 +128,9 @@ public class SnapXDialog {
     /**
      * Show snackbar for network error
      */
-    public void showSnackBar(View view, View.OnClickListener poitiveClick) {
+    public void showSnackBar(View view, View.OnClickListener positiveClick) {
         Snackbar snackbar = Snackbar.make(view, context.getString(R.string.check_network), Snackbar.LENGTH_INDEFINITE);
-        snackbar.setAction(context.getString(R.string.retry), poitiveClick);
+        snackbar.setAction(context.getString(R.string.retry), positiveClick);
         snackbar.show();
     }
 }

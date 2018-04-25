@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/fragment_snap_n_share"
     tools:context="com.snapxeats.ui.home.fragment.checkin.CheckInFragment">
     <LinearLayout
         android:id="@+id/layout_parent"

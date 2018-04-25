@@ -205,7 +205,7 @@ public class HomeFragment extends BaseFragment implements
         ViewTreeObserver treeObserver = mRecyclerView.getViewTreeObserver();
         treeObserver.addOnGlobalLayoutListener(() -> {
             List<Cuisines> list = getSelectedCuisineList();
-            if (list != null && list.size() > 0) {
+            if (null != list && 0 < list.size()) {
                 mTxtCuisineDone.setTextColor(ContextCompat.getColor(activity, R.color.colorPrimary));
                 mTxtCuisineDone.setClickable(true);
             } else {

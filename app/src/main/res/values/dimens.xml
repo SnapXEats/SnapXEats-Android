@@ -82,6 +82,7 @@
     <dimen name="text_size_11">11sp</dimen>
     <dimen name="dimens_95dp">95dp</dimen>
     <dimen name="common_dimens_210">210dp</dimen>
+    <dimen name="txt_size_20">20sp</dimen>
     <dimen name="dimen_6dp">6dp</dimen>
 
 </resources>

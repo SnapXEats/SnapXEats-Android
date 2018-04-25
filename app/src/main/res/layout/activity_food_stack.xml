@@ -15,6 +15,7 @@
         app:theme="@style/ToolBarTheme">
 
         <ImageView
+            android:alpha="0.4"
             android:id="@+id/img_foodstack_map"
             android:layout_width="@dimen/dimen_25"
             android:layout_height="@dimen/dimen_25"
