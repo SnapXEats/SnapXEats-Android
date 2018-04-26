@@ -49,19 +49,19 @@ import butterknife.OnClick;
 
 import static com.snapxeats.common.Router.Screen.CUISINE_PREF;
 import static com.snapxeats.common.Router.Screen.FOOD_PREF;
-import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.DISTANCE.DISTANCE_FIVE;
-import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.DISTANCE.DISTANCE_FOUR;
-import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.DISTANCE.DISTANCE_ONE;
-import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.DISTANCE.DISTANCE_THREE;
-import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.DISTANCE.DISTANCE_TWO;
-import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.PRICING.PRICE_AUTO;
-import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.PRICING.PRICE_FOUR;
-import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.PRICING.PRICE_ONE;
-import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.PRICING.PRICE_THREE;
-import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.PRICING.PRICE_TWO;
-import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.RATINGS.FIVE_STAR;
-import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.RATINGS.FOUR_STAR;
-import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.RATINGS.THREE_STAR;
+import static com.snapxeats.common.constants.UIConstants.DISTANCE_FIVE;
+import static com.snapxeats.common.constants.UIConstants.DISTANCE_FOUR;
+import static com.snapxeats.common.constants.UIConstants.DISTANCE_ONE;
+import static com.snapxeats.common.constants.UIConstants.DISTANCE_THREE;
+import static com.snapxeats.common.constants.UIConstants.DISTANCE_TWO;
+import static com.snapxeats.common.constants.UIConstants.FIVE_STAR;
+import static com.snapxeats.common.constants.UIConstants.FOUR_STAR;
+import static com.snapxeats.common.constants.UIConstants.PRICE_AUTO;
+import static com.snapxeats.common.constants.UIConstants.PRICE_FOUR;
+import static com.snapxeats.common.constants.UIConstants.PRICE_ONE;
+import static com.snapxeats.common.constants.UIConstants.PRICE_THREE;
+import static com.snapxeats.common.constants.UIConstants.PRICE_TWO;
+import static com.snapxeats.common.constants.UIConstants.THREE_STAR;
 
 /**
  * Created by Snehal Tembare on 17/2/18.
@@ -73,28 +73,6 @@ public class NavPrefFragment extends BaseFragment implements
         View.OnClickListener,
         AppContract.SnapXResults {
     private RootUserPreference userPreferenceObject;
-
-    public interface RATINGS {
-        int THREE_STAR = 3;
-        int FOUR_STAR = 4;
-        int FIVE_STAR = 5;
-    }
-
-    public interface DISTANCE {
-        int DISTANCE_ONE = 1;
-        int DISTANCE_TWO = 2;
-        int DISTANCE_THREE = 3;
-        int DISTANCE_FOUR = 4;
-        int DISTANCE_FIVE = 5;
-    }
-
-    public interface PRICING {
-        int PRICE_AUTO = 0;
-        int PRICE_ONE = 1;
-        int PRICE_TWO = 2;
-        int PRICE_THREE = 3;
-        int PRICE_FOUR = 4;
-    }
 
     private DrawerLayout mDrawerLayout;
     private Activity activity;

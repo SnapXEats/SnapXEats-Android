@@ -13,7 +13,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
 import com.snapxeats.R;
+import com.snapxeats.ui.review.ReviewActivity;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,8 +27,9 @@ import static com.snapxeats.common.constants.UIConstants.CAMERA_REQUEST_PERMISSI
  * Created by Snehal Tembare on 18/4/18.
  */
 public class CameraActivity extends AppCompatActivity {
-
     private Uri file;
+    private String restId;
+    private String restName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +39,8 @@ public class CameraActivity extends AppCompatActivity {
 
     private void initView() {
         checkPermissions();
+        restId=getIntent().getStringExtra(getString(R.string.review_rest_id));
+        restName=getIntent().getStringExtra(getString(R.string.review_rest_name));
     }
 
     private void checkPermissions() {
@@ -92,10 +98,12 @@ public class CameraActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == CAMERA_REQUEST) {
-           //TODO-Start Review activity
-           /* Intent reviewIntent = new Intent(this,ReviewActivity.class);
-            reviewIntent.putExtra(getString(R.string.file_path),file);
-            startActivity(reviewIntent);*/
+            Intent reviewIntent = new Intent(this,ReviewActivity.class);
+            reviewIntent.putExtra(getString(R.string.file_path),file.toString());
+            reviewIntent.putExtra(getString(R.string.review_rest_id),restId);
+            reviewIntent.putExtra(getString(R.string.review_rest_name),restName);
+            startActivity(reviewIntent);
+            finish();
         }else {
             finish();
         }

@@ -53,6 +53,11 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_FOUR;
+import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_ONE;
+import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_THREE;
+import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_TWO;
+
 /**
  * Created by Prajakta Patil on 22/3/18.
  */
@@ -154,16 +159,16 @@ public class DirectionsActivity extends BaseActivity
     private void setRestPrice() {
         String price = mDetails.getRestaurantDetails().getRestaurant_price();
         switch (price) {
-            case "1":
+            case DIR_PRICE_ONE:
                 mTxtPrice.setText(getString(R.string.price_one));
                 break;
-            case "2":
+            case DIR_PRICE_TWO:
                 mTxtPrice.setText(getString(R.string.price_two));
                 break;
-            case "3":
+            case DIR_PRICE_THREE:
                 mTxtPrice.setText(getString(R.string.price_three));
                 break;
-            case "4":
+            case DIR_PRICE_FOUR:
                 mTxtPrice.setText(getString(R.string.price_four));
                 break;
             default:

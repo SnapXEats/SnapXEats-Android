@@ -11,20 +11,37 @@ public class UIConstants {
     public static final int PROFILE_WIDTH_HEIGHT = 50;
     public static final int PROFILE_HEIGHT = 50;
 
+    /*NavPrefFragment*/
+    public static final int PRICE_AUTO = 0;
+    public static final int PRICE_ONE = 1;
+    public static final int PRICE_TWO = 2;
+    public static final int PRICE_THREE = 3;
+    public static final int PRICE_FOUR = 4;
+
+    public static final int THREE_STAR = 3;
+    public static final int FOUR_STAR = 4;
+    public static final int FIVE_STAR = 5;
+
+    public static final int DISTANCE_ONE = 1;
+    public static final int DISTANCE_TWO = 2;
+    public static final int DISTANCE_THREE = 3;
+    public static final int DISTANCE_FOUR = 4;
+    public static final int DISTANCE_FIVE = 5;
+
     /*Maps Screen*/
     public static final String LATITUDE = "40.4862157";
     public static final String LONGITUDE = "-74.4518188";
 
-    public static final double LAT =  40.7014;
+    public static final double LAT = 40.7014;
     public static final double LNG = -74.0151;
 
     public static final float DEFAULT = 0;
     public static final float MAP_SCOLL_BY = 370;
-    public static final float MAP_ZOOM = 12.3f;
+    public static final float MAP_ZOOM = 13.3f;
     public static final int MAP_FILL_COLOR = 0x55AAAAAA;
     public static final float MAP_STROKE = 5;
     public static final float MAP_MARKER_ZOOM = 13;
-    public static final String DIST_FORMAT ="##.###";
+    public static final String DIST_FORMAT = "##.###";
 
     /*Directions Screen*/
     public static final float SCROLL_MIN_SCALE = 0.8f;
@@ -32,6 +49,10 @@ public class UIConstants {
     public static final float ROUTE_WIDTH = 10;
     public static final int ROUTE_COLOR = 93;
     public static final long DURATION_MARKER = 30000;
+    public static final String DIR_PRICE_ONE = "1";
+    public static final String DIR_PRICE_TWO = "2";
+    public static final String DIR_PRICE_THREE = "3";
+    public static final String DIR_PRICE_FOUR = "4";
 
     /*Foodstack screen*/
     public static final long SET_START_DELAY = 100;
@@ -74,6 +95,13 @@ public class UIConstants {
     /*Snap N Share*/
     public static final int MARGIN = 8;
 
-    public static final  int CAMERA_REQUEST_PERMISSION = 3;
-    public static final  int CAMERA_REQUEST = 4;
+    /*AddReview screen*/
+    public static final int RECORD_AUDIO_REQUEST_CODE = 123;
+    public static final int CAMERA_REQUEST_PERMISSION = 3;
+    public static final int CAMERA_REQUEST = 4;
+    public static final String INSTA_PACKAGE_NAME = "com.instagram.android";
+    public static final String IMAGE_TYPE = "image/jpeg";
+    public static final String MEDIATYPE_IMG = "image/*";
+    public static final String MEDIATYPE_AUD = "audio/*";
+
 }

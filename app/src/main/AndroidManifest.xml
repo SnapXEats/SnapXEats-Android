@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.snapxeats">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -15,6 +16,15 @@
      android:name="android.permission.WRITE_EXTERNAL_STORAGE"
      tools:node="replace"/>
     -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.STORAGE" />
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:node="replace" />
+
     <application
         android:name=".SnapXApplication"
         android:allowBackup="true"
@@ -44,6 +54,7 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -64,6 +75,8 @@
         <activity android:name=".ui.directions.DirectionsActivity" />
         <activity android:name=".ui.maps.MapsActivity" />
         <activity android:name=".ui.home.fragment.snapnshare.CameraActivity"></activity>
+        <activity android:name=".ui.review.ReviewActivity" />
+        <activity android:name=".ui.shareReview.ShareReviewActivity" />
     </application>
 
 </manifest>

@@ -31,5 +31,5 @@ public class WebConstants {
     public static final String USER_LOGOUT = "/api/v1/users/logout";
     public static final String CHECKIN_RESTAURANTS = "/api/v1/restaurant/checkIn/getRestaurants";
     public static final String CHECKIN = "/api/v1/restaurant/checkIn";
-
+    public static final String SNAPSHARE = "/api/v1/snapNShare";
 }

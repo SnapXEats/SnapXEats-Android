@@ -26,7 +26,6 @@ import android.widget.TextView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.restaurantDetails.RestaurantDetails;
 import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
@@ -73,6 +72,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
     @Inject
     SnapShareContract.SnapSharePresenter mPresenter;
     private RootRestaurantDetails mRootRestaurantDetails;
+    private String restaurantId;
 
     @Inject
     public SnapShareFragment() {
@@ -125,10 +125,9 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
     public void initView() {
         mPresenter.addView(this);
-        String restaurantId = getArguments().getString(getString(R.string.intent_restaurant_id));
+        restaurantId = getArguments().getString(getString(R.string.intent_restaurant_id));
         showProgressDialog();
         mPresenter.getRestaurantInfo(restaurantId);
-//        mPresenter.getRestaurantInfo("5f13c6e7-b6a2-4c92-a560-02b1e39e7843");
         if (null != getActivity() && isAdded()) {
 
             mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -208,7 +207,11 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
         TextView mTxtRemindMeLater = mDialog.findViewById(R.id.txt_remind_me_later);
 
         mBtnTakePhoto.setOnClickListener(v -> {
-                    startActivity(new Intent(getActivity(), CameraActivity.class));
+
+                    Intent intent=new Intent(getActivity(), CameraActivity.class);
+                    intent.putExtra(getString(R.string.review_rest_id),restaurantId);
+                    intent.putExtra(getString(R.string.review_rest_name),mRootRestaurantDetails.getRestaurantDetails().getRestaurant_name());
+                    startActivity(intent);
                     mDialog.dismiss();
                 });
 

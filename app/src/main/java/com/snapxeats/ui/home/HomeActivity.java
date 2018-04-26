@@ -54,10 +54,14 @@ import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.squareup.picasso.Picasso;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 import static com.snapxeats.common.Router.Screen.LOGIN;
+import static com.snapxeats.common.Router.Screen.REVIEW;
 import static com.snapxeats.common.constants.UIConstants.LAT;
 import static com.snapxeats.common.constants.UIConstants.LNG;
 import static com.snapxeats.common.constants.UIConstants.ONE;
@@ -73,7 +77,6 @@ import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isFoo
 public class HomeActivity extends BaseActivity implements
         NavigationView.OnNavigationItemSelectedListener, HomeContract.HomeView,
         AppContract.SnapXResults, View.OnClickListener {
-
 
     @Inject
     HomeFragment homeFragment;
@@ -306,7 +309,6 @@ public class HomeActivity extends BaseActivity implements
                     selectedFragment = navPrefFragment;
                     break;
                 case R.id.nav_food_journey:
-                    selectedFragment = foodJourneyFragment;
                     break;
 
                 case R.id.nav_smart_photos:
@@ -316,6 +318,7 @@ public class HomeActivity extends BaseActivity implements
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                     showCheckInDialog();
                     break;
+
                 case R.id.nav_rewards:
                     selectedFragment = rewardsFragment;
                     break;
@@ -443,7 +446,6 @@ public class HomeActivity extends BaseActivity implements
         } else if (value instanceof CheckInResponse) {
             mRewardDialog = new Dialog(this);
             mRewardDialog.setContentView(R.layout.layout_reward_message);
-
             Window window = mRewardDialog.getWindow();
             if (null != window) {
                 window.setLayout(UIConstants.REWARD_DIALOG_WIDTH, UIConstants.REWARD_DIALOG_HEIGHT);
@@ -604,6 +606,7 @@ public class HomeActivity extends BaseActivity implements
 
             if (!NetworkUtility.isNetworkAvailable(getActivity())) {
                 AppContract.DialogListenerAction click = () -> {
+                    showProgressDialog();
                     postOrPutUserPreferences();
                 };
                 showSnackBar(mParentLayout, setClickListener(click));

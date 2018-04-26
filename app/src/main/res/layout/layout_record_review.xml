@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayoutRecorder"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_dimens_20"
+        android:gravity="center"
+        android:text="@string/add_ur_review"
+        android:textAllCaps="true"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/common_dimens_10"
+        android:src="@drawable/ic_add_review" />
+
+    <Chronometer
+        android:id="@+id/chronometer_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/common_dimens_10"
+        android:layout_marginTop="@dimen/common_dimens_10"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="@dimen/txt_size_16" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_record_review"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_record_btn"
+            android:text="@string/record"
+            android:textColor="@color/colorWhite"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/btn_stop_review"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_record_btn"
+            android:gravity="center"
+            android:text="@string/done"
+            android:textColor="@color/colorWhite"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/txt_review_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/common_dimens_20"
+        android:layout_marginTop="@dimen/common_dimens_10"
+        android:gravity="center"
+        android:text="@string/cancel" />
+</LinearLayout>

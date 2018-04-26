@@ -9,14 +9,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
-
-    <!--<TextView-->
-        <!--android:id="@+id/txt_food_photos_count"-->
-        <!--android:layout_width="@dimen/dimens_40"-->
-        <!--android:layout_height="@dimen/dimens_20"-->
-        <!--android:layout_gravity="bottom"-->
-        <!--android:background="@color/text_color_primary"-->
-        <!--android:gravity="center"-->
-        <!--android:textColor="@color/colorWhite"-->
-        <!--android:textSize="@dimen/text_size_14" />-->
 </FrameLayout>

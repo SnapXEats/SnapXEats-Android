@@ -20,8 +20,11 @@ import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
 import com.snapxeats.ui.restaurant.RestaurantDetailsModule;
 import com.snapxeats.ui.restaurantInfo.RestaurantInfoActivity;
 import com.snapxeats.ui.restaurantInfo.RestaurantInfoModule;
+import com.snapxeats.ui.review.ReviewActivity;
+import com.snapxeats.ui.review.ReviewModule;
 import com.snapxeats.ui.splash.SplashActivity;
 import com.snapxeats.ui.splash.SplashModule;
+
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 
@@ -68,4 +71,7 @@ public abstract class ActivityBuilder {
 
     @ContributesAndroidInjector(modules = MapsModule.class)
     abstract MapsActivity bindMapsActivity();
+
+    @ContributesAndroidInjector(modules = ReviewModule.class)
+    abstract ReviewActivity bindReviewActivity();
 }

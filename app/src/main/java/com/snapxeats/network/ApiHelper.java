@@ -2,44 +2,39 @@ package com.snapxeats.network;
 
 import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.Logout;
+import com.snapxeats.common.model.RootCuisinePhotos;
+import com.snapxeats.common.model.SnapXUserRequest;
+import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.model.checkin.CheckInResponse;
 import com.snapxeats.common.model.checkin.CheckInRestaurants;
 import com.snapxeats.common.model.foodGestures.RootDeleteWishlist;
+import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.foodGestures.RootWishlist;
 import com.snapxeats.common.model.googleDirections.RootGoogleDir;
 import com.snapxeats.common.model.location.PlaceDetail;
 import com.snapxeats.common.model.location.PlacesAutoCompleteData;
+import com.snapxeats.common.model.login.RootInstagram;
+import com.snapxeats.common.model.preference.RootCuisine;
+import com.snapxeats.common.model.preference.RootFoodPref;
 import com.snapxeats.common.model.preference.SnapXPreference;
-import com.snapxeats.common.model.preference.RootCuisine;
-import com.snapxeats.common.model.RootCuisinePhotos;
-import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
-import com.snapxeats.common.model.preference.RootFoodPref;
-import com.snapxeats.common.model.login.RootInstagram;
-import com.snapxeats.common.model.SnapXUserRequest;
-import com.snapxeats.common.model.SnapXUserResponse;
-import com.snapxeats.common.model.foodGestures.RootFoodGestures;
-import com.snapxeats.common.model.googleDirections.RootGoogleDir;
-import com.snapxeats.common.model.location.PlaceDetail;
-import com.snapxeats.common.model.location.PlacesAutoCompleteData;
-import com.snapxeats.common.model.login.RootInstagram;
-import com.snapxeats.common.model.preference.RootCuisine;
-import com.snapxeats.common.model.preference.RootFoodPref;
-import com.snapxeats.common.model.preference.RootUserPreference;
-import com.snapxeats.common.model.preference.RootUserPreferences;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
+import com.snapxeats.common.model.review.SnapNShareResponse;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -235,9 +230,17 @@ public interface ApiHelper {
     Call<CheckInResponse> checkIn(@Header("Authorization") String token,
                                   @Body CheckInRequest checkInRequest);
 
+    @Multipart
+    @POST(WebConstants.SNAPSHARE)
+    Call<SnapNShareResponse> sendUserReview(@Header("Authoriozation") String token,
+                                            @Part("restaurantInfoId") String restaurantInfoId,
+                                            @Part MultipartBody.Part dishPicture,
+                                            @Part MultipartBody.Part audioReview,
+                                            @Part("textReview") String textReview,
+                                            @Part("textReview") Integer rating);
+
     /**
      * User logout
-     *
      * @param token
      * @return
      */

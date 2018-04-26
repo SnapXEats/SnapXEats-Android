@@ -85,6 +85,10 @@ public class MapsActivity extends BaseActivity
         setScrollview();
     }
 
+    public boolean onMarkerClick(Marker marker) {
+        marker.showInfoWindow();
+        return true;
+    }
     /**
      * Set up map view
      **/
@@ -147,7 +151,6 @@ public class MapsActivity extends BaseActivity
     public void onMapReady(GoogleMap googleMap) {
         this.mMap = googleMap;
         placeRestMarkers();
-//        drawMapCircle();
 
         LatLng latLng = new LatLng(Double.parseDouble(UIConstants.LATITUDE), Double.parseDouble(UIConstants.LONGITUDE));
         mMap.addMarker(new MarkerOptions()
