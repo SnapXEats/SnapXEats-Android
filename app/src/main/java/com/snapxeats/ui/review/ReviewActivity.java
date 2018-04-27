@@ -119,7 +119,8 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         snapXDialog.setContext(this);
         utility.setContext(this);
 
-        mEditTxtReview.addTextChangedListener(new TextWatcher() {
+       /*TODO-Restrict review text length
+       mEditTxtReview.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -139,7 +140,8 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             public void afterTextChanged(Editable s) {
 
             }
-        });
+        });*/
+       
         setUpToolbar();
         //get file path
         Intent intent = getIntent();

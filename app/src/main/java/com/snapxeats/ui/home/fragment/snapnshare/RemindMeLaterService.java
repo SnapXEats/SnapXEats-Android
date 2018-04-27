@@ -8,6 +8,8 @@ import android.content.Context;
 import android.support.v4.app.NotificationManagerCompat;
 import com.snapxeats.R;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by Snehal Tembare on 26/4/18.
  */
@@ -36,6 +38,6 @@ public class RemindMeLaterService extends IntentService {
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
-                1000 * 60 * 60 * 24, pendingIntent);
+                TimeUnit.MINUTES.toMillis(10), pendingIntent);
     }
 }

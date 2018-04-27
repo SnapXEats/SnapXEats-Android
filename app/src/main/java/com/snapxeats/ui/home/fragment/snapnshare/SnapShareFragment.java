@@ -36,6 +36,8 @@ import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.dagger.AppContract;
 import com.squareup.picasso.Picasso;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -281,7 +283,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
                 PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
-                1000 * 60 * 60 * 24, pendingIntent);
+                TimeUnit.MINUTES.toMillis(10), pendingIntent);
 
     }
 }
