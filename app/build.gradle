@@ -7,8 +7,8 @@ android {
         applicationId "com.snapxeats"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 502
-        versionName "0.5"
+        versionCode 601
+        versionName "0.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         resValue "string", "HOCKEYAPP_APP_ID", HOCKEYAPP_APP_key
         resValue "string", "FACEBOOK_APP_ID", "240700273135016"

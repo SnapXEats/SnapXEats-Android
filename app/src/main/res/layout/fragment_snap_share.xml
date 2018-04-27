@@ -5,23 +5,28 @@
     android:layout_height="match_parent"
     android:id="@+id/fragment_snap_n_share"
     tools:context="com.snapxeats.ui.home.fragment.checkin.CheckInFragment">
+
     <LinearLayout
         android:id="@+id/layout_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fontFamily="Roboto-Medium"
         android:orientation="vertical">
+
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/CustomAppBar">
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -35,81 +40,103 @@
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
         <!-- TODO: Update blank fragment layout -->
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <android.support.v4.view.ViewPager
-                android:id="@+id/view_pager"
-                android:layout_width="400dp"
-                android:layout_height="180dp" />
+            android:layout_height="match_parent">
+
             <LinearLayout
-                android:id="@+id/layout_dots"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/common_dimens_5"
-                android:layout_marginBottom="@dimen/common_dimens_10"
-                android:gravity="center"
-                android:orientation="horizontal" />
-            <TextView
-                android:id="@+id/txt_rest_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Restaurant name"
-                android:textSize="@dimen/text_size_18"
-                android:textStyle="bold"
-                android:textColor="@color/text_color_primary"
-                android:paddingLeft="@dimen/common_dimens_20" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Closes in 50 mins"
-                android:paddingLeft="@dimen/common_dimens_20"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Checked in 10 mins ago"
-                android:drawableLeft="@drawable/checkin_background"
-                android:paddingLeft="@dimen/common_dimens_20"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/from_the_menu"
-                android:textStyle="bold"
-                android:textColor="@color/text_color_primary"
-                android:drawableLeft="@drawable/checkin_background"
-                android:paddingLeft="@dimen/common_dimens_10"
-                android:layout_marginTop="@dimen/common_dimens_10"
-                android:layout_marginLeft="@dimen/common_dimens_10"
-                android:layout_marginRight="@dimen/common_dimens_10"/>
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dimen_115"
-                android:layout_marginBottom="@dimen/common_dimens_10"
-                android:layout_marginLeft="@dimen/common_dimens_20"
-                android:layout_marginRight="@dimen/common_dimens_20"
-                android:layout_marginTop="@dimen/common_dimens_10">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/view_pager"
+                    android:layout_width="400dp"
+                    android:layout_height="180dp" />
+
                 <LinearLayout
-                    android:id="@+id/layout_rest_specialties"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/layout_dots"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/common_dimens_10"
+                    android:layout_marginTop="@dimen/common_dimens_5"
+                    android:gravity="center"
                     android:orientation="horizontal" />
-            </HorizontalScrollView>
-            <ImageView
-                android:id="@+id/img_snap"
-                android:layout_width="@dimen/dimens_60"
-                android:layout_height="@dimen/dimens_60"
-                android:src="@drawable/ic_camera"
-                android:layout_gravity="center_horizontal|bottom"/>
-            <TextView
+
+                <TextView
+                    android:id="@+id/txt_rest_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/common_dimens_20"
+                    android:text="Restaurant name"
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="@dimen/text_size_18"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/common_dimens_20"
+                    android:text="Closes in 50 mins" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/checkin_background"
+                    android:paddingLeft="@dimen/common_dimens_20"
+                    android:text="Checked in 10 mins ago" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/common_dimens_10"
+                    android:layout_marginRight="@dimen/common_dimens_10"
+                    android:layout_marginTop="@dimen/common_dimens_10"
+                    android:drawableLeft="@drawable/checkin_background"
+                    android:paddingLeft="@dimen/common_dimens_10"
+                    android:text="@string/from_the_menu"
+                    android:textColor="@color/text_color_primary"
+                    android:textStyle="bold" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimen_115"
+                    android:layout_marginBottom="@dimen/common_dimens_10"
+                    android:layout_marginLeft="@dimen/common_dimens_20"
+                    android:layout_marginRight="@dimen/common_dimens_20"
+                    android:layout_marginTop="@dimen/common_dimens_10">
+
+                    <LinearLayout
+                        android:id="@+id/layout_rest_specialties"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
+                </HorizontalScrollView>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/snap_share"
-                android:gravity="center_horizontal"
-                android:textColor="@color/text_color_primary"
-                android:textSize="@dimen/text_size_12"
-                android:layout_marginBottom="@dimen/common_dimens_5"
-                android:layout_marginTop="@dimen/common_dimens_5"/>
-        </LinearLayout>
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical">
+                <ImageView
+                    android:id="@+id/img_snap"
+                    android:layout_width="@dimen/dimens_60"
+                    android:layout_height="@dimen/dimens_60"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:src="@drawable/ic_camera" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/common_dimens_5"
+                    android:layout_marginTop="@dimen/common_dimens_5"
+                    android:gravity="center_horizontal"
+                    android:text="@string/snap_share"
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="@dimen/text_size_12" />
+            </LinearLayout>
+
+        </RelativeLayout>
     </LinearLayout>
 </FrameLayout>
