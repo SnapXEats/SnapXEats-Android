@@ -1,7 +1,9 @@
 package com.snapxeats.ui.home.fragment.snapnshare;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,6 +36,8 @@ import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.dagger.AppContract;
 import com.squareup.picasso.Picasso;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,6 +60,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
     private Activity activity;
     private int dotsCount;
     private ImageView[] dots;
+    private boolean isFromNotification;
 
     @BindView(R.id.txt_rest_name)
     protected TextView mTxtRestName;
@@ -125,7 +130,11 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
     public void initView() {
         mPresenter.addView(this);
-        restaurantId = getArguments().getString(getString(R.string.intent_restaurant_id));
+        if (null != getArguments()) {
+            restaurantId = getArguments().getString(getString(R.string.intent_restaurant_id));
+            isFromNotification = getArguments().getBoolean(getString(R.string.notification));
+        }
+
         showProgressDialog();
         mPresenter.getRestaurantInfo(restaurantId);
         if (null != getActivity() && isAdded()) {
@@ -186,8 +195,9 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
         setViewPager(restaurantDetails.getRestaurant_pics());
         setMenusView(restaurantDetails.getRestaurant_speciality());
-
-        showPhotoReminderDialog();
+        if (!isFromNotification) {
+            showPhotoReminderDialog();
+        }
     }
 
     /**
@@ -215,7 +225,10 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
                     mDialog.dismiss();
                 });
 
-        mTxtRemindMeLater.setOnClickListener(v -> mDialog.dismiss());
+        mTxtRemindMeLater.setOnClickListener(v -> {
+            mDialog.dismiss();
+            startTimerForNotification();
+        });
     }
 
     private void setMenusView(List<RestaurantSpeciality> restaurant_speciality) {
@@ -260,6 +273,17 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
     @Override
     public void networkError(Object value) {
+
+    }
+
+    public void startTimerForNotification() {
+        Intent intent = new Intent(getActivity(), SnapNotificationReceiver.class);
+        intent.putExtra(getString(R.string.intent_restaurant_id), restaurantId);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
+                TimeUnit.MINUTES.toMillis(10), pendingIntent);
 
     }
 }

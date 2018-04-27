@@ -203,5 +203,11 @@
     <string name="permission_granted">Permission Granted</string>
     <string name="permission_denied">Permission Denied</string>
     <string name="review_del">Audio Review deleted</string>
+    <string name="photo_notification_title">SnapXEats Reminder</string>
+    <string name="photo_notification_body">Its Time to take some food snap</string>
+    <string name="photo_notification_sub_text">By sharing photos you can earn rewards</string>
+    <string name="notification">notification</string>
+    <string name="notification_id">notification_id</string>
+    <string name="text_review_limit_error_msg">Maximum limit exceeded</string>
 
 </resources>

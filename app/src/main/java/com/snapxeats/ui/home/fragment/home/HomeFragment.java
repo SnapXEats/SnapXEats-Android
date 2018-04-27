@@ -409,15 +409,18 @@ public class HomeFragment extends BaseFragment implements
     @Override
     public void noNetwork(Object value) {
         dismissProgressDialog();
+
         showNetworkErrorDialog((dialog, which) -> {
+            if (!NetworkUtility.isNetworkAvailable(getActivity()) && null != mRootUserPreference) {
+                AppContract.DialogListenerAction click = () -> setLocation();
+                showSnackBar(mParentLayout, setClickListener(click));
+            }
         });
     }
 
     @Override
     public void networkError(Object value) {
         dismissProgressDialog();
-        showNetworkErrorDialog((dialog, which) -> {
-        });
     }
 
     @Override

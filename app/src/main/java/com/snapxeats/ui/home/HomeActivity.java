@@ -9,12 +9,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,8 +28,6 @@ import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.OnRecyclerItemClickListener;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.checkin.CheckInRequest;
@@ -217,9 +215,26 @@ public class HomeActivity extends BaseActivity implements
             }
         } else
             transaction.replace(R.id.frame_layout, homeFragment);
-        transaction.commit();
         mNavigationView.setCheckedItem(R.id.nav_home);
 
+        //Notification for take photo
+        Intent intent = getIntent();
+        boolean isFromNotification = intent.getBooleanExtra(getString(R.string.notification), false);
+        String restaurantId = intent.getStringExtra(getString(R.string.intent_restaurant_id));
+        int notificationId = intent.getIntExtra(getString(R.string.notification_id), 0);
+
+        if (isFromNotification) {
+            NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+            managerCompat.cancel(notificationId);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(getString(R.string.notification), isFromNotification);
+            bundle.putString(getString(R.string.intent_restaurant_id), restaurantId);
+            snapShareFragment.setArguments(bundle);
+            transaction.replace(R.id.frame_layout, snapShareFragment);
+            mNavigationView.setCheckedItem(R.id.nav_snap);
+       }
+
+        transaction.commit();
         changeItems();
     }
 
@@ -363,16 +378,26 @@ public class HomeActivity extends BaseActivity implements
     }
 
     public void checkIn() {
-        showProgressDialog();
-        CheckInRequest checkInRequest = null;
-        for (RestaurantInfo restaurantInfo : mRestaurantList) {
-            if (restaurantInfo.isSelected()) {
-                checkInRequest = new CheckInRequest();
-                checkInRequest.setRestaurant_info_id(restaurantInfo.getRestaurant_info_id());
-                checkInRequest.setReward_type(getString(R.string.reward_type_check_in));
+        if (utility.isLoggedIn()) {
+            showProgressDialog();
+            CheckInRequest checkInRequest = null;
+            for (RestaurantInfo restaurantInfo : mRestaurantList) {
+                if (restaurantInfo.isSelected()) {
+                    checkInRequest = new CheckInRequest();
+                    checkInRequest.setRestaurant_info_id(restaurantInfo.getRestaurant_info_id());
+                    checkInRequest.setReward_type(getString(R.string.reward_type_check_in));
+                }
             }
+            mPresenter.checkIn(checkInRequest);
+        }else {
+            mCheckInDialog.dismiss();
+            transaction = fragmentManager.beginTransaction();
+            Bundle bundle = new Bundle();
+            bundle.putString(getString(R.string.intent_restaurant_id), restaurantId);
+            snapShareFragment.setArguments(bundle);
+            transaction.replace(R.id.frame_layout, snapShareFragment);
+            transaction.commit();
         }
-        mPresenter.checkIn(checkInRequest);
     }
 
     public void dismissCheckInDialog() {
@@ -517,32 +542,6 @@ public class HomeActivity extends BaseActivity implements
 
         showProgressDialog();
         mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
-
-        /**
-         Check In button
-         */
-        mBtnCheckIn.setOnClickListener(v -> {
-            if (utility.isLoggedIn()) {
-                showProgressDialog();
-                CheckInRequest checkInRequest = null;
-                for (RestaurantInfo restaurantInfo : mRestaurantList) {
-                    if (restaurantInfo.isSelected()) {
-                        checkInRequest = new CheckInRequest();
-                        checkInRequest.setRestaurant_info_id(restaurantInfo.getRestaurant_info_id());
-                        checkInRequest.setReward_type(getString(R.string.reward_type_check_in));
-                    }
-                }
-                mPresenter.checkIn(checkInRequest);
-            }else {
-                mCheckInDialog.dismiss();
-                transaction = fragmentManager.beginTransaction();
-                Bundle bundle = new Bundle();
-                bundle.putString(getString(R.string.intent_restaurant_id), restaurantId);
-                snapShareFragment.setArguments(bundle);
-                transaction.replace(R.id.frame_layout, snapShareFragment);
-                transaction.commit();
-            }
-        });
     }
 
     @Override

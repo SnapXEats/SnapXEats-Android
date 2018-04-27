@@ -13,7 +13,10 @@ import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -26,6 +29,7 @@ import android.widget.Toast;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
@@ -85,6 +89,9 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     @BindView(R.id.edt_txt_review)
     protected EditText mEditTxtReview;
 
+    @BindView(R.id.txt_length_error)
+    protected TextView mTxtLengthError;
+
     @BindView(R.id.timer_audio_time)
     protected Chronometer mAudioTime;
 
@@ -111,6 +118,30 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         mPresenter.addView(this);
         snapXDialog.setContext(this);
         utility.setContext(this);
+
+       /*TODO-Restrict review text length
+       mEditTxtReview.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (UIConstants.REVIEW_LENGTH_LIMIT == s.length()) {
+                    mTxtLengthError.setVisibility(View.VISIBLE);
+                    utility.hideKeyboard();
+                }else {
+                    mTxtLengthError.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });*/
+       
         setUpToolbar();
         //get file path
         Intent intent = getIntent();
@@ -340,6 +371,13 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                 }
                 break;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home)
+            finish();
+        return true;
     }
 
     public boolean checkPermission() {

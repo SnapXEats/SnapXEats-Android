@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <!-- TODO storage permissions for future use -->
     <!--
       <uses-permission
@@ -54,7 +55,6 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -74,9 +74,20 @@
         <activity android:name=".ui.cuisinepreference.CuisinePrefActivity" />
         <activity android:name=".ui.directions.DirectionsActivity" />
         <activity android:name=".ui.maps.MapsActivity" />
-        <activity android:name=".ui.home.fragment.snapnshare.CameraActivity"></activity>
+        <activity android:name=".ui.home.fragment.snapnshare.CameraActivity"/>
         <activity android:name=".ui.review.ReviewActivity" />
-        <activity android:name=".ui.shareReview.ShareReviewActivity" />
+
+        <receiver
+            android:name=".ui.home.fragment.snapnshare.SnapNotificationReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <service
+            android:name=".ui.home.fragment.snapnshare.SnapNotificationService"
+            android:exported="false" />
+        <service
+            android:name=".ui.home.fragment.snapnshare.RemindMeLaterService"
+            android:exported="false"/>
     </application>
 
 </manifest>

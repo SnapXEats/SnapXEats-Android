@@ -97,11 +97,16 @@ public class UIConstants {
 
     /*AddReview screen*/
     public static final int RECORD_AUDIO_REQUEST_CODE = 123;
-    public static final int CAMERA_REQUEST_PERMISSION = 3;
-    public static final int CAMERA_REQUEST = 4;
     public static final String INSTA_PACKAGE_NAME = "com.instagram.android";
     public static final String IMAGE_TYPE = "image/jpeg";
     public static final String MEDIATYPE_IMG = "image/*";
     public static final String MEDIATYPE_AUD = "audio/*";
 
+    public static final  int CAMERA_REQUEST_PERMISSION = 3;
+    public static final  int CAMERA_REQUEST = 4;
+    public static final String NOTIFICATION_MESSAGE = "Its Time to take some food snap " +
+            "\nBy sharing photos you can earn rewards";
+    public static final int NOTIFICATION_ID = 3;
+
+    public static final int REVIEW_LENGTH_LIMIT = 140;
 }

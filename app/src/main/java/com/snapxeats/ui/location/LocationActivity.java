@@ -99,6 +99,7 @@ public class LocationActivity extends BaseActivity implements
         utility.setContext(this);
         snapXDialog.setContext(this);
         resultList = new ArrayList<>();
+        predictionList = new ArrayList<>();
         locationHelper = new LocationHelper(this);
         mAutoCompleteTextView.setSingleLine();
         mListView.setTextFilterEnabled(true);
