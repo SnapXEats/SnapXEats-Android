@@ -30,8 +30,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_dimens_0"
-        android:layout_weight="0.7"
-        android:layout_marginBottom="@dimen/common_dimens_5">
+        android:layout_marginBottom="@dimen/common_dimens_5"
+        android:layout_weight="0.7">
+
         <ImageView
             android:id="@+id/img_rest_photo"
             android:layout_width="match_parent"
@@ -44,6 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_dimens_1"
         android:background="@color/colorLightGrey" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_dimens_0"
@@ -58,9 +60,9 @@
             android:layout_gravity="center"
             android:layout_margin="@dimen/common_dimens_10"
             android:layout_weight="3"
-            android:maxLength="140"
             android:background="@android:color/transparent"
-            android:hint="@string/hint_txt_review" />
+            android:hint="@string/hint_txt_review"
+            android:maxLength="140" />
 
         <View
             android:layout_width="@dimen/common_dimens_1"
@@ -120,10 +122,10 @@
         android:id="@+id/txt_length_error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/common_dimens_20"
         android:text="@string/text_review_limit_error_msg"
-        android:layout_marginLeft="@dimen/common_dimens_2"
         android:textColor="@color/delete_bg_color"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 
     <LinearLayout
         android:layout_width="match_parent"

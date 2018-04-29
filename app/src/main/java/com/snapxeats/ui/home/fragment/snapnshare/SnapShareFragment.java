@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
@@ -35,10 +36,13 @@ import com.snapxeats.common.model.restaurantDetails.RestaurantSpeciality;
 import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.dagger.AppContract;
 import com.squareup.picasso.Picasso;
+
 import java.util.List;
+
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -143,7 +147,6 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 }
-
                 @Override
                 public void onPageSelected(int position) {
                     for (int index = ZERO; index < dotsCount; index++) {
@@ -218,12 +221,12 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
         mBtnTakePhoto.setOnClickListener(v -> {
 
-                    Intent intent=new Intent(getActivity(), CameraActivity.class);
-                    intent.putExtra(getString(R.string.review_rest_id),restaurantId);
-                    intent.putExtra(getString(R.string.review_rest_name),mRootRestaurantDetails.getRestaurantDetails().getRestaurant_name());
-                    startActivity(intent);
-                    mDialog.dismiss();
-                });
+            Intent intent = new Intent(getActivity(), CameraActivity.class);
+            intent.putExtra(getString(R.string.review_rest_id), restaurantId);
+            intent.putExtra(getString(R.string.review_rest_name), mRootRestaurantDetails.getRestaurantDetails().getRestaurant_name());
+            startActivity(intent);
+            mDialog.dismiss();
+        });
 
         mTxtRemindMeLater.setOnClickListener(v -> {
             mDialog.dismiss();

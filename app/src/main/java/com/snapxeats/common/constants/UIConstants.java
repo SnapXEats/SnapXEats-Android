@@ -99,8 +99,7 @@ public class UIConstants {
     public static final int RECORD_AUDIO_REQUEST_CODE = 123;
     public static final String INSTA_PACKAGE_NAME = "com.instagram.android";
     public static final String IMAGE_TYPE = "image/jpeg";
-    public static final String MEDIATYPE_IMG = "image/*";
-    public static final String MEDIATYPE_AUD = "audio/*";
+    public static final String FILE_MEDIATYPE = "*/*";
 
     public static final  int CAMERA_REQUEST_PERMISSION = 3;
     public static final  int CAMERA_REQUEST = 4;
