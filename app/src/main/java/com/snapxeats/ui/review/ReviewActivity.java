@@ -48,6 +48,10 @@ import butterknife.OnClick;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static com.snapxeats.common.constants.UIConstants.INT_TEN;
+import static com.snapxeats.common.constants.UIConstants.TIME_HOUR;
+import static com.snapxeats.common.constants.UIConstants.TIME_MINUTE;
+import static com.snapxeats.common.constants.UIConstants.TIME_SECONDS;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -300,10 +304,11 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     private void setAudioTime() {
         long time = SystemClock.elapsedRealtime() - mChronometer.getBase();
-        int hour = (int) (time / 3600000);
-        int min = (int) (time - hour * 3600000) / 60000;
-        int seconds = (int) (time - hour * 3600000 - min * 60000) / 1000;
-        String audioTime = (min < 10 ? "0" + min : min) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+        int hour = (int) (time / TIME_HOUR);
+        int min = (int) (time - hour * TIME_HOUR) / TIME_MINUTE;
+        int seconds = (int) (time - hour * TIME_HOUR - min * TIME_MINUTE) / TIME_SECONDS;
+        String audioTime = (min < INT_TEN ? getString(R.string.int_zero) + min : min) + ":"
+                + (seconds < INT_TEN ? getString(R.string.int_zero) + seconds : seconds);
         mAudioTime.setText(audioTime);
     }
 

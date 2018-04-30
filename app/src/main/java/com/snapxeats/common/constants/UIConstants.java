@@ -101,11 +101,15 @@ public class UIConstants {
     public static final String IMAGE_TYPE = "image/jpeg";
     public static final String FILE_MEDIATYPE = "*/*";
 
-    public static final  int CAMERA_REQUEST_PERMISSION = 3;
-    public static final  int CAMERA_REQUEST = 4;
+    public static final int CAMERA_REQUEST_PERMISSION = 3;
+    public static final int CAMERA_REQUEST = 4;
     public static final String NOTIFICATION_MESSAGE = "Its Time to take some food snap " +
             "\nBy sharing photos you can earn rewards";
     public static final int NOTIFICATION_ID = 3;
 
     public static final int REVIEW_LENGTH_LIMIT = 140;
+    public static final int TIME_HOUR = 3600000;
+    public static final int TIME_MINUTE = 60000;
+    public static final int TIME_SECONDS = 1000;
+    public static final int INT_TEN = 10;
 }
