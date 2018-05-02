@@ -230,17 +230,31 @@ public interface ApiHelper {
     Call<CheckInResponse> checkIn(@Header("Authorization") String token,
                                   @Body CheckInRequest checkInRequest);
 
+    /**
+     * Snap n share api call
+     *
+     * @param token
+     * @param restaurantInfoId
+     * @param dishPicture
+     * @param audioReview
+     * @param textReview
+     * @param rating
+     * @return
+     */
+
     @Multipart
     @POST(WebConstants.SNAPSHARE)
-    Call<SnapNShareResponse> sendUserReview(@Header("Authoriozation") String token,
-                                            @Part("restaurantInfoId") String restaurantInfoId,
-                                            @Part MultipartBody.Part dishPicture,
-                                            @Part MultipartBody.Part audioReview,
-                                            @Part("textReview") String textReview,
-                                            @Part("textReview") Integer rating);
+    Call<SnapNShareResponse> sendUserReview(
+            @Header("Authoriozation") String token,
+            @Part("restaurantInfoId") String restaurantInfoId,
+            @Part MultipartBody.Part dishPicture,
+            @Part MultipartBody.Part audioReview,
+            @Part("textReview") String textReview,
+            @Part("rating") Integer rating);
 
     /**
      * User logout
+     *
      * @param token
      * @return
      */

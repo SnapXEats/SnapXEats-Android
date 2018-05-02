@@ -22,6 +22,8 @@ import com.snapxeats.ui.restaurantInfo.RestaurantInfoActivity;
 import com.snapxeats.ui.restaurantInfo.RestaurantInfoModule;
 import com.snapxeats.ui.review.ReviewActivity;
 import com.snapxeats.ui.review.ReviewModule;
+import com.snapxeats.ui.shareReview.ShareReviewActivity;
+import com.snapxeats.ui.shareReview.ShareReviewModule;
 import com.snapxeats.ui.splash.SplashActivity;
 import com.snapxeats.ui.splash.SplashModule;
 
@@ -74,4 +76,7 @@ public abstract class ActivityBuilder {
 
     @ContributesAndroidInjector(modules = ReviewModule.class)
     abstract ReviewActivity bindReviewActivity();
+
+    @ContributesAndroidInjector(modules = ShareReviewModule.class)
+    abstract ShareReviewActivity bindShareReviewActivity();
 }

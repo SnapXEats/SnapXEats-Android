@@ -13,9 +13,9 @@ import android.view.inputmethod.InputMethodManager;
 import com.google.gson.Gson;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
-import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.location.Location;
 import com.snapxeats.network.LocationHelper;
 
@@ -81,7 +81,7 @@ public class AppUtility {
             } else {
                 //TODO: fetch it from DB, assign it to app.token & return that token
                 if (null != snapxData) {
-                    token = snapxData.getToken(); // fetch it from DB}
+                    token = snapxData.getToken(); // fetch it from DB
                     app.setToken(token);
                 }
                 return String.format("Bearer %s", token);

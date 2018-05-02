@@ -24,8 +24,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.snapxeats.common.constants.UIConstants.MEDIATYPE_AUD;
-import static com.snapxeats.common.constants.UIConstants.MEDIATYPE_IMG;
+import static com.snapxeats.common.constants.UIConstants.FILE_MEDIATYPE;
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 /**
@@ -34,6 +33,7 @@ import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 public class ReviewInteractor {
     private ReviewContract.ReviewPresenter mReviewPresenter;
     private Context mContext;
+
     @Inject
     AppUtility utility;
 
@@ -58,14 +58,20 @@ public class ReviewInteractor {
 
             String fileImagePath = getRealPathFromURIPath(image, mContext);
             String fileAudioPath = getRealPathFromURIPath(audio, mContext);
+
             File fileImg = new File(fileImagePath);
             File fileAud = new File(fileAudioPath);
-            RequestBody mFileImage = RequestBody.create(MediaType.parse(MEDIATYPE_IMG), fileImg);
-            RequestBody mFileAudio = RequestBody.create(MediaType.parse(MEDIATYPE_AUD), fileAud);
-            MultipartBody.Part imageUpload = MultipartBody.Part.createFormData(mContext.getString(R.string.file), fileImg.getName(), mFileImage);
-            MultipartBody.Part audioUpload = MultipartBody.Part.createFormData(mContext.getString(R.string.file), fileAud.getName(), mFileAudio);
 
-            Call<SnapNShareResponse> snapXUserCall = apiHelper.sendUserReview(utility.getAuthToken(mContext)
+            RequestBody mFileImage = RequestBody.create(MediaType.parse(FILE_MEDIATYPE), fileImg);
+            RequestBody mFileAudio = RequestBody.create(MediaType.parse(FILE_MEDIATYPE), fileAud);
+
+            MultipartBody.Part imageUpload = MultipartBody.Part.createFormData
+                    (mContext.getString(R.string.file), fileImg.getName(), mFileImage);
+            MultipartBody.Part audioUpload = MultipartBody.Part.createFormData
+                    (mContext.getString(R.string.file), fileAud.getName(), mFileAudio);
+
+            Call<SnapNShareResponse> snapXUserCall = apiHelper.sendUserReview(
+                    utility.getAuthToken(mContext)
                     , restId, imageUpload, audioUpload, txtReview, rating);
             snapXUserCall.enqueue(new Callback<SnapNShareResponse>() {
                 @Override
@@ -89,7 +95,7 @@ public class ReviewInteractor {
 
     private String getRealPathFromURIPath(Uri contentURI, Context mContext) {
         Cursor cursor = mContext.getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) {
+        if (null == cursor) {
             return contentURI.getPath();
         } else {
             cursor.moveToFirst();

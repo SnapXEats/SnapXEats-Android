@@ -1,31 +1,30 @@
-package com.snapxeats.ui.review;
+package com.snapxeats.ui.shareReview;
 
-import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import com.snapxeats.common.Router;
 import com.snapxeats.common.utilities.SnapXResult;
 
 /**
- * Created by Prajakta Patil on 12/4/18.
+ * Created by Prajakta Patil on 23/4/18.
  */
-public class ReviewPresenterImpl implements ReviewContract.ReviewPresenter {
-    private ReviewInteractor mReviewInteractor;
+public class ShareReviewPresenterImpl implements ShareReviewContract.ShareReviewPresenter {
+    private ShareReviewInteractor mReviewInteractor;
 
     @Nullable
-    private ReviewContract.ReviewView mReviewView;
+    private ShareReviewContract.ShareReviewView mReviewView;
 
-    private ReviewRouterImpl mInfoRouter;
+    private ShareReviewRouterImpl mRouter;
 
-    ReviewPresenterImpl(ReviewInteractor mInteractor, ReviewRouterImpl router) {
+    ShareReviewPresenterImpl(ShareReviewInteractor mInteractor, ShareReviewRouterImpl router) {
         this.mReviewInteractor = mInteractor;
-        this.mInfoRouter = router;
+        this.mRouter = router;
     }
 
     @Override
-    public void addView(ReviewContract.ReviewView view) {
+    public void addView(ShareReviewContract.ShareReviewView view) {
         mReviewView = view;
-        mInfoRouter.setView(view);
+        mRouter.setView(view);
         mReviewInteractor.setContext(view);
     }
 
@@ -36,13 +35,9 @@ public class ReviewPresenterImpl implements ReviewContract.ReviewPresenter {
 
     @Override
     public void presentScreen(Router.Screen screen) {
-        mInfoRouter.presentScreen(screen);
+        mRouter.presentScreen(screen);
     }
 
-    @Override
-    public void sendReview(String restId, Uri image, Uri audio, String txtReview, Integer rating) {
-        mReviewInteractor.sendReview(restId, image, audio, txtReview, rating);
-    }
 
     @Override
     public void response(SnapXResult result, Object value) {
