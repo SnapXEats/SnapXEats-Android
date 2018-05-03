@@ -245,7 +245,7 @@ public interface ApiHelper {
     @Multipart
     @POST(WebConstants.SNAPSHARE)
     Call<SnapNShareResponse> sendUserReview(
-            @Header("Authoriozation") String token,
+            @Header("Authorization") String token,
             @Part("restaurantInfoId") String restaurantInfoId,
             @Part MultipartBody.Part dishPicture,
             @Part MultipartBody.Part audioReview,

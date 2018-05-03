@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -107,7 +108,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private Uri fileImageUri;
     private String restId;
     private String restName;
-    private SnapNShareResponse mSnapResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +123,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         snapXDialog.setContext(this);
         utility.setContext(this);
         setUpToolbar();
-        limitTexrReview();
         //get file path
         Intent intent = getIntent();
         String image_path = intent.getStringExtra(getString(R.string.file_path));
@@ -133,8 +132,10 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         mImgRestPhoto.setImageURI(fileImageUri);
     }
 
-    private void limitTexrReview() {
-        mEditTxtReview.addTextChangedListener(new TextWatcher() {
+      /*TODO-Restrict review text length
+    private void limitTextReview() {
+
+       mEditTxtReview.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -155,8 +156,8 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
             }
         });
+} */
 
-    }
 
     private void setUpToolbar() {
         setSupportActionBar(mToolbar);
@@ -164,10 +165,11 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         getSupportActionBar().setTitle(getString(R.string.toolbar_snap_share));
     }
 
+
     /*webservice call to send review*/
     @OnClick(R.id.img_share_review)
     public void imgSendReview() {
-        Integer rating = (int) mRatingBar.getRating();
+        int rating = (int) mRatingBar.getRating();
         if (ZERO != rating) {
             dialogShareReview();
         } else {
@@ -197,13 +199,11 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     private void callApiReview() {
         String textReview = mEditTxtReview.getText().toString();
-        Integer rating = (int) mRatingBar.getRating();
+        int rating = (int) mRatingBar.getRating();
         if (null != restId && null != fileImageUri && 0 != rating) {
+            showProgressDialog();
             mPresenter.sendReview(restId, fileImageUri, Uri.fromFile(savedAudioPath), textReview, rating);
         }
-        Intent intent = new Intent(ReviewActivity.this, ShareReviewActivity.class);
-        intent.putExtra(getString(R.string.intent_review), mSnapResponse);
-        startActivity(intent);
     }
 
     /*Play recorded audio review*/
@@ -340,9 +340,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                                 .show();
                     }
                 });
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (IllegalStateException | IOException e) {
                 e.printStackTrace();
             }
         } else {
@@ -394,6 +392,13 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home)
+            finish();
+        return true;
+    }
+
     public boolean checkPermission() {
         int resultStorage = ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE);
         int resultAudio = ContextCompat.checkSelfPermission(this, RECORD_AUDIO);
@@ -402,7 +407,11 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     @Override
     public void success(Object value) {
-        mSnapResponse = (SnapNShareResponse) value;
+        dismissProgressDialog();
+        SnapNShareResponse mSnapResponse = (SnapNShareResponse) value;
+        Intent intent = new Intent(ReviewActivity.this, ShareReviewActivity.class);
+        intent.putExtra(getString(R.string.intent_review), mSnapResponse);
+        startActivity(intent);
     }
 
     @Override

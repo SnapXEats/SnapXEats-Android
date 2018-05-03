@@ -76,6 +76,7 @@
         <activity android:name=".ui.maps.MapsActivity" />
         <activity android:name=".ui.home.fragment.snapnshare.CameraActivity"/>
         <activity android:name=".ui.review.ReviewActivity" />
+        <activity android:name=".ui.shareReview.ShareReviewActivity" />
 
         <receiver
             android:name=".ui.home.fragment.snapnshare.SnapNotificationReceiver"

@@ -49,6 +49,8 @@ import butterknife.OnClick;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.snapxeats.common.constants.UIConstants.MARGIN;
+import static com.snapxeats.common.constants.UIConstants.PHOTO_NOTIFICATION_REQUEST_CODE;
+import static com.snapxeats.common.constants.UIConstants.PHOTO_NOTIFICATION_TIME;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -282,11 +284,11 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
     public void startTimerForNotification() {
         Intent intent = new Intent(getActivity(), SnapNotificationReceiver.class);
         intent.putExtra(getString(R.string.intent_restaurant_id), restaurantId);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, intent,
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), PHOTO_NOTIFICATION_REQUEST_CODE, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
-                TimeUnit.MINUTES.toMillis(10), pendingIntent);
+                TimeUnit.SECONDS.toMillis(PHOTO_NOTIFICATION_TIME), pendingIntent);
 
     }
 }

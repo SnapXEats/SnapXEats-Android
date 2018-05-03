@@ -552,17 +552,17 @@ public class NavPrefFragment extends BaseFragment implements
             if (null != mRootUserPreference.getUser_Id()) {
                 userId = mRootUserPreference.getUser_Id();
 
-                if (null != mRootUserPreference.getRestaurant_price()) {
+                if (null != mRootUserPreference.getRestaurant_price() && !mRootUserPreference.getRestaurant_price().isEmpty()) {
                     pricing = Integer.parseInt(mRootUserPreference.getRestaurant_price());
                     updatePricingUI(pricing);
                 }
 
-                if (null != mRootUserPreference.getRestaurant_rating()) {
+                if (null != mRootUserPreference.getRestaurant_rating() && !mRootUserPreference.getRestaurant_rating().isEmpty()) {
                     userRating = Integer.parseInt(mRootUserPreference.getRestaurant_rating());
                     updateRatingUI(userRating);
                 }
 
-                if (null != mRootUserPreference.getRestaurant_distance()) {
+                if (null != mRootUserPreference.getRestaurant_distance() && !mRootUserPreference.getRestaurant_distance().isEmpty()) {
                     distance = Integer.parseInt(mRootUserPreference.getRestaurant_distance());
                     updateDistanceUI(distance);
                 }

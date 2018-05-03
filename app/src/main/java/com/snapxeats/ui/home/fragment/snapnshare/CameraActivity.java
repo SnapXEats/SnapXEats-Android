@@ -39,8 +39,8 @@ public class CameraActivity extends AppCompatActivity {
 
     private void initView() {
         checkPermissions();
-        restId=getIntent().getStringExtra(getString(R.string.review_rest_id));
-        restName=getIntent().getStringExtra(getString(R.string.review_rest_name));
+        restId = getIntent().getStringExtra(getString(R.string.review_rest_id));
+        restName = getIntent().getStringExtra(getString(R.string.review_rest_name));
     }
 
     private void checkPermissions() {

@@ -66,9 +66,9 @@ public class ReviewInteractor {
             RequestBody mFileAudio = RequestBody.create(MediaType.parse(FILE_MEDIATYPE), fileAud);
 
             MultipartBody.Part imageUpload = MultipartBody.Part.createFormData
-                    (mContext.getString(R.string.file), fileImg.getName(), mFileImage);
+                    (mContext.getString(R.string.dishPicture), fileImg.getName(), mFileImage);
             MultipartBody.Part audioUpload = MultipartBody.Part.createFormData
-                    (mContext.getString(R.string.file), fileAud.getName(), mFileAudio);
+                    (mContext.getString(R.string.audioReview), fileAud.getName(), mFileAudio);
 
             Call<SnapNShareResponse> snapXUserCall = apiHelper.sendUserReview(
                     utility.getAuthToken(mContext)

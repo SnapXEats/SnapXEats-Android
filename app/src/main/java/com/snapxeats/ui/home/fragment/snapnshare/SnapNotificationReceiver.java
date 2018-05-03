@@ -17,8 +17,8 @@ public class SnapNotificationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Intent intentService = new Intent(context, SnapNotificationService.class);
-        intentService.putExtra(context.getString(R.string.intent_restaurant_id),
-                intent.getStringExtra(context.getString(R.string.intent_restaurant_id)));
+        String restaurantId = intent.getStringExtra(context.getString(R.string.intent_restaurant_id));
+        intentService.putExtra(context.getString(R.string.intent_restaurant_id),restaurantId);
         context.startService(intentService);
     }
 }

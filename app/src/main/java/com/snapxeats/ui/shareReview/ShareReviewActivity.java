@@ -70,6 +70,9 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
     @BindView(R.id.txt_card_rest_name)
     protected TextView mImgRestName;
 
+    @BindView(R.id.txt_share_url)
+    protected TextView mTxtMessage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,10 +89,12 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         setUpToolbar();
         mShareDialog = new ShareDialog(this);
         mCallbackManager = CallbackManager.Factory.create();
+
         mSnapResponse = getIntent().getExtras().getParcelable(getString(R.string.intent_review));
-        if (null != mSnapResponse.getRestaurant_name() && null != mSnapResponse.getDish_image_url()) {
+        if (null != mSnapResponse) {
             Picasso.with(this).load(mSnapResponse.getDish_image_url()).placeholder(R.drawable.ic_restaurant_placeholder).into(mImgRest);
             mImgRestName.setText(mSnapResponse.getRestaurant_name());
+            mTxtMessage.setText(mSnapResponse.getMessage());
         }
     }
 

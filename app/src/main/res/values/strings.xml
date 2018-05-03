@@ -207,11 +207,13 @@
     <string name="photo_notification_body">Its Time to take some food snap</string>
     <string name="photo_notification_sub_text">By sharing photos you can earn rewards</string>
     <string name="notification">notification</string>
-    <string name="notification_id">notification_id</string>
+    <!--<string name="notification_id">notification_id</string>-->
     <string name="text_review_limit_error_msg">Maximum characters limit exceeded</string>
     <string name="msg_review_back_pressed">Do you want to discard your review? You can earn rewards by sharing them.</string>
     <string name="aud">AUD_</string>
     <string name="intent_review">intent_review</string>
     <string name="int_zero">0</string>
+    <string name="dishPicture">dishPicture</string>
+    <string name="audioReview">audioReview</string>
 
 </resources>

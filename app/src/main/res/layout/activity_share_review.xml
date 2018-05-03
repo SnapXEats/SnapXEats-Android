@@ -47,6 +47,7 @@
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:textColor="@color/colorTxtRestName"
+                    android:text="@string/restaurant_name"
                     android:textSize="@dimen/txt_size_22"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -67,7 +68,6 @@
             android:layout_marginEnd="@dimen/common_dimens_20"
             android:layout_marginStart="@dimen/common_dimens_20"
             android:layout_width="match_parent"
-            android:text="Get reward points on #ravioli at Azalea #SnapXEats Click on the link below to avail this deal http://snapxeats/3j49fkjh"
             android:textColor="@color/colorShareUrl"
             android:textSize="@dimen/txt_size_16" />
 
