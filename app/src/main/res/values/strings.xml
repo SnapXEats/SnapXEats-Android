@@ -215,5 +215,6 @@
     <string name="int_zero">0</string>
     <string name="dishPicture">dishPicture</string>
     <string name="audioReview">audioReview</string>
+    <string name="image_path">image_path</string>
 
 </resources>

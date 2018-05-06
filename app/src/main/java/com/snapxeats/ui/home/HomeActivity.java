@@ -8,7 +8,6 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -28,7 +27,6 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
@@ -58,14 +56,10 @@ import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.squareup.picasso.Picasso;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import static com.snapxeats.common.Router.Screen.LOGIN;
-import static com.snapxeats.common.Router.Screen.REVIEW;
 import static com.snapxeats.common.constants.UIConstants.LAT;
 import static com.snapxeats.common.constants.UIConstants.LNG;
 import static com.snapxeats.common.constants.UIConstants.NOTIFICATION_ID;
@@ -227,19 +221,22 @@ public class HomeActivity extends BaseActivity implements
         //Notification for take photo
         Intent intent = getIntent();
         boolean isFromNotification = intent.getBooleanExtra(getString(R.string.notification), false);
+        boolean isShareAnother = intent.getBooleanExtra(getString(R.string.share_another), false);
         String restaurantId = intent.getStringExtra(getString(R.string.intent_restaurant_id));
 
-        if (isFromNotification) {
-            NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
-            managerCompat.cancel(NOTIFICATION_ID);
-            cancelReminder();
+        if (isFromNotification || isShareAnother) {
             Bundle bundle = new Bundle();
-            bundle.putBoolean(getString(R.string.notification), isFromNotification);
+            if (isFromNotification) {
+                NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+                managerCompat.cancel(NOTIFICATION_ID);
+                cancelReminder();
+                bundle.putBoolean(getString(R.string.notification), isFromNotification);
+            }
             bundle.putString(getString(R.string.intent_restaurant_id), restaurantId);
             snapShareFragment.setArguments(bundle);
             transaction.replace(R.id.frame_layout, snapShareFragment);
             mNavigationView.setCheckedItem(R.id.nav_snap);
-       }
+        }
 
         transaction.commit();
         changeItems();
@@ -348,7 +345,7 @@ public class HomeActivity extends BaseActivity implements
                 case R.id.nav_logout:
                     if (utility.isLoggedIn()) {
                         showLogoutDialog();
-                    }else {
+                    } else {
                         mPresenter.presentScreen(LOGIN);
                     }
                     break;
@@ -401,7 +398,7 @@ public class HomeActivity extends BaseActivity implements
                 }
             }
             mPresenter.checkIn(checkInRequest);
-        }else {
+        } else {
             mCheckInDialog.dismiss();
             transaction = fragmentManager.beginTransaction();
             Bundle bundle = new Bundle();
@@ -597,7 +594,7 @@ public class HomeActivity extends BaseActivity implements
         if (null != restaurantInfo) {
             if (null != restaurantInfo.getRestaurant_logo() && !restaurantInfo.getRestaurant_logo().isEmpty()) {
                 Picasso.with(this).load(restaurantInfo.getRestaurant_logo())
-                        .placeholder(R.drawable.user_image).into(mImgRestaurant);
+                        .placeholder(R.drawable.ic_restaurant_placeholder).into(mImgRestaurant);
             }
             if (null != restaurantInfo.getRestaurant_name() && !restaurantInfo.getRestaurant_name().isEmpty()) {
                 mTxtRestName.setText(restaurantInfo.getRestaurant_name());
@@ -676,7 +673,7 @@ public class HomeActivity extends BaseActivity implements
         mRootUserPreference.resetRootUserPreference();
     }
 
-    private void enableReceiver(){
+    private void enableReceiver() {
 
         ComponentName receiver = new ComponentName(this, SnapNotificationReceiver.class);
 
@@ -689,9 +686,9 @@ public class HomeActivity extends BaseActivity implements
                 PackageManager.DONT_KILL_APP);
     }
 
-    private void cancelReminder(){
+    private void cancelReminder() {
 
-        ComponentName componentName = new ComponentName(this,SnapNotificationReceiver.class);
+        ComponentName componentName = new ComponentName(this, SnapNotificationReceiver.class);
         PackageManager pm = getPackageManager();
         pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                 PackageManager.DONT_KILL_APP);

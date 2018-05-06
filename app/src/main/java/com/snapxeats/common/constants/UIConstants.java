@@ -100,8 +100,9 @@ public class UIConstants {
     /*AddReview screen*/
     public static final int RECORD_AUDIO_REQUEST_CODE = 123;
     public static final String INSTA_PACKAGE_NAME = "com.instagram.android";
-    public static final String IMAGE_TYPE = "image/jpeg";
+    public static final String IMAGE_TYPE = "image/*";
     public static final String FILE_MEDIATYPE = "*/*";
+    public static final String TEXT_TYPE = "text/plain";
 
     public static final int CAMERA_REQUEST_PERMISSION = 3;
     public static final int CAMERA_REQUEST = 4;
@@ -118,4 +119,5 @@ public class UIConstants {
     public static final int PHOTO_NOTIFICATION_REQUEST_CODE = 0;
     public static final int REQUEST_CODE_TAKE_PHOTO_ACTION = 2;
     public static final int REQUEST_CODE_REMIND_ACTION = 4;
+    public static final int REMIND_LATER_REQUEST_ACTION = 6;
 }

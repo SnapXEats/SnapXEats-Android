@@ -26,6 +26,7 @@ import com.snapxeats.common.model.review.SnapNShareResponse;
 import java.util.List;
 
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -246,10 +247,10 @@ public interface ApiHelper {
     @POST(WebConstants.SNAPSHARE)
     Call<SnapNShareResponse> sendUserReview(
             @Header("Authorization") String token,
-            @Part("restaurantInfoId") String restaurantInfoId,
+            @Part("restaurantInfoId") RequestBody restaurantInfoId,
             @Part MultipartBody.Part dishPicture,
             @Part MultipartBody.Part audioReview,
-            @Part("textReview") String textReview,
+            @Part("textReview") RequestBody textReview,
             @Part("rating") Integer rating);
 
     /**

@@ -25,7 +25,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
@@ -36,17 +35,12 @@ import com.snapxeats.common.model.restaurantDetails.RestaurantSpeciality;
 import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.dagger.AppContract;
 import com.squareup.picasso.Picasso;
-
 import java.util.List;
-
 import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.snapxeats.common.constants.UIConstants.MARGIN;
 import static com.snapxeats.common.constants.UIConstants.PHOTO_NOTIFICATION_REQUEST_CODE;
@@ -149,6 +143,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 }
+
                 @Override
                 public void onPageSelected(int position) {
                     for (int index = ZERO; index < dotsCount; index++) {
@@ -268,17 +263,14 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
     @Override
     public void error(Object value) {
-
     }
 
     @Override
     public void noNetwork(Object value) {
-
     }
 
     @Override
     public void networkError(Object value) {
-
     }
 
     public void startTimerForNotification() {

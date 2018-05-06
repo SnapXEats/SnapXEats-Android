@@ -6,14 +6,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
-import android.support.v4.app.NotificationManagerCompat;
 import com.snapxeats.R;
-
 import java.util.concurrent.TimeUnit;
-
 import static com.snapxeats.common.constants.UIConstants.NOTIFICATION_ID;
-import static com.snapxeats.common.constants.UIConstants.PHOTO_NOTIFICATION_REQUEST_CODE;
 import static com.snapxeats.common.constants.UIConstants.PHOTO_NOTIFICATION_TIME;
+import static com.snapxeats.common.constants.UIConstants.REMIND_LATER_REQUEST_ACTION;
 
 /**
  * Created by Snehal Tembare on 26/4/18.
@@ -34,7 +31,7 @@ public class RemindMeLaterService extends IntentService {
         Intent notifyIntent = new Intent(this, SnapNotificationReceiver.class);
         notifyIntent.putExtra(getString(R.string.intent_restaurant_id), restaurantId);
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, PHOTO_NOTIFICATION_REQUEST_CODE, notifyIntent,
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, REMIND_LATER_REQUEST_ACTION, notifyIntent,
                 PendingIntent.FLAG_ONE_SHOT);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
