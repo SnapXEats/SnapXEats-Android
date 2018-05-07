@@ -1,12 +1,16 @@
 package com.snapxeats.ui.home;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.NotificationManagerCompat;
@@ -23,7 +27,6 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
@@ -47,21 +50,19 @@ import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
 import com.snapxeats.ui.home.fragment.rewards.RewardsFragment;
 import com.snapxeats.ui.home.fragment.smartphotos.SmartPhotoFragment;
 import com.snapxeats.ui.home.fragment.snapnshare.CheckInAdapter;
+import com.snapxeats.ui.home.fragment.snapnshare.SnapNotificationReceiver;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.squareup.picasso.Picasso;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import static com.snapxeats.common.Router.Screen.LOGIN;
-import static com.snapxeats.common.Router.Screen.REVIEW;
 import static com.snapxeats.common.constants.UIConstants.LAT;
 import static com.snapxeats.common.constants.UIConstants.LNG;
+import static com.snapxeats.common.constants.UIConstants.NOTIFICATION_ID;
 import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isCuisineDirty;
@@ -220,22 +221,26 @@ public class HomeActivity extends BaseActivity implements
         //Notification for take photo
         Intent intent = getIntent();
         boolean isFromNotification = intent.getBooleanExtra(getString(R.string.notification), false);
+        boolean isShareAnother = intent.getBooleanExtra(getString(R.string.share_another), false);
         String restaurantId = intent.getStringExtra(getString(R.string.intent_restaurant_id));
-        int notificationId = intent.getIntExtra(getString(R.string.notification_id), 0);
 
-        if (isFromNotification) {
-            NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
-            managerCompat.cancel(notificationId);
+        if (isFromNotification || isShareAnother) {
             Bundle bundle = new Bundle();
-            bundle.putBoolean(getString(R.string.notification), isFromNotification);
+            if (isFromNotification) {
+                NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+                managerCompat.cancel(NOTIFICATION_ID);
+                cancelReminder();
+                bundle.putBoolean(getString(R.string.notification), isFromNotification);
+            }
             bundle.putString(getString(R.string.intent_restaurant_id), restaurantId);
             snapShareFragment.setArguments(bundle);
             transaction.replace(R.id.frame_layout, snapShareFragment);
             mNavigationView.setCheckedItem(R.id.nav_snap);
-       }
+        }
 
         transaction.commit();
         changeItems();
+        enableReceiver();
     }
 
     private void changeItems() {
@@ -338,7 +343,11 @@ public class HomeActivity extends BaseActivity implements
                     selectedFragment = rewardsFragment;
                     break;
                 case R.id.nav_logout:
-                    showLogoutDialog();
+                    if (utility.isLoggedIn()) {
+                        showLogoutDialog();
+                    } else {
+                        mPresenter.presentScreen(LOGIN);
+                    }
                     break;
             }
 
@@ -389,7 +398,7 @@ public class HomeActivity extends BaseActivity implements
                 }
             }
             mPresenter.checkIn(checkInRequest);
-        }else {
+        } else {
             mCheckInDialog.dismiss();
             transaction = fragmentManager.beginTransaction();
             Bundle bundle = new Bundle();
@@ -585,11 +594,20 @@ public class HomeActivity extends BaseActivity implements
         if (null != restaurantInfo) {
             if (null != restaurantInfo.getRestaurant_logo() && !restaurantInfo.getRestaurant_logo().isEmpty()) {
                 Picasso.with(this).load(restaurantInfo.getRestaurant_logo())
-                        .placeholder(R.drawable.user_image).into(mImgRestaurant);
+                        .placeholder(R.drawable.ic_restaurant_placeholder).into(mImgRestaurant);
             }
             if (null != restaurantInfo.getRestaurant_name() && !restaurantInfo.getRestaurant_name().isEmpty()) {
                 mTxtRestName.setText(restaurantInfo.getRestaurant_name());
             }
+            Window window = mCheckInDialog.getWindow();
+            if (null != window) {
+                window.setLayout(UIConstants.CHECKIN_SINGLE_ITEM_DIALOG_WIDTH, UIConstants.CHECKIN_SINGLE_ITEM_DIALOG_HEIGHT);
+                window.setBackgroundDrawable(getDrawable(R.drawable.checkin_background));
+            }
+            restaurantId = restaurantInfo.getRestaurant_info_id();
+            restaurantInfo.setSelected(true);
+            mBtnCheckIn.setBackground(getDrawable(R.drawable.custom_button_selected));
+            mBtnCheckIn.setEnabled(true);
         }
     }
 
@@ -653,5 +671,37 @@ public class HomeActivity extends BaseActivity implements
     protected void onDestroy() {
         super.onDestroy();
         mRootUserPreference.resetRootUserPreference();
+    }
+
+    private void enableReceiver() {
+
+        ComponentName receiver = new ComponentName(this, SnapNotificationReceiver.class);
+
+        PackageManager pm = getPackageManager();
+
+        pm.setComponentEnabledSetting(receiver,
+
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+
+                PackageManager.DONT_KILL_APP);
+    }
+
+    private void cancelReminder() {
+
+        ComponentName componentName = new ComponentName(this, SnapNotificationReceiver.class);
+        PackageManager pm = getPackageManager();
+        pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
+
+        Intent intent1 = new Intent(this, SnapNotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
+
+                0, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        am.cancel(pendingIntent);
+        pendingIntent.cancel();
+
     }
 }

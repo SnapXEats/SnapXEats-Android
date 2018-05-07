@@ -26,6 +26,7 @@ import com.snapxeats.common.model.review.SnapNShareResponse;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.home.HomeActivity;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.squareup.picasso.Picasso;
 
@@ -70,6 +71,10 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
     @BindView(R.id.txt_card_rest_name)
     protected TextView mImgRestName;
 
+    @BindView(R.id.txt_share_url)
+    protected TextView mTxtMessage;
+    private String image_path;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,10 +91,14 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         setUpToolbar();
         mShareDialog = new ShareDialog(this);
         mCallbackManager = CallbackManager.Factory.create();
+
         mSnapResponse = getIntent().getExtras().getParcelable(getString(R.string.intent_review));
-        if (null != mSnapResponse.getRestaurant_name() && null != mSnapResponse.getDish_image_url()) {
+        image_path = getIntent().getExtras().getString(getString(R.string.image_path));
+
+        if (null != mSnapResponse) {
             Picasso.with(this).load(mSnapResponse.getDish_image_url()).placeholder(R.drawable.ic_restaurant_placeholder).into(mImgRest);
             mImgRestName.setText(mSnapResponse.getRestaurant_name());
+            mTxtMessage.setText(mSnapResponse.getMessage());
         }
     }
 
@@ -143,11 +152,24 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         alert.setCancelable(false);
         AlertDialog dialog = alert.create();
         dialog.show();
+
+        Intent shareAnotherIntent = new Intent(this, HomeActivity.class);
+        shareAnotherIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
         mBtnShare.setOnClickListener(v -> {
-            Fragment fragment = new SnapShareFragment();
-            getFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
+
+            String restId = getIntent().getExtras().getString(getString(R.string.intent_restaurant_id));
+            shareAnotherIntent.putExtra(getString(R.string.intent_restaurant_id), restId);
+            shareAnotherIntent.putExtra(getString(R.string.share_another), true);
+            startActivity(shareAnotherIntent);
         });
-        mTxtDismiss.setOnClickListener(v -> dialog.dismiss());
+
+        mTxtDismiss.setOnClickListener(v -> {
+            dialog.dismiss();
+            startActivity(shareAnotherIntent);
+
+        });
+
     }
 
     @OnClick(R.id.img_share_insta)
@@ -163,7 +185,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
             shareIntent.setPackage(INSTA_PACKAGE_NAME);
             try {
                 shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(),
-                        mSnapResponse.getDish_image_url(), "", "")));
+                        image_path, "", "")));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }

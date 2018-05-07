@@ -12,6 +12,8 @@ import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.ui.home.HomeActivity;
 import static com.snapxeats.common.constants.UIConstants.NOTIFICATION_ID;
+import static com.snapxeats.common.constants.UIConstants.REQUEST_CODE_REMIND_ACTION;
+import static com.snapxeats.common.constants.UIConstants.REQUEST_CODE_TAKE_PHOTO_ACTION;
 
 /**
  * Created by Snehal Tembare on 24/4/18.
@@ -29,27 +31,26 @@ public class SnapNotificationService extends IntentService {
     }
 
     public void customNotification(Intent intent) {
+        String restaurantId = intent.getStringExtra(getString(R.string.intent_restaurant_id));
         //Intent for take photo
-        Intent notifyIntent = new Intent(this, HomeActivity.class);
-        notifyIntent.putExtra(getString(R.string.notification_id), NOTIFICATION_ID);
-        notifyIntent.putExtra(getString(R.string.notification), true);
-        notifyIntent.putExtra(getString(R.string.intent_restaurant_id),
-                intent.getStringExtra(getString(R.string.intent_restaurant_id)));
 
-        PendingIntent pendingIntentTake = PendingIntent.getActivity(this, 2, notifyIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent takePhotoNotifyIntent = new Intent(this, HomeActivity.class);
+        takePhotoNotifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        takePhotoNotifyIntent.putExtra(getString(R.string.notification), true);
+        takePhotoNotifyIntent.putExtra(getString(R.string.intent_restaurant_id), restaurantId );
+
+        PendingIntent pendingIntentTakePhoto = PendingIntent.getActivity(this, REQUEST_CODE_TAKE_PHOTO_ACTION, takePhotoNotifyIntent,
+                PendingIntent.FLAG_ONE_SHOT);
 
         Notification.Action takePhoto = new Notification.Action(0, getString(R.string.take_photo),
-                pendingIntentTake);
+                pendingIntentTakePhoto);
 
         //Intent for notify me later
-        Intent notifyForRemindIntent = new Intent(this, RemindMeLaterService.class);
-        notifyForRemindIntent.putExtra(getString(R.string.notification_id), NOTIFICATION_ID);
-        notifyForRemindIntent.putExtra(getString(R.string.intent_restaurant_id),
-                intent.getStringExtra(getString(R.string.intent_restaurant_id)));
+        Intent remindNotifyIntent = new Intent(this, RemindMeLaterService.class);
+        remindNotifyIntent.putExtra(getString(R.string.intent_restaurant_id),restaurantId);
 
-        PendingIntent pendingIntentRemind = PendingIntent.getService(this, 4,
-                notifyForRemindIntent, 0);
+        PendingIntent pendingIntentRemind = PendingIntent.getService(this, REQUEST_CODE_REMIND_ACTION,
+                remindNotifyIntent, PendingIntent.FLAG_ONE_SHOT);
 
         Notification.Action remindLaterAction = new Notification.Action(0, getString(R.string.remind_me_later),
                 pendingIntentRemind);
@@ -63,7 +64,7 @@ public class SnapNotificationService extends IntentService {
                 .setSmallIcon(R.drawable.ic_notification)
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
-                .setContentIntent(pendingIntentTake)
+                .setContentIntent(pendingIntentTakePhoto)
                 .addAction(remindLaterAction)
                 .addAction(takePhoto)
                 .setAutoCancel(true);

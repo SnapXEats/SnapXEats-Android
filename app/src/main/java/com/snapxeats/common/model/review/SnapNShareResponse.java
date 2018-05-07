@@ -14,8 +14,8 @@ import lombok.Setter;
 
 public class SnapNShareResponse implements Parcelable {
     private String restaurant_name;
-    private String dish_image_url;
     private String restaurant_dish_id;
+    private String dish_image_url;
     private String message;
 
     @Override
@@ -26,18 +26,15 @@ public class SnapNShareResponse implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(restaurant_name);
-        dest.writeString(dish_image_url);
         dest.writeString(restaurant_dish_id);
+        dest.writeString(dish_image_url);
         dest.writeString(message);
     }
 
-    public SnapNShareResponse() {
-    }
-
-    protected SnapNShareResponse(Parcel in) {
+    private SnapNShareResponse(Parcel in) {
         restaurant_name = in.readString();
-        dish_image_url = in.readString();
         restaurant_dish_id = in.readString();
+        dish_image_url = in.readString();
         message = in.readString();
     }
 

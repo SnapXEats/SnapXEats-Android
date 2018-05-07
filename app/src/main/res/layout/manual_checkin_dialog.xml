@@ -21,7 +21,8 @@
                 android:id="@+id/multiple_restaurants_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -44,7 +45,7 @@
             <LinearLayout
                 android:id="@+id/single_restaurant_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
                 android:visibility="gone">
@@ -53,6 +54,7 @@
                     android:id="@+id/img_restaurant"
                     android:layout_width="@dimen/dimens_95dp"
                     android:layout_height="@dimen/dimens_95dp"
+                    android:layout_marginTop="@dimen/dimens_40dp"
                     android:src="@drawable/user_image"
                     app:border="true"
                     app:border_width="@dimen/common_1"
@@ -68,15 +70,6 @@
                     android:textColor="@color/text_color_primary"
                     android:textSize="@dimen/text_size_15"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/common_dimens_10"
-                    android:gravity="center_horizontal"
-                    android:text="@string/check_and_earn"
-                    android:textColor="@color/text_color_primary"
-                    android:textSize="@dimen/text_size_12" />
             </LinearLayout>
 
 

@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -34,18 +35,14 @@ import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.shareReview.ShareReviewActivity;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.snapxeats.common.constants.UIConstants.INT_TEN;
@@ -84,7 +81,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     private Button mBtnStartAudio;
     private Button mBtnStopReview;
-    private long seconds;
 
     @BindView(R.id.rating_review)
     protected RatingBar mRatingBar;
@@ -106,8 +102,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     private Uri fileImageUri;
     private String restId;
-    private String restName;
-    private SnapNShareResponse mSnapResponse;
+    private String image_path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,18 +118,18 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         snapXDialog.setContext(this);
         utility.setContext(this);
         setUpToolbar();
-        limitTexrReview();
         //get file path
         Intent intent = getIntent();
-        String image_path = intent.getStringExtra(getString(R.string.file_path));
+        image_path = intent.getStringExtra(getString(R.string.file_path));
         restId = intent.getStringExtra(getString(R.string.review_rest_id));
-        restName = intent.getStringExtra(getString(R.string.review_rest_name));
         fileImageUri = Uri.parse(image_path);
         mImgRestPhoto.setImageURI(fileImageUri);
     }
 
-    private void limitTexrReview() {
-        mEditTxtReview.addTextChangedListener(new TextWatcher() {
+      /*TODO-Restrict review text length
+    private void limitTextReview() {
+
+       mEditTxtReview.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -155,8 +150,8 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
             }
         });
+} */
 
-    }
 
     private void setUpToolbar() {
         setSupportActionBar(mToolbar);
@@ -164,10 +159,11 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         getSupportActionBar().setTitle(getString(R.string.toolbar_snap_share));
     }
 
+
     /*webservice call to send review*/
     @OnClick(R.id.img_share_review)
     public void imgSendReview() {
-        Integer rating = (int) mRatingBar.getRating();
+        int rating = (int) mRatingBar.getRating();
         if (ZERO != rating) {
             dialogShareReview();
         } else {
@@ -197,13 +193,15 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     private void callApiReview() {
         String textReview = mEditTxtReview.getText().toString();
-        Integer rating = (int) mRatingBar.getRating();
+        int rating = (int) mRatingBar.getRating();
         if (null != restId && null != fileImageUri && 0 != rating) {
-            mPresenter.sendReview(restId, fileImageUri, Uri.fromFile(savedAudioPath), textReview, rating);
+            showProgressDialog();
+            Uri audioFile = null;
+            if (null != savedAudioPath){
+                audioFile = Uri.fromFile(savedAudioPath);
+            }
+            mPresenter.sendReview(restId, fileImageUri,audioFile , textReview, rating);
         }
-        Intent intent = new Intent(ReviewActivity.this, ShareReviewActivity.class);
-        intent.putExtra(getString(R.string.intent_review), mSnapResponse);
-        startActivity(intent);
     }
 
     /*Play recorded audio review*/
@@ -340,9 +338,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                                 .show();
                     }
                 });
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (IllegalStateException | IOException e) {
                 e.printStackTrace();
             }
         } else {
@@ -394,6 +390,13 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home)
+            finish();
+        return true;
+    }
+
     public boolean checkPermission() {
         int resultStorage = ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE);
         int resultAudio = ContextCompat.checkSelfPermission(this, RECORD_AUDIO);
@@ -402,7 +405,13 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     @Override
     public void success(Object value) {
-        mSnapResponse = (SnapNShareResponse) value;
+        dismissProgressDialog();
+        SnapNShareResponse mSnapResponse = (SnapNShareResponse) value;
+        Intent intent = new Intent(ReviewActivity.this, ShareReviewActivity.class);
+        intent.putExtra(getString(R.string.intent_review), mSnapResponse);
+        intent.putExtra(getString(R.string.image_path), image_path);
+        intent.putExtra(getString(R.string.review_rest_id), restId);
+        startActivity(intent);
     }
 
     @Override
