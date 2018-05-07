@@ -336,7 +336,8 @@ public class HomeActivity extends BaseActivity implements
                     break;
                 case R.id.nav_snap:
                     mDrawerLayout.closeDrawer(GravityCompat.START);
-                    showCheckInDialog();
+                   // showCheckInDialog();
+                    selectedFragment=snapShareFragment;
                     break;
 
                 case R.id.nav_rewards:

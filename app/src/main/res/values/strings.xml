@@ -197,6 +197,7 @@
     <string name="msg_set_rating">You need to give at least rating for your review.</string>
     <string name="timer_audio_review">00:30</string>
     <string name="audio_extension">.mp3</string>
+    <string name="insta_img_extension">.jpg</string>
     <string name="review_rest_name">reviewRestName</string>
     <string name="review_rest_id">reviewRestId</string>
     <string name="file">file</string>
@@ -213,6 +214,9 @@
     <string name="aud">AUD_</string>
     <string name="intent_review">intent_review</string>
     <string name="int_zero">0</string>
+    <string name="review_dishPicture">dishPicture</string>
+    <string name="review_audioReview">audioReview</string>
+    <string name="insta">INSTA_</string>
     <string name="dishPicture">dishPicture</string>
     <string name="audioReview">audioReview</string>
     <string name="image_path">image_path</string>

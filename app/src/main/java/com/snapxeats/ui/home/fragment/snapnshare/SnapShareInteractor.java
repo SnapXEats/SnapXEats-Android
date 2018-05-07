@@ -1,15 +1,19 @@
 package com.snapxeats.ui.home.fragment.snapnshare;
 
 import android.content.Context;
+
 import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
+
 import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 /**

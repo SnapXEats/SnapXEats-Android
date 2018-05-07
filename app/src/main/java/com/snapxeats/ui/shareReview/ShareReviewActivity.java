@@ -2,11 +2,9 @@ package com.snapxeats.ui.shareReview;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,10 +25,7 @@ import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.home.HomeActivity;
-import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.squareup.picasso.Picasso;
-
-import java.io.FileNotFoundException;
 
 import javax.inject.Inject;
 
@@ -73,6 +68,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
 
     @BindView(R.id.txt_share_url)
     protected TextView mTxtMessage;
+
     private String image_path;
 
     @Override
@@ -91,7 +87,6 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         setUpToolbar();
         mShareDialog = new ShareDialog(this);
         mCallbackManager = CallbackManager.Factory.create();
-
         mSnapResponse = getIntent().getExtras().getParcelable(getString(R.string.intent_review));
         image_path = getIntent().getExtras().getString(getString(R.string.image_path));
 
@@ -115,7 +110,6 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
     }
 
     private void shareOnFb() {
-
         if (ShareDialog.canShow(ShareLinkContent.class)) {
             ShareLinkContent linkContent = new ShareLinkContent.Builder()
                     .setQuote(mSnapResponse.getMessage())
@@ -167,9 +161,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         mTxtDismiss.setOnClickListener(v -> {
             dialog.dismiss();
             startActivity(shareAnotherIntent);
-
         });
-
     }
 
     @OnClick(R.id.img_share_insta)
@@ -183,12 +175,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);
             shareIntent.setPackage(INSTA_PACKAGE_NAME);
-            try {
-                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(),
-                        image_path, "", "")));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(image_path));
             shareIntent.setType(IMAGE_TYPE);
             startActivity(shareIntent);
         }
@@ -213,21 +200,17 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
 
     @Override
     public void success(Object value) {
-
     }
 
     @Override
     public void error(Object value) {
-
     }
 
     @Override
     public void noNetwork(Object value) {
-
     }
 
     @Override
     public void networkError(Object value) {
-
     }
 }

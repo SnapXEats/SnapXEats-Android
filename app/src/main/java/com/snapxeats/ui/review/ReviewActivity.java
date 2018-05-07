@@ -2,6 +2,7 @@ package com.snapxeats.ui.review;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
@@ -18,6 +19,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
@@ -35,14 +37,18 @@ import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.shareReview.ShareReviewActivity;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.snapxeats.common.constants.UIConstants.INT_TEN;
@@ -118,28 +124,30 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         snapXDialog.setContext(this);
         utility.setContext(this);
         setUpToolbar();
+        limitTextReview();
         //get file path
         Intent intent = getIntent();
         image_path = intent.getStringExtra(getString(R.string.file_path));
-        restId = intent.getStringExtra(getString(R.string.review_rest_id));
+//        restId = intent.getStringExtra(getString(R.string.review_rest_id));
+//        restName = intent.getStringExtra(getString(R.string.review_rest_name));
+        //TODO restId and restName are hardcoded for now
+        restId = "047d0616-51e9-4ae1-bc4b-05bfab0e3eaf";
+        String restName = "Battery Gardens";
         fileImageUri = Uri.parse(image_path);
         mImgRestPhoto.setImageURI(fileImageUri);
     }
 
-      /*TODO-Restrict review text length
     private void limitTextReview() {
-
-       mEditTxtReview.addTextChangedListener(new TextWatcher() {
+        mEditTxtReview.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (UIConstants.REVIEW_LENGTH_LIMIT == s.length()) {
                     mTxtLengthError.setVisibility(View.VISIBLE);
-                    utility.hideKeyboard();
+                    hideTheKeyboard(ReviewActivity.this, mEditTxtReview);
                 } else {
                     mTxtLengthError.setVisibility(View.INVISIBLE);
                 }
@@ -150,15 +158,19 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
             }
         });
-} */
 
+    }
+
+    public void hideTheKeyboard(Context context, EditText editText) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
+    }
 
     private void setUpToolbar() {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getString(R.string.toolbar_snap_share));
     }
-
 
     /*webservice call to send review*/
     @OnClick(R.id.img_share_review)
@@ -197,10 +209,10 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         if (null != restId && null != fileImageUri && 0 != rating) {
             showProgressDialog();
             Uri audioFile = null;
-            if (null != savedAudioPath){
+            if (null != savedAudioPath) {
                 audioFile = Uri.fromFile(savedAudioPath);
             }
-            mPresenter.sendReview(restId, fileImageUri,audioFile , textReview, rating);
+            mPresenter.sendReview(restId, fileImageUri, audioFile, textReview, rating);
         }
     }
 
@@ -267,37 +279,41 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     /*Add audio review*/
     @OnClick(R.id.img_audio_review)
     public void imgAddReview() {
-        LayoutInflater inflater = getLayoutInflater();
-        View alertLayout = inflater.inflate(R.layout.layout_record_review, null);
-        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setView(alertLayout);
-        alert.setCancelable(false);
-        AlertDialog dialog = alert.create();
-        dialog.show();
+        if (checkPermission()) {
+            LayoutInflater inflater = getLayoutInflater();
+            View alertLayout = inflater.inflate(R.layout.layout_record_review, null);
+            final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setView(alertLayout);
+            alert.setCancelable(false);
+            AlertDialog dialog = alert.create();
+            dialog.show();
 
-        mBtnStartAudio = alertLayout.findViewById(R.id.btn_record_review);
-        mBtnStopReview = alertLayout.findViewById(R.id.btn_stop_review);
-        TextView mTxtCancel = alertLayout.findViewById(R.id.txt_review_cancel);
-        mChronometer = alertLayout.findViewById(R.id.chronometer_timer);
+            mBtnStartAudio = alertLayout.findViewById(R.id.btn_record_review);
+            mBtnStopReview = alertLayout.findViewById(R.id.btn_stop_review);
+            TextView mTxtCancel = alertLayout.findViewById(R.id.txt_review_cancel);
+            mChronometer = alertLayout.findViewById(R.id.chronometer_timer);
 
-        mRecorder = new MediaRecorder();
+            mRecorder = new MediaRecorder();
 
-        mBtnStartAudio.setOnClickListener(v -> {
-            mBtnStartAudio.setVisibility(View.GONE);
-            mBtnStopReview.setVisibility(View.VISIBLE);
-            startRecording();
-        });
+            mBtnStartAudio.setOnClickListener(v -> {
+                mBtnStartAudio.setVisibility(View.GONE);
+                mBtnStopReview.setVisibility(View.VISIBLE);
+                startRecording();
+            });
 
-        mBtnStopReview.setOnClickListener(v -> {
-            stopRecording();
-            dialog.dismiss();
-            mImgAddAudio.setVisibility(View.GONE);
-            mImgPlayAudio.setVisibility(View.VISIBLE);
-            mAudioTime.setVisibility(View.VISIBLE);
+            mBtnStopReview.setOnClickListener(v -> {
+                stopRecording();
+                dialog.dismiss();
+                mImgAddAudio.setVisibility(View.GONE);
+                mImgPlayAudio.setVisibility(View.VISIBLE);
+                mAudioTime.setVisibility(View.VISIBLE);
 
-            setAudioTime();
-        });
-        mTxtCancel.setOnClickListener(v -> dialog.dismiss());
+                setAudioTime();
+            });
+            mTxtCancel.setOnClickListener(v -> dialog.dismiss());
+        } else {
+            requestPermission();
+        }
     }
 
     private void setAudioTime() {
@@ -317,32 +333,27 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     }
 
     private void startRecording() {
-
-        if (checkPermission()) {
-            savedAudioPath = getOutputMediaFile();
-            setMediaRecorder();
-            try {
-                mRecorder.prepare();
-                mRecorder.start();
-                mChronometer.setBase(SystemClock.elapsedRealtime());
-                mChronometer.start();
-                mChronometer.setOnChronometerTickListener(chronometer -> {
-                    String currentTime = mChronometer.getText().toString();
-                    if (currentTime.equals(getString(R.string.timer_audio_review))) {
-                        mChronometer.stop();
-                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                        builder.setTitle(getString(R.string.msg_share_review))
-                                .setNeutralButton(getString(R.string.ok), (dialog, which) -> {
-                                    dialog.dismiss();
-                                })
-                                .show();
-                    }
-                });
-            } catch (IllegalStateException | IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            requestPermission();
+        savedAudioPath = getOutputMediaFile();
+        setMediaRecorder();
+        try {
+            mRecorder.prepare();
+            mRecorder.start();
+            mChronometer.setBase(SystemClock.elapsedRealtime());
+            mChronometer.start();
+            mChronometer.setOnChronometerTickListener(chronometer -> {
+                String currentTime = mChronometer.getText().toString();
+                if (currentTime.equals(getString(R.string.timer_audio_review))) {
+                    mChronometer.stop();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage(getString(R.string.msg_share_review))
+                            .setNeutralButton(getString(R.string.ok), (dialog, which) -> {
+                                dialog.dismiss();
+                            })
+                            .show();
+                }
+            });
+        } catch (IllegalStateException | IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
@@ -35,12 +36,16 @@ import com.snapxeats.common.model.restaurantDetails.RestaurantSpeciality;
 import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.dagger.AppContract;
 import com.squareup.picasso.Picasso;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.snapxeats.common.constants.UIConstants.MARGIN;
 import static com.snapxeats.common.constants.UIConstants.PHOTO_NOTIFICATION_REQUEST_CODE;
@@ -134,9 +139,10 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
             restaurantId = getArguments().getString(getString(R.string.intent_restaurant_id));
             isFromNotification = getArguments().getBoolean(getString(R.string.notification));
         }
-
         showProgressDialog();
-        mPresenter.getRestaurantInfo(restaurantId);
+        //TODO restId hardcoded till manual checkin functionality completes
+        mPresenter.getRestaurantInfo("047d0616-51e9-4ae1-bc4b-05bfab0e3eaf");
+//        mPresenter.getRestaurantInfo( restaurantId);
         if (null != getActivity() && isAdded()) {
 
             mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -192,7 +198,6 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
     private void setView(RestaurantDetails restaurantDetails) {
         mTxtRestName.setText(restaurantDetails.getRestaurant_name());
-
         setViewPager(restaurantDetails.getRestaurant_pics());
         setMenusView(restaurantDetails.getRestaurant_speciality());
         if (!isFromNotification) {
@@ -220,7 +225,9 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
             Intent intent = new Intent(getActivity(), CameraActivity.class);
             intent.putExtra(getString(R.string.review_rest_id), restaurantId);
-            intent.putExtra(getString(R.string.review_rest_name), mRootRestaurantDetails.getRestaurantDetails().getRestaurant_name());
+//            intent.putExtra(getString(R.string.review_rest_name), mRootRestaurantDetails.getRestaurantDetails().getRestaurant_name());
+            //TODO restId hardcoded for manual checkin
+            intent.putExtra(getString(R.string.review_rest_name), "Battery Gardens");
             startActivity(intent);
             mDialog.dismiss();
         });
