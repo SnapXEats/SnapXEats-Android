@@ -29,7 +29,6 @@ import android.widget.TextView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.restaurantDetails.RestaurantDetails;
 import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
@@ -141,7 +140,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
             isFromNotification = getArguments().getBoolean(getString(R.string.notification));
         }
         showProgressDialog();
-        mPresenter.getRestaurantInfo( restaurantId);
+        mPresenter.getRestaurantInfo(restaurantId);
         if (null != getActivity() && isAdded()) {
 
             mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

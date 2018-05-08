@@ -15,13 +15,27 @@
         android:textColor="@color/colorPrimary"
         android:textStyle="bold" />
 
-    <ImageView
-        android:id="@+id/img_play_audio"
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/common_dimens_10"
-        android:src="@drawable/ic_play_review" />
+        android:padding="@dimen/common_dimens_10">
+
+        <ImageView
+            android:id="@+id/img_play_audio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_play_review" />
+
+        <ImageView
+            android:id="@+id/img_pause_audio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_audio_pause"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <Chronometer
         android:id="@+id/timer_play"
