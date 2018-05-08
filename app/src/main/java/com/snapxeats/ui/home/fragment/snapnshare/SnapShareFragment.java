@@ -140,9 +140,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
             isFromNotification = getArguments().getBoolean(getString(R.string.notification));
         }
         showProgressDialog();
-        //TODO restId hardcoded till manual checkin functionality completes
-        mPresenter.getRestaurantInfo("047d0616-51e9-4ae1-bc4b-05bfab0e3eaf");
-//        mPresenter.getRestaurantInfo( restaurantId);
+        mPresenter.getRestaurantInfo( restaurantId);
         if (null != getActivity() && isAdded()) {
 
             mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -222,12 +220,8 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
         TextView mTxtRemindMeLater = mDialog.findViewById(R.id.txt_remind_me_later);
 
         mBtnTakePhoto.setOnClickListener(v -> {
-
             Intent intent = new Intent(getActivity(), CameraActivity.class);
             intent.putExtra(getString(R.string.review_rest_id), restaurantId);
-//            intent.putExtra(getString(R.string.review_rest_name), mRootRestaurantDetails.getRestaurantDetails().getRestaurant_name());
-            //TODO restId hardcoded for manual checkin
-            intent.putExtra(getString(R.string.review_rest_name), "Battery Gardens");
             startActivity(intent);
             mDialog.dismiss();
         });

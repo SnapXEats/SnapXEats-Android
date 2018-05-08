@@ -109,6 +109,9 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private Uri fileImageUri;
     private String restId;
     private String image_path;
+    private String audioTime;
+
+    private TextView mTxtPlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +119,12 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         setContentView(R.layout.activity_review);
         ButterKnife.bind(this);
         initView();
+    }
+
+    /*hide keyboard when tabbed on screen*/
+    @OnClick(R.id.layout_main_review)
+    public void layoutReview() {
+        utility.hideKeyboard();
     }
 
     @Override
@@ -128,11 +137,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         //get file path
         Intent intent = getIntent();
         image_path = intent.getStringExtra(getString(R.string.file_path));
-//        restId = intent.getStringExtra(getString(R.string.review_rest_id));
-//        restName = intent.getStringExtra(getString(R.string.review_rest_name));
-        //TODO restId and restName are hardcoded for now
-        restId = "047d0616-51e9-4ae1-bc4b-05bfab0e3eaf";
-        String restName = "Battery Gardens";
+        restId = intent.getStringExtra(getString(R.string.review_rest_id));
         fileImageUri = Uri.parse(image_path);
         mImgRestPhoto.setImageURI(fileImageUri);
     }
@@ -161,9 +166,11 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     }
 
+    /*hide keyboard when text review limit exceeds*/
     public void hideTheKeyboard(Context context, EditText editText) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
+        InputMethodManager manager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        assert manager != null;
+        manager.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
     }
 
     private void setUpToolbar() {
@@ -221,26 +228,26 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     public void imgPlayAudio() {
         LayoutInflater inflater = getLayoutInflater();
         View alertLayout = inflater.inflate(R.layout.layout_play_audio, null);
-        Button mBtnDismissAudio = alertLayout.findViewById(R.id.btn_play_dismiss);
+        Button mBtnDoneAudio = alertLayout.findViewById(R.id.btn_play_done);
         ImageView mImgPlayRecAudio = alertLayout.findViewById(R.id.img_play_audio);
         TextView mTxtDeleteAudio = alertLayout.findViewById(R.id.txt_delete_audio);
         mChronometerPlay = alertLayout.findViewById(R.id.timer_play);
+//        mTxtPlay = alertLayout.findViewById(R.id.timer_play);
 
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setView(alertLayout);
         alert.setCancelable(false);
         AlertDialog dialog = alert.create();
         dialog.show();
-        mBtnDismissAudio.setOnClickListener(v -> {
+
+        mBtnDoneAudio.setOnClickListener(v -> {
             mChronometerPlay.stop();
-            dialog.dismiss();
             if (null != mPlayer) {
-                mPlayer.stop();
-                mPlayer.reset();
-                mPlayer.release();
-                setMediaRecorder();
+                mPlayer.pause();
             }
+            dialog.dismiss();
         });
+
         mImgPlayRecAudio.setOnClickListener(v -> {
             mChronometerPlay.setBase(SystemClock.elapsedRealtime());
             mChronometerPlay.start();
@@ -255,7 +262,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         });
         mTxtDeleteAudio.setOnClickListener(v -> {
             AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-            builder1.setTitle(getString(R.string.msg_delete_review))
+            builder1.setMessage(getString(R.string.msg_delete_review))
                     .setPositiveButton(getString(R.string.yes), (dialog1, which) -> {
                         mPlayer = new MediaPlayer();
                         mPlayer.stop();
@@ -292,7 +299,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             mBtnStopReview = alertLayout.findViewById(R.id.btn_stop_review);
             TextView mTxtCancel = alertLayout.findViewById(R.id.txt_review_cancel);
             mChronometer = alertLayout.findViewById(R.id.chronometer_timer);
-
             mRecorder = new MediaRecorder();
 
             mBtnStartAudio.setOnClickListener(v -> {
@@ -321,7 +327,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         int hour = (int) (time / TIME_HOUR);
         int min = (int) (time - hour * TIME_HOUR) / TIME_MINUTE;
         int seconds = (int) (time - hour * TIME_HOUR - min * TIME_MINUTE) / TIME_SECONDS;
-        String audioTime = (min < INT_TEN ? getString(R.string.int_zero) + min : min) + ":"
+        audioTime = (min < INT_TEN ? getString(R.string.int_zero) + min : min) + ":"
                 + (seconds < INT_TEN ? getString(R.string.int_zero) + seconds : seconds);
         mAudioTime.setText(audioTime);
     }
@@ -345,7 +351,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                 if (currentTime.equals(getString(R.string.timer_audio_review))) {
                     mChronometer.stop();
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage(getString(R.string.msg_share_review))
+                    builder.setMessage(getString(R.string.audio_review_limit_msg))
                             .setNeutralButton(getString(R.string.ok), (dialog, which) -> {
                                 dialog.dismiss();
                             })
@@ -427,7 +433,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     @Override
     public void error(Object value) {
-
     }
 
     @Override

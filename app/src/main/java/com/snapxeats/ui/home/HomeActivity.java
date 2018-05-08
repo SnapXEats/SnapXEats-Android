@@ -27,6 +27,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
@@ -55,10 +56,14 @@ import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.squareup.picasso.Picasso;
+
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 import static com.snapxeats.common.Router.Screen.LOGIN;
 import static com.snapxeats.common.constants.UIConstants.LAT;
 import static com.snapxeats.common.constants.UIConstants.LNG;
@@ -336,8 +341,8 @@ public class HomeActivity extends BaseActivity implements
                     break;
                 case R.id.nav_snap:
                     mDrawerLayout.closeDrawer(GravityCompat.START);
-                   // showCheckInDialog();
-                    selectedFragment=snapShareFragment;
+                    showCheckInDialog();
+//                    selectedFragment=snapShareFragment;
                     break;
 
                 case R.id.nav_rewards:
