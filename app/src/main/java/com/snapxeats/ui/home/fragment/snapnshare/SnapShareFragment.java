@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.restaurantDetails.RestaurantDetails;
 import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
@@ -165,7 +166,9 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
     @OnClick(R.id.img_snap)
     public void snapImage() {
-        startActivity(new Intent(getActivity(), CameraActivity.class));
+        Intent intent = new Intent(getActivity(), CameraActivity.class);
+        intent.putExtra(getString(R.string.review_rest_id), restaurantId);
+        startActivity(intent);
     }
 
     @Override

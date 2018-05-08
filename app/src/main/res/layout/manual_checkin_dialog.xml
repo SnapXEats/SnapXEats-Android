@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -38,8 +37,8 @@
                     android:id="@+id/recyclerview"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/common_dimens_210"
-                    android:scrollbars="vertical"
-                    android:layout_marginBottom="@dimen/common_dimens_5" />
+                    android:layout_marginBottom="@dimen/common_dimens_5"
+                    android:scrollbars="vertical" />
             </LinearLayout>
 
             <LinearLayout
@@ -90,19 +89,19 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/common_dimens_10"
                 android:text="@string/check_in_and_earn"
-                android:textSize="@dimen/text_size_12"
-                android:textColor="@color/text_color_secondary" />
+                android:textColor="@color/text_color_secondary"
+                android:textSize="@dimen/text_size_12" />
 
             <Button
                 android:id="@+id/btn_check_in"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/custom_button"
+                android:enabled="false"
                 android:paddingLeft="@dimen/common_dimens_30"
                 android:paddingRight="@dimen/common_dimens_30"
                 android:text="@string/check_in"
-                android:textColor="@color/colorWhite"
-                android:enabled="false"/>
+                android:textColor="@color/colorWhite" />
 
             <TextView
                 android:id="@+id/txt_cancel"
@@ -114,6 +113,7 @@
                 android:text="@string/cancel"
                 android:textColor="@color/text_color_primary" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/layout_no_restaurants"
             android:layout_width="match_parent"
@@ -161,7 +161,6 @@
         </LinearLayout>
 
     </RelativeLayout>
-
 
 
 </LinearLayout>

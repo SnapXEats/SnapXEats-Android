@@ -342,7 +342,6 @@ public class HomeActivity extends BaseActivity implements
                 case R.id.nav_snap:
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                     showCheckInDialog();
-//                    selectedFragment=snapShareFragment;
                     break;
 
                 case R.id.nav_rewards:
@@ -426,7 +425,6 @@ public class HomeActivity extends BaseActivity implements
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.log_out));
         builder.setMessage(getString(R.string.logout_message));
-
         builder.setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> {
             //Clear local db
             showProgressDialog();

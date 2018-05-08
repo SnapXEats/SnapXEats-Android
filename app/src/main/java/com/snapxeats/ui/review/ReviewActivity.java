@@ -140,6 +140,13 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         restId = intent.getStringExtra(getString(R.string.review_rest_id));
         fileImageUri = Uri.parse(image_path);
         mImgRestPhoto.setImageURI(fileImageUri);
+
+        mToolbar.setNavigationOnClickListener(v -> dialogExitReview());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void limitTextReview() {
