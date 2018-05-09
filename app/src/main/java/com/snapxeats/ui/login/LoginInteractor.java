@@ -3,16 +3,17 @@ package com.snapxeats.ui.login;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+
 import com.facebook.AccessToken;
 import com.facebook.Profile;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.model.login.RootInstagram;
 import com.snapxeats.common.model.SnapXUser;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
+import com.snapxeats.common.model.login.RootInstagram;
 import com.snapxeats.common.model.preference.SnapXPreference;
 import com.snapxeats.common.model.preference.UserPreferences;
 import com.snapxeats.common.utilities.AppUtility;
@@ -21,11 +22,14 @@ import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import static com.snapxeats.common.constants.UIConstants.PROFILE_WIDTH_HEIGHT;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
@@ -117,7 +121,7 @@ public class LoginInteractor {
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(mContext.getString(R.string.user_id), snapXUser.getUserInfo().getUser_id());
                         editor.putBoolean(mContext.getString(R.string.isFirstTimeUser), snapXUser.getUserInfo().isFirst_time_login());
-                        editor.commit();
+                        editor.apply();
                         /** save instagram data **/
                         if (snapXUser.getUserInfo().getSocial_platform().
                                 equalsIgnoreCase(mContext.getString(R.string.platform_instagram))) {
@@ -148,7 +152,7 @@ public class LoginInteractor {
      * TODO- Relogin user
      * GET- Get user preferences
      */
-    public void getUserPreferences(String token) {
+    private void getUserPreferences(String token) {
 
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);

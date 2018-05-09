@@ -230,7 +230,7 @@ public class CuisinePrefActivity extends BaseActivity implements
         showNetworkErrorDialog((dialog, which) -> {
             if (!NetworkUtility.isNetworkAvailable(this) && null != mRootCuisineList) {
                 AppContract.DialogListenerAction click = () -> {
-                    showSavePrefDialog();
+                    showProgressDialog();
                     prefPresenter.getCuisinePrefList();
                 };
                 showSnackBar(mParentLayout, setClickListener(click));

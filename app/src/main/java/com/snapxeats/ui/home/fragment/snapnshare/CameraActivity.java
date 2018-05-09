@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -12,7 +13,6 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 import com.snapxeats.R;
 import com.snapxeats.ui.review.ReviewActivity;
@@ -20,6 +20,7 @@ import com.snapxeats.ui.review.ReviewActivity;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import static com.snapxeats.common.constants.UIConstants.CAMERA_REQUEST;
 import static com.snapxeats.common.constants.UIConstants.CAMERA_REQUEST_PERMISSION;
 
@@ -29,7 +30,6 @@ import static com.snapxeats.common.constants.UIConstants.CAMERA_REQUEST_PERMISSI
 public class CameraActivity extends AppCompatActivity {
     private Uri file;
     private String restId;
-    private String restName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,17 +40,16 @@ public class CameraActivity extends AppCompatActivity {
     private void initView() {
         checkPermissions();
         restId = getIntent().getStringExtra(getString(R.string.review_rest_id));
-        restName = getIntent().getStringExtra(getString(R.string.review_rest_name));
     }
 
     private void checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE},
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE},
                     CAMERA_REQUEST_PERMISSION);
         } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE},
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE},
                     CAMERA_REQUEST_PERMISSION);
         } else {
             takePicture();
@@ -76,7 +75,7 @@ public class CameraActivity extends AppCompatActivity {
             if (intent.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(intent, CAMERA_REQUEST);
             }
-        }else {
+        } else {
             finish();
         }
     }
@@ -98,13 +97,12 @@ public class CameraActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == CAMERA_REQUEST) {
-            Intent reviewIntent = new Intent(this,ReviewActivity.class);
-            reviewIntent.putExtra(getString(R.string.file_path),file.toString());
-            reviewIntent.putExtra(getString(R.string.review_rest_id),restId);
-            reviewIntent.putExtra(getString(R.string.review_rest_name),restName);
+            Intent reviewIntent = new Intent(this, ReviewActivity.class);
+            reviewIntent.putExtra(getString(R.string.file_path), file.toString());
+            reviewIntent.putExtra(getString(R.string.review_rest_id), restId);
             startActivity(reviewIntent);
             finish();
-        }else {
+        } else {
             finish();
         }
     }

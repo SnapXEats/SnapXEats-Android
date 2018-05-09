@@ -27,6 +27,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
@@ -55,10 +56,14 @@ import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.squareup.picasso.Picasso;
+
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 import static com.snapxeats.common.Router.Screen.LOGIN;
 import static com.snapxeats.common.constants.UIConstants.LAT;
 import static com.snapxeats.common.constants.UIConstants.LNG;
@@ -420,7 +425,6 @@ public class HomeActivity extends BaseActivity implements
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.log_out));
         builder.setMessage(getString(R.string.logout_message));
-
         builder.setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> {
             //Clear local db
             showProgressDialog();
@@ -676,13 +680,10 @@ public class HomeActivity extends BaseActivity implements
     private void enableReceiver() {
 
         ComponentName receiver = new ComponentName(this, SnapNotificationReceiver.class);
-
         PackageManager pm = getPackageManager();
 
         pm.setComponentEnabledSetting(receiver,
-
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-
                 PackageManager.DONT_KILL_APP);
     }
 
@@ -702,6 +703,5 @@ public class HomeActivity extends BaseActivity implements
 
         am.cancel(pendingIntent);
         pendingIntent.cancel();
-
     }
 }

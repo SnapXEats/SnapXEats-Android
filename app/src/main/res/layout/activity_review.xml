@@ -70,7 +70,6 @@
             android:background="@color/colorLightGrey" />
 
         <LinearLayout
-
             android:layout_width="@dimen/common_dimens_0"
             android:layout_height="match_parent"
             android:layout_gravity="end"
@@ -148,7 +147,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/common_dimens_10"
             android:numStars="5"
-            android:stepSize="1"
+            android:stepSize="0.5"
             android:theme="@style/RatingBar" />
     </LinearLayout>
 </LinearLayout>

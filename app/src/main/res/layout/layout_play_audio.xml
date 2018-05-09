@@ -15,15 +15,30 @@
         android:textColor="@color/colorPrimary"
         android:textStyle="bold" />
 
-    <ImageView
-        android:id="@+id/img_play_audio"
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/common_dimens_10"
-        android:src="@drawable/ic_play_review" />
+        android:padding="@dimen/common_dimens_10">
 
-    <Chronometer
+        <ImageView
+            android:id="@+id/img_play_audio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_play_review"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/img_pause_audio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_audio_pause"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <TextView
         android:id="@+id/timer_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,9 +48,8 @@
         android:textColor="@android:color/darker_gray"
         android:textSize="@dimen/txt_size_16" />
 
-
     <Button
-        android:id="@+id/btn_play_dismiss"
+        android:id="@+id/btn_play_done"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
