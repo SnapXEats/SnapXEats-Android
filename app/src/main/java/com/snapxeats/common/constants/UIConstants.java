@@ -120,4 +120,5 @@ public class UIConstants {
     public static final int REQUEST_CODE_TAKE_PHOTO_ACTION = 2;
     public static final int REQUEST_CODE_REMIND_ACTION = 4;
     public static final int REMIND_LATER_REQUEST_ACTION = 6;
+    public static final long MILLI_TO_SEC = 1000;
 }

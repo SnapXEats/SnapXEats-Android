@@ -26,7 +26,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/ic_play_review" />
+            android:src="@drawable/ic_play_review"
+            android:visibility="visible" />
 
         <ImageView
             android:id="@+id/img_pause_audio"
@@ -37,7 +38,7 @@
             android:visibility="gone" />
     </FrameLayout>
 
-    <Chronometer
+    <TextView
         android:id="@+id/timer_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

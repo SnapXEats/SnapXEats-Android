@@ -9,6 +9,7 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
@@ -17,7 +18,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -52,6 +52,7 @@ import butterknife.OnClick;
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.snapxeats.common.constants.UIConstants.INT_TEN;
+import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC;
 import static com.snapxeats.common.constants.UIConstants.TIME_HOUR;
 import static com.snapxeats.common.constants.UIConstants.TIME_MINUTE;
 import static com.snapxeats.common.constants.UIConstants.TIME_SECONDS;
@@ -81,7 +82,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     private MediaPlayer mPlayer;
     private MediaRecorder mRecorder;
-    private Chronometer mChronometer, mChronometerPlay;
+    private Chronometer mChronometer;
     private File savedAudioPath = null;
     public static final int RequestPermissionCode = 1;
 
@@ -109,6 +110,16 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private Uri fileImageUri;
     private String restId;
     private String image_path;
+    private int resumePosition;
+
+    private boolean isPaused = false;
+    private boolean isCanceled = false;
+    private int seconds;
+    private String audioTime;
+    private AlertDialog dialog;
+    private long timeRemaining = 0;
+    private TextView mTimer;
+    private ImageView mImgPlayRecAudio, mImgPauseRecAudio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,11 +150,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         mImgRestPhoto.setImageURI(fileImageUri);
 
         mToolbar.setNavigationOnClickListener(v -> dialogExitReview());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     private void limitTextReview() {
@@ -205,12 +211,8 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private void dialogShareReview() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.msg_share_review))
-                .setPositiveButton(getString(R.string.review_continue), (dialog, which) -> {
-                    callApiReview();
-                })
-                .setNegativeButton(getString(R.string.review_discard), (dialog, which) -> {
-                    dialog.dismiss();
-                })
+                .setPositiveButton(getString(R.string.review_continue), (dialog, which) -> callApiReview())
+                .setNegativeButton(getString(R.string.review_discard), (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
@@ -227,47 +229,71 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         }
     }
 
+    public void initAlertDialog(View view) {
+        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setView(view);
+        alert.setCancelable(false);
+        dialog = alert.create();
+        dialog.show();
+    }
+
     /*Play recorded audio review*/
     @OnClick(R.id.img_play_review)
     public void imgPlayAudio() {
+
         LayoutInflater inflater = getLayoutInflater();
         View alertLayout = inflater.inflate(R.layout.layout_play_audio, null);
         Button mBtnDoneAudio = alertLayout.findViewById(R.id.btn_play_done);
-        ImageView mImgPlayRecAudio = alertLayout.findViewById(R.id.img_play_audio);
-        ImageView mImgPauseRecAudio = alertLayout.findViewById(R.id.img_pause_audio);
+        mImgPlayRecAudio = alertLayout.findViewById(R.id.img_play_audio);
+        mImgPauseRecAudio = alertLayout.findViewById(R.id.img_pause_audio);
         TextView mTxtDeleteAudio = alertLayout.findViewById(R.id.txt_delete_audio);
-        mChronometerPlay = alertLayout.findViewById(R.id.timer_play);
+        mTimer = alertLayout.findViewById(R.id.timer_play);
 
-        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setView(alertLayout);
-        alert.setCancelable(false);
-        AlertDialog dialog = alert.create();
-        dialog.show();
+        initAlertDialog(alertLayout);
+
+        mPlayer = new MediaPlayer();
+        mTimer.setText(audioTime);
 
         /*Pause audio review*/
         mImgPauseRecAudio.setOnClickListener(v -> {
             mImgPlayRecAudio.setVisibility(View.VISIBLE);
             mImgPauseRecAudio.setVisibility(View.GONE);
-            mChronometerPlay.stop();
-            mPlayer = new MediaPlayer();
-            mPlayer.pause();
-        });
-
-        /*Finish audio review*/
-        mBtnDoneAudio.setOnClickListener(v -> {
-            mChronometerPlay.stop();
-            if (null != mPlayer) {
+            isPaused = true;
+            if (mPlayer.isPlaying()) {
                 mPlayer.pause();
             }
-            dialog.dismiss();
+            resumePosition = mPlayer.getCurrentPosition();
         });
 
         /*Play audio review*/
         mImgPlayRecAudio.setOnClickListener(v -> {
             mImgPlayRecAudio.setVisibility(View.GONE);
             mImgPauseRecAudio.setVisibility(View.VISIBLE);
-            mChronometerPlay.setBase(SystemClock.elapsedRealtime());
-            mChronometerPlay.start();
+
+            setAudioTimer((long) seconds * MILLI_TO_SEC);
+/*
+            isPaused = false;
+            isCanceled = false;
+
+            long millisInFuture = (long) seconds * MILLI_TO_SEC;
+            new CountDownTimer(millisInFuture, MILLI_TO_SEC) {
+                public void onTick(long millisUntilFinished) {
+                    if (isPaused || isCanceled) {
+                        cancel();
+                    } else {
+                        long sec = millisUntilFinished / MILLI_TO_SEC;
+                        mTimer.setText(getString(R.string.str_timer) + (sec < INT_TEN ? getString(R.string.int_zero) + sec : sec));
+                        timeRemaining = millisUntilFinished;
+                    }
+                }
+
+                public void onFinish() {
+                    mImgPlayRecAudio.setVisibility(View.VISIBLE);
+                    mImgPauseRecAudio.setVisibility(View.GONE);
+                    mTimer.setText(audioTime);
+                }
+            }.start();*/
+
             mPlayer = new MediaPlayer();
             try {
                 mPlayer.setDataSource(savedAudioPath.toString());
@@ -275,7 +301,23 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            mPlayer.start();
+            if (0 != resumePosition) {
+//                setAudioTimer(timeRemaining);
+                resumeAudio();
+                mPlayer.seekTo(resumePosition);
+                mPlayer.start();
+            } else {
+                mPlayer.start();
+            }
+        });
+
+        /*Finish audio review*/
+        mBtnDoneAudio.setOnClickListener(v -> {
+            isCanceled = true;
+            if (mPlayer.isPlaying()) {
+                mPlayer.stop();
+            }
+            dialog.dismiss();
         });
 
         /*Delete audio review*/
@@ -295,13 +337,55 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                         mImgPlayAudio.setVisibility(View.GONE);
                         mAudioTime.setVisibility(View.GONE);
                     })
-                    .setNegativeButton(getString(R.string.not_now), (dialog1, which) -> {
-                        dialog.dismiss();
-                    })
+                    .setNegativeButton(getString(R.string.not_now), (dialog1, which) -> dialog.dismiss())
                     .show();
         });
     }
 
+    public void setAudioTimer(long millisInFuture) {
+        isPaused = false;
+        isCanceled = false;
+        new CountDownTimer(millisInFuture, MILLI_TO_SEC) {
+            public void onTick(long millisUntilFinished) {
+                if (isPaused || isCanceled) {
+                    cancel();
+                } else {
+                    long sec = millisUntilFinished / MILLI_TO_SEC;
+                    mTimer.setText(getString(R.string.str_timer) + (sec < INT_TEN ? getString(R.string.int_zero) + sec : sec));
+                    timeRemaining = millisUntilFinished;
+                }
+            }
+
+            public void onFinish() {
+                mImgPlayRecAudio.setVisibility(View.VISIBLE);
+                mImgPauseRecAudio.setVisibility(View.GONE);
+                mTimer.setText(audioTime);
+            }
+        }.start();
+    }
+
+    private void resumeAudio() {
+        isPaused = false;
+        isCanceled = false;
+        long millisInFuture = timeRemaining;
+        new CountDownTimer(millisInFuture, MILLI_TO_SEC) {
+            public void onTick(long millisUntilFinished) {
+                if (isPaused || isCanceled) {
+                    cancel();
+                } else {
+                    long sec = millisUntilFinished / MILLI_TO_SEC;
+                    mTimer.setText(getString(R.string.str_timer) + (sec < INT_TEN ? getString(R.string.int_zero) + sec : sec));
+                    timeRemaining = millisUntilFinished;
+                }
+            }
+
+            public void onFinish() {
+                mImgPlayRecAudio.setVisibility(View.GONE);
+                mImgPauseRecAudio.setVisibility(View.VISIBLE);
+                mTimer.setText(audioTime);
+            }
+        }.start();
+    }
 
     /*Add audio review*/
     @OnClick(R.id.img_audio_review)
@@ -309,11 +393,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         if (checkPermission()) {
             LayoutInflater inflater = getLayoutInflater();
             View alertLayout = inflater.inflate(R.layout.layout_record_review, null);
-            final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-            alert.setView(alertLayout);
-            alert.setCancelable(false);
-            AlertDialog dialog = alert.create();
-            dialog.show();
+            initAlertDialog(alertLayout);
 
             mBtnStartAudio = alertLayout.findViewById(R.id.btn_record_review);
             mBtnStopReview = alertLayout.findViewById(R.id.btn_stop_review);
@@ -342,21 +422,14 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         }
     }
 
-
     private void setAudioTime() {
         long time = SystemClock.elapsedRealtime() - mChronometer.getBase();
         int hour = (int) (time / TIME_HOUR);
         int min = (int) (time - hour * TIME_HOUR) / TIME_MINUTE;
-        int seconds = (int) (time - hour * TIME_HOUR - min * TIME_MINUTE) / TIME_SECONDS;
-        String audioTime = (min < INT_TEN ? getString(R.string.int_zero) + min : min) + ":"
+        seconds = (int) (time - hour * TIME_HOUR - min * TIME_MINUTE) / TIME_SECONDS;
+        audioTime = (min < INT_TEN ? getString(R.string.int_zero) + min : min) + ":"
                 + (seconds < INT_TEN ? getString(R.string.int_zero) + seconds : seconds);
         mAudioTime.setText(audioTime);
-    }
-
-    private void stopRecording() {
-        mChronometer.stop();
-        mRecorder.stop();
-        mRecorder.release();
     }
 
     private void startRecording() {
@@ -367,18 +440,20 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             mRecorder.start();
             mChronometer.setBase(SystemClock.elapsedRealtime());
             mChronometer.start();
-        mChronometer.setOnChronometerTickListener(chronometer -> {
-            String currentTime = mChronometer.getText().toString();
-            if (currentTime.equals(getString(R.string.timer_audio_review))) {
-                mChronometer.stop();
+            mChronometer.setOnChronometerTickListener(chronometer -> {
+                String currentTime = mChronometer.getText().toString();
+                if (currentTime.equals(getString(R.string.timer_audio_review))) {
+                    mChronometer.stop();
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage(getString(R.string.audio_review_limit_msg))
                             .setNeutralButton(getString(R.string.ok), (dialog, which) -> {
+                                stopRecording();
+                                setAudioTime();
                                 dialog.dismiss();
                             })
-                        .show();
-            }
-        });
+                            .show();
+                }
+            });
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
         }
@@ -389,6 +464,12 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
         mRecorder.setOutputFile(savedAudioPath.toString());
+    }
+
+    private void stopRecording() {
+        mChronometer.stop();
+        mRecorder.stop();
+        mRecorder.release();
     }
 
     private File getOutputMediaFile() {
@@ -479,9 +560,17 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         builder.setMessage(getString(R.string.msg_review_back_pressed));
         builder.setPositiveButton(getString(R.string.ok), (dialog, which) -> finish());
         builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
-                    dialog.cancel();
+            dialog.cancel();
         });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mPlayer.isPlaying()) {
+            mPlayer.release();
+        }
     }
 }

@@ -221,5 +221,6 @@
     <string name="dishPicture">dishPicture</string>
     <string name="audioReview">audioReview</string>
     <string name="image_path">image_path</string>
+    <string name="str_timer">00:</string>
 
 </resources>
