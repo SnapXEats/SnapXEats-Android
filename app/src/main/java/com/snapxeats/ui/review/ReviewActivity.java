@@ -271,28 +271,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             mImgPauseRecAudio.setVisibility(View.VISIBLE);
 
             setAudioTimer((long) seconds * MILLI_TO_SEC);
-/*
-            isPaused = false;
-            isCanceled = false;
-
-            long millisInFuture = (long) seconds * MILLI_TO_SEC;
-            new CountDownTimer(millisInFuture, MILLI_TO_SEC) {
-                public void onTick(long millisUntilFinished) {
-                    if (isPaused || isCanceled) {
-                        cancel();
-                    } else {
-                        long sec = millisUntilFinished / MILLI_TO_SEC;
-                        mTimer.setText(getString(R.string.str_timer) + (sec < INT_TEN ? getString(R.string.int_zero) + sec : sec));
-                        timeRemaining = millisUntilFinished;
-                    }
-                }
-
-                public void onFinish() {
-                    mImgPlayRecAudio.setVisibility(View.VISIBLE);
-                    mImgPauseRecAudio.setVisibility(View.GONE);
-                    mTimer.setText(audioTime);
-                }
-            }.start();*/
 
             mPlayer = new MediaPlayer();
             try {
@@ -302,8 +280,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                 e.printStackTrace();
             }
             if (0 != resumePosition) {
-//                setAudioTimer(timeRemaining);
-                resumeAudio();
+                setAudioTimer(timeRemaining);
                 mPlayer.seekTo(resumePosition);
                 mPlayer.start();
             } else {
@@ -359,29 +336,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             public void onFinish() {
                 mImgPlayRecAudio.setVisibility(View.VISIBLE);
                 mImgPauseRecAudio.setVisibility(View.GONE);
-                mTimer.setText(audioTime);
-            }
-        }.start();
-    }
-
-    private void resumeAudio() {
-        isPaused = false;
-        isCanceled = false;
-        long millisInFuture = timeRemaining;
-        new CountDownTimer(millisInFuture, MILLI_TO_SEC) {
-            public void onTick(long millisUntilFinished) {
-                if (isPaused || isCanceled) {
-                    cancel();
-                } else {
-                    long sec = millisUntilFinished / MILLI_TO_SEC;
-                    mTimer.setText(getString(R.string.str_timer) + (sec < INT_TEN ? getString(R.string.int_zero) + sec : sec));
-                    timeRemaining = millisUntilFinished;
-                }
-            }
-
-            public void onFinish() {
-                mImgPlayRecAudio.setVisibility(View.GONE);
-                mImgPauseRecAudio.setVisibility(View.VISIBLE);
                 mTimer.setText(audioTime);
             }
         }.start();
