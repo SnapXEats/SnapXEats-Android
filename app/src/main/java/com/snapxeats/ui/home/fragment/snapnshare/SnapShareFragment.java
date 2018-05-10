@@ -34,6 +34,7 @@ import com.snapxeats.common.model.restaurantDetails.RestaurantDetails;
 import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
 import com.snapxeats.common.model.restaurantDetails.RestaurantSpeciality;
 import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
+import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.dagger.AppContract;
 import com.squareup.picasso.Picasso;
 
@@ -78,6 +79,9 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
     @BindView(R.id.layout_dots)
     protected LinearLayout mSliderDotsPanel;
+
+    @BindView(R.id.layout_parent)
+    protected LinearLayout mParentLayout;
 
     @Inject
     SnapShareContract.SnapSharePresenter mPresenter;
@@ -270,6 +274,20 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
     @Override
     public void noNetwork(Object value) {
+        dismissProgressDialog();
+
+        showNetworkErrorDialog((dialog, which) -> {
+            if (!NetworkUtility.isNetworkAvailable(getActivity()) && null != mRootRestaurantDetails) {
+                AppContract.DialogListenerAction click = () -> {
+                    showProgressDialog();
+                    mPresenter.getRestaurantInfo(restaurantId);
+                };
+                showSnackBar(mParentLayout, setClickListener(click));
+            }else {
+                showProgressDialog();
+                mPresenter.getRestaurantInfo(restaurantId);
+            }
+        });
     }
 
     @Override

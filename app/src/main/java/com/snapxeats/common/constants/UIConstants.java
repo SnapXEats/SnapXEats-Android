@@ -90,9 +90,14 @@ public class UIConstants {
     public static final int CHECKIN_DIALOG_HEIGHT = 1250;
     public static final int CHECKIN_SINGLE_ITEM_DIALOG_HEIGHT = 1000;
     public static final int CHECKIN_SINGLE_ITEM_DIALOG_WIDTH = 850;
-    public static final int PHOTO_DIALOG_HEIGHT = 1300;
+    public static final int NO_DATA_DIALOG_HEIGHT = 1250;
+    public static final int NO_DATA_DIALOG_WIDTH = 900;
     public static final int REWARD_DIALOG_WIDTH = 800;
     public static final int REWARD_DIALOG_HEIGHT = 1100;
+    public static final int LOGOUT_DIALOG_HEIGHT = 500;
+    public static final int WISHLIST_DIALOG_WIDTH = 800;
+
+    public static final String ACTION_LOCATION_GET ="snapxeats.GET_LOCATION";
 
     /*Snap N Share*/
     public static final int MARGIN = 8;

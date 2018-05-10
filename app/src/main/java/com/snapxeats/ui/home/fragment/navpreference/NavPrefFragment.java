@@ -677,6 +677,9 @@ public class NavPrefFragment extends BaseFragment implements
                     postOrPutUserPreferences();
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
+            } else {
+                showProgressDialog();
+                postOrPutUserPreferences();
             }
         });
     }

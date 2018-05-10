@@ -378,6 +378,9 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
                     wishlistPresenter.sendUsersGestures(mRootFoodGestures);
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
+            } else {
+                showProgressDialog();
+                wishlistPresenter.sendUsersGestures(mRootFoodGestures);
             }
         });
     }

@@ -3,6 +3,7 @@ package com.snapxeats.ui.home.fragment.home;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -62,6 +63,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import static com.snapxeats.common.Router.Screen.LOCATION;
 import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
+import static com.snapxeats.common.constants.UIConstants.ACTION_LOCATION_GET;
 import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
 
 /**
@@ -112,6 +114,8 @@ public class HomeFragment extends BaseFragment implements
     private HomeAdapter adapter;
     private LocationCuisine mLocationCuisine;
 
+    private ProgressDialog mDialog;
+
     @Inject
     public HomeFragment() {
     }
@@ -128,7 +132,7 @@ public class HomeFragment extends BaseFragment implements
         super.onCreate(savedInstanceState);
         receiver = new MyReceiver();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("GET_DATA");
+        intentFilter.addAction(ACTION_LOCATION_GET);
         getActivity().registerReceiver(receiver, intentFilter);
     }
 
@@ -146,6 +150,10 @@ public class HomeFragment extends BaseFragment implements
         mTxtPlaceName.setSingleLine();
         cuisinesList = new ArrayList<>();
         selectedList = new ArrayList<>();
+
+        mDialog = new ProgressDialog(getActivity());
+        mDialog.setMessage(getActivity().getString(R.string.please_wait));
+        mDialog.setCanceledOnTouchOutside(false);
 
         if (null == mSelectedLocation) {
             mSelectedLocation = detectCurrentLocation();
@@ -253,10 +261,11 @@ public class HomeFragment extends BaseFragment implements
         } else {
             showNetworkErrorDialog((dialog, which) -> {
                 if (!NetworkUtility.isNetworkAvailable(activity)) {
-                    AppContract.DialogListenerAction click = () -> {
+                    AppContract.DialogListenerAction click = () ->
                         mSelectedLocation = detectCurrentLocation();
-                    };
                     showSnackBar(mParentLayout, setClickListener(click));
+                }else {
+                    mSelectedLocation = detectCurrentLocation();
                 }
             });
         }
@@ -290,6 +299,7 @@ public class HomeFragment extends BaseFragment implements
     public void success(Object value) {
         dismissProgressDialog();
         if (value instanceof RootCuisine) {
+            mDialog.dismiss();
             mRootCuisine = (RootCuisine) value;
             cuisinesList = mRootCuisine.getCuisineList();
             Collections.sort(cuisinesList);
@@ -414,6 +424,8 @@ public class HomeFragment extends BaseFragment implements
             if (!NetworkUtility.isNetworkAvailable(getActivity()) && null != mRootUserPreference) {
                 AppContract.DialogListenerAction click = () -> setLocation();
                 showSnackBar(mParentLayout, setClickListener(click));
+            }else {
+                setLocation();
             }
         });
     }
@@ -449,10 +461,11 @@ public class HomeFragment extends BaseFragment implements
             } else {
                 showNetworkErrorDialog((dialog, which) -> {
                     if (!NetworkUtility.isNetworkAvailable(activity)) {
-                        AppContract.DialogListenerAction click = () -> {
-                            mSelectedLocation = detectCurrentLocation();
-                        };
+                        AppContract.DialogListenerAction click = () ->
+                                mSelectedLocation = detectCurrentLocation();
                         showSnackBar(mParentLayout, setClickListener(click));
+                    } else {
+                        mSelectedLocation = detectCurrentLocation();
                     }
                 });
             }
@@ -473,7 +486,7 @@ public class HomeFragment extends BaseFragment implements
             utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
 
             mTxtPlaceName.setText(mSelectedLocation.getName());
-            showProgressDialog();
+            mDialog.show();
             presenter.getCuisineList(mLocationCuisine);
         }
     }

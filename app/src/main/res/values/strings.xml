@@ -141,7 +141,7 @@
     <string name="yyyy_MM_dd">yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'</string>
     <string name="dd_MMM_yyyy">dd MMM yyyy</string>
     <string name="date_rest_info">dd MMM yyyy</string>
-    <string name="log_out">LogOut</string>
+    <string name="log_out">Logout</string>
     <string name="chek_in">Check In</string>
     <string name="food_journey">Food Journey</string>
     <string name="rewards">Rewards</string>
@@ -221,6 +221,7 @@
     <string name="dishPicture">dishPicture</string>
     <string name="audioReview">audioReview</string>
     <string name="image_path">image_path</string>
+    <string name="no_data_found">It seems you need to \n revise your preferences \n to get a better result</string>
     <string name="str_timer">00:</string>
 
 </resources>

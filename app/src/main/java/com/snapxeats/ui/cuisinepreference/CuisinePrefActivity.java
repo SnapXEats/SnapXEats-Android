@@ -234,6 +234,9 @@ public class CuisinePrefActivity extends BaseActivity implements
                     prefPresenter.getCuisinePrefList();
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
+            } else {
+                showProgressDialog();
+                prefPresenter.getCuisinePrefList();
             }
         });
 

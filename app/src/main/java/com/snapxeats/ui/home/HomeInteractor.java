@@ -24,6 +24,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
+import static com.snapxeats.common.utilities.NoNetworkResults.CHECKIN;
+import static com.snapxeats.common.utilities.NoNetworkResults.CHECKIN_RESTAURANTS;
 
 /**
  * Created by Snehal Tembare on 28/2/18.
@@ -249,7 +251,7 @@ public class HomeInteractor {
             });
 
         } else {
-            homePresenter.response(SnapXResult.NONETWORK, null);
+            homePresenter.response(SnapXResult.NONETWORK, CHECKIN_RESTAURANTS);
         }
     }
 
@@ -270,7 +272,7 @@ public class HomeInteractor {
                 }
             });
         } else {
-            homePresenter.response(SnapXResult.NONETWORK, null);
+            homePresenter.response(SnapXResult.NONETWORK, CHECKIN);
         }
     }
 }
