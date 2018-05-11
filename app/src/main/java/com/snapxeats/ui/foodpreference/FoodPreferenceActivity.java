@@ -186,6 +186,7 @@ public class FoodPreferenceActivity extends BaseActivity implements
                         public void onSingleTap(int position, boolean isLike) {
                             isDirty = true;
                             mRootFoodPrefList.get(position).set_food_like(isLike);
+                            mRootFoodPrefList.get(position).setSelected(true);
                             mFoodPrefAdapter.notifyItemChanged(position);
                         }
 
@@ -193,6 +194,7 @@ public class FoodPreferenceActivity extends BaseActivity implements
                         public void onDoubleTap(int position, boolean isSuperLike) {
                             isDirty = true;
                             mRootFoodPrefList.get(position).set_food_favourite(isSuperLike);
+                            mRootFoodPrefList.get(position).setSelected(true);
                             mFoodPrefAdapter.notifyItemChanged(position);
                         }
                     });
@@ -213,10 +215,13 @@ public class FoodPreferenceActivity extends BaseActivity implements
         showNetworkErrorDialog((dialog, which) -> {
             if (!NetworkUtility.isNetworkAvailable(this) && null != mRootFoodPrefList) {
                 AppContract.DialogListenerAction click = () -> {
-                    showSavePrefDialog();
+                    showProgressDialog();
                     presenter.getFoodPrefList();
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
+            } else {
+                showProgressDialog();
+                presenter.getFoodPrefList();
             }
         });
     }

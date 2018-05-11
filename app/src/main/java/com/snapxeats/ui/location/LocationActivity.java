@@ -33,6 +33,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
+import static com.snapxeats.common.constants.UIConstants.ACTION_LOCATION_GET;
 import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
 
 /**
@@ -274,7 +275,7 @@ public class LocationActivity extends BaseActivity implements
 
         if (null != location) {
             Intent intent = new Intent();
-            intent.setAction("GET_DATA");
+            intent.setAction(ACTION_LOCATION_GET);
             intent.putExtra(getString(R.string.selected_location), location);
             this.sendBroadcast(intent);
             this.finish();
@@ -297,6 +298,10 @@ public class LocationActivity extends BaseActivity implements
                 };
                 utility.hideKeyboard();
                 showSnackBar(mParentLayout, setClickListener(click));
+            }else {
+                utility.hideKeyboard();
+                showProgressDialog();
+                locationPresenter.getPlaceDetails(placeId);
             }
         });
     }

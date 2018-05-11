@@ -354,6 +354,9 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
                     mRestaurantPresenter.getRestDetails(restaurantId);
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
+            }else {
+                showProgressDialog();
+                mRestaurantPresenter.getRestDetails(restaurantId);
             }
         });
     }

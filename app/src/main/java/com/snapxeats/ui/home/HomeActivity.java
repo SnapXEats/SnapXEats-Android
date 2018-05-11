@@ -27,7 +27,6 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
@@ -42,6 +41,7 @@ import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
+import com.snapxeats.common.utilities.NoNetworkResults;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.foodstack.FoodStackDbHelper;
 import com.snapxeats.ui.home.fragment.checkin.CheckInFragment;
@@ -56,17 +56,14 @@ import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.squareup.picasso.Picasso;
-
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import static com.snapxeats.common.Router.Screen.LOGIN;
 import static com.snapxeats.common.constants.UIConstants.LAT;
 import static com.snapxeats.common.constants.UIConstants.LNG;
+import static com.snapxeats.common.constants.UIConstants.LOGOUT_DIALOG_HEIGHT;
 import static com.snapxeats.common.constants.UIConstants.NOTIFICATION_ID;
 import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
@@ -161,12 +158,12 @@ public class HomeActivity extends BaseActivity implements
     private TextView txtRewards;
     private LinearLayout mLayoutUserData;
     private UserPreference mUserPreference;
-    private boolean isCheckIn = true;
     private Dialog mCheckInDialog;
     private Dialog mRewardDialog;
     private List<RestaurantInfo> mRestaurantList;
 
     private CheckInAdapter mAdapter;
+    private CheckInRequest checkInRequest;
 
     @Inject
     FoodStackDbHelper foodStackDbHelper;
@@ -227,6 +224,8 @@ public class HomeActivity extends BaseActivity implements
         Intent intent = getIntent();
         boolean isFromNotification = intent.getBooleanExtra(getString(R.string.notification), false);
         boolean isShareAnother = intent.getBooleanExtra(getString(R.string.share_another), false);
+        boolean isSetPref = intent.getBooleanExtra(getString(R.string.set_preferences), false);
+
         String restaurantId = intent.getStringExtra(getString(R.string.intent_restaurant_id));
 
         if (isFromNotification || isShareAnother) {
@@ -241,6 +240,8 @@ public class HomeActivity extends BaseActivity implements
             snapShareFragment.setArguments(bundle);
             transaction.replace(R.id.frame_layout, snapShareFragment);
             mNavigationView.setCheckedItem(R.id.nav_snap);
+        }else if (isSetPref){
+            transaction.replace(R.id.frame_layout, navPrefFragment);
         }
 
         transaction.commit();
@@ -249,11 +250,13 @@ public class HomeActivity extends BaseActivity implements
     }
 
     private void changeItems() {
-        if (isCheckIn) {
-            Menu menu = mNavigationView.getMenu();
-            MenuItem menuItem = menu.findItem(R.id.nav_snap);
-            menuItem.setTitle(getString(R.string.check_in));
-        }
+        Menu menu = mNavigationView.getMenu();
+        //Disable smart photos option
+        MenuItem checkInMenuItem = menu.findItem(R.id.nav_check_in).setActionView(R.layout.nav_check_in_layout);
+        MenuItem smartPhotoMenu = menu.findItem(R.id.nav_smart_photos);
+        MenuItem snapNShareMenu = menu.findItem(R.id.nav_snap);
+        smartPhotoMenu.setEnabled(false);
+        snapNShareMenu.setEnabled(false);
     }
 
     private void setWishlistCount() {
@@ -329,6 +332,9 @@ public class HomeActivity extends BaseActivity implements
                     if (ZERO != homeDbHelper.getWishlistCount()) {
                         selectedFragment = wishlistFragment;
                     }
+                    if (!utility.isLoggedIn()){
+                        showWishlistDialogNonLoggedInUser();
+                    }
                     break;
                 case R.id.nav_preferences:
                     selectedFragment = navPrefFragment;
@@ -339,7 +345,7 @@ public class HomeActivity extends BaseActivity implements
                 case R.id.nav_smart_photos:
                     selectedFragment = smartPhotoFragment;
                     break;
-                case R.id.nav_snap:
+                case R.id.nav_check_in:
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                     showCheckInDialog();
                     break;
@@ -391,10 +397,21 @@ public class HomeActivity extends BaseActivity implements
         return true;
     }
 
+    private void showWishlistDialogNonLoggedInUser() {
+        Dialog mWishlistDialog = new Dialog(this);
+        mWishlistDialog.setContentView(R.layout.layout_wishlist_dialog);
+        Window window = mWishlistDialog.getWindow();
+        if (null != window) {
+            window.setLayout(UIConstants.CHECKIN_DIALOG_WIDTH, LinearLayout.LayoutParams.WRAP_CONTENT);
+        }
+        Button btnOk = mWishlistDialog.findViewById(R.id.btn_ok);
+        btnOk.setOnClickListener(v -> mWishlistDialog.dismiss());
+        mWishlistDialog.show();
+    }
+
     public void checkIn() {
         if (utility.isLoggedIn()) {
             showProgressDialog();
-            CheckInRequest checkInRequest = null;
             for (RestaurantInfo restaurantInfo : mRestaurantList) {
                 if (restaurantInfo.isSelected()) {
                     checkInRequest = new CheckInRequest();
@@ -422,22 +439,23 @@ public class HomeActivity extends BaseActivity implements
      * Show logout dialog
      */
     private void showLogoutDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.log_out));
-        builder.setMessage(getString(R.string.logout_message));
-        builder.setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> {
+        Dialog logoutDialog = new Dialog(this);
+        logoutDialog.setContentView(R.layout.layout_logout_dialog);
+        Button btnCancel = logoutDialog.findViewById(R.id.btn_cancel);
+        Button btnOk = logoutDialog.findViewById(R.id.btn_ok);
+        btnCancel.setOnClickListener(v -> logoutDialog.dismiss());
+        btnOk.setOnClickListener(v -> {
             //Clear local db
             showProgressDialog();
+            logoutDialog.dismiss();
             mPresenter.sendUserGestures(wishlistDbHelper.getFoodGestures());
         });
-
-        builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
-            dialog.cancel();
-        });
-
-        Dialog alertDialog = builder.create();
-        alertDialog.setCanceledOnTouchOutside(false);
-        alertDialog.show();
+        Window window = logoutDialog.getWindow();
+        if (null != window) {
+            window.setLayout(UIConstants.CHECKIN_DIALOG_WIDTH, LOGOUT_DIALOG_HEIGHT);
+        }
+        logoutDialog.setCanceledOnTouchOutside(false);
+        logoutDialog.show();
     }
 
     @Override
@@ -628,7 +646,23 @@ public class HomeActivity extends BaseActivity implements
             if (!NetworkUtility.isNetworkAvailable(getActivity())) {
                 AppContract.DialogListenerAction click = () -> {
                     showProgressDialog();
-                    postOrPutUserPreferences();
+
+                    NoNetworkResults api = (NoNetworkResults) value;
+                    switch (api){
+                        case CHECKIN_RESTAURANTS:
+                            mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
+                            break;
+                        case CHECKIN:
+                            mPresenter.checkIn(checkInRequest);
+                            break;
+
+                        case USER_PREFERENCES:
+                            postOrPutUserPreferences();
+                            break;
+                        case FOODSTACK_GESTURES:
+                            mPresenter.sendUserGestures(wishlistDbHelper.getFoodGestures());
+                            break;
+                    }
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
             }

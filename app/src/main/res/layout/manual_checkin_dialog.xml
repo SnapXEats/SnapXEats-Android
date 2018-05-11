@@ -10,12 +10,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
+            <!--Layout for multiple restaurants-->
             <LinearLayout
                 android:id="@+id/multiple_restaurants_layout"
                 android:layout_width="match_parent"
@@ -41,10 +36,11 @@
                     android:scrollbars="vertical" />
             </LinearLayout>
 
+        <!--Layout for Single restaurants-->
             <LinearLayout
                 android:id="@+id/single_restaurant_layout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
                 android:visibility="gone">
@@ -63,16 +59,17 @@
                     android:id="@+id/txt_rest_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/common_dimens_10"
+                    android:padding="@dimen/common_dimens_10"
                     android:gravity="center_horizontal"
                     android:text="Restaurant Name"
+                    android:layout_gravity="center"
                     android:textColor="@color/text_color_primary"
                     android:textSize="@dimen/text_size_15"
                     android:textStyle="bold" />
             </LinearLayout>
 
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
         <LinearLayout
             android:id="@+id/buttons_layout"
@@ -87,7 +84,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/common_dimens_10"
+                android:layout_margin="@dimen/common_dimens_15"
                 android:text="@string/check_in_and_earn"
                 android:textColor="@color/text_color_secondary"
                 android:textSize="@dimen/text_size_12" />
@@ -156,7 +153,6 @@
                 android:paddingRight="@dimen/common_dimens_40"
                 android:text="@string/okay"
                 android:textColor="@color/colorWhite" />
-
 
         </LinearLayout>
 

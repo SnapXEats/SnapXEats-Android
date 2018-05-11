@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -12,7 +13,10 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.mindorks.butterknifelite.ButterKnifeLite;
 import com.mindorks.butterknifelite.annotations.BindView;
@@ -32,6 +36,7 @@ import com.snapxeats.common.model.restaurantDetails.RestaurantDishes;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.home.HomeActivity;
 import com.snapxeats.ui.maps.MapsActivity;
 import com.snapxeats.ui.restaurant.RestaurantDetailsActivity;
 import com.snapxeats.ui.restaurantInfo.RestaurantInfoActivity;
@@ -45,6 +50,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import static com.snapxeats.common.constants.UIConstants.SET_ALPHA;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Prajakta Patil on 30/1/18.
@@ -147,7 +153,7 @@ public class FoodStackActivity extends BaseActivity
                 .getParcelable(getString(R.string.data_selectedCuisineList));
 
         assert null != selectedCuisineList;
-        if (0 != selectedCuisineList.getSelectedCuisineList().size()) {
+        if (ZERO != selectedCuisineList.getSelectedCuisineList().size()) {
             enableGestureActions();
         }
 
@@ -169,9 +175,9 @@ public class FoodStackActivity extends BaseActivity
         mRootFoodGestures.setLike_dish_array(foodStackDbHelper.getFoodLikes());
 
         //If all list are empty API shouldn't call
-        if (0 != mRootFoodGestures.getDislike_dish_array().size()
-                || 0 != mRootFoodGestures.getWishlist_dish_array().size()
-                || 0 != mRootFoodGestures.getLike_dish_array().size()) {
+        if (ZERO != mRootFoodGestures.getDislike_dish_array().size()
+                || ZERO != mRootFoodGestures.getWishlist_dish_array().size()
+                || ZERO != mRootFoodGestures.getLike_dish_array().size()) {
             mFoodStackPresenter.foodstackGestures(mRootFoodGestures);
         }
     }
@@ -234,7 +240,7 @@ public class FoodStackActivity extends BaseActivity
                 if (cardStackView.getTopIndex() == foodStackDataList.size()) {
                     disableGestureActions();
                 }
-                if (0 == foodGestureDislike.size()) {
+                if (ZERO == foodGestureDislike.size()) {
                     disableUndo();
                 }
                 switch (direction) {
@@ -294,10 +300,10 @@ public class FoodStackActivity extends BaseActivity
     private void setStackAdapter() {
         int rowIndex, colIndex;
         List<DishesInfo> dishInfo = rootCuisinePhotos.getDishesInfo();
-        if (0 != dishInfo.size()) {
-            for (rowIndex = 0; rowIndex < dishInfo.size(); rowIndex++) {
+        if (ZERO != dishInfo.size()) {
+            for (rowIndex = ZERO; rowIndex < dishInfo.size(); rowIndex++) {
                 DishesInfo dish = dishInfo.get(rowIndex);
-                for (colIndex = 0; colIndex < dish.getRestaurantDishes().size(); colIndex++) {
+                for (colIndex = ZERO; colIndex < dish.getRestaurantDishes().size(); colIndex++) {
                     RestaurantDishes restaurantDishes = dish.getRestaurantDishes().get(colIndex);
                     stringsUrl.add(restaurantDishes.getDish_image_url());
                     FoodStackData foodStackData = new FoodStackData(dish.getRestaurant_name(),
@@ -308,7 +314,35 @@ public class FoodStackActivity extends BaseActivity
             }
             mStackAdapter = new FoodStackAdapter(FoodStackActivity.this, foodStackDataList);
             cardStackView.setAdapter(mStackAdapter);
+        }else {
+            showNoDataFoundDialog();
         }
+    }
+
+    private void showNoDataFoundDialog() {
+        Dialog noDataFoundDialog = new Dialog(this);
+        noDataFoundDialog.setContentView(R.layout.layout_no_data_dialog);
+        Window window = noDataFoundDialog.getWindow();
+        if (null != window) {
+            window.setLayout(UIConstants.NO_DATA_DIALOG_WIDTH, UIConstants.NO_DATA_DIALOG_HEIGHT);
+        }
+        noDataFoundDialog.show();
+
+        Button btnSetPref = noDataFoundDialog.findViewById(R.id.btn_set_pref);
+        TextView txtSelectCuisines = noDataFoundDialog.findViewById(R.id.txt_select_cuisine);
+
+        Intent homeIntent = new Intent(this, HomeActivity.class);
+        homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        btnSetPref.setOnClickListener(v -> {
+            homeIntent.putExtra(getString(R.string.set_preferences),true);
+            startActivity(homeIntent);
+        });
+
+        txtSelectCuisines.setOnClickListener(v -> {
+            noDataFoundDialog.dismiss();
+            finish();
+        });
     }
 
     /*swipe LEFT*/
@@ -428,7 +462,7 @@ public class FoodStackActivity extends BaseActivity
 
     @OnClick(R.id.img_foodstack_map)
     public void imgMaps() {
-        if (mStackAdapter.getCount() != 0) {
+        if (ZERO != mStackAdapter.getCount()) {
             mImgMap.setAlpha(SET_ALPHA);
             Intent intent = new Intent(FoodStackActivity.this, MapsActivity.class);
             intent.putExtra(getString(R.string.intent_root_cuisine), rootCuisinePhotos);
