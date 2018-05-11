@@ -523,7 +523,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mPlayer.isPlaying()) {
+        if (null != mPlayer && mPlayer.isPlaying()) {
             mPlayer.release();
         }
     }

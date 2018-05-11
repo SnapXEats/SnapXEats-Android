@@ -152,9 +152,10 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
 
         mBtnShare.setOnClickListener(v -> {
 
-            String restId = getIntent().getExtras().getString(getString(R.string.intent_restaurant_id));
+            String restId = getIntent().getExtras().getString(getString(R.string.review_rest_id));
             shareAnotherIntent.putExtra(getString(R.string.intent_restaurant_id), restId);
             shareAnotherIntent.putExtra(getString(R.string.share_another), true);
+            dialog.dismiss();
             startActivity(shareAnotherIntent);
         });
 

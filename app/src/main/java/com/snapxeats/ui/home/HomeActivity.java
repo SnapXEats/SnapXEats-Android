@@ -252,7 +252,6 @@ public class HomeActivity extends BaseActivity implements
     private void changeItems() {
         Menu menu = mNavigationView.getMenu();
         //Disable smart photos option
-        MenuItem checkInMenuItem = menu.findItem(R.id.nav_check_in).setActionView(R.layout.nav_check_in_layout);
         MenuItem smartPhotoMenu = menu.findItem(R.id.nav_smart_photos);
         MenuItem snapNShareMenu = menu.findItem(R.id.nav_snap);
         smartPhotoMenu.setEnabled(false);
@@ -642,12 +641,12 @@ public class HomeActivity extends BaseActivity implements
     public void noNetwork(Object value) {
         dismissProgressDialog();
         showNetworkErrorDialog((dialog, which) -> {
+            NoNetworkResults api = (NoNetworkResults) value;
 
             if (!NetworkUtility.isNetworkAvailable(getActivity())) {
                 AppContract.DialogListenerAction click = () -> {
                     showProgressDialog();
 
-                    NoNetworkResults api = (NoNetworkResults) value;
                     switch (api){
                         case CHECKIN_RESTAURANTS:
                             mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
@@ -665,6 +664,24 @@ public class HomeActivity extends BaseActivity implements
                     }
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
+            } else {
+                showProgressDialog();
+
+                switch (api) {
+                    case CHECKIN_RESTAURANTS:
+                        mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
+                        break;
+                    case CHECKIN:
+                        mPresenter.checkIn(checkInRequest);
+                        break;
+
+                    case USER_PREFERENCES:
+                        postOrPutUserPreferences();
+                        break;
+                    case FOODSTACK_GESTURES:
+                        mPresenter.sendUserGestures(wishlistDbHelper.getFoodGestures());
+                        break;
+                }
             }
         });
     }
