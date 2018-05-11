@@ -158,7 +158,6 @@ public class HomeActivity extends BaseActivity implements
     private TextView txtRewards;
     private LinearLayout mLayoutUserData;
     private UserPreference mUserPreference;
-    private boolean isCheckIn = true;
     private Dialog mCheckInDialog;
     private Dialog mRewardDialog;
     private List<RestaurantInfo> mRestaurantList;
@@ -226,7 +225,6 @@ public class HomeActivity extends BaseActivity implements
         boolean isFromNotification = intent.getBooleanExtra(getString(R.string.notification), false);
         boolean isShareAnother = intent.getBooleanExtra(getString(R.string.share_another), false);
         boolean isSetPref = intent.getBooleanExtra(getString(R.string.set_preferences), false);
-        boolean isSelectCuisine = intent.getBooleanExtra(getString(R.string.select_cuisines), false);
 
         String restaurantId = intent.getStringExtra(getString(R.string.intent_restaurant_id));
 
@@ -244,9 +242,7 @@ public class HomeActivity extends BaseActivity implements
             mNavigationView.setCheckedItem(R.id.nav_snap);
         }else if (isSetPref){
             transaction.replace(R.id.frame_layout, navPrefFragment);
-        }/*else if (isSelectCuisine){
-            transaction.replace(R.id.frame_layout, homeFragment);
-        }*/
+        }
 
         transaction.commit();
         changeItems();
@@ -255,14 +251,12 @@ public class HomeActivity extends BaseActivity implements
 
     private void changeItems() {
         Menu menu = mNavigationView.getMenu();
-        if (isCheckIn) {
-            MenuItem menuItem = menu.findItem(R.id.nav_snap);
-            menuItem.setTitle(getString(R.string.check_in));
-        }
-
         //Disable smart photos option
-        MenuItem menuItem = menu.findItem(R.id.nav_smart_photos);
-        menuItem.setEnabled(false);
+        MenuItem checkInMenuItem = menu.findItem(R.id.nav_check_in).setActionView(R.layout.nav_check_in_layout);
+        MenuItem smartPhotoMenu = menu.findItem(R.id.nav_smart_photos);
+        MenuItem snapNShareMenu = menu.findItem(R.id.nav_snap);
+        smartPhotoMenu.setEnabled(false);
+        snapNShareMenu.setEnabled(false);
     }
 
     private void setWishlistCount() {
@@ -351,7 +345,7 @@ public class HomeActivity extends BaseActivity implements
                 case R.id.nav_smart_photos:
                     selectedFragment = smartPhotoFragment;
                     break;
-                case R.id.nav_snap:
+                case R.id.nav_check_in:
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                     showCheckInDialog();
                     break;

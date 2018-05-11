@@ -196,6 +196,7 @@ public class CuisinePrefActivity extends BaseActivity implements
                     isDirty = true;
                     isCuisineDirty = true;
                     mRootCuisineList.get(position).set_cuisine_like(isLike);
+                    mRootCuisineList.get(position).setSelected(true);
                     mCuisinePrefAdapter.notifyItemChanged(position);
                 }
 
@@ -204,6 +205,7 @@ public class CuisinePrefActivity extends BaseActivity implements
                     isDirty = true;
                     isCuisineDirty = true;
                     mRootCuisineList.get(position).set_cuisine_favourite(isSuperLike);
+                    mRootCuisineList.get(position).setSelected(true);
                     mCuisinePrefAdapter.notifyItemChanged(position);
                 }
             });

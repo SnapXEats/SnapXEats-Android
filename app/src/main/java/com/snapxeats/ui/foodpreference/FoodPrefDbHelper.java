@@ -53,6 +53,7 @@ public class FoodPrefDbHelper {
                             (rootFoodPrefList.get(rootIndex).getFood_type_info_id())) {
                         rootFoodPrefList.get(rootIndex).set_food_favourite(userFoodPreferencesList.get(index).getIs_food_favourite());
                         rootFoodPrefList.get(rootIndex).set_food_like(userFoodPreferencesList.get(index).getIs_food_like());
+                        rootFoodPrefList.get(rootIndex).setSelected(true);
                     }
                 }
             }
@@ -84,7 +85,7 @@ public class FoodPrefDbHelper {
         UserFoodPreferences userCuisinePreferences;
         if (foodPrefList != null) {
             for (FoodPref foodPref : foodPrefList) {
-                if (foodPref.is_food_like() || foodPref.is_food_favourite()) {
+                if (foodPref.isSelected()) {
                     userCuisinePreferences = new UserFoodPreferences(foodPref.getFood_type_info_id()
                             , foodPref.is_food_like(), foodPref.is_food_favourite(), "");
                     selectedFoodList.add(userCuisinePreferences);

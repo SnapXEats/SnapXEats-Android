@@ -18,6 +18,7 @@ public class FoodPref implements Parcelable,Comparable<FoodPref> {
     private String food_type_info_id;
     private String food_name;
     private String food_image_url;
+    private boolean isSelected;
     private boolean is_food_like;
     private boolean is_food_favourite;
     private String user_food_preferences_id;
@@ -26,6 +27,7 @@ public class FoodPref implements Parcelable,Comparable<FoodPref> {
         food_type_info_id = in.readString();
         food_name = in.readString();
         food_image_url = in.readString();
+        isSelected = in.readByte() != 0;
         is_food_like = in.readByte() != 0;
         is_food_favourite = in.readByte() != 0;
         user_food_preferences_id = in.readString();
@@ -53,6 +55,7 @@ public class FoodPref implements Parcelable,Comparable<FoodPref> {
         dest.writeString(food_type_info_id);
         dest.writeString(food_name);
         dest.writeString(food_image_url);
+        dest.writeByte((byte) (isSelected ? 1 : 0));
         dest.writeByte((byte) (is_food_like ? 1 : 0));
         dest.writeByte((byte) (is_food_favourite ? 1 : 0));
         dest.writeString(user_food_preferences_id);

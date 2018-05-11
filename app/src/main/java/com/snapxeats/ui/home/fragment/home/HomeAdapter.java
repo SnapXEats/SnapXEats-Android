@@ -70,9 +70,6 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         @BindView(R.id.layout_cuisine_cardview)
         LinearLayout linearLayoutCuisine;
 
-        private Cuisines item;
-
-
         ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this,view);
