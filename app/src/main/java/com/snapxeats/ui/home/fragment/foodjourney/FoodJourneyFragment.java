@@ -182,6 +182,9 @@ public class FoodJourneyFragment extends BaseFragment implements
                     presenter.getFoodJourney();
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
+            } else {
+                showProgressDialog();
+                presenter.getFoodJourney();
             }
         });
     }
