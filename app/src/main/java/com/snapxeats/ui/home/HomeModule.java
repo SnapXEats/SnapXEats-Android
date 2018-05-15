@@ -12,13 +12,13 @@ import com.snapxeats.ui.home.fragment.foodjourney.FoodJourneyFragment;
 import com.snapxeats.ui.home.fragment.foodjourney.FoodJourneyInteractor;
 import com.snapxeats.ui.home.fragment.foodjourney.FoodJourneyPresenterImpl;
 import com.snapxeats.ui.home.fragment.foodjourney.FoodJourneyRouterImpl;
-import com.snapxeats.ui.home.fragment.navpreference.NavPrefContract;
-import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
 import com.snapxeats.ui.home.fragment.home.HomeFgmtContract;
 import com.snapxeats.ui.home.fragment.home.HomeFgmtInteractor;
 import com.snapxeats.ui.home.fragment.home.HomeFgmtPresenterImpl;
 import com.snapxeats.ui.home.fragment.home.HomeFgmtRouterImpl;
 import com.snapxeats.ui.home.fragment.home.HomeFragment;
+import com.snapxeats.ui.home.fragment.navpreference.NavPrefContract;
+import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefInteractor;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefPresenterImpl;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefRouterImpl;
@@ -172,8 +172,9 @@ public abstract class HomeModule {
     @Provides
     static FoodJourneyContract.FoodJourneyPresenter provideFoodJpurneyPresenter(FoodJourneyInteractor interactor,
                                                                                 FoodJourneyRouterImpl router) {
-        FoodJourneyContract.FoodJourneyPresenter foodJourneyPresenter = new FoodJourneyPresenterImpl(interactor, router);
-        interactor.setWishlistPresenter(foodJourneyPresenter);
+        FoodJourneyContract.FoodJourneyPresenter foodJourneyPresenter =
+                new FoodJourneyPresenterImpl(interactor, router);
+        interactor.setFoodJourneyPresenter(foodJourneyPresenter);
         return foodJourneyPresenter;
     }
 

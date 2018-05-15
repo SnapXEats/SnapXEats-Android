@@ -84,5 +84,8 @@
     <dimen name="common_dimens_210">210dp</dimen>
     <dimen name="txt_size_20">20sp</dimen>
     <dimen name="dimen_6dp">6dp</dimen>
+    <dimen name="txt_size_9">9sp</dimen>
+    <dimen name="txt_size_8">8sp</dimen>
+    <dimen name="dimen_50">50dp</dimen>
 
 </resources>

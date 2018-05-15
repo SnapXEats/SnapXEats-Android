@@ -148,7 +148,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         restId = intent.getStringExtra(getString(R.string.review_rest_id));
         fileImageUri = Uri.parse(image_path);
         mImgRestPhoto.setImageURI(fileImageUri);
-
         mToolbar.setNavigationOnClickListener(v -> dialogExitReview());
     }
 
@@ -240,7 +239,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     /*Play recorded audio review*/
     @OnClick(R.id.img_play_review)
     public void imgPlayAudio() {
-
         LayoutInflater inflater = getLayoutInflater();
         View alertLayout = inflater.inflate(R.layout.layout_play_audio, null);
         Button mBtnDoneAudio = alertLayout.findViewById(R.id.btn_play_done);
@@ -367,7 +365,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                 mImgAddAudio.setVisibility(View.GONE);
                 mImgPlayAudio.setVisibility(View.VISIBLE);
                 mAudioTime.setVisibility(View.VISIBLE);
-
                 setAudioTime();
             });
             mTxtCancel.setOnClickListener(v -> dialog.dismiss());
@@ -513,9 +510,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         builder.setCancelable(false);
         builder.setMessage(getString(R.string.msg_review_back_pressed));
         builder.setPositiveButton(getString(R.string.ok), (dialog, which) -> finish());
-        builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
-            dialog.cancel();
-        });
+        builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel());
         AlertDialog alert = builder.create();
         alert.show();
     }

@@ -223,5 +223,8 @@
     <string name="image_path">image_path</string>
     <string name="no_data_found">It seems you need to \n revise your preferences \n to get a better result</string>
     <string name="str_timer">00:</string>
+    <string name="Older">Older</string>
+    <string name="this_week">This Week</string>
+    <string name="points">points</string>
 
 </resources>

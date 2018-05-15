@@ -287,7 +287,6 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
         dismissProgressDialog();
         setInitWishlistView();
 
-
         if (value instanceof RootWishlist) {
             mWishlist = ((RootWishlist) value).getUser_wishlist();
             setupRecyclerview();
