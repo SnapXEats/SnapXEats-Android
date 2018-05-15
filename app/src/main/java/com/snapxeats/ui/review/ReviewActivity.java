@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -24,24 +26,32 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
+import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
+import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.model.review.SnapNShareResponse;
 import com.snapxeats.common.utilities.AppUtility;
+import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.shareReview.ShareReviewActivity;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -72,7 +82,13 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     AppUtility utility;
 
     @Inject
+    DbHelper dbHelper;
+
+    @Inject
     ReviewContract.ReviewPresenter mPresenter;
+
+    @Inject
+    ReviewDbHelper reviewDbHelper;
 
     @BindView(R.id.toolbar_review)
     protected Toolbar mToolbar;
@@ -84,6 +100,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private MediaRecorder mRecorder;
     private Chronometer mChronometer;
     private File savedAudioPath = null;
+
     public static final int RequestPermissionCode = 1;
 
     private Button mBtnStartAudio;
@@ -109,6 +126,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     private Uri fileImageUri;
     private String restId;
+
     private String image_path;
     private int resumePosition;
 
@@ -120,6 +138,14 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private long timeRemaining = 0;
     private TextView mTimer;
     private ImageView mImgPlayRecAudio, mImgPauseRecAudio;
+    private RootRestaurantInfo mRootRestaurantInfo;
+
+    @BindView(R.id.layout_main_review)
+    protected LinearLayout mParentLayout;
+
+    private Uri audioFile;
+    private int rating;
+    private String textReview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,14 +166,32 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         mPresenter.addView(this);
         snapXDialog.setContext(this);
         utility.setContext(this);
+        dbHelper.setContext(this);
+        reviewDbHelper.setContext(this);
         setUpToolbar();
-        limitTextReview();
+
+        dbHelper.getDraftPhotoDao();
+
+        /**
+         *  Commented for now as not implemented in iOs
+         * limitTextReview();
+         */
+
         //get file path
         Intent intent = getIntent();
-        image_path = intent.getStringExtra(getString(R.string.file_path));
-        restId = intent.getStringExtra(getString(R.string.review_rest_id));
-        fileImageUri = Uri.parse(image_path);
-        mImgRestPhoto.setImageURI(fileImageUri);
+        if (intent != null) {
+            image_path = intent.getExtras().getString(getString(R.string.file_path));
+            fileImageUri = Uri.parse(image_path);
+
+            mRootRestaurantInfo = intent.getExtras().getParcelable(getString(R.string.restaurant_info_object));
+            if (null != mRootRestaurantInfo.getRestaurantDetails()) {
+                restId = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_info_id();
+            }
+        }
+
+        //Reduce image size
+        Bitmap bitmap = BitmapFactory.decodeFile(fileImageUri.getPath());
+        mImgRestPhoto.setImageBitmap(bitmap);
 
         mToolbar.setNavigationOnClickListener(v -> dialogExitReview());
     }
@@ -192,6 +236,27 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     /*webservice call to send review*/
     @OnClick(R.id.img_share_review)
     public void imgSendReview() {
+        //Save share data in local db for Smart photo 'Draft'
+        List<String> restaurant_aminities = null;
+        String restName = null;
+        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities()
+                && 0 != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size())
+            restaurant_aminities = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities();
+
+        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name() &&
+                !mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name().isEmpty())
+            restName = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name();
+
+        String audioFile = null;
+        if (null != savedAudioPath) audioFile = Uri.fromFile(savedAudioPath).getPath();
+
+        reviewDbHelper.saveSnapDataInDb(restName
+                , Uri.parse(image_path).getPath()
+                ,audioFile ,
+                textReview,
+                rating,
+                restaurant_aminities);
+
         int rating = (int) mRatingBar.getRating();
         if (ZERO != rating) {
             dialogShareReview();
@@ -217,11 +282,11 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     }
 
     private void callApiReview() {
-        String textReview = mEditTxtReview.getText().toString();
-        int rating = (int) mRatingBar.getRating();
+        textReview = mEditTxtReview.getText().toString();
+        rating = (int) mRatingBar.getRating();
         if (null != restId && null != fileImageUri && 0 != rating) {
             showProgressDialog();
-            Uri audioFile = null;
+            audioFile = null;
             if (null != savedAudioPath) {
                 audioFile = Uri.fromFile(savedAudioPath);
             }
@@ -367,7 +432,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                 mImgAddAudio.setVisibility(View.GONE);
                 mImgPlayAudio.setVisibility(View.VISIBLE);
                 mAudioTime.setVisibility(View.VISIBLE);
-
                 setAudioTime();
             });
             mTxtCancel.setOnClickListener(v -> dialog.dismiss());
@@ -486,6 +550,19 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     @Override
     public void noNetwork(Object value) {
+        dismissProgressDialog();
+        showNetworkErrorDialog((dialog, which) -> {
+            if (!NetworkUtility.isNetworkAvailable(getActivity()) ) {
+                AppContract.DialogListenerAction click = () -> {
+                    showProgressDialog();
+                    mPresenter.sendReview(restId, fileImageUri, audioFile, textReview, rating);
+                };
+                showSnackBar(mParentLayout, setClickListener(click));
+            } else {
+                showProgressDialog();
+                mPresenter.sendReview(restId, fileImageUri, audioFile, textReview, rating);
+            }
+        });
     }
 
     @Override
@@ -513,9 +590,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         builder.setCancelable(false);
         builder.setMessage(getString(R.string.msg_review_back_pressed));
         builder.setPositiveButton(getString(R.string.ok), (dialog, which) -> finish());
-        builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
-            dialog.cancel();
-        });
+        builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel());
         AlertDialog alert = builder.create();
         alert.show();
     }

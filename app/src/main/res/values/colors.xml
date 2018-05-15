@@ -23,6 +23,7 @@
     <color name="check_in_rest_selected">#FFEDDC</color>
     <color name="colorTxtRestName">#424242</color>
     <color name="colorShareUrl">#1B202D</color>
+    <color name="colorDarkerGrey">#636262</color>
 
 </resources>
 

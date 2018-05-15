@@ -30,14 +30,15 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
-import com.snapxeats.common.model.restaurantDetails.RestaurantDetails;
 import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
 import com.snapxeats.common.model.restaurantDetails.RestaurantSpeciality;
-import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
+import com.snapxeats.common.model.restaurantInfo.RestaurantInfo;
+import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.dagger.AppContract;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -85,7 +86,8 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
     @Inject
     SnapShareContract.SnapSharePresenter mPresenter;
-    private RootRestaurantDetails mRootRestaurantDetails;
+
+    private RootRestaurantInfo mRootRestaurantInfo;
     private String restaurantId;
 
     @Inject
@@ -169,8 +171,12 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
     @OnClick(R.id.img_snap)
     public void snapImage() {
+        startCameraActivity();
+    }
+
+    private void startCameraActivity() {
         Intent intent = new Intent(getActivity(), CameraActivity.class);
-        intent.putExtra(getString(R.string.review_rest_id), restaurantId);
+        intent.putExtra(getString(R.string.restaurant_info_object),mRootRestaurantInfo);
         startActivity(intent);
     }
 
@@ -192,15 +198,15 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
     @Override
     public void success(Object value) {
         dismissProgressDialog();
-        if (value instanceof RootRestaurantDetails) {
-            mRootRestaurantDetails = (RootRestaurantDetails) value;
+        if (value instanceof RootRestaurantInfo) {
+            mRootRestaurantInfo = (RootRestaurantInfo) value;
             if (null != getActivity() && isAdded()) {
-                setView(mRootRestaurantDetails.getRestaurantDetails());
+                setView(mRootRestaurantInfo.getRestaurantDetails());
             }
         }
     }
 
-    private void setView(RestaurantDetails restaurantDetails) {
+    private void setView(RestaurantInfo restaurantDetails) {
         mTxtRestName.setText(restaurantDetails.getRestaurant_name());
         setViewPager(restaurantDetails.getRestaurant_pics());
         setMenusView(restaurantDetails.getRestaurant_speciality());
@@ -226,9 +232,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
         TextView mTxtRemindMeLater = mDialog.findViewById(R.id.txt_remind_me_later);
 
         mBtnTakePhoto.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), CameraActivity.class);
-            intent.putExtra(getString(R.string.review_rest_id), restaurantId);
-            startActivity(intent);
+            startCameraActivity();
             mDialog.dismiss();
         });
 
@@ -277,7 +281,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
         dismissProgressDialog();
 
         showNetworkErrorDialog((dialog, which) -> {
-            if (!NetworkUtility.isNetworkAvailable(getActivity()) && null != mRootRestaurantDetails) {
+            if (!NetworkUtility.isNetworkAvailable(getActivity()) && null != mRootRestaurantInfo) {
                 AppContract.DialogListenerAction click = () -> {
                     showProgressDialog();
                     mPresenter.getRestaurantInfo(restaurantId);

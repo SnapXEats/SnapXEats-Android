@@ -30,9 +30,9 @@
         android:name=".SnapXApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="false"
-        android:largeHeap="true"
         android:icon="@drawable/ic_snapx_app_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
@@ -74,7 +74,7 @@
         <activity android:name=".ui.cuisinepreference.CuisinePrefActivity" />
         <activity android:name=".ui.directions.DirectionsActivity" />
         <activity android:name=".ui.maps.MapsActivity" />
-        <activity android:name=".ui.home.fragment.snapnshare.CameraActivity"/>
+        <activity android:name=".ui.home.fragment.snapnshare.CameraActivity" />
         <activity android:name=".ui.review.ReviewActivity" />
         <activity android:name=".ui.shareReview.ShareReviewActivity" />
 
@@ -88,7 +88,7 @@
             android:exported="false" />
         <service
             android:name=".ui.home.fragment.snapnshare.RemindMeLaterService"
-            android:exported="false"/>
+            android:exported="false" />
     </application>
 
 </manifest>

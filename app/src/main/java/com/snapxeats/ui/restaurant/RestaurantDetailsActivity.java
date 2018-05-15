@@ -26,7 +26,7 @@ import com.snapxeats.common.model.googleDirections.RootGoogleDir;
 import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
 import com.snapxeats.common.model.restaurantDetails.RestaurantSpeciality;
 import com.snapxeats.common.model.restaurantDetails.RestaurantTimings;
-import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
+import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
@@ -79,7 +79,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     @BindView(R.id.layout_rest_specialties)
     protected LinearLayout mLayoutRestSpecialties;
 
-    private RootRestaurantDetails mRootRestaurantDetails;
+    private RootRestaurantInfo mRootRestaurantInfo;
 
     @BindView(R.id.txt_restaurant_name)
     protected TextView mTxtRestName;
@@ -188,8 +188,8 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     private void setGoogleDir() {
         //TODO latlng are hardcoded for now
-        final String destLat = mRootRestaurantDetails.getRestaurantDetails().getLocation_lat();
-        final String destLng = mRootRestaurantDetails.getRestaurantDetails().getLocation_long();
+        final String destLat = mRootRestaurantInfo.getRestaurantDetails().getLocation_lat();
+        final String destLng = mRootRestaurantInfo.getRestaurantDetails().getLocation_long();
         LocationGoogleDir locationGoogleDir = new LocationGoogleDir();
         GoogleDirOrigin googleDirOrigin = new GoogleDirOrigin();
         googleDirOrigin.setOriginLat(LATITUDE);
@@ -204,9 +204,9 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     @OnClick(R.id.img_rest_directions)
     public void imgRestDirections() {
-        if (null != mRootRestaurantDetails && mRootGoogleDir != null) {
+        if (null != mRootRestaurantInfo && mRootGoogleDir != null) {
             Intent intent = new Intent(RestaurantDetailsActivity.this, DirectionsActivity.class);
-            intent.putExtra(getString(R.string.intent_rest_details), mRootRestaurantDetails);
+            intent.putExtra(getString(R.string.intent_rest_details), mRootRestaurantInfo);
             intent.putExtra(getString(R.string.intent_google_dir), mRootGoogleDir);
             startActivity(intent);
         }
@@ -220,8 +220,8 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     @OnClick(R.id.img_rest_call)
     public void imgRestCall() {
-        if (null != mRootRestaurantDetails && !restContactNo.isEmpty()) {
-            String contact = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_contact_no();
+        if (null != mRootRestaurantInfo && !restContactNo.isEmpty()) {
+            String contact = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_contact_no();
             Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts(REST_CALL, contact, null));
             startActivity(intent);
         }
@@ -240,8 +240,8 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     @Override
     public void success(Object value) {
-        if (value instanceof RootRestaurantDetails) {
-            mRootRestaurantDetails = (RootRestaurantDetails) value;
+        if (value instanceof RootRestaurantInfo) {
+            mRootRestaurantInfo = (RootRestaurantInfo) value;
             setUpRecyclerView();
             restaurantTimingsList();
             setGoogleDir();
@@ -259,29 +259,29 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     }
 
     public void setUpRecyclerView() {
-        if (!mRootRestaurantDetails.getRestaurantDetails().getRestaurant_name().isEmpty()) {
-            String restName = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_name();
+        if (!mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name().isEmpty()) {
+            String restName = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name();
             mTxtRestName.setText(restName);
         }
-        if (!mRootRestaurantDetails.getRestaurantDetails().getRestaurant_address().isEmpty()) {
-            String restAddress = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_address();
+        if (!mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address().isEmpty()) {
+            String restAddress = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address();
             mTxtRestAddr.setText(restAddress);
         }
 
-        if (!mRootRestaurantDetails.getRestaurantDetails().getRestaurant_contact_no().isEmpty()) {
-            restContactNo = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_contact_no();
+        if (!mRootRestaurantInfo.getRestaurantDetails().getRestaurant_contact_no().isEmpty()) {
+            restContactNo = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_contact_no();
         } else {
             mImgCall.setClickable(false);
             mImgCall.setAlpha((float) 0.5);
         }
 
-        List<RestaurantPics> restPics = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_pics();
+        List<RestaurantPics> restPics = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_pics();
         for (int INDEX_REST_PICS = 0;
              INDEX_REST_PICS < restPics.size();
              INDEX_REST_PICS++) {
             mRestaurantPicsList.add(restPics.get(INDEX_REST_PICS));
         }
-        List<RestaurantSpeciality> restSpecialty = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_speciality();
+        List<RestaurantSpeciality> restSpecialty = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_speciality();
         for (int INDEX_REST_SPECIALTIES = 0; INDEX_REST_SPECIALTIES < restSpecialty.size(); INDEX_REST_SPECIALTIES++) {
             mRestaurantSpecialties.add(restSpecialty.get(INDEX_REST_SPECIALTIES));
             View view = mInflater.inflate(R.layout.layout_rest_specialties,
@@ -300,9 +300,9 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     private void restaurantTimingsList() {
         List<String> listTimings = new ArrayList<>();
-        List<RestaurantTimings> restTimingList = mRootRestaurantDetails.getRestaurantDetails().getRestaurant_timings();
-        String isOpenNow = mRootRestaurantDetails.getRestaurantDetails().getIsOpenNow();
-        if (0 != mRootRestaurantDetails.getRestaurantDetails().getRestaurant_timings().size()) {
+        List<RestaurantTimings> restTimingList = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings();
+        String isOpenNow = mRootRestaurantInfo.getRestaurantDetails().getIsOpenNow();
+        if (0 != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size()) {
             for (int row = 0; row < restTimingList.size(); row++) {
                 listTimings.add(restTimingList.get(row).getDay_of_week() + " " + restTimingList.get(row).getRestaurant_open_close_time());
             }

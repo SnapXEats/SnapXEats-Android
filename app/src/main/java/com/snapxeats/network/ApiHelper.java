@@ -11,6 +11,7 @@ import com.snapxeats.common.model.checkin.CheckInRestaurants;
 import com.snapxeats.common.model.foodGestures.RootDeleteWishlist;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.foodGestures.RootWishlist;
+import com.snapxeats.common.model.foodJourney.RootFoodJourney;
 import com.snapxeats.common.model.googleDirections.RootGoogleDir;
 import com.snapxeats.common.model.location.PlaceDetail;
 import com.snapxeats.common.model.location.PlacesAutoCompleteData;
@@ -123,7 +124,7 @@ public interface ApiHelper {
      * @return
      */
     @GET(WebConstants.RESTAURANT_DETAILS)
-    Call<RootRestaurantDetails> getRestDetails(@Path("restaurantInfoId") String restaurantInfoId);
+    Call<RootRestaurantInfo> getRestDetails(@Path("restaurantInfoId") String restaurantInfoId);
 
     /**
      * get restaurant info
@@ -261,4 +262,13 @@ public interface ApiHelper {
      */
     @GET(WebConstants.USER_LOGOUT)
     Call<Logout> logout(@Header("Authorization") String token);
+
+    /**
+     * get food journey details
+     *
+     * @param token
+     * @return
+     */
+    @GET(WebConstants.FOOD_JOURNEY)
+    Call<RootFoodJourney> getFoodJourney(@Header("Authorization") String token);
 }

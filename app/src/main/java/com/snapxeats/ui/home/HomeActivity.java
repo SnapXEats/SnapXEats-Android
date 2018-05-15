@@ -240,7 +240,7 @@ public class HomeActivity extends BaseActivity implements
             snapShareFragment.setArguments(bundle);
             transaction.replace(R.id.frame_layout, snapShareFragment);
             mNavigationView.setCheckedItem(R.id.nav_snap);
-        }else if (isSetPref){
+        } else if (isSetPref) {
             transaction.replace(R.id.frame_layout, navPrefFragment);
         }
 
@@ -331,7 +331,7 @@ public class HomeActivity extends BaseActivity implements
                     if (ZERO != homeDbHelper.getWishlistCount()) {
                         selectedFragment = wishlistFragment;
                     }
-                    if (!utility.isLoggedIn()){
+                    if (!utility.isLoggedIn()) {
                         showWishlistDialogNonLoggedInUser();
                     }
                     break;
@@ -339,6 +339,7 @@ public class HomeActivity extends BaseActivity implements
                     selectedFragment = navPrefFragment;
                     break;
                 case R.id.nav_food_journey:
+                    selectedFragment = foodJourneyFragment;
                     break;
 
                 case R.id.nav_smart_photos:

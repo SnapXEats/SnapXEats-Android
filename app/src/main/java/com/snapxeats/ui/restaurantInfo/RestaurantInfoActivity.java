@@ -186,13 +186,13 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     /*set restaurant aminities values*/
     public void setRestaurantAminities() {
         List<String> list = new ArrayList<>();
-        if (0 != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_aminities().size()) {
-            for (int row = 0; row < mRootRestaurantInfo.getRestaurantDetails().getRestaurant_aminities().size(); row++) {
-                list.add(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_aminities().get(row));
+        if (0 != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size()) {
+            for (int row = 0; row < mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size(); row++) {
+                list.add(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().get(row));
             }
 
             StringBuilder builder = new StringBuilder();
-            for (String details : mRootRestaurantInfo.getRestaurantDetails().getRestaurant_aminities()) {
+            for (String details : mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities()) {
                 builder.append(details + "\n");
             }
             mTxtRestAminities.setText(builder.toString());

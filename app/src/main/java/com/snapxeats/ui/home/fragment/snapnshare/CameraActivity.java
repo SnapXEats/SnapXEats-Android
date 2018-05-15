@@ -15,11 +15,16 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import com.snapxeats.R;
+import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.ui.review.ReviewActivity;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import butterknife.ButterKnife;
 
 import static com.snapxeats.common.constants.UIConstants.CAMERA_REQUEST;
 import static com.snapxeats.common.constants.UIConstants.CAMERA_REQUEST_PERMISSION;
@@ -29,7 +34,6 @@ import static com.snapxeats.common.constants.UIConstants.CAMERA_REQUEST_PERMISSI
  */
 public class CameraActivity extends AppCompatActivity {
     private Uri file;
-    private String restId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +43,6 @@ public class CameraActivity extends AppCompatActivity {
 
     private void initView() {
         checkPermissions();
-        restId = getIntent().getStringExtra(getString(R.string.review_rest_id));
     }
 
     private void checkPermissions() {
@@ -99,7 +102,10 @@ public class CameraActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK && requestCode == CAMERA_REQUEST) {
             Intent reviewIntent = new Intent(this, ReviewActivity.class);
             reviewIntent.putExtra(getString(R.string.file_path), file.toString());
-            reviewIntent.putExtra(getString(R.string.review_rest_id), restId);
+
+            //Put rest info object
+            RootRestaurantInfo restaurantInfo = getIntent().getParcelableExtra(getString(R.string.restaurant_info_object));
+            reviewIntent.putExtra(getString(R.string.restaurant_info_object), restaurantInfo);
             startActivity(reviewIntent);
             finish();
         } else {
