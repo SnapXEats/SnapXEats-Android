@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +35,7 @@ import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.review.SnapNShareResponse;
 import com.snapxeats.common.utilities.AppUtility;
+import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.shareReview.ShareReviewActivity;
@@ -120,6 +122,14 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private long timeRemaining = 0;
     private TextView mTimer;
     private ImageView mImgPlayRecAudio, mImgPauseRecAudio;
+    private SnapNShareResponse mSnapResponse;
+
+    @BindView(R.id.layout_main_review)
+    protected LinearLayout mParentLayout;
+
+    private Uri audioFile;
+    private int rating;
+    private String textReview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,7 +158,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         restId = intent.getStringExtra(getString(R.string.review_rest_id));
         fileImageUri = Uri.parse(image_path);
         mImgRestPhoto.setImageURI(fileImageUri);
-
         mToolbar.setNavigationOnClickListener(v -> dialogExitReview());
     }
 
@@ -217,11 +226,11 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     }
 
     private void callApiReview() {
-        String textReview = mEditTxtReview.getText().toString();
-        int rating = (int) mRatingBar.getRating();
+        textReview = mEditTxtReview.getText().toString();
+        rating = (int) mRatingBar.getRating();
         if (null != restId && null != fileImageUri && 0 != rating) {
             showProgressDialog();
-            Uri audioFile = null;
+            audioFile = null;
             if (null != savedAudioPath) {
                 audioFile = Uri.fromFile(savedAudioPath);
             }
@@ -240,7 +249,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     /*Play recorded audio review*/
     @OnClick(R.id.img_play_review)
     public void imgPlayAudio() {
-
         LayoutInflater inflater = getLayoutInflater();
         View alertLayout = inflater.inflate(R.layout.layout_play_audio, null);
         Button mBtnDoneAudio = alertLayout.findViewById(R.id.btn_play_done);
@@ -367,7 +375,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                 mImgAddAudio.setVisibility(View.GONE);
                 mImgPlayAudio.setVisibility(View.VISIBLE);
                 mAudioTime.setVisibility(View.VISIBLE);
-
                 setAudioTime();
             });
             mTxtCancel.setOnClickListener(v -> dialog.dismiss());
@@ -472,7 +479,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     @Override
     public void success(Object value) {
         dismissProgressDialog();
-        SnapNShareResponse mSnapResponse = (SnapNShareResponse) value;
+        mSnapResponse = (SnapNShareResponse) value;
         Intent intent = new Intent(ReviewActivity.this, ShareReviewActivity.class);
         intent.putExtra(getString(R.string.intent_review), mSnapResponse);
         intent.putExtra(getString(R.string.image_path), image_path);
@@ -486,6 +493,19 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     @Override
     public void noNetwork(Object value) {
+        dismissProgressDialog();
+        showNetworkErrorDialog((dialog, which) -> {
+            if (!NetworkUtility.isNetworkAvailable(getActivity()) && null != mSnapResponse) {
+                AppContract.DialogListenerAction click = () -> {
+                    showProgressDialog();
+                    mPresenter.sendReview(restId, fileImageUri, audioFile, textReview, rating);
+                };
+                showSnackBar(mParentLayout, setClickListener(click));
+            } else {
+                showProgressDialog();
+                mPresenter.sendReview(restId, fileImageUri, audioFile, textReview, rating);
+            }
+        });
     }
 
     @Override
@@ -513,9 +533,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         builder.setCancelable(false);
         builder.setMessage(getString(R.string.msg_review_back_pressed));
         builder.setPositiveButton(getString(R.string.ok), (dialog, which) -> finish());
-        builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
-            dialog.cancel();
-        });
+        builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel());
         AlertDialog alert = builder.create();
         alert.show();
     }

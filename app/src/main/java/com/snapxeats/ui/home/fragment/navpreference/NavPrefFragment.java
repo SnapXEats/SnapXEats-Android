@@ -84,7 +84,6 @@ public class NavPrefFragment extends BaseFragment implements
     private int distance = DISTANCE_ONE;
     private boolean isSortByDistance;
     private boolean isSortByRating;
-
     @Inject
     AppUtility utility;
 
@@ -96,6 +95,7 @@ public class NavPrefFragment extends BaseFragment implements
 
     @BindView(R.id.toolbar)
     protected Toolbar mToolbar;
+
 
     //View for Rating
 

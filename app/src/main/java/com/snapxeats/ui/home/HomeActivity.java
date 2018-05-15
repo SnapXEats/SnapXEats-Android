@@ -27,6 +27,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
@@ -56,10 +57,14 @@ import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.squareup.picasso.Picasso;
+
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 import static com.snapxeats.common.Router.Screen.LOGIN;
 import static com.snapxeats.common.constants.UIConstants.LAT;
 import static com.snapxeats.common.constants.UIConstants.LNG;
@@ -240,7 +245,7 @@ public class HomeActivity extends BaseActivity implements
             snapShareFragment.setArguments(bundle);
             transaction.replace(R.id.frame_layout, snapShareFragment);
             mNavigationView.setCheckedItem(R.id.nav_snap);
-        }else if (isSetPref){
+        } else if (isSetPref) {
             transaction.replace(R.id.frame_layout, navPrefFragment);
         }
 
@@ -252,7 +257,6 @@ public class HomeActivity extends BaseActivity implements
     private void changeItems() {
         Menu menu = mNavigationView.getMenu();
         //Disable smart photos option
-        MenuItem checkInMenuItem = menu.findItem(R.id.nav_check_in).setActionView(R.layout.nav_check_in_layout);
         MenuItem smartPhotoMenu = menu.findItem(R.id.nav_smart_photos);
         MenuItem snapNShareMenu = menu.findItem(R.id.nav_snap);
         smartPhotoMenu.setEnabled(false);
@@ -332,7 +336,7 @@ public class HomeActivity extends BaseActivity implements
                     if (ZERO != homeDbHelper.getWishlistCount()) {
                         selectedFragment = wishlistFragment;
                     }
-                    if (!utility.isLoggedIn()){
+                    if (!utility.isLoggedIn()) {
                         showWishlistDialogNonLoggedInUser();
                     }
                     break;
@@ -340,6 +344,7 @@ public class HomeActivity extends BaseActivity implements
                     selectedFragment = navPrefFragment;
                     break;
                 case R.id.nav_food_journey:
+                    selectedFragment = foodJourneyFragment;
                     break;
 
                 case R.id.nav_smart_photos:
@@ -648,7 +653,7 @@ public class HomeActivity extends BaseActivity implements
                     showProgressDialog();
 
                     NoNetworkResults api = (NoNetworkResults) value;
-                    switch (api){
+                    switch (api) {
                         case CHECKIN_RESTAURANTS:
                             mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
                             break;

@@ -32,4 +32,5 @@ public class WebConstants {
     public static final String CHECKIN_RESTAURANTS = "/api/v1/restaurant/checkIn/getRestaurants";
     public static final String CHECKIN = "/api/v1/restaurant/checkIn";
     public static final String SNAPSHARE = "/api/v1/snapNShare";
+    public static final String FOOD_JOURNEY = "/api/v1/foodJourney";
 }
