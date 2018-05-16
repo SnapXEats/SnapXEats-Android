@@ -5,6 +5,7 @@ import android.content.Context;
 import com.snapxeats.common.model.googleDirections.LocationGoogleDir;
 import com.snapxeats.common.model.googleDirections.RootGoogleDir;
 import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
+import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
@@ -44,18 +45,18 @@ public class RestaurantDetailsInteractor {
     public void getRestDetails(String restaurantId) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
-            Call<RootRestaurantDetails> snapXUserCall = apiHelper.getRestDetails(restaurantId);
-            snapXUserCall.enqueue(new Callback<RootRestaurantDetails>() {
+            Call<RootRestaurantInfo> snapXUserCall = apiHelper.getRestDetails(restaurantId);
+            snapXUserCall.enqueue(new Callback<RootRestaurantInfo>() {
                 @Override
-                public void onResponse(Call<RootRestaurantDetails> call, Response<RootRestaurantDetails> response) {
+                public void onResponse(Call<RootRestaurantInfo> call, Response<RootRestaurantInfo> response) {
                     if (response.isSuccessful() && null != response.body()) {
-                        RootRestaurantDetails rootRestaurantDetails = response.body();
-                        mRestaurantDetailsPresenter.response(SnapXResult.SUCCESS, rootRestaurantDetails);
+                        RootRestaurantInfo rootRestaurantInfo = response.body();
+                        mRestaurantDetailsPresenter.response(SnapXResult.SUCCESS, rootRestaurantInfo);
                     }
                 }
 
                 @Override
-                public void onFailure(Call<RootRestaurantDetails> call, Throwable t) {
+                public void onFailure(Call<RootRestaurantInfo> call, Throwable t) {
                     mRestaurantDetailsPresenter.response(SnapXResult.FAILURE, null);
                 }
             });

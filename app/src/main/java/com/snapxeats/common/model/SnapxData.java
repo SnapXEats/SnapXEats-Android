@@ -19,6 +19,7 @@ public class SnapxData {
     public String userName;
     public String socialPlatform;
     public boolean isFirstTimeUser;
+
     @Generated(hash = 367889088)
     public SnapxData(String token, String userId, String socialToken,
             String socialUserId, String imageUrl, String userName,

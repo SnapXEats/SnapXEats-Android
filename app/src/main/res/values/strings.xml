@@ -226,5 +226,7 @@
     <string name="Older">Older</string>
     <string name="this_week">This Week</string>
     <string name="points">points</string>
+    <string name="restaurant_aminities">restaurant_aminities</string>
+    <string name="restaurant_info_object">restaurant_info_object</string>
 
 </resources>

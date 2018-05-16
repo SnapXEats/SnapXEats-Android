@@ -124,7 +124,7 @@ public interface ApiHelper {
      * @return
      */
     @GET(WebConstants.RESTAURANT_DETAILS)
-    Call<RootRestaurantDetails> getRestDetails(@Path("restaurantInfoId") String restaurantInfoId);
+    Call<RootRestaurantInfo> getRestDetails(@Path("restaurantInfoId") String restaurantInfoId);
 
     /**
      * get restaurant info

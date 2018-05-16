@@ -27,7 +27,6 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
@@ -57,14 +56,10 @@ import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.squareup.picasso.Picasso;
-
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import static com.snapxeats.common.Router.Screen.LOGIN;
 import static com.snapxeats.common.constants.UIConstants.LAT;
 import static com.snapxeats.common.constants.UIConstants.LNG;
@@ -647,13 +642,13 @@ public class HomeActivity extends BaseActivity implements
     public void noNetwork(Object value) {
         dismissProgressDialog();
         showNetworkErrorDialog((dialog, which) -> {
+            NoNetworkResults api = (NoNetworkResults) value;
 
             if (!NetworkUtility.isNetworkAvailable(getActivity())) {
                 AppContract.DialogListenerAction click = () -> {
                     showProgressDialog();
 
-                    NoNetworkResults api = (NoNetworkResults) value;
-                    switch (api) {
+                    switch (api){
                         case CHECKIN_RESTAURANTS:
                             mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
                             break;
@@ -670,6 +665,24 @@ public class HomeActivity extends BaseActivity implements
                     }
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
+            } else {
+                showProgressDialog();
+
+                switch (api) {
+                    case CHECKIN_RESTAURANTS:
+                        mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
+                        break;
+                    case CHECKIN:
+                        mPresenter.checkIn(checkInRequest);
+                        break;
+
+                    case USER_PREFERENCES:
+                        postOrPutUserPreferences();
+                        break;
+                    case FOODSTACK_GESTURES:
+                        mPresenter.sendUserGestures(wishlistDbHelper.getFoodGestures());
+                        break;
+                }
             }
         });
     }
