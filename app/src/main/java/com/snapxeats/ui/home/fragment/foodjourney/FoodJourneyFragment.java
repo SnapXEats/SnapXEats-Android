@@ -64,9 +64,6 @@ public class FoodJourneyFragment extends BaseFragment implements
     @BindView(R.id.layout_parent)
     protected LinearLayout mParentLayout;
 
-    private ActionBarDrawerToggle toggle;
-
-
     @Inject
     public FoodJourneyFragment() {
         // Required empty public constructor

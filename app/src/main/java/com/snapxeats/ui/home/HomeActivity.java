@@ -254,17 +254,20 @@ public class HomeActivity extends BaseActivity implements
         //Disable smart photos option
         MenuItem smartPhotoMenu = menu.findItem(R.id.nav_smart_photos);
         MenuItem snapNShareMenu = menu.findItem(R.id.nav_snap);
+        MenuItem foodJourneyMenu = menu.findItem(R.id.nav_food_journey);
         smartPhotoMenu.setEnabled(false);
         snapNShareMenu.setEnabled(false);
+        if(!utility.isLoggedIn()) {
+            foodJourneyMenu.setEnabled(false);
+        }
     }
 
     private void setWishlistCount() {
         LinearLayout linearLayout = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
                 .getActionView().findViewById(R.id.layout_wishlist_count);
 
-        if (null != mSnapxData && mSnapxData.size() > ZERO && isLoggedIn()) {
+        if (null != mSnapxData && ZERO < mSnapxData.size() && isLoggedIn()) {
             linearLayout.setVisibility(View.VISIBLE);
-
             TextView view = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
                     .getActionView().findViewById(R.id.txt_count_wishlist);
 

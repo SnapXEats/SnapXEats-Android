@@ -7,7 +7,8 @@
 
             <solid android:color="@android:color/transparent" />
 
-            <corners android:bottomLeftRadius="@dimen/common_4" android:bottomRightRadius="@dimen/common_4" android:topLeftRadius="@dimen/common_4" android:topRightRadius="@dimen/common_4" />
+            <corners android:bottomLeftRadius="@dimen/common_4" android:bottomRightRadius="@dimen/common_4"
+                android:topLeftRadius="@dimen/common_4" android:topRightRadius="@dimen/common_4" />
         </shape>
     </item>
 

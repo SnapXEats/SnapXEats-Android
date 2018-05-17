@@ -127,15 +127,6 @@ public interface ApiHelper {
     Call<RootRestaurantInfo> getRestDetails(@Path("restaurantInfoId") String restaurantInfoId);
 
     /**
-     * get restaurant info
-     *
-     * @param restaurantInfoId
-     * @return
-     */
-    @GET(WebConstants.RESTAURANT_INFO)
-    Call<RootRestaurantInfo> getRestInfo(@Path("restaurantInfoId") String restaurantInfoId);
-
-    /**
      * get instagram info
      *
      * @param accessToken

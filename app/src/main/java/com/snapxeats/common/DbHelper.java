@@ -2,9 +2,9 @@ package com.snapxeats.common;
 
 import android.content.Context;
 import com.snapxeats.SnapXApplication;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.SnapxDataDao;
 import com.snapxeats.common.model.draft.SnapXDraftPhotoDao;
-import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.foodGestures.FoodLikesDao;
 import com.snapxeats.common.model.preference.UserCuisinePreferencesDao;
 import com.snapxeats.common.model.preference.UserFoodPreferencesDao;

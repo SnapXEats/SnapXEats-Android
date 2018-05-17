@@ -15,6 +15,7 @@ public class LoginContract {
     }
 
     interface LoginPresenter extends BasePresenter<LoginView> {
+
         void presentScreen(Router.Screen screen);
 
         void getInstaInfo(String token);
@@ -23,6 +24,7 @@ public class LoginContract {
     }
 
     public interface LoginRouter {
+
         void presentScreen(Router.Screen screen);
 
         void setView(LoginContract.LoginView view);

@@ -36,8 +36,8 @@ public class UIConstants {
     public static final double LNG = -74.0151;
 
     public static final float DEFAULT = 0;
-    public static final float MAP_SCOLL_BY = 370;
-    public static final float MAP_ZOOM = 13.3f;
+    public static final float MAP_SCOLL_BY = 320;
+    public static final float MAP_ZOOM = 13.2f;
     public static final int MAP_FILL_COLOR = 0x55AAAAAA;
     public static final float MAP_STROKE = 5;
     public static final float MAP_MARKER_ZOOM = 13;
@@ -68,7 +68,6 @@ public class UIConstants {
     public static final float RIGHT_ROTATION = 10f;
     public static final float RIGHT_X_TRANSLATION = 2000f;
     public static final float RIGHT_Y_TRANSLATION = 500f;
-    public static final int CARD_COUNT = 5;
 
     /*Wishlist screen*/
     public static final String DELETE = "Delete";
@@ -97,13 +96,12 @@ public class UIConstants {
     public static final int LOGOUT_DIALOG_HEIGHT = 500;
     public static final int WISHLIST_DIALOG_WIDTH = 800;
 
-    public static final String ACTION_LOCATION_GET ="snapxeats.GET_LOCATION";
+    public static final String ACTION_LOCATION_GET = "snapxeats.GET_LOCATION";
 
     /*Snap N Share*/
     public static final int MARGIN = 8;
 
     /*AddReview screen*/
-    public static final int RECORD_AUDIO_REQUEST_CODE = 123;
     public static final String INSTA_PACKAGE_NAME = "com.instagram.android";
     public static final String IMAGE_TYPE = "image/*";
     public static final String FILE_MEDIATYPE = "*/*";

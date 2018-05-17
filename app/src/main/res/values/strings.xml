@@ -228,5 +228,9 @@
     <string name="points">points</string>
     <string name="restaurant_aminities">restaurant_aminities</string>
     <string name="restaurant_info_object">restaurant_info_object</string>
+    <string name="txt_share_later">Share Later</string>
+    <string name="msg_login_dialog">The photo will not able to Shared unless you login into SnapXEats</string>
+    <string name="msg_save_to_draft">The photo has been saved in drafts and you can share it, once you login.</string>
+    <string name="draft">Draft</string>
 
 </resources>
