@@ -20,7 +20,6 @@ import com.snapxeats.common.model.preference.RootCuisine;
 import com.snapxeats.common.model.preference.RootFoodPref;
 import com.snapxeats.common.model.preference.SnapXPreference;
 import com.snapxeats.common.model.preference.UserPreference;
-import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.model.review.SnapNShareResponse;
 

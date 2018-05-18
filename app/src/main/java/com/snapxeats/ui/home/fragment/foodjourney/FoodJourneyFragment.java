@@ -107,9 +107,6 @@ public class FoodJourneyFragment extends BaseFragment implements
                 getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
-        mDrawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
         initView();
 
     }

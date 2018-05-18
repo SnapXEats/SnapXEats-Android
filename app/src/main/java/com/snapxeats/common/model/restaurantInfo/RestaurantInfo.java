@@ -3,10 +3,6 @@ package com.snapxeats.common.model.restaurantInfo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
-import com.snapxeats.common.model.restaurantDetails.RestaurantSpeciality;
-import com.snapxeats.common.model.restaurantDetails.RestaurantTimings;
-
 import java.util.List;
 
 import lombok.Getter;

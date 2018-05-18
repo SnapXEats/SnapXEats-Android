@@ -3,7 +3,7 @@ package com.snapxeats.common.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.snapxeats.common.model.restaurantDetails.RestaurantDishes;
+import com.snapxeats.common.model.restaurantInfo.RestaurantDishes;
 
 import java.util.List;
 

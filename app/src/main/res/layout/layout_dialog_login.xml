@@ -14,8 +14,8 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="200dp"
-            android:layout_height="50dp"
+            android:layout_width="@dimen/common_dimens_200"
+            android:layout_height="@dimen/dimen_50"
             android:layout_marginTop="@dimen/common_dimens_30"
             android:src="@drawable/ic_snapx_logo" />
 

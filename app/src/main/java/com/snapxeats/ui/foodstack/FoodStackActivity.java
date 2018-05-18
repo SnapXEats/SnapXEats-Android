@@ -32,7 +32,7 @@ import com.snapxeats.common.model.foodGestures.FoodDislikes;
 import com.snapxeats.common.model.foodGestures.FoodLikes;
 import com.snapxeats.common.model.foodGestures.FoodWishlists;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
-import com.snapxeats.common.model.restaurantDetails.RestaurantDishes;
+import com.snapxeats.common.model.restaurantInfo.RestaurantDishes;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.dagger.AppContract;
@@ -153,17 +153,8 @@ public class FoodStackActivity extends BaseActivity
         if (ZERO != selectedCuisineList.getSelectedCuisineList().size()) {
             enableGestureActions();
         }
-        callApiFoodStack();
-    }
-
-    private void callApiFoodStack() {
-        if (NetworkUtility.isNetworkAvailable(this)) {
-            showProgressDialog();
-            mFoodStackPresenter.getCuisinePhotos(selectedCuisineList);
-        } else {
-            showNetworkErrorDialog((dialog, which) -> {
-            });
-        }
+        showProgressDialog();
+        mFoodStackPresenter.getCuisinePhotos(selectedCuisineList);
     }
 
     private void setupToolbar() {

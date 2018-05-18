@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -24,16 +23,15 @@ import com.snapxeats.common.model.googleDirections.GoogleDirDest;
 import com.snapxeats.common.model.googleDirections.GoogleDirOrigin;
 import com.snapxeats.common.model.googleDirections.LocationGoogleDir;
 import com.snapxeats.common.model.googleDirections.RootGoogleDir;
-import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
-import com.snapxeats.common.model.restaurantDetails.RestaurantSpeciality;
-import com.snapxeats.common.model.restaurantDetails.RestaurantTimings;
+import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
+import com.snapxeats.common.model.restaurantInfo.RestaurantSpeciality;
+import com.snapxeats.common.model.restaurantInfo.RestaurantTimings;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.directions.DirectionsActivity;
-import com.snapxeats.ui.home.fragment.snapnshare.ViewPagerAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -53,7 +51,7 @@ import butterknife.OnClick;
 
 import static com.snapxeats.common.constants.UIConstants.LATITUDE;
 import static com.snapxeats.common.constants.UIConstants.LONGITUDE;
-import static com.snapxeats.common.constants.UIConstants.MARGIN;
+import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.SET_ALPHA_DISABLE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -121,8 +119,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     private RootGoogleDir mRootGoogleDir;
     private String restaurantId;
 
-    private int dotsCount;
-    private ImageView[] dots;
     @BindView(R.id.layout_dots)
     protected LinearLayout mSliderDotsPanel;
 
@@ -190,44 +186,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         restaurantId = getIntent().getStringExtra(getString(R.string.intent_restaurant_id));
         showProgressDialog();
         mRestaurantPresenter.getRestDetails(restaurantId);
-        setImagesCorousal();
-    }
-
-    private void setViewPager(List<RestaurantPics> restaurant_pics) {
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getActivity(), restaurant_pics);
-        mRestviewPager.setAdapter(viewPagerAdapter);
-        dotsCount = viewPagerAdapter.getCount();
-        dots = new ImageView[dotsCount];
-
-        for (int index = ZERO; index < dotsCount; index++) {
-            dots[index] = new ImageView(getActivity());
-            dots[index].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.non_active_dot));
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(MARGIN, ZERO, MARGIN, ZERO);
-            mSliderDotsPanel.addView(dots[index], params);
-        }
-        dots[ZERO].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
-    }
-
-    private void setImagesCorousal() {
-        mRestviewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                for (int index = ZERO; index < dotsCount; index++) {
-                    dots[index].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.non_active_dot));
-                }
-                dots[position].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.active_dot));
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
+        utility.setImagesCorousal(mRestviewPager);
     }
 
     @Override
@@ -311,7 +270,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             String restName = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name();
             mTxtRestName.setText(restName);
         }
-        setViewPager(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_pics());
+        utility.setViewPager(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_pics(), mRestviewPager, mSliderDotsPanel);
         if (!mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address().isEmpty()) {
             String restAddress = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address();
             mTxtRestAddr.setText(restAddress);
@@ -341,7 +300,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
                     .placeholder(R.drawable.ic_cuisine_placeholder).into(imageView);
             mLayoutRestSpecialties.addView(view);
         }
-
         /*set adapter for restaurant images*/
         RestImagesAdapter mRestPicsAdapter = new RestImagesAdapter(RestaurantDetailsActivity.this, mRestaurantPicsList);
         mRestviewPager.setAdapter(mRestPicsAdapter);
@@ -362,7 +320,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
                     Date d1 = format.parse(s1);
                     Date d2 = format.parse(s2);
                     if (d1.equals(d2)) {
-                        return s1.substring(s1.indexOf(" ") + 1).compareTo(s2.substring(s2.indexOf(" ") + 1));
+                        return s1.substring(s1.indexOf(" ") + ONE).compareTo(s2.substring(s2.indexOf(" ") + ONE));
                     } else {
                         Calendar cal1 = Calendar.getInstance();
                         Calendar cal2 = Calendar.getInstance();

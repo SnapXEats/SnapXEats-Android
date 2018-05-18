@@ -3,25 +3,23 @@ package com.snapxeats.ui.restaurantInfo;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
+import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
-import com.snapxeats.ui.home.fragment.snapnshare.ViewPagerAdapter;
+import com.snapxeats.ui.restaurant.RestImagesAdapter;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -38,7 +36,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.snapxeats.common.constants.UIConstants.MARGIN;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -92,9 +89,6 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     @BindView(R.id.txt_photo_taken)
     protected TextView mTxtPhotoTaken;
 
-    private int dotsCount;
-    private ImageView[] dots;
-
     @BindView(R.id.layout_dots)
     protected LinearLayout mSliderDotsPanel;
 
@@ -127,44 +121,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         restaurantId = getIntent().getStringExtra(getString(R.string.intent_foodstackRestInfoId));
         showProgressDialog();
         mRestaurantPresenter.getRestInfo(restaurantId);
-        setImagesCorousal();
-    }
-
-    private void setViewPager(List<RestaurantPics> restaurant_pics) {
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getActivity(), restaurant_pics);
-        mRestInfoViewPager.setAdapter(viewPagerAdapter);
-        dotsCount = viewPagerAdapter.getCount();
-        dots = new ImageView[dotsCount];
-
-        for (int index = ZERO; index < dotsCount; index++) {
-            dots[index] = new ImageView(getActivity());
-            dots[index].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.non_active_dot));
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(MARGIN, ZERO, MARGIN, ZERO);
-            mSliderDotsPanel.addView(dots[index], params);
-        }
-        dots[ZERO].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
-    }
-
-    private void setImagesCorousal() {
-        mRestInfoViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                for (int index = ZERO; index < dotsCount; index++) {
-                    dots[index].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.non_active_dot));
-                }
-                dots[position].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.active_dot));
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
+        utility.setImagesCorousal(mRestInfoViewPager);
     }
 
     /*set restaurant timings*/
@@ -271,7 +228,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
             String restName = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name();
             mTxtRestName.setText(restName);
         }
-        setViewPager(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_pics());
+        utility.setViewPager(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_pics(), mRestInfoViewPager, mSliderDotsPanel);
         if (!mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address().isEmpty()) {
             String restAddress = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address();
             mTxtRestAddr.setText(restAddress);
@@ -284,7 +241,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         }
 
         /*set adapter for restaurant images*/
-        RestaurantInfoAdapter mRestInfoAdapter = new RestaurantInfoAdapter(RestaurantInfoActivity.this, mRestaurantPicsList);
+        RestImagesAdapter mRestInfoAdapter = new RestImagesAdapter(RestaurantInfoActivity.this, mRestaurantPicsList);
         mRestInfoViewPager.setAdapter(mRestInfoAdapter);
     }
 
