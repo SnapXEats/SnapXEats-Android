@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.snapxeats.R;
-import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
+import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 

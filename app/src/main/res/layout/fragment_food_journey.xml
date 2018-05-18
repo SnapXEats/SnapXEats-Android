@@ -1,70 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/layout_parent"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fontFamily="Roboto-Medium"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <android.support.design.widget.AppBarLayout
+        <LinearLayout
+            android:id="@+id/layout_parent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/CustomAppBar">
+            android:layout_height="match_parent"
+            android:fontFamily="Roboto-Medium"
+            android:orientation="vertical">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+            <android.support.design.widget.AppBarLayout
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize">
+                android:layout_height="wrap_content"
+                android:theme="@style/CustomAppBar">
 
-                <TextView
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.4"
-                    android:gravity="center"
-                    android:text="@string/food_journey"
-                    android:textColor="@color/colorCuisine"
-                    android:textSize="@dimen/text_size_16"
-                    android:textStyle="bold" />
-            </android.support.v7.widget.Toolbar>
-        </android.support.design.widget.AppBarLayout>
+                    android:layout_height="?attr/actionBarSize">
 
-        <TextView
-            android:layout_marginTop="@dimen/common_dimens_10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/common_dimens_20"
-            android:text="@string/this_week"
-            android:textColor="@color/colorDarkerGrey"
-            android:textSize="@dimen/txt_size_16"
-            android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:gravity="center"
+                        android:text="@string/food_journey"
+                        android:textColor="@color/colorCuisine"
+                        android:textSize="@dimen/text_size_16"
+                        android:textStyle="bold" />
+                </android.support.v7.widget.Toolbar>
+            </android.support.design.widget.AppBarLayout>
 
-        <ListView
-            android:divider="@null"
-            android:layout_margin="@dimen/common_dimens_10"
-            android:id="@+id/list_current_food_journey"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/common_dimens_20"
+                android:layout_marginTop="@dimen/common_dimens_10"
+                android:text="@string/this_week"
+                android:textColor="@color/colorDarkerGrey"
+                android:textSize="@dimen/txt_size_16"
+                android:textStyle="bold" />
 
-        <TextView
+            <ListView
+                android:id="@+id/list_current_food_journey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/common_dimens_10"
+                android:divider="@null" />
 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/common_dimens_20"
-            android:text="@string/Older"
-            android:textColor="@color/colorDarkerGrey"
-            android:textSize="@dimen/txt_size_16"
-            android:textStyle="bold" />
+            <TextView
 
-        <ListView
-            android:divider="@null"
-            android:layout_margin="@dimen/common_dimens_10"
-            android:id="@+id/list_older_food_journey"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/common_dimens_20"
+                android:text="@string/Older"
+                android:textColor="@color/colorDarkerGrey"
+                android:textSize="@dimen/txt_size_16"
+                android:textStyle="bold" />
 
-</FrameLayout>
+            <ListView
+                android:id="@+id/list_older_food_journey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/common_dimens_10"
+                android:divider="@null" />
+        </LinearLayout>
+
+    </FrameLayout>
+</ScrollView>

@@ -45,11 +45,8 @@ import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.shareReview.ShareReviewActivity;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -135,7 +132,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private int seconds;
     private String audioTime;
     private AlertDialog dialog;
-    private long timeRemaining = 0;
+    private long timeRemaining = ZERO;
     private TextView mTimer;
     private ImageView mImgPlayRecAudio, mImgPauseRecAudio;
     private RootRestaurantInfo mRootRestaurantInfo;
@@ -173,13 +170,13 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         dbHelper.getDraftPhotoDao();
 
         /**
-         *  Commented for now as not implemented in iOs
+         *  Commented for now as not implemented in iOS
          * limitTextReview();
          */
 
         //get file path
         Intent intent = getIntent();
-        if (intent != null) {
+        if (null != intent) {
             image_path = intent.getExtras().getString(getString(R.string.file_path));
             fileImageUri = Uri.parse(image_path);
 
@@ -233,6 +230,28 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         getSupportActionBar().setTitle(getString(R.string.toolbar_snap_share));
     }
 
+    /*show login dialog if user is not logged in*/
+    private void showLoginDialog() {
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_dialog_login, null);
+        initAlertDialog(alertLayout);
+        TextView txtShareLater = alertLayout.findViewById(R.id.txt_login_share_later);
+        txtShareLater.setOnClickListener(v -> dialogSaveToDraft());
+    }
+
+    /*save to draft dialog on 'share later' action*/
+    private void dialogSaveToDraft() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setTitle(getString(R.string.draft));
+        builder.setMessage(getString(R.string.msg_save_to_draft));
+        builder.setNeutralButton(getString(R.string.ok), (dialog, which) -> {
+            finish();
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     /*webservice call to send review*/
     @OnClick(R.id.img_share_review)
     public void imgSendReview() {
@@ -240,7 +259,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         List<String> restaurant_aminities = null;
         String restName = null;
         if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities()
-                && 0 != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size())
+                && ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size())
             restaurant_aminities = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities();
 
         if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name() &&
@@ -252,14 +271,18 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
         reviewDbHelper.saveSnapDataInDb(restName
                 , Uri.parse(image_path).getPath()
-                ,audioFile ,
+                , audioFile,
                 textReview,
                 rating,
                 restaurant_aminities);
 
         int rating = (int) mRatingBar.getRating();
         if (ZERO != rating) {
-            dialogShareReview();
+            if (utility.isLoggedIn()) {
+                dialogShareReview();
+            } else {
+                showLoginDialog();
+            }
         } else {
             dialogSetRating();
         }
@@ -284,7 +307,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private void callApiReview() {
         textReview = mEditTxtReview.getText().toString();
         rating = (int) mRatingBar.getRating();
-        if (null != restId && null != fileImageUri && 0 != rating) {
+        if (null != restId && null != fileImageUri && ZERO != rating) {
             showProgressDialog();
             audioFile = null;
             if (null != savedAudioPath) {
@@ -294,6 +317,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         }
     }
 
+    /*initialize components for alert dialog*/
     public void initAlertDialog(View view) {
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setView(view);
@@ -305,7 +329,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     /*Play recorded audio review*/
     @OnClick(R.id.img_play_review)
     public void imgPlayAudio() {
-
         LayoutInflater inflater = getLayoutInflater();
         View alertLayout = inflater.inflate(R.layout.layout_play_audio, null);
         Button mBtnDoneAudio = alertLayout.findViewById(R.id.btn_play_done);
@@ -344,7 +367,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (0 != resumePosition) {
+            if (ZERO != resumePosition) {
                 setAudioTimer(timeRemaining);
                 mPlayer.seekTo(resumePosition);
                 mPlayer.start();
@@ -552,7 +575,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     public void noNetwork(Object value) {
         dismissProgressDialog();
         showNetworkErrorDialog((dialog, which) -> {
-            if (!NetworkUtility.isNetworkAvailable(getActivity()) ) {
+            if (!NetworkUtility.isNetworkAvailable(getActivity())) {
                 AppContract.DialogListenerAction click = () -> {
                     showProgressDialog();
                     mPresenter.sendReview(restId, fileImageUri, audioFile, textReview, rating);

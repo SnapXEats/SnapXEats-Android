@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -30,15 +29,14 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
-import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
-import com.snapxeats.common.model.restaurantDetails.RestaurantSpeciality;
 import com.snapxeats.common.model.restaurantInfo.RestaurantInfo;
+import com.snapxeats.common.model.restaurantInfo.RestaurantSpeciality;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
+import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.dagger.AppContract;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -48,8 +46,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
-import static com.snapxeats.common.constants.UIConstants.MARGIN;
 import static com.snapxeats.common.constants.UIConstants.PHOTO_NOTIFICATION_REQUEST_CODE;
 import static com.snapxeats.common.constants.UIConstants.PHOTO_NOTIFICATION_TIME;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
@@ -89,6 +85,9 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
     private RootRestaurantInfo mRootRestaurantInfo;
     private String restaurantId;
+
+    @Inject
+    AppUtility utility;
 
     @Inject
     public SnapShareFragment() {
@@ -148,24 +147,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
         showProgressDialog();
         mPresenter.getRestaurantInfo(restaurantId);
         if (null != getActivity() && isAdded()) {
-
-            mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                }
-
-                @Override
-                public void onPageSelected(int position) {
-                    for (int index = ZERO; index < dotsCount; index++) {
-                        dots[index].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.non_active_dot));
-                    }
-                    dots[position].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.active_dot));
-                }
-
-                @Override
-                public void onPageScrollStateChanged(int state) {
-                }
-            });
+            utility.setImagesCorousal(mViewPager);
         }
     }
 
@@ -176,7 +158,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
     private void startCameraActivity() {
         Intent intent = new Intent(getActivity(), CameraActivity.class);
-        intent.putExtra(getString(R.string.restaurant_info_object),mRootRestaurantInfo);
+        intent.putExtra(getString(R.string.restaurant_info_object), mRootRestaurantInfo);
         startActivity(intent);
     }
 
@@ -208,7 +190,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
     private void setView(RestaurantInfo restaurantDetails) {
         mTxtRestName.setText(restaurantDetails.getRestaurant_name());
-        setViewPager(restaurantDetails.getRestaurant_pics());
+        utility.setViewPager(restaurantDetails.getRestaurant_pics(), mViewPager, mSliderDotsPanel);
         setMenusView(restaurantDetails.getRestaurant_speciality());
         if (!isFromNotification) {
             showPhotoReminderDialog();
@@ -255,23 +237,6 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
         }
     }
 
-    private void setViewPager(List<RestaurantPics> restaurant_pics) {
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getActivity(), restaurant_pics);
-        mViewPager.setAdapter(viewPagerAdapter);
-        dotsCount = viewPagerAdapter.getCount();
-        dots = new ImageView[dotsCount];
-
-        for (int index = ZERO; index < dotsCount; index++) {
-            dots[index] = new ImageView(getActivity());
-            dots[index].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.non_active_dot));
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(MARGIN, ZERO, MARGIN, ZERO);
-            mSliderDotsPanel.addView(dots[index], params);
-        }
-        dots[ZERO].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
-    }
-
     @Override
     public void error(Object value) {
     }
@@ -287,7 +252,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
                     mPresenter.getRestaurantInfo(restaurantId);
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
-            }else {
+            } else {
                 showProgressDialog();
                 mPresenter.getRestaurantInfo(restaurantId);
             }

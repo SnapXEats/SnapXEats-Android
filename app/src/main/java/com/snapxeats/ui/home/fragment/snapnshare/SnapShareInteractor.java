@@ -2,7 +2,6 @@ package com.snapxeats.ui.home.fragment.snapnshare;
 
 import android.content.Context;
 
-import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;

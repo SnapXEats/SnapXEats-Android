@@ -23,9 +23,9 @@ import com.snapxeats.common.model.googleDirections.GoogleDirDest;
 import com.snapxeats.common.model.googleDirections.GoogleDirOrigin;
 import com.snapxeats.common.model.googleDirections.LocationGoogleDir;
 import com.snapxeats.common.model.googleDirections.RootGoogleDir;
-import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
-import com.snapxeats.common.model.restaurantDetails.RestaurantSpeciality;
-import com.snapxeats.common.model.restaurantDetails.RestaurantTimings;
+import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
+import com.snapxeats.common.model.restaurantInfo.RestaurantSpeciality;
+import com.snapxeats.common.model.restaurantInfo.RestaurantTimings;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
@@ -48,6 +48,12 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.snapxeats.common.constants.UIConstants.LATITUDE;
+import static com.snapxeats.common.constants.UIConstants.LONGITUDE;
+import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.SET_ALPHA_DISABLE;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Prajakta Patil on 05/02/18.
@@ -112,8 +118,9 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     private RootGoogleDir mRootGoogleDir;
     private String restaurantId;
-    private static final String LATITUDE = "40.4862157";
-    private static final String LONGITUDE = "-74.4518188";
+
+    @BindView(R.id.layout_dots)
+    protected LinearLayout mSliderDotsPanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,6 +186,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         restaurantId = getIntent().getStringExtra(getString(R.string.intent_restaurant_id));
         showProgressDialog();
         mRestaurantPresenter.getRestDetails(restaurantId);
+        utility.setImagesCorousal(mRestviewPager);
     }
 
     @Override
@@ -237,7 +245,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         return this;
     }
 
-
     @Override
     public void success(Object value) {
         if (value instanceof RootRestaurantInfo) {
@@ -254,7 +261,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     }
 
     private void setGoogleDirView() {
-        mTxtRestDuration.setText(mRootGoogleDir.getRoutes().get(0).getLegs().get(0)
+        mTxtRestDuration.setText(mRootGoogleDir.getRoutes().get(ZERO).getLegs().get(ZERO)
                 .getDuration().getText() + " " + getString(R.string.away));
     }
 
@@ -263,6 +270,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             String restName = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name();
             mTxtRestName.setText(restName);
         }
+        utility.setViewPager(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_pics(), mRestviewPager, mSliderDotsPanel);
         if (!mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address().isEmpty()) {
             String restAddress = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address();
             mTxtRestAddr.setText(restAddress);
@@ -272,17 +280,17 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             restContactNo = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_contact_no();
         } else {
             mImgCall.setClickable(false);
-            mImgCall.setAlpha((float) 0.5);
+            mImgCall.setAlpha(SET_ALPHA_DISABLE);
         }
 
         List<RestaurantPics> restPics = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_pics();
-        for (int INDEX_REST_PICS = 0;
+        for (int INDEX_REST_PICS = ZERO;
              INDEX_REST_PICS < restPics.size();
              INDEX_REST_PICS++) {
             mRestaurantPicsList.add(restPics.get(INDEX_REST_PICS));
         }
         List<RestaurantSpeciality> restSpecialty = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_speciality();
-        for (int INDEX_REST_SPECIALTIES = 0; INDEX_REST_SPECIALTIES < restSpecialty.size(); INDEX_REST_SPECIALTIES++) {
+        for (int INDEX_REST_SPECIALTIES = ZERO; INDEX_REST_SPECIALTIES < restSpecialty.size(); INDEX_REST_SPECIALTIES++) {
             mRestaurantSpecialties.add(restSpecialty.get(INDEX_REST_SPECIALTIES));
             View view = mInflater.inflate(R.layout.layout_rest_specialties,
                     mLayoutRestSpecialties, false);
@@ -292,7 +300,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
                     .placeholder(R.drawable.ic_cuisine_placeholder).into(imageView);
             mLayoutRestSpecialties.addView(view);
         }
-
         /*set adapter for restaurant images*/
         RestImagesAdapter mRestPicsAdapter = new RestImagesAdapter(RestaurantDetailsActivity.this, mRestaurantPicsList);
         mRestviewPager.setAdapter(mRestPicsAdapter);
@@ -302,8 +309,8 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         List<String> listTimings = new ArrayList<>();
         List<RestaurantTimings> restTimingList = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings();
         String isOpenNow = mRootRestaurantInfo.getRestaurantDetails().getIsOpenNow();
-        if (0 != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size()) {
-            for (int row = 0; row < restTimingList.size(); row++) {
+        if (ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size()) {
+            for (int row = ZERO; row < restTimingList.size(); row++) {
                 listTimings.add(restTimingList.get(row).getDay_of_week() + " " + restTimingList.get(row).getRestaurant_open_close_time());
             }
             Comparator<String> dateComparator = (s1, s2) -> {
@@ -313,7 +320,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
                     Date d1 = format.parse(s1);
                     Date d2 = format.parse(s2);
                     if (d1.equals(d2)) {
-                        return s1.substring(s1.indexOf(" ") + 1).compareTo(s2.substring(s2.indexOf(" ") + 1));
+                        return s1.substring(s1.indexOf(" ") + ONE).compareTo(s2.substring(s2.indexOf(" ") + ONE));
                     } else {
                         Calendar cal1 = Calendar.getInstance();
                         Calendar cal2 = Calendar.getInstance();
@@ -345,7 +352,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     @Override
     public void noNetwork(Object value) {
-
         dismissProgressDialog();
         showNetworkErrorDialog((dialog, which) -> {
             if (!NetworkUtility.isNetworkAvailable(getActivity())) {
@@ -354,7 +360,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
                     mRestaurantPresenter.getRestDetails(restaurantId);
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
-            }else {
+            } else {
                 showProgressDialog();
                 mRestaurantPresenter.getRestDetails(restaurantId);
             }

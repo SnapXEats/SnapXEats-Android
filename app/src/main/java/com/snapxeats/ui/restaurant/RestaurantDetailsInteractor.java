@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.snapxeats.common.model.googleDirections.LocationGoogleDir;
 import com.snapxeats.common.model.googleDirections.RootGoogleDir;
-import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;

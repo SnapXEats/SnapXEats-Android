@@ -1,4 +1,4 @@
-package com.snapxeats.common.model.restaurantDetails;
+package com.snapxeats.common.model.restaurantInfo;
 
 import android.os.Parcel;
 import android.os.Parcelable;

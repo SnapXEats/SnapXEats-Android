@@ -22,6 +22,7 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.model.review.SnapNShareResponse;
 import com.snapxeats.common.utilities.AppUtility;
+import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.home.HomeActivity;
@@ -105,8 +106,13 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
 
     @OnClick(R.id.img_share_fb)
     public void imgFb() {
-        shareOnFb();
-        fbCallback();
+        if (NetworkUtility.isNetworkAvailable(this)) {
+            shareOnFb();
+            fbCallback();
+        } else {
+            showNetworkErrorDialog((dialog, which) -> {
+            });
+        }
     }
 
     private void shareOnFb() {
@@ -167,7 +173,12 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
 
     @OnClick(R.id.img_share_insta)
     public void imgInsta() {
-        shareOnInsta();
+        if (NetworkUtility.isNetworkAvailable(this)) {
+            shareOnInsta();
+        } else {
+            showNetworkErrorDialog((dialog, which) -> {
+            });
+        }
     }
 
     private void shareOnInsta() {

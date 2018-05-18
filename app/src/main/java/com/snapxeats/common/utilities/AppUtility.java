@@ -7,21 +7,34 @@ import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+
 import com.google.gson.Gson;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
+import com.snapxeats.common.model.DaoSession;
 import com.snapxeats.common.model.SnapxData;
 import com.snapxeats.common.model.SnapxDataDao;
-import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.location.Location;
+import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
 import com.snapxeats.network.LocationHelper;
+import com.snapxeats.ui.home.fragment.snapnshare.ViewPagerAdapter;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
+import static com.snapxeats.common.constants.UIConstants.MARGIN;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Snehal Tembare on 31/1/18.
@@ -36,6 +49,8 @@ public class AppUtility {
     private SnapxDataDao snapxDataDao;
     private SnapxData snapxData;
     private ProgressDialog mDialog;
+    private int dotsCount;
+    private ImageView[] dots;
 
     @Inject
     public AppUtility() {
@@ -206,5 +221,54 @@ public class AppUtility {
         SharedPreferences preferences = getSharedPreferences();
         String serverUserId = preferences.getString(mContext.getString(R.string.user_id), "");
         return !serverUserId.isEmpty();
+    }
+
+    /**
+     * view pager for restaurant images
+     *
+     * @param restaurant_pics
+     * @param viewPager
+     * @param layout
+     */
+    public void setViewPager(List<RestaurantPics> restaurant_pics, ViewPager viewPager, LinearLayout layout) {
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getApplicationContext(), restaurant_pics);
+        viewPager.setAdapter(viewPagerAdapter);
+        dotsCount = viewPagerAdapter.getCount();
+        dots = new ImageView[dotsCount];
+
+        for (int index = ZERO; index < dotsCount; index++) {
+            dots[index] = new ImageView(getApplicationContext());
+            dots[index].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.setMargins(MARGIN, ZERO, MARGIN, ZERO);
+            layout.addView(dots[index], params);
+        }
+        dots[ZERO].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+    }
+
+    /**
+     * Set corousal dots
+     *
+     * @param viewPager
+     */
+    public void setImagesCorousal(ViewPager viewPager) {
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                for (int index = ZERO; index < dotsCount; index++) {
+                    dots[index].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
+                }
+                dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
     }
 }

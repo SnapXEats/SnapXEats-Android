@@ -20,7 +20,6 @@ import com.snapxeats.common.model.preference.RootCuisine;
 import com.snapxeats.common.model.preference.RootFoodPref;
 import com.snapxeats.common.model.preference.SnapXPreference;
 import com.snapxeats.common.model.preference.UserPreference;
-import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.model.review.SnapNShareResponse;
 
@@ -125,15 +124,6 @@ public interface ApiHelper {
      */
     @GET(WebConstants.RESTAURANT_DETAILS)
     Call<RootRestaurantInfo> getRestDetails(@Path("restaurantInfoId") String restaurantInfoId);
-
-    /**
-     * get restaurant info
-     *
-     * @param restaurantInfoId
-     * @return
-     */
-    @GET(WebConstants.RESTAURANT_INFO)
-    Call<RootRestaurantInfo> getRestInfo(@Path("restaurantInfoId") String restaurantInfoId);
 
     /**
      * get instagram info

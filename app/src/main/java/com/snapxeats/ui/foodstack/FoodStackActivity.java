@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.mindorks.butterknifelite.ButterKnifeLite;
@@ -23,7 +24,6 @@ import com.mindorks.butterknifelite.annotations.BindView;
 import com.mindorks.butterknifelite.annotations.OnClick;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.DishesInfo;
 import com.snapxeats.common.model.RootCuisinePhotos;
@@ -32,7 +32,7 @@ import com.snapxeats.common.model.foodGestures.FoodDislikes;
 import com.snapxeats.common.model.foodGestures.FoodLikes;
 import com.snapxeats.common.model.foodGestures.FoodWishlists;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
-import com.snapxeats.common.model.restaurantDetails.RestaurantDishes;
+import com.snapxeats.common.model.restaurantInfo.RestaurantDishes;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.dagger.AppContract;
@@ -49,15 +49,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.SET_ALPHA;
+import static com.snapxeats.common.constants.UIConstants.SET_ALPHA_DISABLE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Prajakta Patil on 30/1/18.
- */
-
-/**
- * This activity is not yet functionally completed
  */
 
 public class FoodStackActivity extends BaseActivity
@@ -95,6 +93,8 @@ public class FoodStackActivity extends BaseActivity
 
     private List<String> stringsUrl;
 
+    private SelectedCuisineList selectedCuisineList;
+
     @Inject
     AppUtility mAppUtility;
 
@@ -109,13 +109,13 @@ public class FoodStackActivity extends BaseActivity
     private AnimatorSet mAnimatorSet;
 
     @Inject
-    DbHelper mDbHelper;
-
-    @Inject
     FoodStackDbHelper foodStackDbHelper;
 
     @BindView(R.id.img_foodstack_map)
     protected ImageView mImgMap;
+
+    @BindView(R.id.layout_food_stack)
+    protected LinearLayout mParentLayout;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -134,10 +134,7 @@ public class FoodStackActivity extends BaseActivity
     public void initView() {
         mFoodStackPresenter.addView(this);
         stringsUrl = new ArrayList<>();
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        setupToolbar();
         foodStackDataList = new ArrayList<>();
         foodGestureWishlist = new ArrayList<>();
         foodGestureDislike = new ArrayList<>();
@@ -149,21 +146,22 @@ public class FoodStackActivity extends BaseActivity
         //Api call for saved food preferences
         foodGestures();
 
-        SelectedCuisineList selectedCuisineList = getIntent().getExtras()
+        selectedCuisineList = getIntent().getExtras()
                 .getParcelable(getString(R.string.data_selectedCuisineList));
 
         assert null != selectedCuisineList;
         if (ZERO != selectedCuisineList.getSelectedCuisineList().size()) {
             enableGestureActions();
         }
+        showProgressDialog();
+        mFoodStackPresenter.getCuisinePhotos(selectedCuisineList);
+    }
 
-        if (NetworkUtility.isNetworkAvailable(this)) {
-            showProgressDialog();
-            mFoodStackPresenter.getCuisinePhotos(selectedCuisineList);
-        } else {
-            showNetworkErrorDialog((dialog, which) -> {
-            });
-        }
+    private void setupToolbar() {
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     private void foodGestures() {
@@ -219,7 +217,7 @@ public class FoodStackActivity extends BaseActivity
     /*Enable Undo button action*/
     public void enableUndo() {
         mImgUndo.setClickable(true);
-        mImgUndo.setAlpha((float) 1.0);
+        mImgUndo.setAlpha(SET_ALPHA);
     }
 
     /*Disable Undo button action*/
@@ -239,17 +237,18 @@ public class FoodStackActivity extends BaseActivity
                 /*disable gestures buttons if stack is empty*/
                 if (cardStackView.getTopIndex() == foodStackDataList.size()) {
                     disableGestureActions();
+                    mImgMap.setAlpha(SET_ALPHA_DISABLE);
                 }
                 if (ZERO == foodGestureDislike.size()) {
                     disableUndo();
                 }
                 switch (direction) {
                     case Top: {
-                        swipeTop(cardStackView.getTopIndex() - 1);
+                        swipeTop(cardStackView.getTopIndex() - ONE);
                         break;
                     }
                     case Right: {
-                        swipeRight(cardStackView.getTopIndex() - 1);
+                        swipeRight(cardStackView.getTopIndex() - ONE);
                         break;
                     }
                     case Left: {
@@ -314,7 +313,7 @@ public class FoodStackActivity extends BaseActivity
             }
             mStackAdapter = new FoodStackAdapter(FoodStackActivity.this, foodStackDataList);
             cardStackView.setAdapter(mStackAdapter);
-        }else {
+        } else {
             showNoDataFoundDialog();
         }
     }
@@ -335,7 +334,7 @@ public class FoodStackActivity extends BaseActivity
         homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         btnSetPref.setOnClickListener(v -> {
-            homeIntent.putExtra(getString(R.string.set_preferences),true);
+            homeIntent.putExtra(getString(R.string.set_preferences), true);
             startActivity(homeIntent);
         });
 
@@ -463,7 +462,6 @@ public class FoodStackActivity extends BaseActivity
     @OnClick(R.id.img_foodstack_map)
     public void imgMaps() {
         if (ZERO != mStackAdapter.getCount()) {
-            mImgMap.setAlpha(SET_ALPHA);
             Intent intent = new Intent(FoodStackActivity.this, MapsActivity.class);
             intent.putExtra(getString(R.string.intent_root_cuisine), rootCuisinePhotos);
             startActivity(intent);
@@ -499,6 +497,16 @@ public class FoodStackActivity extends BaseActivity
     public void noNetwork(Object value) {
         dismissProgressDialog();
         showNetworkErrorDialog((dialog, which) -> {
+            if (!NetworkUtility.isNetworkAvailable(getActivity())) {
+                AppContract.DialogListenerAction click = () -> {
+                    showProgressDialog();
+                    mFoodStackPresenter.getCuisinePhotos(selectedCuisineList);
+                };
+                showSnackBar(mParentLayout, setClickListener(click));
+            } else {
+                showProgressDialog();
+                mFoodStackPresenter.getCuisinePhotos(selectedCuisineList);
+            }
         });
     }
 

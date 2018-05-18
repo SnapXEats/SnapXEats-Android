@@ -1,6 +1,6 @@
 package com.snapxeats.common.model.checkin;
 
-import com.snapxeats.common.model.restaurantDetails.RestaurantDishes;
+import com.snapxeats.common.model.restaurantInfo.RestaurantDishes;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;

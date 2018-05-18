@@ -64,9 +64,6 @@ public class FoodJourneyFragment extends BaseFragment implements
     @BindView(R.id.layout_parent)
     protected LinearLayout mParentLayout;
 
-    private ActionBarDrawerToggle toggle;
-
-
     @Inject
     public FoodJourneyFragment() {
         // Required empty public constructor
@@ -108,9 +105,6 @@ public class FoodJourneyFragment extends BaseFragment implements
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         initView();

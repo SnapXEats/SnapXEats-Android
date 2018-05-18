@@ -13,12 +13,13 @@ import android.widget.TextView;
 
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.common.model.restaurantDetails.RestaurantPics;
+import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.restaurant.RestImagesAdapter;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -34,6 +35,8 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Prajakta Patil on 05/02/18.
@@ -86,6 +89,9 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     @BindView(R.id.txt_photo_taken)
     protected TextView mTxtPhotoTaken;
 
+    @BindView(R.id.layout_dots)
+    protected LinearLayout mSliderDotsPanel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,6 +121,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         restaurantId = getIntent().getStringExtra(getString(R.string.intent_foodstackRestInfoId));
         showProgressDialog();
         mRestaurantPresenter.getRestInfo(restaurantId);
+        utility.setImagesCorousal(mRestInfoViewPager);
     }
 
     /*set restaurant timings*/
@@ -123,8 +130,8 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         List<String> listTimings = new ArrayList<>();
         String isOpenNow = mRootRestaurantInfo.getRestaurantDetails().getIsOpenNow();
 
-        if (0 != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size()) {
-            for (int row = 0; row < mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size(); row++) {
+        if (ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size()) {
+            for (int row = ZERO; row < mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size(); row++) {
                 listTimings.add(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().get(row).getDay_of_week()
                         + " - " +
                         mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().get(row).getRestaurant_open_close_time());
@@ -186,8 +193,8 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     /*set restaurant aminities values*/
     public void setRestaurantAminities() {
         List<String> list = new ArrayList<>();
-        if (0 != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size()) {
-            for (int row = 0; row < mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size(); row++) {
+        if (ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size()) {
+            for (int row = ZERO; row < mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size(); row++) {
                 list.add(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().get(row));
             }
 
@@ -205,7 +212,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         Date date = null;
         String stringDate = null;
         try {
-            date = simpleDateFormat.parse(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_pics().get(0).getCreated_date());
+            date = simpleDateFormat.parse(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_pics().get(ZERO).getCreated_date());
             SimpleDateFormat dateFormat = new SimpleDateFormat(getString(R.string.dd_MMM_yyyy));
             stringDate = dateFormat.format(date);
 
@@ -221,19 +228,20 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
             String restName = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name();
             mTxtRestName.setText(restName);
         }
+        utility.setViewPager(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_pics(), mRestInfoViewPager, mSliderDotsPanel);
         if (!mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address().isEmpty()) {
             String restAddress = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address();
             mTxtRestAddr.setText(restAddress);
         }
 
-        for (int INDEX_REST_PICS = 0;
+        for (int INDEX_REST_PICS = ZERO;
              INDEX_REST_PICS < mRootRestaurantInfo.getRestaurantDetails().getRestaurant_pics().size();
              INDEX_REST_PICS++) {
             mRestaurantPicsList.add(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_pics().get(INDEX_REST_PICS));
         }
 
         /*set adapter for restaurant images*/
-        RestaurantInfoAdapter mRestInfoAdapter = new RestaurantInfoAdapter(RestaurantInfoActivity.this, mRestaurantPicsList);
+        RestImagesAdapter mRestInfoAdapter = new RestImagesAdapter(RestaurantInfoActivity.this, mRestaurantPicsList);
         mRestInfoViewPager.setAdapter(mRestInfoAdapter);
     }
 
@@ -244,7 +252,6 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
 
     @Override
     public void noNetwork(Object value) {
-
         dismissProgressDialog();
         showNetworkErrorDialog((dialog, which) -> {
             if (!NetworkUtility.isNetworkAvailable(getActivity())) {
@@ -253,7 +260,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
                     mRestaurantPresenter.getRestInfo(restaurantId);
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
-            }else {
+            } else {
                 showProgressDialog();
                 mRestaurantPresenter.getRestInfo(restaurantId);
             }

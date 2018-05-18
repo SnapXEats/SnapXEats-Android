@@ -33,7 +33,7 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.googleDirections.RootGoogleDir;
-import com.snapxeats.common.model.restaurantDetails.RootRestaurantDetails;
+import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 
@@ -88,7 +88,7 @@ public class DirectionsActivity extends BaseActivity
     @BindView(R.id.txt_distance_maps)
     protected TextView mTxtRestDist;
 
-    private RootRestaurantDetails mDetails;
+    private RootRestaurantInfo mDetails;
 
     private GoogleMap mMap;
 

@@ -43,7 +43,7 @@ public class RestaurantInfoInteractor {
     public void getRestInfo(String restaurantId) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext,BASE_URL).create(ApiHelper.class);
-            Call<RootRestaurantInfo> snapXUserCall = apiHelper.getRestInfo(restaurantId);
+            Call<RootRestaurantInfo> snapXUserCall = apiHelper.getRestDetails(restaurantId);
             snapXUserCall.enqueue(new Callback<RootRestaurantInfo>() {
                 @Override
                 public void onResponse(Call<RootRestaurantInfo> call,
