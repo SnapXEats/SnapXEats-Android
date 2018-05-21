@@ -5,8 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -30,7 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.bumptech.glide.Glide;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
@@ -43,19 +41,15 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.shareReview.ShareReviewActivity;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.snapxeats.common.constants.UIConstants.INT_TEN;
@@ -124,7 +118,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private Uri fileImageUri;
     private String restId;
 
-    private String image_path;
+    private String image_path = new String();
     private int resumePosition;
 
     private boolean isPaused = false;
@@ -186,9 +180,10 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             }
         }
 
-        //Reduce image size
-        Bitmap bitmap = BitmapFactory.decodeFile(fileImageUri.getPath());
-        mImgRestPhoto.setImageBitmap(bitmap);
+        Glide.with(this)
+                .load(image_path)
+                .thumbnail(0.5f)
+                .into(mImgRestPhoto);
 
         mToolbar.setNavigationOnClickListener(v -> dialogExitReview());
     }
@@ -258,6 +253,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         //Save share data in local db for Smart photo 'Draft'
         List<String> restaurant_aminities = null;
         String restName = null;
+        String restAddress = null;
         if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities()
                 && ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size())
             restaurant_aminities = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities();
@@ -266,17 +262,24 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                 !mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name().isEmpty())
             restName = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name();
 
+        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address() &&
+                !mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address().isEmpty())
+            restAddress = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address();
+
         String audioFile = null;
         if (null != savedAudioPath) audioFile = Uri.fromFile(savedAudioPath).getPath();
+        textReview = mEditTxtReview.getText().toString();
+        int rating = (int) mRatingBar.getRating();
 
-        reviewDbHelper.saveSnapDataInDb(restName
+        reviewDbHelper.saveSnapDataInDb(restId,
+                restName
+                ,restAddress
                 , Uri.parse(image_path).getPath()
                 , audioFile,
                 textReview,
                 rating,
                 restaurant_aminities);
 
-        int rating = (int) mRatingBar.getRating();
         if (ZERO != rating) {
             if (utility.isLoggedIn()) {
                 dialogShareReview();

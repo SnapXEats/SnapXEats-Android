@@ -11,8 +11,8 @@ import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
 public class RestaurantAminities {
-    @Id(autoincrement = true)
     private Long id;
+
     private String aminity;
     private String photoIdFk;
     @Generated(hash = 373263892)
@@ -42,4 +42,5 @@ public class RestaurantAminities {
     public void setPhotoIdFk(String photoIdFk) {
         this.photoIdFk = photoIdFk;
     }
+
 }

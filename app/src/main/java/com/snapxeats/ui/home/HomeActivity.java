@@ -48,7 +48,6 @@ import com.snapxeats.ui.home.fragment.checkin.CheckInFragment;
 import com.snapxeats.ui.home.fragment.foodjourney.FoodJourneyFragment;
 import com.snapxeats.ui.home.fragment.home.HomeFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
-import com.snapxeats.ui.home.fragment.rewards.RewardsFragment;
 import com.snapxeats.ui.home.fragment.smartphotos.SmartPhotoFragment;
 import com.snapxeats.ui.home.fragment.snapnshare.CheckInAdapter;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapNotificationReceiver;
@@ -99,9 +98,6 @@ public class HomeActivity extends BaseActivity implements
 
     @Inject
     SnapShareFragment snapShareFragment;
-
-    @Inject
-    RewardsFragment rewardsFragment;
 
     @BindView(R.id.drawer_layout)
     protected DrawerLayout mDrawerLayout;
@@ -255,9 +251,14 @@ public class HomeActivity extends BaseActivity implements
         MenuItem smartPhotoMenu = menu.findItem(R.id.nav_smart_photos);
         MenuItem snapNShareMenu = menu.findItem(R.id.nav_snap);
         MenuItem foodJourneyMenu = menu.findItem(R.id.nav_food_journey);
-        smartPhotoMenu.setEnabled(false);
+
+        if (ZERO != dbHelper.getDraftPhotoDao().loadAll().size()) {
+            smartPhotoMenu.setEnabled(true);
+        } else {
+            smartPhotoMenu.setEnabled(false);
+        }
         snapNShareMenu.setEnabled(false);
-        if(!utility.isLoggedIn()) {
+        if (!utility.isLoggedIn()) {
             foodJourneyMenu.setEnabled(false);
         }
     }
@@ -349,13 +350,11 @@ public class HomeActivity extends BaseActivity implements
                     selectedFragment = smartPhotoFragment;
                     break;
                 case R.id.nav_check_in:
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                    showCheckInDialog();
+                   /* mDrawerLayout.closeDrawer(GravityCompat.START);
+                    showCheckInDialog();*/
+                    selectedFragment = snapShareFragment;
                     break;
 
-                case R.id.nav_rewards:
-                    selectedFragment = rewardsFragment;
-                    break;
                 case R.id.nav_logout:
                     if (utility.isLoggedIn()) {
                         showLogoutDialog();
@@ -651,7 +650,7 @@ public class HomeActivity extends BaseActivity implements
                 AppContract.DialogListenerAction click = () -> {
                     showProgressDialog();
 
-                    switch (api){
+                    switch (api) {
                         case CHECKIN_RESTAURANTS:
                             mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
                             break;
@@ -749,14 +748,13 @@ public class HomeActivity extends BaseActivity implements
         pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                 PackageManager.DONT_KILL_APP);
 
-        Intent intent1 = new Intent(this, SnapNotificationReceiver.class);
+        Intent cancelIntent = new Intent(this, SnapNotificationReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
-
-                0, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+                ZERO, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        am.cancel(pendingIntent);
+        if (null != am)
+            am.cancel(pendingIntent);
         pendingIntent.cancel();
     }
 }

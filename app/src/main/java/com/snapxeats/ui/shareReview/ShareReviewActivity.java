@@ -26,6 +26,7 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.home.HomeActivity;
+import com.snapxeats.ui.review.ReviewDbHelper;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
@@ -52,6 +53,9 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
     @Inject
     ShareReviewContract.ShareReviewPresenter mPresenter;
 
+    @Inject
+    ReviewDbHelper reviewDbHelper;
+
     @BindView(R.id.toolbar_review)
     protected Toolbar mToolbar;
 
@@ -71,6 +75,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
     protected TextView mTxtMessage;
 
     private String image_path;
+    private String photoId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,11 +90,14 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         mPresenter.addView(this);
         snapXDialog.setContext(this);
         utility.setContext(this);
+        reviewDbHelper.setContext(this);
+
         setUpToolbar();
         mShareDialog = new ShareDialog(this);
         mCallbackManager = CallbackManager.Factory.create();
         mSnapResponse = getIntent().getExtras().getParcelable(getString(R.string.intent_review));
         image_path = getIntent().getExtras().getString(getString(R.string.image_path));
+        photoId = getIntent().getExtras().getString(getString(R.string.photo_id));
 
         if (null != mSnapResponse) {
             Picasso.with(this).load(mSnapResponse.getDish_image_url()).placeholder(R.drawable.ic_restaurant_placeholder).into(mImgRest);
@@ -129,6 +137,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         mShareDialog.registerCallback(mCallbackManager, new FacebookCallback<Sharer.Result>() {
             @Override
             public void onSuccess(Sharer.Result result) {
+                reviewDbHelper.deleteDraftData(photoId);
                 dialogShareCallback();
             }
 

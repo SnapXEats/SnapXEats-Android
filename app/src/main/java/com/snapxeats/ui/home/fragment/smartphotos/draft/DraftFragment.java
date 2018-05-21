@@ -1,0 +1,528 @@
+package com.snapxeats.ui.home.fragment.smartphotos.draft;
+
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
+import android.view.InflateException;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import com.bumptech.glide.Glide;
+import com.snapxeats.BaseFragment;
+import com.snapxeats.R;
+import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.model.draft.RestaurantAminities;
+import com.snapxeats.common.model.draft.RestaurantAminitiesDao;
+import com.snapxeats.common.model.draft.SnapXDraftPhoto;
+import com.snapxeats.common.model.review.SnapNShareResponse;
+import com.snapxeats.common.utilities.AppUtility;
+import com.snapxeats.common.utilities.NetworkUtility;
+import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.review.ReviewDbHelper;
+import com.snapxeats.ui.shareReview.ShareReviewActivity;
+import org.greenrobot.greendao.query.QueryBuilder;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import javax.inject.Inject;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import static com.snapxeats.common.constants.UIConstants.MILLIES_TWO;
+import static com.snapxeats.common.constants.UIConstants.MILLIS;
+import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC_CONVERSION;
+import static com.snapxeats.common.constants.UIConstants.TEN;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
+
+/**
+ * Created by Snehal Tembare on 15/5/18.
+ */
+
+public class DraftFragment extends BaseFragment implements View.OnClickListener, DraftContract.DraftView,
+        AppContract.SnapXResults, MediaPlayer.OnCompletionListener {
+
+    @BindView(R.id.listview)
+    protected RecyclerView mRecyclerview;
+
+    @BindView(R.id.parent_layout)
+    protected LinearLayout mParentLayout;
+
+    private LinearLayout mLayoutControls;
+    private LinearLayout mLayoutDescription;
+    private LinearLayout mLayoutInfo;
+    private LinearLayout mLayoutReview;
+    private LinearLayout mLayoutAudio;
+    private ListView mListAminities;
+    private List<RestaurantAminities> mAminitiesList;
+
+    private ImageView mImgInfo;
+    private ImageView mImgAudioReview;
+    private ImageView mImgTextReview;
+
+    private ImageView mImgPlayAudio;
+
+    private TextView mTxtRestName;
+    private TextView mTxtTimeOfAudio;
+    private TextView mTxtRestAddress;
+    private TextView mTxtRestReviewContents;
+    private SnapXDraftPhoto mSnapXDraftPhoto;
+
+    private DraftAdapter mDraftAdapter;
+    private List<SnapXDraftPhoto> mDraftPhotoList;
+    private boolean isImageTap;
+    private boolean isInfoTap;
+    private boolean isReviewTap;
+    private boolean isAudioViewTap;
+    private boolean isAudioPlayTap;
+
+    private Uri fileImageUri;
+    private Uri audioFile;
+    private String restId;
+    private String textReview;
+    private int rating;
+
+    MediaPlayer mMediaPlayer;
+    private Handler mHandler = new Handler();
+
+    private Dialog mDialog;
+
+    @Inject
+    ReviewDbHelper reviewDbHelper;
+
+    @Inject
+    DbHelper dbHelper;
+
+    @Inject
+    AppUtility utility;
+
+    @Inject
+    DraftContract.DraftPresenter mDraftPresenter;
+
+    @Inject
+    public DraftFragment() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = null;
+        try {
+            view = inflater.inflate(R.layout.fragment_draft, container, false);
+            ButterKnife.bind(this, view);
+        } catch (InflateException e) {
+            e.printStackTrace();
+        }
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initView();
+
+        mDraftPhotoList = reviewDbHelper.getDraftData();
+        if (null != mDraftPhotoList && 0 != mDraftPhotoList.size()) {
+            mDraftAdapter = new DraftAdapter(getActivity(), mDraftPhotoList, new DraftAdapter.OnItemClickListener() {
+                @Override
+                public void onClick(SnapXDraftPhoto snapXDraftPhoto, View view) {
+                    mSnapXDraftPhoto = snapXDraftPhoto;
+
+                    QueryBuilder<RestaurantAminities> queryBuilder = dbHelper.getRestaurantAminitiesDao().queryBuilder();
+                    mAminitiesList = queryBuilder.
+                            where(RestaurantAminitiesDao.Properties.PhotoIdFk.eq(snapXDraftPhoto.getSmartPhoto_Draft_Stored_id())).list();
+
+                    showDialog();
+
+                    ImageView imgShare = view.findViewById(R.id.img_share);
+                    imgShare.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            callApiReview();
+                        }
+                    });
+                }
+            });
+            mRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
+            mRecyclerview.setAdapter(mDraftAdapter);
+        }
+    }
+
+    private void showDialog() {
+        mDialog = new Dialog(getActivity());
+        mDialog.setContentView(R.layout.draft_dialog_layout);
+        Window window = mDialog.getWindow();
+        if (null != window) {
+            window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            window.setGravity(Gravity.START);
+        }
+
+        mLayoutDescription = mDialog.findViewById(R.id.layout_description);
+        mLayoutControls = mDialog.findViewById(R.id.layout_controls);
+        mLayoutInfo = mDialog.findViewById(R.id.layout_info);
+        mLayoutReview = mDialog.findViewById(R.id.layout_review);
+        mLayoutAudio = mDialog.findViewById(R.id.layout_audio);
+
+        mTxtRestName = mDialog.findViewById(R.id.txt_rest_name);
+        mTxtRestAddress = mDialog.findViewById(R.id.txt_rest_address);
+        mTxtRestReviewContents = mDialog.findViewById(R.id.txt_review_contents);
+        mTxtTimeOfAudio = mDialog.findViewById(R.id.timer_play);
+
+        ImageView img = mDialog.findViewById(R.id.image_view);
+        ImageView imgClose = mDialog.findViewById(R.id.img_close);
+        mImgInfo = mDialog.findViewById(R.id.img_info);
+        mImgTextReview = mDialog.findViewById(R.id.img_text_review);
+        mImgAudioReview = mDialog.findViewById(R.id.img_audio);
+        ImageView imgShare = mDialog.findViewById(R.id.img_share);
+        mImgPlayAudio = mDialog.findViewById(R.id.img_play_audio);
+        mListAminities = mDialog.findViewById(R.id.list_aminities);
+
+        if (null == mSnapXDraftPhoto.getTextReview() || mSnapXDraftPhoto.getTextReview().isEmpty())
+            mImgTextReview.setVisibility(View.GONE);
+
+        if (null == mSnapXDraftPhoto.getAudioURL() || mSnapXDraftPhoto.getAudioURL().isEmpty())
+            mImgAudioReview.setVisibility(View.GONE);
+
+        Glide.with(getActivity())
+                .load(mSnapXDraftPhoto.getImageURL())
+                .thumbnail(0.5f)
+                .into(img);
+
+        //Register listeners
+        img.setOnClickListener(this);
+        imgClose.setOnClickListener(this);
+        mImgInfo.setOnClickListener(this);
+        mImgTextReview.setOnClickListener(this);
+        mImgAudioReview.setOnClickListener(this);
+        imgShare.setOnClickListener(this);
+        mImgPlayAudio.setOnClickListener(this);
+
+        mDialog.show();
+    }
+
+    public String milliSecondsToTimer(long milliseconds) {
+        String finalTimerString = "00";
+        String secondsString = "";
+
+        // Convert total duration into time
+        int seconds = (int) ((milliseconds % (MILLIS)) % (MILLIES_TWO) / MILLI_TO_SEC_CONVERSION);
+
+        // Prepending 0 to seconds if it is one digit
+        if (TEN > seconds) {
+            secondsString = ZERO + "" + seconds;
+        } else {
+            secondsString = "" + seconds;
+        }
+
+        finalTimerString = finalTimerString + ":" + secondsString;
+
+        // return timer string
+        return finalTimerString;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        resetMediaPlayer();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        resetMediaPlayer();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.image_view:
+                isImageTap = !isImageTap;
+                if (isImageTap) {
+                    mLayoutControls.setVisibility(View.VISIBLE);
+                } else {
+                    mLayoutControls.setVisibility(View.GONE);
+                    mLayoutDescription.setVisibility(View.GONE);
+                    mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review));
+                    mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
+                    mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info));
+                    resetMediaPlayer();
+                }
+                break;
+
+            case R.id.img_close:
+                resetMediaPlayer();
+                mMediaPlayer.release();
+                mMediaPlayer = null;
+                mDialog.dismiss();
+                break;
+
+            case R.id.img_info:
+                isInfoTap = !isInfoTap;
+                if (isInfoTap) {
+                    resetMediaPlayer();
+                    mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info_selected));
+                    mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
+                    mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review));
+
+                    mLayoutDescription.setVisibility(View.VISIBLE);
+                    mLayoutInfo.setVisibility(View.VISIBLE);
+                    mLayoutAudio.setVisibility(View.GONE);
+                    mLayoutReview.setVisibility(View.GONE);
+                    mListAminities.setAdapter(new AminityAdapter(getActivity(), mAminitiesList));
+
+                    mTxtRestName.setText(mSnapXDraftPhoto.getRestaurantName());
+                    mTxtRestAddress.setText(mSnapXDraftPhoto.getRestaurantAddress());
+                } else {
+                    mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info));
+                    mLayoutInfo.setVisibility(View.GONE);
+                }
+                break;
+
+            case R.id.img_text_review:
+                isReviewTap = !isReviewTap;
+                if (isReviewTap) {
+                    mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review_selected));
+                    mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info));
+                    mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
+
+
+                    mLayoutDescription.setVisibility(View.VISIBLE);
+                    mLayoutReview.setVisibility(View.VISIBLE);
+                    mLayoutInfo.setVisibility(View.GONE);
+                    mTxtRestReviewContents.setText(mSnapXDraftPhoto.getTextReview());
+                    resetMediaPlayer();
+
+                } else {
+                    mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review));
+                    mLayoutReview.setVisibility(View.GONE);
+                }
+                break;
+
+            case R.id.img_audio:
+                isAudioViewTap = !isAudioViewTap;
+                if (isAudioViewTap) {
+                    mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker_selected));
+                    mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review));
+                    mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info));
+
+                    mLayoutDescription.setVisibility(View.VISIBLE);
+                    mLayoutAudio.setVisibility(View.VISIBLE);
+                    mLayoutInfo.setVisibility(View.GONE);
+                    mLayoutReview.setVisibility(View.GONE);
+
+                    mMediaPlayer = MediaPlayer.create(getActivity(), Uri.parse(mSnapXDraftPhoto.getAudioURL()));
+                    mMediaPlayer.setOnCompletionListener(this);
+                    mTxtTimeOfAudio.setText(milliSecondsToTimer(mMediaPlayer.getCurrentPosition()));
+
+                } else {
+                    mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
+                    mLayoutAudio.setVisibility(View.GONE);
+                    resetMediaPlayer();
+                }
+                break;
+
+            case R.id.img_play_audio:
+                isAudioPlayTap = !isAudioPlayTap;
+
+                if (isAudioPlayTap) {
+                    mLayoutDescription.setVisibility(View.VISIBLE);
+                    mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_pause));
+                    mLayoutAudio.setVisibility(View.VISIBLE);
+                    mLayoutInfo.setVisibility(View.GONE);
+                    mLayoutReview.setVisibility(View.GONE);
+
+                    mMediaPlayer.start();
+                    mUpdateTimeTask.run();
+                } else {
+                    mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_play_review));
+                    if (mMediaPlayer.isPlaying()) {
+                        mMediaPlayer.pause();
+                    }
+                }
+                break;
+
+            case R.id.img_share:
+                callApiReview();
+                break;
+
+        }
+    }
+
+    private void resetMediaPlayer() {
+        if (null != mMediaPlayer) {
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.pause();
+                mMediaPlayer.stop();
+                mMediaPlayer.reset();
+            }
+        }
+    }
+
+    private void callApiReview() {
+        textReview = mSnapXDraftPhoto.getTextReview();
+        rating = mSnapXDraftPhoto.getRating();
+        fileImageUri = Uri.parse(mSnapXDraftPhoto.getImageURL());
+        restId = mSnapXDraftPhoto.getRestId();
+
+        if (null != restId && null != fileImageUri && ZERO != rating) {
+            showProgressDialog();
+            audioFile = null;
+            if (null != mSnapXDraftPhoto.getAudioURL()) {
+                File file = new File(mSnapXDraftPhoto.getAudioURL());
+                audioFile = Uri.fromFile(file);
+            }
+            showProgressDialog();
+            mDraftPresenter.sendReview(restId, fileImageUri, audioFile, textReview, rating);
+        }
+    }
+
+    private Runnable mUpdateTimeTask = new Runnable() {
+        public void run() {
+            if (null != mMediaPlayer) {
+                long currentDuration = mMediaPlayer.getCurrentPosition();
+
+                // Displaying time completed playing
+                mTxtTimeOfAudio.setText("" + milliSecondsToTimer(currentDuration));
+
+                // Running this thread after 100 milliseconds
+                mHandler.postDelayed(this, 100);
+            }
+        }
+    };
+
+    @Override
+    public void initView() {
+        reviewDbHelper.setContext(getActivity());
+        dbHelper.setContext(getActivity());
+        mDraftPresenter.addView(this);
+    }
+
+    @Override
+    public DialogInterface.OnClickListener setListener(AppContract.DialogListenerAction button) {
+        return null;
+    }
+
+    @Override
+    public void success(Object value) {
+        mDialog.dismiss();
+        dismissProgressDialog();
+        SnapNShareResponse mSnapResponse = (SnapNShareResponse) value;
+        Intent intent = new Intent(getActivity(), ShareReviewActivity.class);
+        intent.putExtra(getString(R.string.photo_id), mSnapXDraftPhoto.getSmartPhoto_Draft_Stored_id());
+        intent.putExtra(getString(R.string.intent_review), mSnapResponse);
+        intent.putExtra(getString(R.string.image_path), mSnapXDraftPhoto.getImageURL());
+        intent.putExtra(getString(R.string.review_rest_id), mSnapXDraftPhoto.getRestId());
+        startActivity(intent);
+    }
+
+    @Override
+    public void error(Object value) {}
+
+    @Override
+    public void noNetwork(Object value) {
+        dismissProgressDialog();
+        showNetworkErrorDialog((dialog, which) -> {
+            if (!NetworkUtility.isNetworkAvailable(getActivity())) {
+                AppContract.DialogListenerAction click = () -> {
+                    showProgressDialog();
+                    mDraftPresenter.sendReview(restId, fileImageUri, audioFile, textReview, rating);
+                };
+                showSnackBar(mParentLayout, setClickListener(click));
+            } else {
+                showProgressDialog();
+                mDraftPresenter.sendReview(restId, fileImageUri, audioFile, textReview, rating);
+            }
+        });
+
+    }
+
+    @Override
+    public void networkError(Object value) {}
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_play_review));
+        mMediaPlayer = MediaPlayer.create(getActivity(), Uri.parse(mSnapXDraftPhoto.getAudioURL()));
+        mMediaPlayer.setOnCompletionListener(this);
+        mTxtTimeOfAudio.setText(milliSecondsToTimer(mMediaPlayer.getCurrentPosition()));
+    }
+
+    class AminityAdapter extends BaseAdapter {
+        private Context mContext;
+        private List<RestaurantAminities> amenityList;
+
+        AminityAdapter(Context context, List<RestaurantAminities> amenityList) {
+            mContext = context;
+            this.amenityList = amenityList;
+        }
+
+        @Override
+        public int getCount() {
+            return amenityList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return amenityList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (null == convertView) {
+                convertView = View.inflate(mContext, R.layout.item_amenities, null);
+                new AminityAdapter.ViewHolder(convertView);
+            }
+
+            AminityAdapter.ViewHolder holder = (ViewHolder) convertView.getTag();
+            holder.mTxtAmenity.setText(amenityList.get(position).getAminity());
+            return convertView;
+        }
+
+        class ViewHolder {
+
+            @BindView(R.id.txt_amenity)
+            TextView mTxtAmenity;
+
+            public ViewHolder(View itemView) {
+                ButterKnife.bind(this, itemView);
+                itemView.setTag(this);
+            }
+        }
+    }
+}

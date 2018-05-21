@@ -9,6 +9,5 @@ import com.snapxeats.common.Router;
 public class SmartPhotoRouterImpl {
 
     public SmartPhotoRouterImpl(Router router) {
-
     }
 }

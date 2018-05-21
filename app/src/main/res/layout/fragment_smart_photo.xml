@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.snapxeats.ui.home.fragment.checkin.CheckInFragment">
 
     <LinearLayout
@@ -39,11 +40,39 @@
             </LinearLayout>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Smart Photos" />
+
+        <info.hoang8f.android.segmented.SegmentedGroup
+            android:id="@+id/btn_group"
+            android:layout_width="@dimen/dimen_250"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal"
+            app:sc_border_width="@dimen/common_1"
+            app:sc_tint_color="@color/colorPrimary"
+            android:layout_marginTop="@dimen/dimens_20">
+            <RadioButton
+                android:id="@+id/btn_smart_photos"
+                style="@style/RadioButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/smart_photos"
+                android:textColor="@color/colorPrimary"
+                android:checked="true"/>
+            <RadioButton
+                android:id="@+id/btn_draft"
+                style="@style/RadioButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/draft"/>
+        </info.hoang8f.android.segmented.SegmentedGroup>
+        <LinearLayout
+            android:id="@+id/layout_main_contents"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/common_dimens_10"/>
     </LinearLayout>
 
 </FrameLayout>

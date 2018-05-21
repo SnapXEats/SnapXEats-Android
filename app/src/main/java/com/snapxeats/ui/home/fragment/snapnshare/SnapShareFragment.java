@@ -145,7 +145,8 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
             isFromNotification = getArguments().getBoolean(getString(R.string.notification));
         }
         showProgressDialog();
-        mPresenter.getRestaurantInfo(restaurantId);
+        mPresenter.getRestaurantInfo("5f13c6e7-b6a2-4c92-a560-02b1e39e7843");
+//        mPresenter.getRestaurantInfo(restaurantId);
         if (null != getActivity() && isAdded()) {
             utility.setImagesCorousal(mViewPager);
         }

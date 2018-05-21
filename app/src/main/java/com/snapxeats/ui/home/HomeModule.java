@@ -22,16 +22,17 @@ import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefInteractor;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefPresenterImpl;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefRouterImpl;
-import com.snapxeats.ui.home.fragment.rewards.RewardsContract;
-import com.snapxeats.ui.home.fragment.rewards.RewardsFragment;
-import com.snapxeats.ui.home.fragment.rewards.RewardsInteractor;
-import com.snapxeats.ui.home.fragment.rewards.RewardsPresenterImpl;
-import com.snapxeats.ui.home.fragment.rewards.RewardsRouterImpl;
+import com.snapxeats.ui.home.fragment.smartphotos.smart.SmartFragment;
+import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftContract;
+import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftFragment;
 import com.snapxeats.ui.home.fragment.smartphotos.SmartPhotoContract;
 import com.snapxeats.ui.home.fragment.smartphotos.SmartPhotoFragment;
 import com.snapxeats.ui.home.fragment.smartphotos.SmartPhotoInteractor;
 import com.snapxeats.ui.home.fragment.smartphotos.SmartPhotoPresenterImpl;
 import com.snapxeats.ui.home.fragment.smartphotos.SmartPhotoRouterImpl;
+import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftInteractor;
+import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftPresenterImpl;
+import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftRouterImpl;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapShareContract;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapShareInteractor;
@@ -76,15 +77,19 @@ public abstract class HomeModule {
 
     @FragmentScoped
     @ContributesAndroidInjector
-    abstract RewardsFragment rewardsFragment();
-
-    @FragmentScoped
-    @ContributesAndroidInjector
     abstract SnapShareFragment snapShareFragment();
 
     @FragmentScoped
     @ContributesAndroidInjector
     abstract SmartPhotoFragment smartPhotoFragment();
+
+    @FragmentScoped
+    @ContributesAndroidInjector
+    abstract SmartFragment smartPhotosFragment();
+
+    @FragmentScoped
+    @ContributesAndroidInjector
+    abstract DraftFragment draftFragment();
 
     @Provides
     static HomeContract.HomePresenter provideHomePresenter(HomeInteractor interactor,
@@ -154,21 +159,6 @@ public abstract class HomeModule {
         return checkInRouter;
     }
 
-
-    @Provides
-    static RewardsContract.RewardsPresenter provideRewardsPresenter(RewardsInteractor interactor,
-                                                                    RewardsRouterImpl router) {
-        RewardsContract.RewardsPresenter rewardsPresenter = new RewardsPresenterImpl(interactor, router);
-        interactor.setRewardsPresenter(rewardsPresenter);
-        return rewardsPresenter;
-    }
-
-    @Provides
-    static RewardsRouterImpl provideRewardsRouter(Router router) {
-        RewardsRouterImpl rewardsRouter = new RewardsRouterImpl(router);
-        return rewardsRouter;
-    }
-
     @Provides
     static FoodJourneyContract.FoodJourneyPresenter provideFoodJpurneyPresenter(FoodJourneyInteractor interactor,
                                                                                 FoodJourneyRouterImpl router) {
@@ -197,6 +187,20 @@ public abstract class HomeModule {
     static SmartPhotoRouterImpl provideSmartPhotoRouter(Router router) {
         SmartPhotoRouterImpl smartPhotoRouter = new SmartPhotoRouterImpl(router);
         return smartPhotoRouter;
+    }
+
+    @Provides
+    static DraftContract.DraftPresenter provideDraftPresenter(DraftInteractor interactor,
+                                                              DraftRouterImpl router) {
+        DraftContract.DraftPresenter draftPresenter = new DraftPresenterImpl(interactor, router);
+        interactor.setDraftPresenter(draftPresenter);
+        return draftPresenter;
+    }
+
+    @Provides
+    static DraftRouterImpl provideDraftRouter(Router router) {
+        DraftRouterImpl draftRouter = new DraftRouterImpl(router);
+        return draftRouter;
     }
 
     @Provides

@@ -124,4 +124,8 @@ public class UIConstants {
     public static final int REQUEST_CODE_REMIND_ACTION = 4;
     public static final int REMIND_LATER_REQUEST_ACTION = 6;
     public static final long MILLI_TO_SEC = 1000;
+    public static final long MILLI_TO_SEC_CONVERSION = 1000;
+    public static final long MILLIS = 1000 * 60 * 60;
+    public static final long MILLIES_TWO = 1000 * 60 ;
+    public static final long TEN = 10;
 }
