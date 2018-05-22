@@ -27,6 +27,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.bumptech.glide.Glide;
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
@@ -48,14 +49,12 @@ import com.snapxeats.ui.home.fragment.checkin.CheckInFragment;
 import com.snapxeats.ui.home.fragment.foodjourney.FoodJourneyFragment;
 import com.snapxeats.ui.home.fragment.home.HomeFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
-import com.snapxeats.ui.home.fragment.rewards.RewardsFragment;
 import com.snapxeats.ui.home.fragment.smartphotos.SmartPhotoFragment;
 import com.snapxeats.ui.home.fragment.snapnshare.CheckInAdapter;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapNotificationReceiver;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
-import com.squareup.picasso.Picasso;
 import java.util.List;
 import javax.inject.Inject;
 import butterknife.BindView;
@@ -99,9 +98,6 @@ public class HomeActivity extends BaseActivity implements
 
     @Inject
     SnapShareFragment snapShareFragment;
-
-    @Inject
-    RewardsFragment rewardsFragment;
 
     @BindView(R.id.drawer_layout)
     protected DrawerLayout mDrawerLayout;
@@ -255,9 +251,14 @@ public class HomeActivity extends BaseActivity implements
         MenuItem smartPhotoMenu = menu.findItem(R.id.nav_smart_photos);
         MenuItem snapNShareMenu = menu.findItem(R.id.nav_snap);
         MenuItem foodJourneyMenu = menu.findItem(R.id.nav_food_journey);
-        smartPhotoMenu.setEnabled(false);
+
+        if (ZERO != dbHelper.getDraftPhotoDao().loadAll().size()) {
+            smartPhotoMenu.setEnabled(true);
+        } else {
+            smartPhotoMenu.setEnabled(false);
+        }
         snapNShareMenu.setEnabled(false);
-        if(!utility.isLoggedIn()) {
+        if (!utility.isLoggedIn()) {
             foodJourneyMenu.setEnabled(false);
         }
     }
@@ -302,7 +303,7 @@ public class HomeActivity extends BaseActivity implements
     private void setUserInfo() {
         initNavHeaderViews();
         if (isLoggedIn() && null != mSnapxData && mSnapxData.size() > ZERO) {
-            Picasso.with(this).load(mSnapxData.get(ZERO).getImageUrl()).into(imgUser);
+            Glide.with(this).load(mSnapxData.get(ZERO).getImageUrl()).into(imgUser);
             txtUserName.setText(mSnapxData.get(ZERO).getUserName());
         } else {
             mLayoutUserData.setVisibility(View.GONE);
@@ -349,13 +350,9 @@ public class HomeActivity extends BaseActivity implements
                     selectedFragment = smartPhotoFragment;
                     break;
                 case R.id.nav_check_in:
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                    showCheckInDialog();
+                    selectedFragment = snapShareFragment;
                     break;
 
-                case R.id.nav_rewards:
-                    selectedFragment = rewardsFragment;
-                    break;
                 case R.id.nav_logout:
                     if (utility.isLoggedIn()) {
                         showLogoutDialog();
@@ -618,8 +615,7 @@ public class HomeActivity extends BaseActivity implements
     private void setSingleCheckInView(RestaurantInfo restaurantInfo) {
         if (null != restaurantInfo) {
             if (null != restaurantInfo.getRestaurant_logo() && !restaurantInfo.getRestaurant_logo().isEmpty()) {
-                Picasso.with(this).load(restaurantInfo.getRestaurant_logo())
-                        .placeholder(R.drawable.ic_restaurant_placeholder).into(mImgRestaurant);
+                Glide.with(this).load(restaurantInfo.getRestaurant_logo()).into(mImgRestaurant);
             }
             if (null != restaurantInfo.getRestaurant_name() && !restaurantInfo.getRestaurant_name().isEmpty()) {
                 mTxtRestName.setText(restaurantInfo.getRestaurant_name());
@@ -651,7 +647,7 @@ public class HomeActivity extends BaseActivity implements
                 AppContract.DialogListenerAction click = () -> {
                     showProgressDialog();
 
-                    switch (api){
+                    switch (api) {
                         case CHECKIN_RESTAURANTS:
                             mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
                             break;
@@ -749,14 +745,13 @@ public class HomeActivity extends BaseActivity implements
         pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                 PackageManager.DONT_KILL_APP);
 
-        Intent intent1 = new Intent(this, SnapNotificationReceiver.class);
+        Intent cancelIntent = new Intent(this, SnapNotificationReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
-
-                0, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+                ZERO, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        am.cancel(pendingIntent);
+        if (null != am)
+            am.cancel(pendingIntent);
         pendingIntent.cancel();
     }
 }

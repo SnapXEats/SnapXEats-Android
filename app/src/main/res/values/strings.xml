@@ -232,5 +232,9 @@
     <string name="msg_login_dialog">The photo will not able to Shared unless you login into SnapXEats</string>
     <string name="msg_save_to_draft">The photo has been saved in drafts and you can share it, once you login.</string>
     <string name="draft">Draft</string>
+    <string name="text_review">Text Review</string>
+    <string name="audio_review">Audio Review</string>
+    <string name="photo_id">photo_id</string>
+    <string name="audio_init_time">00:00</string>
 
 </resources>

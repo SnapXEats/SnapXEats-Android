@@ -9,14 +9,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.ui.restaurantInfo.RestaurantInfoActivity;
-import com.squareup.picasso.Picasso;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Prajakta Patil on 1/4/18.
@@ -39,10 +41,10 @@ public class MapsRestAdapter extends RecyclerView.Adapter<MapsRestAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (0 != stackData.getDishesInfo().get(position).getRestaurantDishes().size()) {
-            Picasso.with(holder.itemView.getContext())
-                    .load(String.valueOf(stackData.getDishesInfo().get(position).getRestaurantDishes().get(0).getDish_image_url()))
-                    .placeholder(R.drawable.foodstack_placeholder)
+        if (ZERO != stackData.getDishesInfo().get(position).getRestaurantDishes().size()) {
+            Glide.with(holder.itemView.getContext())
+                    .load(String.valueOf(stackData.getDishesInfo().get(position).getRestaurantDishes().get(ZERO).getDish_image_url()))
+                    .thumbnail(THUMBNAIL)
                     .into(holder.imgRestaurant);
         }
 

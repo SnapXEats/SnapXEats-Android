@@ -117,13 +117,14 @@ public interface ApiHelper {
                                                @Body UserPreference object);
 
     /**
-     * get restaurant details
+     * get restaurant info
      *
      * @param restaurantInfoId
      * @return
      */
     @GET(WebConstants.RESTAURANT_DETAILS)
     Call<RootRestaurantInfo> getRestDetails(@Path("restaurantInfoId") String restaurantInfoId);
+
 
     /**
      * get instagram info

@@ -15,8 +15,4 @@ public class SmartPhotoContract {
 
     public interface SmartPhotoPresenter extends BasePresenter<SmartPhotoView> {
     }
-
-    public interface SmartPhotoRouter {
-
-    }
 }

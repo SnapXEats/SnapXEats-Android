@@ -9,10 +9,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.snapxeats.R;
-import com.squareup.picasso.Picasso;
-
 import java.util.List;
+
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 
 /**
  * Created by Prajakta Patil on 27/2/18.
@@ -39,7 +40,10 @@ public class FoodStackAdapter extends ArrayAdapter<FoodStackData> {
         }
         FoodStackData stackData = dataList.get(position);
         holder.mTxtDishName.setText(stackData.getName());
-        Picasso.with(getContext()).load(stackData.getUrl().get(position)).into(holder.mImgDishes);
+        Glide.with(getContext())
+                .load(stackData.getUrl().get(position))
+                .thumbnail(THUMBNAIL)
+                .into(holder.mImgDishes);
         return contentView;
     }
 

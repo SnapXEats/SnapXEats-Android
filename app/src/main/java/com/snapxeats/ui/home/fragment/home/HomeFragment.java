@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -104,6 +105,7 @@ public class HomeFragment extends BaseFragment implements
     protected TextView mTxtCuisineDone;
 
     private SelectedCuisineList selectedCuisineList;
+    private Snackbar mSnackBar;
 
     private Activity activity;
     private DrawerLayout mDrawerLayout;
@@ -258,13 +260,17 @@ public class HomeFragment extends BaseFragment implements
 
         if (NetworkUtility.isNetworkAvailable(activity)) {
             setLocation();
+            if (mSnackBar != null) {
+                mSnackBar.dismiss();
+            }
+
         } else {
             showNetworkErrorDialog((dialog, which) -> {
                 if (!NetworkUtility.isNetworkAvailable(activity)) {
                     AppContract.DialogListenerAction click = () ->
-                        mSelectedLocation = detectCurrentLocation();
-                    showSnackBar(mParentLayout, setClickListener(click));
-                }else {
+                            mSelectedLocation = detectCurrentLocation();
+                    mSnackBar = showSnackBar(mParentLayout, setClickListener(click));
+                } else {
                     mSelectedLocation = detectCurrentLocation();
                 }
             });
@@ -423,8 +429,8 @@ public class HomeFragment extends BaseFragment implements
         showNetworkErrorDialog((dialog, which) -> {
             if (!NetworkUtility.isNetworkAvailable(getActivity()) && null != mRootUserPreference) {
                 AppContract.DialogListenerAction click = () -> setLocation();
-                showSnackBar(mParentLayout, setClickListener(click));
-            }else {
+                mSnackBar = showSnackBar(mParentLayout, setClickListener(click));
+            } else {
                 setLocation();
             }
         });
@@ -463,7 +469,7 @@ public class HomeFragment extends BaseFragment implements
                     if (!NetworkUtility.isNetworkAvailable(activity)) {
                         AppContract.DialogListenerAction click = () ->
                                 mSelectedLocation = detectCurrentLocation();
-                        showSnackBar(mParentLayout, setClickListener(click));
+                        mSnackBar = showSnackBar(mParentLayout, setClickListener(click));
                     } else {
                         mSelectedLocation = detectCurrentLocation();
                     }

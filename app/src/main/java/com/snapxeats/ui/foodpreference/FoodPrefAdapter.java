@@ -8,14 +8,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.bumptech.glide.Glide;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.preference.FoodPref;
 import com.snapxeats.ui.cuisinepreference.OnDoubleTapListenr;
-import com.squareup.picasso.Picasso;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Snehal Tembare on 13/2/18.
@@ -26,7 +28,7 @@ public class FoodPrefAdapter extends RecyclerView.Adapter<FoodPrefAdapter.ViewHo
     private List<FoodPref> rootFoodPrefList;
     private Context mContext;
     private OnDoubleTapListenr onDoubleTapListenr;
-    private int tapCount = 0;
+    private int tapCount = ZERO;
 
     FoodPrefAdapter(Context mContext,
                     List<FoodPref> rootFoodPrefList,
@@ -84,16 +86,19 @@ public class FoodPrefAdapter extends RecyclerView.Adapter<FoodPrefAdapter.ViewHo
                     } else if (tapCount == UIConstants.DOUBLE_TAP) {
                         //Double click
                         onDoubleTapListenr.onDoubleTap(position, true);
-                        tapCount = 0;
+                        tapCount = ZERO;
                     }
-                    tapCount = 0;
+                    tapCount = ZERO;
                 }, TIME_DELAY);
             }
         }
 
         void setItem(int position, FoodPref foodPref) {
 
-            Picasso.with(mContext).load(foodPref.getFood_image_url()).into(imgCuisinePref);
+            Glide.with(mContext)
+                    .load(foodPref.getFood_image_url())
+                    .thumbnail(THUMBNAIL)
+                    .into(imgCuisinePref);
             txtCuisineName.setText(foodPref.getFood_name());
 
             if (foodPref.is_food_favourite()) {

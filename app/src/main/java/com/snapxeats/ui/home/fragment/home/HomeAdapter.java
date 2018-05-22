@@ -8,21 +8,23 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.bumptech.glide.Glide;
 import com.snapxeats.R;
 import com.snapxeats.common.model.preference.Cuisines;
 import com.snapxeats.ui.cuisinepreference.OnDoubleTapListenr;
-import com.squareup.picasso.Picasso;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.snapxeats.common.constants.UIConstants.SELECT_OPACITY;
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
+import static com.snapxeats.common.constants.UIConstants.UNSELECT_OPACITY;
 
 /**
  * Created by Snehal Tembare on 7/3/18.
  */
 
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
-    private double UNSELECT_OPACITY = 1.0;
-    private double SELECT_OPACITY = 0.4;
 
     private List<Cuisines> cuisineArrayList;
     private Context mContext;
@@ -88,7 +90,8 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         }
 
         public void setItem(Cuisines cuisines) {
-            Picasso.with(mContext).load(cuisines.getCuisine_image_url()).into(imgCuisinePref);
+            Glide.with(mContext).load(cuisines.getCuisine_image_url())
+                    .thumbnail(THUMBNAIL).into(imgCuisinePref);
             txtCuisineName.setText(cuisines.getCuisine_name());
 
             if (cuisines.is_cuisine_like()) {

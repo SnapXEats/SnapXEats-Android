@@ -29,7 +29,7 @@ public class SnapXDialog {
     private AlertDialog.Builder mNetworkErrorDialog;
     private Activity context;
     protected AlertDialog.Builder mDenyDialog;
-
+    private Snackbar mSnackbar;
     @Inject
     public SnapXDialog() {
     }
@@ -126,11 +126,13 @@ public class SnapXDialog {
     }
 
     /**
-     * Show snackbar for network error
+     * Show Snackbar for network error
      */
-    public void showSnackBar(View view, View.OnClickListener positiveClick) {
-        Snackbar snackbar = Snackbar.make(view, context.getString(R.string.check_network), Snackbar.LENGTH_INDEFINITE);
-        snackbar.setAction(context.getString(R.string.retry), positiveClick);
-        snackbar.show();
+    public Snackbar showSnackBar(View view, View.OnClickListener positiveClick) {
+        mSnackbar = Snackbar.make(view, context.getString(R.string.check_network), Snackbar.LENGTH_INDEFINITE);
+        mSnackbar.setAction(context.getString(R.string.retry), positiveClick);
+        mSnackbar.show();
+        return mSnackbar;
     }
+
 }

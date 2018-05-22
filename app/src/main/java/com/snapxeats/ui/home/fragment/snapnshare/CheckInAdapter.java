@@ -9,14 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.bumptech.glide.Glide;
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.R;
 import com.snapxeats.common.OnRecyclerItemClickListener;
 import com.snapxeats.common.model.checkin.RestaurantInfo;
-import com.squareup.picasso.Picasso;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 
 /**
  * Created by Snehal Tembare on 9/4/18.
@@ -80,7 +82,11 @@ public class CheckInAdapter extends RecyclerView.Adapter<CheckInAdapter.ViewHold
             } else {
                 mParentLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorWhite));
             }
-            Picasso.with(mContext).load(restaurantInfo.getRestaurant_logo()).placeholder(R.drawable.ic_cuisine_placeholder).into(mImgRestaurant);
+            Glide.with(mContext)
+                    .load(restaurantInfo.getRestaurant_logo())
+                    .thumbnail(THUMBNAIL)
+                    .into(mImgRestaurant);
+
             mTxtRestName.setText(restaurantInfo.getRestaurant_name());
             mTxtFoodCategory.setText(restaurantInfo.getRestaurant_type());
 

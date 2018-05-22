@@ -24,7 +24,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
+import com.bumptech.glide.Glide;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
@@ -35,19 +35,15 @@ import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.dagger.AppContract;
-import com.squareup.picasso.Picasso;
-
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import static com.snapxeats.common.constants.UIConstants.PHOTO_NOTIFICATION_REQUEST_CODE;
 import static com.snapxeats.common.constants.UIConstants.PHOTO_NOTIFICATION_TIME;
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -61,8 +57,6 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
     protected NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
     private Activity activity;
-    private int dotsCount;
-    private ImageView[] dots;
     private boolean isFromNotification;
 
     @BindView(R.id.txt_rest_name)
@@ -146,6 +140,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
         }
         showProgressDialog();
         mPresenter.getRestaurantInfo(restaurantId);
+
         if (null != getActivity() && isAdded()) {
             utility.setImagesCorousal(mViewPager);
         }
@@ -231,8 +226,10 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
                     mLayoutRestSpecialties, false);
             ImageView imageView = view.findViewById(R.id.img_restaurant_specialties);
 
-            Picasso.with(getActivity()).load(restaurant_speciality.get(index).getDish_image_url())
-                    .placeholder(R.drawable.ic_cuisine_placeholder).into(imageView);
+            Glide.with(getActivity())
+                    .load(restaurant_speciality.get(index).getDish_image_url())
+                    .thumbnail(THUMBNAIL)
+                    .into(imageView);
             mLayoutRestSpecialties.addView(view);
         }
     }

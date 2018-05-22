@@ -8,10 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 import com.snapxeats.R;
 import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
-import com.squareup.picasso.Picasso;
 import java.util.List;
+
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 
 /**
  * Created by Snehal Tembare on 17/4/18.
@@ -44,8 +47,10 @@ public class ViewPagerAdapter extends PagerAdapter {
         View view = mLayoutInflater.inflate(R.layout.layout_rest_pics, container, false);
         ImageView imageView = view.findViewById(R.id.img_restaurant_pics);
         //Load image using picasso
-        Picasso.with(mContext).load(mImageUrl.get(position).getDish_image_url())
-                .placeholder(R.drawable.ic_cuisine_placeholder).into(imageView);
+        Glide.with(mContext)
+                .load(mImageUrl.get(position).getDish_image_url())
+                .thumbnail(THUMBNAIL)
+                .into(imageView);
         ViewPager viewPager = (ViewPager) container;
         viewPager.addView(view);
         return view;

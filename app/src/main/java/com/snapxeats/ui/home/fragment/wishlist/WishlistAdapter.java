@@ -7,9 +7,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.bumptech.glide.Glide;
 import com.snapxeats.R;
 import com.snapxeats.common.model.foodGestures.Wishlist;
-import com.squareup.picasso.Picasso;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,6 +17,8 @@ import java.util.Date;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 
 /**
  * Created by Snehal Tembare on 2/4/18.
@@ -83,7 +85,10 @@ public class WishlistAdapter extends BaseAdapter {
             } else {
                 mLayoutFg.setBackground(mContext.getDrawable(R.drawable.wishlist_layout_white));
             }
-            Picasso.with(mContext).load(item.getDish_image_url()).into(mImageView);
+            Glide.with(mContext).load(item.getDish_image_url())
+                    .thumbnail(THUMBNAIL)
+                    .into(mImageView);
+
             mTxtRestaurantName.setText(item.getRestaurant_name());
             DateFormat simpleDateFormat = new SimpleDateFormat(mContext.getString(R.string.yyyy_MM_dd));
             Date date = null;

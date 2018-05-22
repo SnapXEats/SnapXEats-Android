@@ -9,11 +9,12 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.snapxeats.R;
 import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
-import com.squareup.picasso.Picasso;
-
 import java.util.List;
+
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 
 /**
  * Created by Prajakta Patil on 14/2/18.
@@ -46,7 +47,8 @@ public class RestImagesAdapter extends PagerAdapter {
 
         ImageView imageView = itemView.findViewById(R.id.img_restaurant_pics);
 
-        Picasso.with(mContext).load(restaurantPicsList.get(position).getDish_image_url()).into(imageView);
+        Glide.with(mContext).load(restaurantPicsList.get(position).getDish_image_url())
+                .thumbnail(THUMBNAIL).into(imageView);
         container.addView(itemView);
         return itemView;
     }

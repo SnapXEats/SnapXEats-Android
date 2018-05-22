@@ -9,18 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.bumptech.glide.Glide;
 import com.snapxeats.R;
 import com.snapxeats.common.model.preference.Cuisines;
-import com.squareup.picasso.Picasso;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import static com.snapxeats.common.constants.UIConstants.DOUBLE_TAP;
 import static com.snapxeats.common.constants.UIConstants.SINGLE_TAP;
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Snehal Tembare on 13/2/18.
@@ -31,7 +29,7 @@ public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.
     private List<Cuisines> cuisineArrayList;
     private Context mContext;
     private OnDoubleTapListenr onDoubleTapListenr;
-    private int tapCount = 0;
+    private int tapCount = ZERO;
 
     CuisinePrefAdapter(Context mContext,
                        List<Cuisines> cuisineArrayList,
@@ -84,7 +82,10 @@ public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.
 
         void setItem(int position, Cuisines cuisines) {
 
-            Picasso.with(mContext).load(cuisines.getCuisine_image_url()).into(imgCuisinePref);
+            Glide.with(mContext).load(cuisines.getCuisine_image_url())
+                    .thumbnail(THUMBNAIL)
+                    .into(imgCuisinePref);
+
             txtCuisineName.setText(cuisines.getCuisine_name());
 
             if (cuisines.is_cuisine_favourite()) {
@@ -121,9 +122,9 @@ public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.
                     } else if (tapCount == DOUBLE_TAP) {
                         //Double click
                         onDoubleTapListenr.onDoubleTap(position, true);
-                        tapCount = 0;
+                        tapCount = ZERO;
                     }
-                    tapCount = 0;
+                    tapCount = ZERO;
                 }, TIME_DELAY);
             }
         }
