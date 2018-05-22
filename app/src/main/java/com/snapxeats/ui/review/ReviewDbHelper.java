@@ -77,7 +77,7 @@ public class ReviewDbHelper {
         }
 
         new DraftAdapter().notifyDataSetChanged();
-        dbHelper.getDraftPhotoDao().insertOrReplace(snapXDraftPhoto);
+        dbHelper.getDraftPhotoDao().insert(snapXDraftPhoto);
     }
 
     public List<SnapXDraftPhoto> getDraftData() {

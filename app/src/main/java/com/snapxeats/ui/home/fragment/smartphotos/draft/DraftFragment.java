@@ -156,12 +156,8 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                     showDialog();
 
                     ImageView imgShare = view.findViewById(R.id.img_share);
-                    imgShare.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            callApiReview();
-                        }
-                    });
+                    //TODO- Need to check for non logged in user
+                    imgShare.setOnClickListener(v -> callApiReview());
                 }
             });
             mRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -282,8 +278,10 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
 
             case R.id.img_close:
                 resetMediaPlayer();
-                mMediaPlayer.release();
-                mMediaPlayer = null;
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.release();
+                    mMediaPlayer = null;
+                }
                 mDialog.dismiss();
                 break;
 
@@ -396,7 +394,6 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         restId = mSnapXDraftPhoto.getRestId();
 
         if (null != restId && null != fileImageUri && ZERO != rating) {
-            showProgressDialog();
             audioFile = null;
             if (null != mSnapXDraftPhoto.getAudioURL()) {
                 File file = new File(mSnapXDraftPhoto.getAudioURL());

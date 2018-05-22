@@ -198,6 +198,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
             shareIntent.setPackage(INSTA_PACKAGE_NAME);
             shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(image_path));
             shareIntent.setType(IMAGE_TYPE);
+            reviewDbHelper.deleteDraftData(photoId);
             startActivity(shareIntent);
         }
     }

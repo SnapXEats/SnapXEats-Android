@@ -14,8 +14,9 @@ import com.snapxeats.common.model.foodGestures.DaoSession;
 
 @Entity
 public class SnapXDraftPhoto {
-    @Id
     private String restId;
+
+    @Id
     private String smartPhoto_Draft_Stored_id;
     private String restaurantName;
     private String restaurantAddress;
@@ -103,7 +104,7 @@ public class SnapXDraftPhoto {
      * To-many relationship, resolved on first access (and after reset).
      * Changes to to-many relations are not persisted, make changes to the target entity.
      */
-    @Generated(hash = 101023154)
+    @Generated(hash = 1698529719)
     public List<RestaurantAminities> getRestaurant_aminities() {
         if (restaurant_aminities == null) {
             final DaoSession daoSession = this.daoSession;
@@ -112,7 +113,7 @@ public class SnapXDraftPhoto {
             }
             RestaurantAminitiesDao targetDao = daoSession.getRestaurantAminitiesDao();
             List<RestaurantAminities> restaurant_aminitiesNew = targetDao
-                    ._querySnapXDraftPhoto_Restaurant_aminities(restId);
+                    ._querySnapXDraftPhoto_Restaurant_aminities(smartPhoto_Draft_Stored_id);
             synchronized (this) {
                 if (restaurant_aminities == null) {
                     restaurant_aminities = restaurant_aminitiesNew;
