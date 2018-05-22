@@ -128,4 +128,7 @@ public class UIConstants {
     public static final long MILLIS = 1000 * 60 * 60;
     public static final long MILLIES_TWO = 1000 * 60 ;
     public static final long TEN = 10;
+    public static final float THUMBNAIL = 0.5f;
+    public static final double UNSELECT_OPACITY = 1.0;
+    public static final double SELECT_OPACITY = 0.4;
 }

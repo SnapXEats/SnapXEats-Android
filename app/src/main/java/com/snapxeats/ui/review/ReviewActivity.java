@@ -54,6 +54,7 @@ import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.snapxeats.common.constants.UIConstants.INT_TEN;
 import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC;
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.TIME_HOUR;
 import static com.snapxeats.common.constants.UIConstants.TIME_MINUTE;
 import static com.snapxeats.common.constants.UIConstants.TIME_SECONDS;
@@ -118,7 +119,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private Uri fileImageUri;
     private String restId;
 
-    private String image_path = new String();
+    private String image_path;
     private int resumePosition;
 
     private boolean isPaused = false;
@@ -182,7 +183,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
         Glide.with(this)
                 .load(image_path)
-                .thumbnail(0.5f)
+                .thumbnail(THUMBNAIL)
                 .into(mImgRestPhoto);
 
         mToolbar.setNavigationOnClickListener(v -> dialogExitReview());

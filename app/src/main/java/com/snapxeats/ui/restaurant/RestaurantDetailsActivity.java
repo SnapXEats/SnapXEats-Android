@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.model.googleDirections.GoogleDirDest;
@@ -32,8 +33,6 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.directions.DirectionsActivity;
-import com.squareup.picasso.Picasso;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,17 +41,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import static com.snapxeats.common.constants.UIConstants.LATITUDE;
 import static com.snapxeats.common.constants.UIConstants.LONGITUDE;
 import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.SET_ALPHA_DISABLE;
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -296,8 +293,9 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
                     mLayoutRestSpecialties, false);
             ImageView imageView = view.findViewById(R.id.img_restaurant_specialties);
 
-            Picasso.with(this).load(mRestaurantSpecialties.get(INDEX_REST_SPECIALTIES).getDish_image_url())
-                    .placeholder(R.drawable.ic_cuisine_placeholder).into(imageView);
+            Glide.with(this).load(mRestaurantSpecialties.get(INDEX_REST_SPECIALTIES)
+                    .getDish_image_url()).thumbnail(THUMBNAIL)
+                    .into(imageView);
             mLayoutRestSpecialties.addView(view);
         }
         /*set adapter for restaurant images*/

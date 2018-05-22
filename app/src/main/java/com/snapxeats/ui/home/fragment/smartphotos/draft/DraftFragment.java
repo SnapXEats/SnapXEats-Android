@@ -37,7 +37,6 @@ import com.snapxeats.ui.review.ReviewDbHelper;
 import com.snapxeats.ui.shareReview.ShareReviewActivity;
 import org.greenrobot.greendao.query.QueryBuilder;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import javax.inject.Inject;
 import butterknife.BindView;
@@ -46,6 +45,7 @@ import static com.snapxeats.common.constants.UIConstants.MILLIES_TWO;
 import static com.snapxeats.common.constants.UIConstants.MILLIS;
 import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC_CONVERSION;
 import static com.snapxeats.common.constants.UIConstants.TEN;
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -202,7 +202,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
 
         Glide.with(getActivity())
                 .load(mSnapXDraftPhoto.getImageURL())
-                .thumbnail(0.5f)
+                .thumbnail(THUMBNAIL)
                 .into(img);
 
         //Register listeners
@@ -218,8 +218,8 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
     }
 
     public String milliSecondsToTimer(long milliseconds) {
-        String finalTimerString = "00";
-        String secondsString = "";
+        String finalTimerString ;
+        String secondsString;
 
         // Convert total duration into time
         int seconds = (int) ((milliseconds % (MILLIS)) % (MILLIES_TWO) / MILLI_TO_SEC_CONVERSION);
@@ -231,7 +231,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
             secondsString = "" + seconds;
         }
 
-        finalTimerString = finalTimerString + ":" + secondsString;
+        finalTimerString = getString(R.string.str_timer) + secondsString;
 
         // return timer string
         return finalTimerString;

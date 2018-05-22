@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.snapxeats.R;
+import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.draft.SnapXDraftPhoto;
 import java.util.List;
 import butterknife.BindView;
@@ -75,7 +76,7 @@ public class DraftAdapter extends RecyclerView.Adapter<DraftAdapter.ViewHolder> 
         public void setData(SnapXDraftPhoto snapXDraftPhoto) {
             Glide.with(mContext)
                     .load(snapXDraftPhoto.getImageURL())
-                    .thumbnail(0.5f)
+                    .thumbnail(UIConstants.THUMBNAIL)
                     .into(mImgView);
             mTxtRestName.setText(snapXDraftPhoto.getRestaurantName());
         }

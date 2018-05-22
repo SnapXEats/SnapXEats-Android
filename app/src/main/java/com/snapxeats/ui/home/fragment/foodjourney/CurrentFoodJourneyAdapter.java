@@ -7,14 +7,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.snapxeats.R;
 import com.snapxeats.common.model.foodJourney.UserCurrentWeekHistory;
-import com.squareup.picasso.Picasso;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 
 /**
  * Created by Prajakta Patil on 14/5/18.
@@ -75,7 +75,11 @@ public class CurrentFoodJourneyAdapter extends BaseAdapter {
         }
 
         void setData(UserCurrentWeekHistory item) {
-            Picasso.with(mContext).load(item.getRestaurant_image_url()).into(mImageView);
+            Glide.with(mContext)
+                    .load(item.getRestaurant_image_url())
+                    .thumbnail(THUMBNAIL)
+                    .into(mImageView);
+
             mTxtRestaurantName.setText(item.getRestaurant_name());
             mTxtAddress.setText(item.getFormattedDate());
             mTxtPoints.setText(item.getReward_point());

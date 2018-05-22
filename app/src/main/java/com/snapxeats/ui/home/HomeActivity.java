@@ -27,6 +27,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.bumptech.glide.Glide;
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
@@ -54,7 +55,6 @@ import com.snapxeats.ui.home.fragment.snapnshare.SnapNotificationReceiver;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
-import com.squareup.picasso.Picasso;
 import java.util.List;
 import javax.inject.Inject;
 import butterknife.BindView;
@@ -303,7 +303,7 @@ public class HomeActivity extends BaseActivity implements
     private void setUserInfo() {
         initNavHeaderViews();
         if (isLoggedIn() && null != mSnapxData && mSnapxData.size() > ZERO) {
-            Picasso.with(this).load(mSnapxData.get(ZERO).getImageUrl()).into(imgUser);
+            Glide.with(this).load(mSnapxData.get(ZERO).getImageUrl()).into(imgUser);
             txtUserName.setText(mSnapxData.get(ZERO).getUserName());
         } else {
             mLayoutUserData.setVisibility(View.GONE);
@@ -350,8 +350,6 @@ public class HomeActivity extends BaseActivity implements
                     selectedFragment = smartPhotoFragment;
                     break;
                 case R.id.nav_check_in:
-                   /* mDrawerLayout.closeDrawer(GravityCompat.START);
-                    showCheckInDialog();*/
                     selectedFragment = snapShareFragment;
                     break;
 
@@ -617,8 +615,7 @@ public class HomeActivity extends BaseActivity implements
     private void setSingleCheckInView(RestaurantInfo restaurantInfo) {
         if (null != restaurantInfo) {
             if (null != restaurantInfo.getRestaurant_logo() && !restaurantInfo.getRestaurant_logo().isEmpty()) {
-                Picasso.with(this).load(restaurantInfo.getRestaurant_logo())
-                        .placeholder(R.drawable.ic_restaurant_placeholder).into(mImgRestaurant);
+                Glide.with(this).load(restaurantInfo.getRestaurant_logo()).into(mImgRestaurant);
             }
             if (null != restaurantInfo.getRestaurant_name() && !restaurantInfo.getRestaurant_name().isEmpty()) {
                 mTxtRestName.setText(restaurantInfo.getRestaurant_name());

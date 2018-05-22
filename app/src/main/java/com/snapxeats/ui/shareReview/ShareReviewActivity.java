@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -27,16 +28,13 @@ import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.home.HomeActivity;
 import com.snapxeats.ui.review.ReviewDbHelper;
-import com.squareup.picasso.Picasso;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import static com.snapxeats.common.constants.UIConstants.IMAGE_TYPE;
 import static com.snapxeats.common.constants.UIConstants.INSTA_PACKAGE_NAME;
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 
 /**
  * Created by Prajakta Patil on 23/4/18.
@@ -100,7 +98,8 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         photoId = getIntent().getExtras().getString(getString(R.string.photo_id));
 
         if (null != mSnapResponse) {
-            Picasso.with(this).load(mSnapResponse.getDish_image_url()).placeholder(R.drawable.ic_restaurant_placeholder).into(mImgRest);
+            Glide.with(this).load(mSnapResponse.getDish_image_url())
+                    .thumbnail(THUMBNAIL).into(mImgRest);
             mImgRestName.setText(mSnapResponse.getRestaurant_name());
             mTxtMessage.setText(mSnapResponse.getMessage());
         }

@@ -235,5 +235,6 @@
     <string name="text_review">Text Review</string>
     <string name="audio_review">Audio Review</string>
     <string name="photo_id">photo_id</string>
+    <string name="audio_init_time">00:00</string>
 
 </resources>

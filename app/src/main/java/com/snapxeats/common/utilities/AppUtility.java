@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -267,5 +270,20 @@ public class AppUtility {
             public void onPageScrollStateChanged(int state) {
             }
         });
+    }
+
+    /**
+     * Get file real path from URI
+     */
+
+    public String getRealPathFromURIPath(Uri contentURI, Context mContext) {
+        Cursor cursor = mContext.getContentResolver().query(contentURI, null, null, null, null);
+        if (null == cursor) {
+            return contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            return cursor.getString(idx);
+        }
     }
 }

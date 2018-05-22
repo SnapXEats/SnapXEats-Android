@@ -36,7 +36,6 @@ public class DraftInteractor {
     private Context mContext;
     private DraftContract.DraftPresenter mpresenter;
 
-
     @Inject
     AppUtility utility;
 
@@ -58,14 +57,14 @@ public class DraftInteractor {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             MultipartBody.Part audioUpload = null;
             if (null != audio) {
-                String fileAudioPath = getRealPathFromURIPath(audio, mContext);
+                String fileAudioPath = utility.getRealPathFromURIPath(audio, mContext);
                 File fileAud = new File(fileAudioPath);
                 RequestBody mFileAudio = RequestBody.create(MediaType.parse(FILE_MEDIATYPE), fileAud);
                 audioUpload = MultipartBody.Part.createFormData
                         (mContext.getString(R.string.review_audioReview), fileAud.getName(), mFileAudio);
 
             }
-            String fileImagePath = getRealPathFromURIPath(image, mContext);
+            String fileImagePath = utility.getRealPathFromURIPath(image, mContext);
             File fileImg = new File(fileImagePath);
             RequestBody mFileImage = RequestBody.create(MediaType.parse(FILE_MEDIATYPE), fileImg);
 
@@ -96,17 +95,6 @@ public class DraftInteractor {
             });
         } else {
             mpresenter.response(SnapXResult.NONETWORK, null);
-        }
-    }
-
-    private String getRealPathFromURIPath(Uri contentURI, Context mContext) {
-        Cursor cursor = mContext.getContentResolver().query(contentURI, null, null, null, null);
-        if (null == cursor) {
-            return contentURI.getPath();
-        } else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            return cursor.getString(idx);
         }
     }
 }
