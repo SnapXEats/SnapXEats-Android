@@ -104,6 +104,7 @@ public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.
                 imgStatus.setVisibility(View.INVISIBLE);
                 cuisines.set_cuisine_favourite(false);
                 cuisines.set_cuisine_like(false);
+                cuisines.setSelected(true);
                 notifyItemChanged(position);
             });
         }

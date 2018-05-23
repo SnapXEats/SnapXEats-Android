@@ -22,6 +22,7 @@ import com.snapxeats.common.model.preference.SnapXPreference;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.model.review.SnapNShareResponse;
+import com.snapxeats.common.model.smartphotos.SmartPhotoResponse;
 
 import java.util.List;
 
@@ -262,4 +263,13 @@ public interface ApiHelper {
      */
     @GET(WebConstants.FOOD_JOURNEY)
     Call<RootFoodJourney> getFoodJourney(@Header("Authorization") String token);
+
+    /**
+     * Get smart photo details
+     *
+     * @param dishId
+     * @return
+     */
+    @GET(WebConstants.SMART_PHOTO)
+    Call<SmartPhotoResponse> getSmartPhotoDetails(@Path("restaurant_dish_id") String dishId);
 }

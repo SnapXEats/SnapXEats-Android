@@ -1,4 +1,4 @@
-package com.snapxeats.common.model.draft;
+package com.snapxeats.common.model.smartphotos;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;

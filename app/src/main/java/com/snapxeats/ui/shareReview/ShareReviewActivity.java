@@ -162,7 +162,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         dialog.show();
 
         Intent shareAnotherIntent = new Intent(this, HomeActivity.class);
-        shareAnotherIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        shareAnotherIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
 
         mBtnShare.setOnClickListener(v -> {
 

@@ -38,6 +38,8 @@ public class HomeContract {
         void getNearByRestaurantToCheckIn(double lattitude, double longitude);
 
         void checkIn(CheckInRequest checkInRequest);
+
+        void getSmartPhotoInfo(String dishId);
     }
 
     public interface HomeRouter {

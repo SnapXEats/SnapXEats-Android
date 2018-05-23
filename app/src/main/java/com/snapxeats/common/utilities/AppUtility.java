@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
@@ -34,6 +35,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.snapxeats.common.constants.UIConstants.MARGIN;
+import static com.snapxeats.common.constants.UIConstants.MILLIES_TWO;
+import static com.snapxeats.common.constants.UIConstants.MILLIS;
+import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC_CONVERSION;
+import static com.snapxeats.common.constants.UIConstants.TEN;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -284,6 +289,42 @@ public class AppUtility {
             cursor.moveToFirst();
             int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
             return cursor.getString(idx);
+        }
+    }
+
+    /**
+     * Converts milliseconds to seconds
+     */
+    public String milliSecondsToTimer(long milliseconds) {
+        String finalTimerString ;
+        String secondsString;
+
+        // Convert total duration into time
+        int seconds = (int) ((milliseconds % (MILLIS)) % (MILLIES_TWO) / MILLI_TO_SEC_CONVERSION);
+
+        // Prepending 0 to seconds if it is one digit
+        if (TEN > seconds) {
+            secondsString = ZERO + "" + seconds;
+        } else {
+            secondsString = "" + seconds;
+        }
+
+        finalTimerString = mContext.getString(R.string.str_timer) + secondsString;
+
+        // return timer string
+        return finalTimerString;
+    }
+
+   /**
+    * Reset media player
+    */
+    public void resetMediaPlayer(MediaPlayer mediaPlayer) {
+        if (null != mediaPlayer) {
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.pause();
+                mediaPlayer.stop();
+                mediaPlayer.reset();
+            }
         }
     }
 }

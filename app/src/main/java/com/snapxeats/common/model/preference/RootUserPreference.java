@@ -36,7 +36,6 @@ public class RootUserPreference{
         setRestaurant_distance("");
         setSort_by_rating(false);
         setSort_by_distance(false);
-        setSort_by_distance(false);
         setUserCuisinePreferences(null);
         setUserFoodPreferences(null);
     }

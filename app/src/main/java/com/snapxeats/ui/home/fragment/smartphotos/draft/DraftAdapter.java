@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
-import com.snapxeats.common.model.draft.SnapXDraftPhoto;
+import com.snapxeats.common.model.smartphotos.SnapXDraftPhoto;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -11,7 +11,11 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.GravityCompat;
@@ -19,13 +23,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.pkmmte.view.CircularImageView;
@@ -40,6 +48,7 @@ import com.snapxeats.common.model.checkin.CheckInRestaurants;
 import com.snapxeats.common.model.checkin.RestaurantInfo;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserPreference;
+import com.snapxeats.common.model.smartphotos.SmartPhotoResponse;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.NoNetworkResults;
@@ -49,6 +58,7 @@ import com.snapxeats.ui.home.fragment.checkin.CheckInFragment;
 import com.snapxeats.ui.home.fragment.foodjourney.FoodJourneyFragment;
 import com.snapxeats.ui.home.fragment.home.HomeFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
+import com.snapxeats.ui.home.fragment.smartphotos.AminityAdapter;
 import com.snapxeats.ui.home.fragment.smartphotos.SmartPhotoFragment;
 import com.snapxeats.ui.home.fragment.snapnshare.CheckInAdapter;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapNotificationReceiver;
@@ -65,6 +75,7 @@ import static com.snapxeats.common.constants.UIConstants.LNG;
 import static com.snapxeats.common.constants.UIConstants.LOGOUT_DIALOG_HEIGHT;
 import static com.snapxeats.common.constants.UIConstants.NOTIFICATION_ID;
 import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isCuisineDirty;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isDirty;
@@ -76,7 +87,7 @@ import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isFoo
 
 public class HomeActivity extends BaseActivity implements
         NavigationView.OnNavigationItemSelectedListener, HomeContract.HomeView,
-        AppContract.SnapXResults, View.OnClickListener {
+        AppContract.SnapXResults, View.OnClickListener, MediaPlayer.OnCompletionListener {
 
     @Inject
     HomeFragment homeFragment;
@@ -157,9 +168,39 @@ public class HomeActivity extends BaseActivity implements
     private Dialog mCheckInDialog;
     private Dialog mRewardDialog;
     private List<RestaurantInfo> mRestaurantList;
-
     private CheckInAdapter mAdapter;
     private CheckInRequest checkInRequest;
+
+    //Smart photos
+    private Dialog mDialog;
+    private SmartPhotoResponse mSmartPhoto;
+    private ImageView mImg;
+    private ImageView mImgInfo;
+    private ImageView mImgAudioReview;
+    private ImageView mImgTextReview;
+    private ImageView mImgPlayAudio;
+    private ImageView mImgShare;
+
+    private TextView mTxtSmartPhotoRestName;
+    private TextView mTxtTimeOfAudio;
+    private TextView mTxtSmartRestAddress;
+    private TextView mTxtRestReviewContents;
+
+    private LinearLayout mLayoutControls;
+    private LinearLayout mLayoutDescription;
+    private LinearLayout mLayoutInfo;
+    private LinearLayout mLayoutReview;
+    private LinearLayout mLayoutAudio;
+    private ListView mListAminities;
+    private List<String> mAminitiesList;
+    private boolean isImageTap;
+    private boolean isInfoTap;
+    private boolean isReviewTap;
+    private boolean isAudioViewTap;
+    private boolean isAudioPlayTap;
+    private String dishId;
+    private MediaPlayer mMediaPlayer;
+    private Handler mHandler = new Handler();
 
     @Inject
     FoodStackDbHelper foodStackDbHelper;
@@ -191,6 +232,18 @@ public class HomeActivity extends BaseActivity implements
         transaction = fragmentManager.beginTransaction();
         foodStackDbHelper.setContext(this);
 
+        //Handle app links in app
+        // ATTENTION: This was auto-generated to handle app links.
+        Intent appLinkIntent = getIntent();
+//        String appLinkAction = appLinkIntent.getAction();
+//        Uri appLinkData = appLinkIntent.getData();
+        if (appLinkIntent != null && appLinkIntent.getData() != null) {
+            dishId = appLinkIntent.getData().getSchemeSpecificPart().split("id=")[ONE];
+            Log.v("HomeActivity", "DishId" + dishId);
+            showProgressDialog();
+            mPresenter.getSmartPhotoInfo(dishId);
+        }
+
         List<SnapxData> snapxData = mPresenter.getUserDataFromDb();
         userId = preferences.getString(getString(R.string.user_id), "");
         mRootUserPreference = mPresenter.getUserPreferenceFromDb();
@@ -205,7 +258,10 @@ public class HomeActivity extends BaseActivity implements
             transaction.replace(R.id.frame_layout, homeFragment);
         }
         mSnapxData = mPresenter.getUserDataFromDb();
-        setUserInfo();
+        if (null != getActivity()) {
+            setUserInfo();
+        }
+
         if (null != mSnapxData && mSnapxData.size() > ZERO) {
             if (mSnapxData.get(ZERO).getIsFirstTimeUser()) {
                 transaction.replace(R.id.frame_layout, navPrefFragment);
@@ -350,7 +406,9 @@ public class HomeActivity extends BaseActivity implements
                     selectedFragment = smartPhotoFragment;
                     break;
                 case R.id.nav_check_in:
-                    selectedFragment = snapShareFragment;
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                    showCheckInDialog();
+//                    selectedFragment = snapShareFragment;
                     break;
 
                 case R.id.nav_logout:
@@ -528,6 +586,10 @@ public class HomeActivity extends BaseActivity implements
                 transaction.replace(R.id.frame_layout, snapShareFragment);
                 transaction.commit();
             });
+        }else if (value instanceof SmartPhotoResponse){
+            mSmartPhoto = (SmartPhotoResponse) value;
+            mAminitiesList = mSmartPhoto.getRestaurant_aminities();
+            showSmartPhotoDialog();
         }
     }
 
@@ -553,7 +615,7 @@ public class HomeActivity extends BaseActivity implements
         mRecyclerView = mCheckInDialog.findViewById(R.id.recyclerview);
 
         mImgRestaurant = mCheckInDialog.findViewById(R.id.img_restaurant);
-        mTxtRestName = mCheckInDialog.findViewById(R.id.txt_rest_name);
+        mTxtSmartPhotoRestName = mCheckInDialog.findViewById(R.id.txt_rest_name);
         mTxtCancel = mCheckInDialog.findViewById(R.id.txt_cancel);
         mBtnCheckIn = mCheckInDialog.findViewById(R.id.btn_check_in);
 
@@ -587,8 +649,134 @@ public class HomeActivity extends BaseActivity implements
             case R.id.btn_okay:
                 dismissCheckInDialog();
                 break;
+
+            case R.id.image_view:
+                isImageTap = !isImageTap;
+                if (isImageTap) {
+                    mLayoutControls.setVisibility(View.VISIBLE);
+                } else {
+                    mLayoutControls.setVisibility(View.GONE);
+                    mLayoutDescription.setVisibility(View.GONE);
+                    mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review));
+                    mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
+                    mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info));
+                    utility.resetMediaPlayer(mMediaPlayer);
+                }
+                break;
+
+            case R.id.img_close:
+                utility.resetMediaPlayer(mMediaPlayer);
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.release();
+                    mMediaPlayer = null;
+                }
+                mDialog.dismiss();
+                break;
+
+            case R.id.img_info:
+                isInfoTap = !isInfoTap;
+                if (isInfoTap) {
+                    utility.resetMediaPlayer(mMediaPlayer);
+                    mImgInfo.setImageDrawable(getDrawable(R.drawable.ic_info_selected));
+                    mImgAudioReview.setImageDrawable(getDrawable(R.drawable.ic_audio_speaker));
+                    mImgTextReview.setImageDrawable(getDrawable(R.drawable.ic_text_review));
+
+                    mLayoutDescription.setVisibility(View.VISIBLE);
+                    mLayoutInfo.setVisibility(View.VISIBLE);
+                    mLayoutAudio.setVisibility(View.GONE);
+                    mLayoutReview.setVisibility(View.GONE);
+                    mListAminities.setAdapter(new AminityAdapter(getActivity(), mAminitiesList));
+
+                    mTxtSmartPhotoRestName.setText(mSmartPhoto.getRestaurant_name());
+                    mTxtSmartRestAddress.setText(mSmartPhoto.getRestaurant_address());
+                } else {
+                    mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info));
+                    mLayoutInfo.setVisibility(View.GONE);
+                }
+                break;
+
+            case R.id.img_text_review:
+                isReviewTap = !isReviewTap;
+                if (isReviewTap) {
+                    mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review_selected));
+                    mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info));
+                    mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
+
+                    mLayoutDescription.setVisibility(View.VISIBLE);
+                    mLayoutReview.setVisibility(View.VISIBLE);
+                    mLayoutInfo.setVisibility(View.GONE);
+                    mTxtRestReviewContents.setText(mSmartPhoto.getText_review());
+                    utility.resetMediaPlayer(mMediaPlayer);
+
+                } else {
+                    mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review));
+                    mLayoutReview.setVisibility(View.GONE);
+                }
+                break;
+
+            case R.id.img_audio:
+                isAudioViewTap = !isAudioViewTap;
+                if (isAudioViewTap) {
+                    mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker_selected));
+                    mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review));
+                    mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info));
+
+                    mLayoutDescription.setVisibility(View.VISIBLE);
+                    mLayoutAudio.setVisibility(View.VISIBLE);
+                    mLayoutInfo.setVisibility(View.GONE);
+                    mLayoutReview.setVisibility(View.GONE);
+
+                    if (null != mMediaPlayer) {
+                        mMediaPlayer = MediaPlayer.create(getActivity(), Uri.parse(mSmartPhoto.getAudio_review_url()));
+                        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                        mMediaPlayer.setOnCompletionListener(this);
+                        mTxtTimeOfAudio.setText(utility.milliSecondsToTimer(mMediaPlayer.getCurrentPosition()));
+                    }
+
+                } else {
+                    mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
+                    mLayoutAudio.setVisibility(View.GONE);
+                    utility.resetMediaPlayer(mMediaPlayer);
+                }
+                break;
+
+            case R.id.img_play_audio:
+                isAudioPlayTap = !isAudioPlayTap;
+
+                if (isAudioPlayTap) {
+                    mLayoutDescription.setVisibility(View.VISIBLE);
+                    mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_pause));
+                    mLayoutAudio.setVisibility(View.VISIBLE);
+                    mLayoutInfo.setVisibility(View.GONE);
+                    mLayoutReview.setVisibility(View.GONE);
+
+                    mMediaPlayer.start();
+                    mUpdateTimeTask.run();
+                } else {
+                    mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_play_review));
+                    if (mMediaPlayer.isPlaying()) {
+                        mMediaPlayer.pause();
+                    }
+                }
+                break;
+            case R.id.img_share:
+                break;
+
         }
     }
+    private Runnable mUpdateTimeTask = new Runnable() {
+        public void run() {
+            if (null != mMediaPlayer) {
+                long currentDuration = mMediaPlayer.getCurrentPosition();
+
+                // Displaying time completed playing
+                mTxtTimeOfAudio.setText("" + utility.milliSecondsToTimer(currentDuration));
+
+                // Running this thread after 100 milliseconds
+                mHandler.postDelayed(this, 100);
+            }
+        }
+    };
 
     private void setupRecyclerView() {
 
@@ -654,12 +842,14 @@ public class HomeActivity extends BaseActivity implements
                         case CHECKIN:
                             mPresenter.checkIn(checkInRequest);
                             break;
-
                         case USER_PREFERENCES:
                             postOrPutUserPreferences();
                             break;
                         case FOODSTACK_GESTURES:
                             mPresenter.sendUserGestures(wishlistDbHelper.getFoodGestures());
+                            break;
+                        case SMART_PHOTO:
+                            mPresenter.getSmartPhotoInfo(dishId);
                             break;
                     }
                 };
@@ -674,12 +864,14 @@ public class HomeActivity extends BaseActivity implements
                     case CHECKIN:
                         mPresenter.checkIn(checkInRequest);
                         break;
-
                     case USER_PREFERENCES:
                         postOrPutUserPreferences();
                         break;
                     case FOODSTACK_GESTURES:
                         mPresenter.sendUserGestures(wishlistDbHelper.getFoodGestures());
+                        break;
+                    case SMART_PHOTO:
+                        mPresenter.getSmartPhotoInfo(dishId);
                         break;
                 }
             }
@@ -710,6 +902,8 @@ public class HomeActivity extends BaseActivity implements
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
+        utility.resetMediaPlayer(mMediaPlayer);
 
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -754,4 +948,68 @@ public class HomeActivity extends BaseActivity implements
             am.cancel(pendingIntent);
         pendingIntent.cancel();
     }
+
+    /**
+     * Dialog to show smart photo information
+     */
+    private void showSmartPhotoDialog() {
+        mDialog = new Dialog(getActivity());
+        mDialog.setContentView(R.layout.draft_dialog_layout);
+        Window window = mDialog.getWindow();
+        if (null != window) {
+            window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            window.setGravity(Gravity.START);
+        }
+
+        mLayoutDescription = mDialog.findViewById(R.id.layout_description);
+        mLayoutControls = mDialog.findViewById(R.id.layout_controls);
+        mLayoutInfo = mDialog.findViewById(R.id.layout_info);
+        mLayoutReview = mDialog.findViewById(R.id.layout_review);
+        mLayoutAudio = mDialog.findViewById(R.id.layout_audio);
+
+        mTxtSmartPhotoRestName = mDialog.findViewById(R.id.txt_rest_name);
+        mTxtSmartRestAddress = mDialog.findViewById(R.id.txt_rest_address);
+        mTxtRestReviewContents = mDialog.findViewById(R.id.txt_review_contents);
+        mTxtTimeOfAudio = mDialog.findViewById(R.id.timer_play);
+
+        ImageView img = mDialog.findViewById(R.id.image_view);
+        ImageView imgClose = mDialog.findViewById(R.id.img_close);
+        mImgInfo = mDialog.findViewById(R.id.img_info);
+        mImgTextReview = mDialog.findViewById(R.id.img_text_review);
+        mImgAudioReview = mDialog.findViewById(R.id.img_audio);
+        mImgShare = mDialog.findViewById(R.id.img_share);
+        mImgShare.setImageDrawable(getDrawable(R.drawable.ic_download_select));
+
+        mImgPlayAudio = mDialog.findViewById(R.id.img_play_audio);
+        mListAminities = mDialog.findViewById(R.id.list_aminities);
+
+        if (null == mSmartPhoto.getText_review() || mSmartPhoto.getText_review().isEmpty())
+            mImgTextReview.setVisibility(View.GONE);
+
+        if (null == mSmartPhoto.getAudio_review_url() || mSmartPhoto.getAudio_review_url().isEmpty())
+            mImgAudioReview.setVisibility(View.GONE);
+
+        Glide.with(getActivity())
+                .load(mSmartPhoto.getDish_image_url())
+                .thumbnail(THUMBNAIL)
+                .into(img);
+
+        //Register listeners
+        img.setOnClickListener(this);
+        imgClose.setOnClickListener(this);
+        mImgInfo.setOnClickListener(this);
+        mImgTextReview.setOnClickListener(this);
+        mImgAudioReview.setOnClickListener(this);
+        mImgShare.setOnClickListener(this);
+        mImgPlayAudio.setOnClickListener(this);
+
+        mDialog.show();
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_play_review));
+        mMediaPlayer = MediaPlayer.create(getActivity(), Uri.parse(mSmartPhoto.getAudio_review_url()));
+        mMediaPlayer.setOnCompletionListener(this);
+        mTxtTimeOfAudio.setText(utility.milliSecondsToTimer(mMediaPlayer.getCurrentPosition()));    }
 }
