@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -24,6 +23,10 @@ import android.widget.TextView;
 import com.snapxeats.R;
 import com.snapxeats.common.utilities.NetworkUtility;
 
+import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.PADDING;
+import static com.snapxeats.common.constants.UIConstants.WEBVIEW_SCALE;
+
 /**
  * Created by Prajakta Patil on 11/1/18.
  */
@@ -31,8 +34,6 @@ public class InstagramDialog extends Dialog {
 
     private static final FrameLayout.LayoutParams mFrameLayout = new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    private static final int PADDING = 20;
-    private static final int WEBVIEW_SCALE = 210;
     private String mInstaUrl;
     private OAuthDialogListener mListener;
     private ProgressDialog progressDialog;
@@ -91,6 +92,7 @@ public class InstagramDialog extends Dialog {
         mWebView.setInitialScale(WEBVIEW_SCALE);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+
         mWebView.getSettings().setSupportZoom(true);
         mWebView.getSettings().setDefaultZoom(WebSettings.ZoomDensity.FAR);
         mLinearLayout.addView(mWebView);
@@ -110,14 +112,9 @@ public class InstagramDialog extends Dialog {
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             if (url.startsWith(InstagramApp.mCallbackUrl)) {
                 String urls[] = url.split("=");
-                mListener.onComplete(urls[1]);
-                //
+                mListener.onComplete(urls[ONE]);
                 InstagramDialogListener activity = (InstagramDialogListener) mContext;
                 activity.onReturnValue(urls[1]);
-                //
-              /*  Intent intent = new Intent(mContext, LoginActivity.class);
-                intent.putExtra(mContext.getString(R.string.instagramToken), urls[1]);
-                mContext.startActivity(intent);*/
                 InstagramDialog.this.dismiss();
                 return true;
             }
@@ -165,6 +162,7 @@ public class InstagramDialog extends Dialog {
 
     public interface OAuthDialogListener {
         void onComplete(String accessToken);
+
         void onError(String error);
     }
 

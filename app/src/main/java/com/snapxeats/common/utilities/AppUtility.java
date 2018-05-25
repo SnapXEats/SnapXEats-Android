@@ -1,7 +1,6 @@
 package com.snapxeats.common.utilities;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -20,20 +19,24 @@ import android.widget.LinearLayout;
 import com.google.gson.Gson;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
-import com.snapxeats.common.model.SnapxData;
-import com.snapxeats.common.model.SnapxDataDao;
-import com.snapxeats.common.model.foodGestures.DaoSession;
+import com.snapxeats.common.model.SnapXData;
+import com.snapxeats.common.model.SnapXDataDao;
 import com.snapxeats.common.model.location.Location;
+import com.snapxeats.common.model.preference.DaoSession;
 import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
 import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.home.fragment.snapnshare.ViewPagerAdapter;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.snapxeats.common.constants.UIConstants.MARGIN;
+import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -43,12 +46,8 @@ import static com.snapxeats.common.constants.UIConstants.ZERO;
 @Singleton
 public class AppUtility {
     private SharedPreferences preferences;
-    private SharedPreferences.Editor editor;
     private Context mContext;
-    private DaoSession daoSession;
-    private SnapxDataDao snapxDataDao;
-    private SnapxData snapxData;
-    private ProgressDialog mDialog;
+    private SnapXData snapXData;
     private int dotsCount;
     private ImageView[] dots;
 
@@ -62,21 +61,21 @@ public class AppUtility {
     public void setContext(Context context) {
         this.mContext = context;
         snapXDialog.setContext((Activity) context);
-        daoSession = ((SnapXApplication) context.getApplicationContext()).getDaoSession();
-        snapxDataDao = daoSession.getSnapxDataDao();
-        if (snapxDataDao.loadAll() != null && snapxDataDao.loadAll().size() > 0) {
-            snapxData = snapxDataDao.loadAll().get(0);
+        DaoSession daoSession = ((SnapXApplication) context.getApplicationContext()).getDaoSession();
+        SnapXDataDao snapxDataDao = daoSession.getSnapXDataDao();
+        if (snapxDataDao.loadAll() != null && snapxDataDao.loadAll().size() > ZERO) {
+            snapXData = snapxDataDao.loadAll().get(ZERO);
         }
     }
 
     public SharedPreferences getSharedPreferences() {
         preferences = mContext.getSharedPreferences(mContext.getString(R.string.preference_name),
-                mContext.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
         return preferences;
     }
 
     public void saveObjectInPref(Location location, String key) {
-        editor = preferences.edit();
+        SharedPreferences.Editor editor = preferences.edit();
         Gson gson = new Gson();
         String json = gson.toJson(location);
         editor.putString(key, json);
@@ -92,8 +91,8 @@ public class AppUtility {
                 return String.format("Bearer %s", token);
             } else {
                 //TODO: fetch it from DB, assign it to app.token & return that token
-                if (null != snapxData) {
-                    token = snapxData.getToken(); // fetch it from DB
+                if (null != snapXData) {
+                    token = snapXData.getToken(); // fetch it from DB
                     app.setToken(token);
                 }
                 return String.format("Bearer %s", token);
@@ -109,8 +108,8 @@ public class AppUtility {
             token = app.getToken();
             if (null != token && !token.isEmpty()) {
                 //TODO: fetch it from DB, assign it to app.token & return that token
-                if (snapxData != null && !snapxData.getToken().isEmpty()) {
-                    token = snapxData.getToken(); // fetch it from DB
+                if (snapXData != null && !snapXData.getToken().isEmpty()) {
+                    token = snapXData.getToken(); // fetch it from DB
                 }
                 app.setToken(token);
             }
@@ -121,7 +120,7 @@ public class AppUtility {
         View view = ((Activity) mContext).getCurrentFocus();
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), ZERO);
         }
     }
 
@@ -208,8 +207,9 @@ public class AppUtility {
         geocoder = new Geocoder(mContext, Locale.getDefault());
         try {
             // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-            addresses = geocoder.getFromLocation(latitude, longitude, 1);
-            return addresses.get(0);
+            addresses = geocoder.getFromLocation(latitude, longitude, ONE);
+
+            return addresses.get(ZERO);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -275,7 +275,6 @@ public class AppUtility {
     /**
      * Get file real path from URI
      */
-
     public String getRealPathFromURIPath(Uri contentURI, Context mContext) {
         Cursor cursor = mContext.getContentResolver().query(contentURI, null, null, null, null);
         if (null == cursor) {
@@ -286,4 +285,6 @@ public class AppUtility {
             return cursor.getString(idx);
         }
     }
+
+
 }

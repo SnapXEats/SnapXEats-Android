@@ -1,13 +1,16 @@
 package com.snapxeats.ui.home.fragment.smartphotos.draft;
 
 import android.content.Context;
-import android.database.Cursor;
+import android.content.SharedPreferences;
 import android.net.Uri;
-import android.provider.MediaStore;
 
 import com.snapxeats.R;
+import com.snapxeats.common.model.SnapXUserRequest;
+import com.snapxeats.common.model.SnapXUserResponse;
+import com.snapxeats.common.model.login.RootInstagram;
 import com.snapxeats.common.model.review.SnapNShareResponse;
 import com.snapxeats.common.utilities.AppUtility;
+import com.snapxeats.common.utilities.LoginUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
@@ -25,6 +28,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.snapxeats.common.constants.UIConstants.FILE_MEDIATYPE;
+import static com.snapxeats.common.constants.UIConstants.SX_BEARER;
 import static com.snapxeats.common.constants.UIConstants.TEXT_TYPE;
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
@@ -35,24 +39,40 @@ import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 public class DraftInteractor {
     private Context mContext;
     private DraftContract.DraftPresenter mpresenter;
-
+    private RootInstagram rootInstagram;
+    private String instaToken;
+    private String serverToken;
     @Inject
     AppUtility utility;
 
     @Inject
-    public DraftInteractor() {
+    LoginUtility loginUtility;
+
+    @Inject
+    DraftInteractor() {
     }
 
 
     public void setDraftPresenter(DraftContract.DraftPresenter draftPresenter) {
-        mpresenter = draftPresenter;    }
+        mpresenter = draftPresenter;
+    }
 
     public void setContext(DraftContract.DraftView view) {
         mContext = view.getActivity();
         utility.setContext(view.getActivity());
+        loginUtility.setContext(view.getActivity());
     }
 
-    void sendReview(String restId, Uri image, Uri audio, String txtReview, Integer rating) {
+    /**
+     * Send review api call
+     *
+     * @param restId
+     * @param image
+     * @param audio
+     * @param txtReview
+     * @param rating
+     */
+    void sendReview(String token, String restId, Uri image, Uri audio, String txtReview, Integer rating) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             MultipartBody.Part audioUpload = null;
@@ -74,10 +94,13 @@ public class DraftInteractor {
             MultipartBody.Part imageUpload = MultipartBody.Part.createFormData
                     (mContext.getString(R.string.review_dishPicture), fileImg.getName(), mFileImage);
 
-
+            if (utility.isLoggedIn()) {
+                serverToken = utility.getAuthToken(mContext);
+            } else {
+                serverToken = SX_BEARER + token;
+            }
             Call<SnapNShareResponse> snapXUserCall = apiHelper.sendUserReview(
-                    utility.getAuthToken(mContext)
-                    , id, imageUpload, audioUpload, review, rating);
+                    serverToken, id, imageUpload, audioUpload, review, rating);
             snapXUserCall.enqueue(new Callback<SnapNShareResponse>() {
                 @Override
                 public void onResponse(Call<SnapNShareResponse> call,
@@ -97,4 +120,81 @@ public class DraftInteractor {
             mpresenter.response(SnapXResult.NONETWORK, null);
         }
     }
+
+    /**
+     * Instagram Info api call
+     *
+     * @param token
+     */
+    public void getInstaInfo(String token) {
+        this.instaToken = token;
+        ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+        Call<RootInstagram> snapXUserCall = apiHelper.getInstagramInfo(token);
+        snapXUserCall.enqueue(new Callback<RootInstagram>() {
+            @Override
+            public void onResponse(Call<RootInstagram> call, Response<RootInstagram> response) {
+                if (response.isSuccessful() && null != response.body()) {
+                    rootInstagram = response.body();
+                    SnapXUserRequest snapXUserRequest = new SnapXUserRequest(rootInstagram.getInstagramToken(),
+                            mContext.getString(R.string.platform_instagram), rootInstagram.getData().getId());
+                    getUserData(snapXUserRequest);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RootInstagram> call, Throwable t) {
+            }
+        });
+    }
+
+    /**
+     * get server user info api call
+     *
+     * @param snapXUserRequest
+     */
+    public void getUserData(SnapXUserRequest snapXUserRequest) {
+        if (NetworkUtility.isNetworkAvailable(mContext)) {
+            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            Call<SnapXUserResponse> snapXUserCall = apiHelper.getServerToken(snapXUserRequest);
+
+            snapXUserCall.enqueue(new Callback<SnapXUserResponse>() {
+                @Override
+                public void onResponse(Call<SnapXUserResponse> call, Response<SnapXUserResponse> response) {
+                    if (response.isSuccessful() && null != response.body()) {
+                        SnapXUserResponse snapXUser = response.body();
+
+                        /** save userId to shared preferences **/
+                        SharedPreferences settings = utility.getSharedPreferences();
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putString(mContext.getString(R.string.user_id), snapXUser.getUserInfo().getUser_id());
+                        editor.putBoolean(mContext.getString(R.string.isFirstTimeUser), snapXUser.getUserInfo().isFirst_time_login());
+                        editor.apply();
+
+                        /** save instagram data **/
+                        if (snapXUser.getUserInfo().getSocial_platform().
+                                equalsIgnoreCase(mContext.getString(R.string.platform_instagram))) {
+                            loginUtility.saveInstaDataInDb(snapXUser.getUserInfo(), instaToken, rootInstagram);
+                            loginUtility.getUserPreferences(snapXUser.getUserInfo().getToken());
+                        }
+
+                        /** save facebook data **/
+                        if (snapXUser.getUserInfo().getSocial_platform().
+                                equalsIgnoreCase(mContext.getString(R.string.platform_facebook))) {
+                            loginUtility.saveFbDataInDb(snapXUser.getUserInfo(), rootInstagram);
+                            loginUtility.getUserPreferences(snapXUser.getUserInfo().getToken());
+                        }
+                        mpresenter.response(SnapXResult.SUCCESS, snapXUser);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<SnapXUserResponse> call, Throwable t) {
+                    mpresenter.response(SnapXResult.FAILURE, null);
+                }
+            });
+        } else {
+            mpresenter.response(SnapXResult.NONETWORK, null);
+        }
+    }
+
 }

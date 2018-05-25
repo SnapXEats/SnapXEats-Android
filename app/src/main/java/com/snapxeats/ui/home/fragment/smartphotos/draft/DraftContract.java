@@ -1,8 +1,10 @@
 package com.snapxeats.ui.home.fragment.smartphotos.draft;
 
 import android.net.Uri;
+
 import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
+import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.dagger.AppContract;
 
 /**
@@ -15,6 +17,10 @@ public class DraftContract {
     }
 
     public interface DraftPresenter extends BasePresenter<DraftView> {
-        void sendReview(String restId, Uri fileImageUri, Uri audioFile, String textReview, int rating);
+        void sendReview(String token, String restId, Uri fileImageUri, Uri audioFile, String textReview, int rating);
+
+        void getInstaInfo(String token);
+
+        void getUserdata(SnapXUserRequest snapXUserRequest);
     }
 }

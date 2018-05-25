@@ -5,8 +5,8 @@ import android.content.SharedPreferences;
 
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.model.SnapxData;
-import com.snapxeats.common.model.SnapxDataDao;
+import com.snapxeats.common.model.SnapXData;
+import com.snapxeats.common.model.SnapXDataDao;
 import com.snapxeats.common.model.foodGestures.FoodWishlists;
 import com.snapxeats.common.model.foodGestures.FoodWishlistsDao;
 import com.snapxeats.common.model.preference.RootUserPreference;
@@ -130,8 +130,8 @@ public class HomeDbHelper {
         userPreferenceDao.insertOrReplaceInTx(userPreference);
     }
 
-    List<SnapxData> getUserInfoFromDb() {
-        SnapxDataDao snapxDataDao = dbHelper.getSnapxDataDao();
+    List<SnapXData> getUserInfoFromDb() {
+        SnapXDataDao snapxDataDao = dbHelper.getSnapxDataDao();
         return snapxDataDao.loadAll();
     }
 

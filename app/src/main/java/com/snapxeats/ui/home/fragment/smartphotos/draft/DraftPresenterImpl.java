@@ -2,6 +2,7 @@ package com.snapxeats.ui.home.fragment.smartphotos.draft;
 
 import android.net.Uri;
 
+import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.utilities.SnapXResult;
 
 /**
@@ -26,7 +27,7 @@ public class DraftPresenterImpl implements DraftContract.DraftPresenter {
 
     @Override
     public void dropView() {
-draftView = null;
+        draftView = null;
     }
 
     @Override
@@ -50,7 +51,17 @@ draftView = null;
     }
 
     @Override
-    public void sendReview(String restId, Uri fileImageUri, Uri audioFile, String textReview, int rating) {
-        interactor.sendReview(restId,fileImageUri,audioFile,textReview,rating);
+    public void sendReview(String token, String restId, Uri fileImageUri, Uri audioFile, String textReview, int rating) {
+        interactor.sendReview(token, restId, fileImageUri, audioFile, textReview, rating);
+    }
+
+    @Override
+    public void getInstaInfo(String token) {
+        interactor.getInstaInfo(token);
+    }
+
+    @Override
+    public void getUserdata(SnapXUserRequest snapXUserRequest) {
+        interactor.getUserData(snapXUserRequest);
     }
 }

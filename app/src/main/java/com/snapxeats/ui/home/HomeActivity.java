@@ -27,13 +27,14 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.constants.UIConstants;
-import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.model.checkin.CheckInResponse;
 import com.snapxeats.common.model.checkin.CheckInRestaurants;
@@ -55,10 +56,14 @@ import com.snapxeats.ui.home.fragment.snapnshare.SnapNotificationReceiver;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
+
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 import static com.snapxeats.common.Router.Screen.LOGIN;
 import static com.snapxeats.common.constants.UIConstants.LAT;
 import static com.snapxeats.common.constants.UIConstants.LNG;
@@ -127,7 +132,7 @@ public class HomeActivity extends BaseActivity implements
     @Inject
     HomeContract.HomePresenter mPresenter;
 
-    private List<SnapxData> mSnapxData;
+    private List<SnapXData> mSnapxData;
 
     @Inject
     AppUtility mAppUtility;
@@ -191,19 +196,8 @@ public class HomeActivity extends BaseActivity implements
         transaction = fragmentManager.beginTransaction();
         foodStackDbHelper.setContext(this);
 
-        List<SnapxData> snapxData = mPresenter.getUserDataFromDb();
         userId = preferences.getString(getString(R.string.user_id), "");
         mRootUserPreference = mPresenter.getUserPreferenceFromDb();
-
-        if (null != snapxData && snapxData.size() > ZERO) {
-            if (snapxData.get(ZERO).getIsFirstTimeUser()) {
-                transaction.replace(R.id.frame_layout, navPrefFragment);
-            } else {
-                transaction.replace(R.id.frame_layout, homeFragment);
-            }
-        } else {
-            transaction.replace(R.id.frame_layout, homeFragment);
-        }
         mSnapxData = mPresenter.getUserDataFromDb();
         setUserInfo();
         if (null != mSnapxData && mSnapxData.size() > ZERO) {
@@ -214,6 +208,7 @@ public class HomeActivity extends BaseActivity implements
             }
         } else
             transaction.replace(R.id.frame_layout, homeFragment);
+
         mNavigationView.setCheckedItem(R.id.nav_home);
 
         //Notification for take photo
@@ -349,8 +344,10 @@ public class HomeActivity extends BaseActivity implements
                 case R.id.nav_smart_photos:
                     selectedFragment = smartPhotoFragment;
                     break;
+
                 case R.id.nav_check_in:
-                    selectedFragment = snapShareFragment;
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                    showCheckInDialog();
                     break;
 
                 case R.id.nav_logout:
@@ -370,31 +367,35 @@ public class HomeActivity extends BaseActivity implements
             }
 
         } else {
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-            alertDialog.setMessage(getString(R.string.preference_save_message))
-                    .setCancelable(false)
-                    .setPositiveButton(getString(R.string.apply), (dialog, which) -> {
-
-                        if (null != userId && !userId.isEmpty()) {
-
-                            mUserPreference = homeDbHelper.mapLocalObject(mRootUserPreference);
-                            postOrPutUserPreferences();
-                        } else {
-                            //For non logged in user
-                            FragmentManager fragmentManager = getFragmentManager();
-                            FragmentTransaction transaction = fragmentManager.beginTransaction();
-                            transaction.replace(R.id.frame_layout, homeFragment);
-                            mNavigationView.setCheckedItem(R.id.nav_home);
-                            mDrawerLayout.closeDrawer(GravityCompat.START);
-                            isDirty = false;
-                            isCuisineDirty = false;
-                            isFoodDirty = false;
-                            transaction.commit();
-                        }
-                    });
-            alertDialog.show();
+            dialogPreferences();
         }
         return true;
+    }
+
+    private void dialogPreferences() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setMessage(getString(R.string.preference_save_message))
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.apply), (dialog, which) -> {
+
+                    if (null != userId && !userId.isEmpty()) {
+
+                        mUserPreference = homeDbHelper.mapLocalObject(mRootUserPreference);
+                        postOrPutUserPreferences();
+                    } else {
+                        //For non logged in user
+                        FragmentManager fragmentManager = getFragmentManager();
+                        FragmentTransaction transaction = fragmentManager.beginTransaction();
+                        transaction.replace(R.id.frame_layout, homeFragment);
+                        mNavigationView.setCheckedItem(R.id.nav_home);
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
+                        isDirty = false;
+                        isCuisineDirty = false;
+                        isFoodDirty = false;
+                        transaction.commit();
+                    }
+                });
+        alertDialog.show();
     }
 
     private void showWishlistDialogNonLoggedInUser() {
@@ -570,7 +571,6 @@ public class HomeActivity extends BaseActivity implements
                 }
             }
         });
-
         showProgressDialog();
         mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
     }
@@ -591,7 +591,6 @@ public class HomeActivity extends BaseActivity implements
     }
 
     private void setupRecyclerView() {
-
         if (null != mRestaurantList) {
             mAdapter = new CheckInAdapter(this, mRestaurantList, (position, isSelected) -> {
                 for (RestaurantInfo restaurantInfo : mRestaurantList) {
@@ -634,7 +633,6 @@ public class HomeActivity extends BaseActivity implements
 
     @Override
     public void error(Object value) {
-
     }
 
     @Override
@@ -754,4 +752,12 @@ public class HomeActivity extends BaseActivity implements
             am.cancel(pendingIntent);
         pendingIntent.cancel();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.id_draft_fragment);
+        fragment.onActivityResult(requestCode, resultCode, data);
+    }
+
 }

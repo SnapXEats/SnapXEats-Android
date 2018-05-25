@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
@@ -28,32 +29,53 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
+import com.snapxeats.common.constants.WebConstants;
+import com.snapxeats.common.model.SnapXUserRequest;
+import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.model.review.SnapNShareResponse;
 import com.snapxeats.common.utilities.AppUtility;
+import com.snapxeats.common.utilities.LoginUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
+import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.login.InstagramApp;
+import com.snapxeats.ui.login.InstagramDialog;
 import com.snapxeats.ui.shareReview.ShareReviewActivity;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.snapxeats.common.constants.UIConstants.INT_TEN;
 import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC;
+import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.REQUEST_PERMISSION_CODE;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.TIME_HOUR;
 import static com.snapxeats.common.constants.UIConstants.TIME_MINUTE;
@@ -65,7 +87,7 @@ import static com.snapxeats.common.constants.UIConstants.ZERO;
  */
 
 public class ReviewActivity extends BaseActivity implements ReviewContract.ReviewView,
-        AppContract.SnapXResults {
+        AppContract.SnapXResults, InstagramDialog.InstagramDialogListener {
 
     @Inject
     SnapXDialog snapXDialog;
@@ -92,8 +114,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private MediaRecorder mRecorder;
     private Chronometer mChronometer;
     private File savedAudioPath = null;
-
-    public static final int RequestPermissionCode = 1;
 
     private Button mBtnStartAudio;
     private Button mBtnStopReview;
@@ -139,6 +159,14 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private int rating;
     private String textReview;
 
+    @Inject
+    LoginUtility loginUtility;
+    private CallbackManager mCallbackManager;
+    private SnapXUserRequest snapXUserRequest;
+    private InstagramApp mApp;
+    private String mToken;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,18 +186,19 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         mPresenter.addView(this);
         snapXDialog.setContext(this);
         utility.setContext(this);
+        setUpToolbar();
         dbHelper.setContext(this);
         reviewDbHelper.setContext(this);
-        setUpToolbar();
-
         dbHelper.getDraftPhotoDao();
+        getReviewData();
+        loginUtility.setContext(this);
 
-        /**
-         *  Commented for now as not implemented in iOS
-         * limitTextReview();
-         */
+        /** initialize facebook login **/
+        mCallbackManager = CallbackManager.Factory.create();
+        initInstagram();
+    }
 
-        //get file path
+    private void getReviewData() {
         Intent intent = getIntent();
         if (null != intent) {
             image_path = intent.getExtras().getString(getString(R.string.file_path));
@@ -189,50 +218,114 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         mToolbar.setNavigationOnClickListener(v -> dialogExitReview());
     }
 
-    private void limitTextReview() {
-        mEditTxtReview.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (UIConstants.REVIEW_LENGTH_LIMIT == s.length()) {
-                    mTxtLengthError.setVisibility(View.VISIBLE);
-                    hideTheKeyboard(ReviewActivity.this, mEditTxtReview);
-                } else {
-                    mTxtLengthError.setVisibility(View.INVISIBLE);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-    }
-
-    /*hide keyboard when text review limit exceeds*/
-    public void hideTheKeyboard(Context context, EditText editText) {
-        InputMethodManager manager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        assert manager != null;
-        manager.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
-    }
-
     private void setUpToolbar() {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getString(R.string.toolbar_snap_share));
+        mToolbar.setNavigationOnClickListener(v -> dialogExitReview());
     }
 
-    /*show login dialog if user is not logged in*/
+    /**
+     * show login dialog if user is not logged in
+     **/
     private void showLoginDialog() {
         LayoutInflater inflater = getLayoutInflater();
         View alertLayout = inflater.inflate(R.layout.layout_dialog_login, null);
         initAlertDialog(alertLayout);
         TextView txtShareLater = alertLayout.findViewById(R.id.txt_login_share_later);
+        Button btnCustomFb = alertLayout.findViewById(R.id.btn_fb_custom);
+        LoginButton btnFb = alertLayout.findViewById(R.id.btn_facebook_login);
+        Button btnInsta = alertLayout.findViewById(R.id.btn_instagram_login);
+
+        loginWithFacebook();
+
+        btnCustomFb.setOnClickListener(v -> {
+            if (v == btnCustomFb) {
+                if (NetworkUtility.isNetworkAvailable(this)) {
+                    btnFb.performClick();
+                } else {
+                    showNetworkErrorDialog((dialog, which) -> {
+                        if (!NetworkUtility.isNetworkAvailable(getActivity())) {
+                            AppContract.DialogListenerAction click = () -> {
+                                showProgressDialog();
+                                btnFb.performClick();
+                            };
+                            showSnackBar(mParentLayout, setClickListener(click));
+                        }
+                    });
+                }
+            }
+        });
+
+        btnInsta.setOnClickListener(v -> showInstaWebView());
+
         txtShareLater.setOnClickListener(v -> dialogSaveToDraft());
+    }
+
+    private void showInstaWebView() {
+
+        if (NetworkUtility.isNetworkAvailable(this)) {
+            mApp.authorize();
+
+        } else {
+            showNetworkErrorDialog((dialog, which) -> {
+                if (!NetworkUtility.isNetworkAvailable(getActivity())) {
+                    AppContract.DialogListenerAction click = () -> {
+                        showProgressDialog();
+                        mApp.authorize();
+                    };
+                    showSnackBar(mParentLayout, setClickListener(click));
+                }
+            });
+        }
+    }
+
+    private void loginWithFacebook() {
+        LoginManager.getInstance().registerCallback(mCallbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        snapXUserRequest = new SnapXUserRequest(AccessToken.getCurrentAccessToken().getToken(),
+                                getString(R.string.platform_facebook), AccessToken.getCurrentAccessToken().getUserId());
+                        showProgressDialog();
+                        mPresenter.getUserdata(snapXUserRequest);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        mPresenter.response(SnapXResult.NETWORKERROR, null);
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        mPresenter.response(SnapXResult.ERROR, null);
+                    }
+                });
+    }
+
+    private void initInstagram() {
+        mApp = new InstagramApp(this, WebConstants.INSTA_CLIENT_ID, WebConstants.INSTA_CALLBACK_URL);
+        mApp.setListener(new InstagramApp.OAuthAuthenticationListener() {
+
+            @Override
+            public void onSuccess() {
+                //TODO data passed null for now
+                mPresenter.response(SnapXResult.SUCCESS, null);
+            }
+
+            @Override
+            public void onFail(String error) {
+                mPresenter.response(SnapXResult.NETWORKERROR, null);
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     /*save to draft dialog on 'share later' action*/
@@ -241,23 +334,22 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         builder.setCancelable(false);
         builder.setTitle(getString(R.string.draft));
         builder.setMessage(getString(R.string.msg_save_to_draft));
-        builder.setNeutralButton(getString(R.string.ok), (dialog, which) -> {
-            finish();
-        });
+        builder.setNeutralButton(getString(R.string.ok), (dialog, which) -> finish());
         AlertDialog alert = builder.create();
         alert.show();
+
     }
 
     /*webservice call to send review*/
     @OnClick(R.id.img_share_review)
     public void imgSendReview() {
         //Save share data in local db for Smart photo 'Draft'
-        List<String> restaurant_aminities = null;
+        List<String> restaurantAminities = null;
         String restName = null;
         String restAddress = null;
         if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities()
                 && ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size())
-            restaurant_aminities = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities();
+            restaurantAminities = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities();
 
         if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name() &&
                 !mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name().isEmpty())
@@ -274,12 +366,12 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
         reviewDbHelper.saveSnapDataInDb(restId,
                 restName
-                ,restAddress
+                , restAddress
                 , Uri.parse(image_path).getPath()
                 , audioFile,
                 textReview,
                 rating,
-                restaurant_aminities);
+                restaurantAminities);
 
         if (ZERO != rating) {
             if (utility.isLoggedIn()) {
@@ -317,7 +409,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             if (null != savedAudioPath) {
                 audioFile = Uri.fromFile(savedAudioPath);
             }
-            mPresenter.sendReview(restId, fileImageUri, audioFile, textReview, rating);
+            mPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
         }
     }
 
@@ -361,9 +453,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         mImgPlayRecAudio.setOnClickListener(v -> {
             mImgPlayRecAudio.setVisibility(View.GONE);
             mImgPauseRecAudio.setVisibility(View.VISIBLE);
-
             setAudioTimer((long) seconds * MILLI_TO_SEC);
-
             mPlayer = new MediaPlayer();
             try {
                 mPlayer.setDataSource(savedAudioPath.toString());
@@ -384,6 +474,8 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         mBtnDoneAudio.setOnClickListener(v -> {
             isCanceled = true;
             if (mPlayer.isPlaying()) {
+                isPaused = false;
+                resumePosition = ZERO;
                 mPlayer.stop();
             }
             dialog.dismiss();
@@ -426,6 +518,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             }
 
             public void onFinish() {
+                resumePosition = 0;
                 mImgPlayRecAudio.setVisibility(View.VISIBLE);
                 mImgPauseRecAudio.setVisibility(View.GONE);
                 mTimer.setText(audioTime);
@@ -518,31 +611,31 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     }
 
     private File getOutputMediaFile() {
-        File fileMediaStorDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+        File saveFilePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 getString(R.string.app_name));
-        if (!fileMediaStorDir.exists()) {
-            if (!fileMediaStorDir.mkdirs()) {
+        if (!saveFilePath.exists()) {
+            if (!saveFilePath.mkdirs()) {
                 return null;
             }
         }
         String timeStamp = new SimpleDateFormat(getString(R.string.date_time_pattern)).format(new Date());
-        return new File(fileMediaStorDir.getPath() + File.separator +
+        return new File(saveFilePath.getPath() + File.separator +
                 getString(R.string.aud) + timeStamp + getString(R.string.audio_extension));
     }
 
     private void requestPermission() {
         ActivityCompat.requestPermissions(ReviewActivity.this, new
-                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, RequestPermissionCode);
+                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, REQUEST_PERMISSION_CODE);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
-            case RequestPermissionCode:
-                if (grantResults.length > ZERO) {
+            case REQUEST_PERMISSION_CODE:
+                if (ZERO < grantResults.length) {
 
                     boolean StoragePermission = grantResults[ZERO] == PackageManager.PERMISSION_GRANTED;
-                    boolean RecordPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    boolean RecordPermission = grantResults[ONE] == PackageManager.PERMISSION_GRANTED;
 
                     if (StoragePermission && RecordPermission) {
                         Toast.makeText(ReviewActivity.this, getString(R.string.permission_granted), Toast.LENGTH_LONG).show();
@@ -563,12 +656,20 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     @Override
     public void success(Object value) {
         dismissProgressDialog();
-        SnapNShareResponse mSnapResponse = (SnapNShareResponse) value;
-        Intent intent = new Intent(ReviewActivity.this, ShareReviewActivity.class);
-        intent.putExtra(getString(R.string.intent_review), mSnapResponse);
-        intent.putExtra(getString(R.string.image_path), image_path);
-        intent.putExtra(getString(R.string.review_rest_id), restId);
-        startActivity(intent);
+        if (value instanceof SnapNShareResponse) {
+            SnapNShareResponse mSnapResponse = (SnapNShareResponse) value;
+            Intent intent = new Intent(ReviewActivity.this, ShareReviewActivity.class);
+            intent.putExtra(getString(R.string.intent_review), mSnapResponse);
+            intent.putExtra(getString(R.string.image_path), image_path);
+            intent.putExtra(getString(R.string.review_rest_id), restId);
+            startActivity(intent);
+        }
+        if (value instanceof SnapXUserResponse) {
+            SnapXUserResponse snapXUserResponse = (SnapXUserResponse) value;
+            mToken = snapXUserResponse.getUserInfo().getToken();
+            dialog.dismiss();
+            callApiReview();
+        }
     }
 
     @Override
@@ -582,12 +683,12 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             if (!NetworkUtility.isNetworkAvailable(getActivity())) {
                 AppContract.DialogListenerAction click = () -> {
                     showProgressDialog();
-                    mPresenter.sendReview(restId, fileImageUri, audioFile, textReview, rating);
+                    mPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
             } else {
                 showProgressDialog();
-                mPresenter.sendReview(restId, fileImageUri, audioFile, textReview, rating);
+                mPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
             }
         });
     }
@@ -628,5 +729,46 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         if (null != mPlayer && mPlayer.isPlaying()) {
             mPlayer.release();
         }
+    }
+
+    /**
+     * Function not used as not implemented in iOS
+     */
+    private void limitTextReview() {
+        mEditTxtReview.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (UIConstants.REVIEW_LENGTH_LIMIT == s.length()) {
+                    mTxtLengthError.setVisibility(View.VISIBLE);
+                    hideTheKeyboard(ReviewActivity.this, mEditTxtReview);
+                } else {
+                    mTxtLengthError.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+    }
+
+    /**
+     * hide keyboard when text review limit exceeds
+     **/
+    public void hideTheKeyboard(Context context, EditText editText) {
+        InputMethodManager manager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        assert null != manager;
+        manager.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
+    }
+
+    @Override
+    public void onReturnValue(String token) {
+        showProgressDialog();
+        mPresenter.getInstaInfo(token);
     }
 }

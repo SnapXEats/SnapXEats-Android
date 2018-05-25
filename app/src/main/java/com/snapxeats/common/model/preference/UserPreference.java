@@ -2,14 +2,15 @@ package com.snapxeats.common.model.preference;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.JoinProperty;
 import org.greenrobot.greendao.annotation.ToMany;
+
 import java.util.List;
-import org.greenrobot.greendao.DaoException;
-import com.snapxeats.common.model.foodGestures.DaoSession;
 
 /**
  * Created by Snehal Tembare on 8/2/18.
@@ -42,17 +43,21 @@ public class UserPreference {
     @ToMany(joinProperties = {@JoinProperty(name = "id", referencedName = "userPreferenceId")})
     private List<UserFoodPreferences> user_food_preferences;
 
-    /** Used to resolve relations */
+    /**
+     * Used to resolve relations
+     */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
 
-    /** Used for active entity operations. */
+    /**
+     * Used for active entity operations.
+     */
     @Generated(hash = 2081933574)
     private transient UserPreferenceDao myDao;
 
     @Generated(hash = 1348862546)
     public UserPreference(String id, String restaurant_rating, String restaurant_price,
-            String restaurant_distance, boolean sort_by_distance, boolean sort_by_rating) {
+                          String restaurant_distance, boolean sort_by_distance, boolean sort_by_rating) {
         this.id = id;
         this.restaurant_rating = restaurant_rating;
         this.restaurant_price = restaurant_price;
@@ -64,6 +69,7 @@ public class UserPreference {
     @Generated(hash = 1390964)
     public UserPreference() {
     }
+
     public UserPreference(String id,
                           String restaurant_rating,
                           String restaurant_price,
@@ -81,6 +87,7 @@ public class UserPreference {
         this.user_cuisine_preferences = user_cuisine_preferences;
         this.user_food_preferences = user_food_preferences;
     }
+
     public String getId() {
         return this.id;
     }
@@ -152,7 +159,9 @@ public class UserPreference {
         return user_cuisine_preferences;
     }
 
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    /**
+     * Resets a to-many relationship, making the next get call to query for a fresh result.
+     */
     @Generated(hash = 1132281012)
     public synchronized void resetUser_cuisine_preferences() {
         user_cuisine_preferences = null;
@@ -181,7 +190,9 @@ public class UserPreference {
         return user_food_preferences;
     }
 
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    /**
+     * Resets a to-many relationship, making the next get call to query for a fresh result.
+     */
     @Generated(hash = 2119780956)
     public synchronized void resetUser_food_preferences() {
         user_food_preferences = null;

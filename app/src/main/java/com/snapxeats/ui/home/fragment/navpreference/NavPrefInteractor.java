@@ -1,13 +1,11 @@
 package com.snapxeats.ui.home.fragment.navpreference;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.model.SnapxData;
-import com.snapxeats.common.model.SnapxDataDao;
+import com.snapxeats.common.model.SnapXData;
+import com.snapxeats.common.model.SnapXDataDao;
 import com.snapxeats.common.model.preference.RootUserPreference;
-import com.snapxeats.common.model.preference.RootUserPreferences;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
@@ -115,11 +113,11 @@ public class NavPrefInteractor {
     }
 
     void saveUserData() {
-        SnapxDataDao snapxDataDao = dbHelper.getSnapxDataDao();
+        SnapXDataDao snapxDataDao = dbHelper.getSnapxDataDao();
         if (snapxDataDao.loadAll().size() > 0) {
-            List<SnapxData> snapxDataList = snapxDataDao.loadAll();
-            snapxDataList.get(0).setIsFirstTimeUser(false);
-            snapxDataDao.update(snapxDataList.get(0));
+            List<SnapXData> snapXDataList = snapxDataDao.loadAll();
+            snapXDataList.get(0).setIsFirstTimeUser(false);
+            snapxDataDao.update(snapXDataList.get(0));
         }
     }
 }

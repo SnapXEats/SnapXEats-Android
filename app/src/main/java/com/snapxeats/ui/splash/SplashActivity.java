@@ -8,8 +8,8 @@ import android.os.Handler;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.model.SnapxData;
-import com.snapxeats.common.model.SnapxDataDao;
+import com.snapxeats.common.model.SnapXData;
+import com.snapxeats.common.model.SnapXDataDao;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.ui.home.HomeActivity;
 import com.snapxeats.ui.login.LoginActivity;
@@ -21,14 +21,15 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 
-import static com.snapxeats.common.model.SnapxDataDao.Properties.UserId;
+import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.model.SnapXDataDao.Properties.UserId;
 
 /**
  * Created by Snehal Tembare on 12/1/18.
  */
 
 public class SplashActivity extends BaseActivity {
-    private SnapxData snapxData;
+    private SnapXData snapXData;
 
     @Inject
     AppUtility appUtility;
@@ -46,12 +47,12 @@ public class SplashActivity extends BaseActivity {
         appUtility.setContext(this);
         dbHelper.setContext(this);
 
-        SnapxDataDao snapxDataDao = dbHelper.getSnapxDataDao();
+        SnapXDataDao snapxDataDao = dbHelper.getSnapxDataDao();
 
         SharedPreferences settings = appUtility.getSharedPreferences();
         if (null != snapxDataDao) {
-            snapxData = snapxDataDao.queryBuilder()
-                    .where(UserId.eq(settings.getString(getString(R.string.user_id), ""))).limit(1).unique();
+            snapXData = snapxDataDao.queryBuilder()
+                    .where(UserId.eq(settings.getString(getString(R.string.user_id), ""))).limit(ONE).unique();
         }
     }
 
@@ -62,7 +63,7 @@ public class SplashActivity extends BaseActivity {
         int TIME_OUT = 1000;
         new Handler().postDelayed(() -> {
             //check if facebook user is logged in or not
-            if (null != snapxData && !snapxData.getUserId().isEmpty()) {
+            if (null != snapXData && !snapXData.getUserId().isEmpty()) {
                 startActivity(new Intent(this, HomeActivity.class));
             } else {
                 startActivity(new Intent(this, LoginActivity.class));

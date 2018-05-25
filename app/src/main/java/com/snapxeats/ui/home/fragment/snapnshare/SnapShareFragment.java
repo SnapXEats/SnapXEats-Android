@@ -53,7 +53,6 @@ import static com.snapxeats.common.constants.UIConstants.ZERO;
 public class SnapShareFragment extends BaseFragment implements SnapShareContract.SnapShareView,
         AppContract.SnapXResults {
 
-    private Toolbar mToolbar;
     protected NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
     private Activity activity;
@@ -111,7 +110,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mToolbar = view.findViewById(R.id.toolbar);
+        Toolbar mToolbar = view.findViewById(R.id.toolbar);
 
         mNavigationView = activity.findViewById(R.id.nav_view);
         mDrawerLayout = activity.findViewById(R.id.drawer_layout);
@@ -128,7 +127,6 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
         initView();
     }
 

@@ -1,6 +1,6 @@
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/id_draft_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.snapxeats.ui.home.fragment.smartphotos.draft.DraftFragment">
@@ -10,10 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/listview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
     </LinearLayout>
 
 </FrameLayout>

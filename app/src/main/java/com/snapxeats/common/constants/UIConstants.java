@@ -10,6 +10,9 @@ public class UIConstants {
 
     public static final int PROFILE_WIDTH_HEIGHT = 50;
     public static final int PROFILE_HEIGHT = 50;
+    public static final int PADDING = 20;
+    public static final int WEBVIEW_SCALE = 210;
+    public static final String SX_VERSION = "V ";
 
     /*NavPrefFragment*/
     public static final int PRICE_AUTO = 0;
@@ -97,6 +100,8 @@ public class UIConstants {
     public static final int WISHLIST_DIALOG_WIDTH = 800;
 
     public static final String ACTION_LOCATION_GET = "snapxeats.GET_LOCATION";
+    public static final int REQUEST_PERMISSION_CODE = 1;
+
 
     /*Snap N Share*/
     public static final int MARGIN = 8;
@@ -106,6 +111,8 @@ public class UIConstants {
     public static final String IMAGE_TYPE = "image/*";
     public static final String FILE_MEDIATYPE = "*/*";
     public static final String TEXT_TYPE = "text/plain";
+    public static final String FB_SHA = "SHA";
+    public static final String SX_BEARER = "Bearer ";
 
     public static final int CAMERA_REQUEST_PERMISSION = 3;
     public static final int CAMERA_REQUEST = 4;

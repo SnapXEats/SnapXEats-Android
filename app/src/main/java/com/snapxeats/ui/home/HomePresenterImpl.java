@@ -1,7 +1,7 @@
 package com.snapxeats.ui.home;
 
 import com.snapxeats.common.Router;
-import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.preference.RootUserPreference;
@@ -37,7 +37,7 @@ public class HomePresenterImpl implements HomeContract.HomePresenter {
     }
 
     @Override
-    public List<SnapxData> getUserDataFromDb() {
+    public List<SnapXData> getUserDataFromDb() {
         return interactor.getUserInfoFromDb();
     }
 
