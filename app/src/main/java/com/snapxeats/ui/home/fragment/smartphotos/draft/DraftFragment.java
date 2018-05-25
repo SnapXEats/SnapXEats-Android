@@ -19,10 +19,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -34,6 +37,13 @@ import com.facebook.login.widget.LoginButton;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
@@ -48,18 +58,28 @@ import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.home.fragment.smartphotos.AminityAdapter;
 import com.snapxeats.ui.login.InstagramApp;
 import com.snapxeats.ui.login.InstagramDialog;
-import com.snapxeats.ui.home.fragment.smartphotos.AminityAdapter;
 import com.snapxeats.ui.review.ReviewDbHelper;
 import com.snapxeats.ui.shareReview.ShareReviewActivity;
+
 import org.greenrobot.greendao.query.QueryBuilder;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.app.Activity.RESULT_OK;
+import static com.snapxeats.common.constants.UIConstants.MILLIES_TWO;
+import static com.snapxeats.common.constants.UIConstants.MILLIS;
+import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC_CONVERSION;
+import static com.snapxeats.common.constants.UIConstants.TEN;
 import static android.app.Activity.RESULT_OK;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
@@ -306,6 +326,9 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         dialog.show();
     }
 
+    /**
+     * show login dialog if user is not logged in
+     **/
     private void showSmartPhotoDialog() {
         mDialog = new Dialog(getActivity());
         mDialog.setContentView(R.layout.draft_dialog_layout);
@@ -346,7 +369,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 .apply(new RequestOptions()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .centerCrop()
-                        .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                         .dontAnimate()
                         .dontTransform())
                 .thumbnail(THUMBNAIL)
@@ -496,12 +519,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 break;
 
             case R.id.img_share:
-                if(utility.isLoggedIn()){
-                    callApiReview();
-                }else {
-                    showLoginDialog();
-                }
-
+                callApiReview();
                 break;
         }
     }
@@ -599,9 +617,10 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 showSnackBar(mParentLayout, setClickListener(click));
             } else {
                 showProgressDialog();
-                mDraftPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+                mDraftPresenter.sendReview(mToken,restId, fileImageUri, audioFile, textReview, rating);
             }
         });
+
     }
 
     @Override
@@ -615,6 +634,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         mMediaPlayer.setOnCompletionListener(this);
         mTxtTimeOfAudio.setText(utility.milliSecondsToTimer(mMediaPlayer.getCurrentPosition()));
     }
+
     @Override
     public void onReturnValue(String token) {
         showProgressDialog();

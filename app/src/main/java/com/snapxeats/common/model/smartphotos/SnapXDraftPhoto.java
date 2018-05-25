@@ -5,6 +5,7 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.ToMany;
+
 import java.util.List;
 import com.snapxeats.common.model.foodGestures.DaoSession;
 
@@ -195,6 +196,8 @@ public class SnapXDraftPhoto {
     /**
      * called by internal mechanisms, do not call yourself.
      */
+
+    /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 1415628995)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
