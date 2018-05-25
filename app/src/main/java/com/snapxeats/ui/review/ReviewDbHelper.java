@@ -1,6 +1,7 @@
 package com.snapxeats.ui.review;
 
 import android.content.Context;
+
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.draft.RestaurantAminities;
@@ -9,12 +10,16 @@ import com.snapxeats.common.model.draft.SnapXDraftPhoto;
 import com.snapxeats.common.model.draft.SnapXDraftPhotoDao;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftAdapter;
+
 import org.greenrobot.greendao.query.DeleteQuery;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -75,9 +80,8 @@ public class ReviewDbHelper {
             }
             snapXDraftPhoto.setRestaurant_aminities(restaurant_aminities_list);
         }
-
-        new DraftAdapter().notifyDataSetChanged();
         dbHelper.getDraftPhotoDao().insert(snapXDraftPhoto);
+        new DraftAdapter().notifyDataSetChanged();
     }
 
     public List<SnapXDraftPhoto> getDraftData() {
@@ -87,7 +91,7 @@ public class ReviewDbHelper {
         return null;
     }
 
-    public void deleteDraftData(String photoId){
+    public void deleteDraftData(String photoId) {
         DeleteQuery<RestaurantAminities> deleteRestAminities = dbHelper.getDaoSesion()
                 .queryBuilder(RestaurantAminities.class)
                 .where(RestaurantAminitiesDao.Properties.PhotoIdFk.eq(photoId)).buildDelete();
@@ -99,7 +103,6 @@ public class ReviewDbHelper {
                 .buildDelete();
 
         deleteQuery.executeDeleteWithoutDetachingEntities();
-
         dbHelper.getDaoSesion().clear();
     }
 }

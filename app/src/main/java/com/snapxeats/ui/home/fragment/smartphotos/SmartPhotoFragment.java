@@ -48,7 +48,6 @@ public class SmartPhotoFragment extends BaseFragment {
     @BindView(R.id.layout_main_contents)
     protected LinearLayout mLayoutMainContents;
 
-    private Toolbar mToolbar;
     protected NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
     private Activity activity;
@@ -76,7 +75,6 @@ public class SmartPhotoFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = null;
         try {
             view = inflater.inflate(R.layout.fragment_smart_photo, container, false);
@@ -90,7 +88,7 @@ public class SmartPhotoFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mToolbar = view.findViewById(R.id.toolbar);
+        Toolbar mToolbar = view.findViewById(R.id.toolbar);
 
         mNavigationView = activity.findViewById(R.id.nav_view);
         mDrawerLayout = activity.findViewById(R.id.drawer_layout);
@@ -117,7 +115,6 @@ public class SmartPhotoFragment extends BaseFragment {
 
     private void initView() {
         mBtnGroup.setOnCheckedChangeListener((group, checkedId) -> {
-
             switch (checkedId) {
                 case R.id.btn_smart_photos:
                     selectedFragment = smartFragment;

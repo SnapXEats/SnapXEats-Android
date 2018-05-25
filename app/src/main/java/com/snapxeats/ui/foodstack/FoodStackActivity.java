@@ -146,8 +146,7 @@ public class FoodStackActivity extends BaseActivity
         //Api call for saved food preferences
         foodGestures();
 
-        selectedCuisineList = getIntent().getExtras()
-                .getParcelable(getString(R.string.data_selectedCuisineList));
+        selectedCuisineList = getIntent().getExtras().getParcelable(getString(R.string.data_selectedCuisineList));
 
         assert null != selectedCuisineList;
         if (ZERO != selectedCuisineList.getSelectedCuisineList().size()) {
@@ -166,7 +165,6 @@ public class FoodStackActivity extends BaseActivity
 
     private void foodGestures() {
         foodGestureWishlist.addAll(foodStackDbHelper.getFoodWishList());
-
         RootFoodGestures mRootFoodGestures = new RootFoodGestures();
         mRootFoodGestures.setWishlist_dish_array(foodStackDbHelper.getFoodWishList());
         mRootFoodGestures.setDislike_dish_array(foodStackDbHelper.getFoodDislikes());
@@ -238,6 +236,7 @@ public class FoodStackActivity extends BaseActivity
                 if (cardStackView.getTopIndex() == foodStackDataList.size()) {
                     disableGestureActions();
                     mImgMap.setAlpha(SET_ALPHA_DISABLE);
+                    mImgMap.setEnabled(false);
                 }
                 if (ZERO == foodGestureDislike.size()) {
                     disableUndo();
@@ -313,6 +312,12 @@ public class FoodStackActivity extends BaseActivity
             }
             mStackAdapter = new FoodStackAdapter(FoodStackActivity.this, foodStackDataList);
             cardStackView.setAdapter(mStackAdapter);
+            if (cardStackView.isShown()) {
+                mImgMap.setAlpha(SET_ALPHA);
+            } else {
+                mImgMap.setAlpha(SET_ALPHA_DISABLE);
+                mImgMap.setEnabled(false);
+            }
         } else {
             showNoDataFoundDialog();
         }

@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import com.snapxeats.common.Router;
+import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.utilities.SnapXResult;
 
 /**
@@ -40,8 +41,18 @@ public class ReviewPresenterImpl implements ReviewContract.ReviewPresenter {
     }
 
     @Override
-    public void sendReview(String restId, Uri image, Uri audio, String txtReview, Integer rating) {
-        mReviewInteractor.sendReview(restId, image, audio, txtReview, rating);
+    public void sendReview(String token, String restId, Uri image, Uri audio, String txtReview, Integer rating) {
+        mReviewInteractor.sendReview(token, restId, image, audio, txtReview, rating);
+    }
+
+    @Override
+    public void getInstaInfo(String token) {
+        mReviewInteractor.getInstaInfo(token);
+    }
+
+    @Override
+    public void getUserdata(SnapXUserRequest snapXUserRequest) {
+        mReviewInteractor.getUserData(snapXUserRequest);
     }
 
     @Override

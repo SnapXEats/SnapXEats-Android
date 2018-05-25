@@ -1,8 +1,9 @@
 package com.snapxeats.ui.foodstack;
 
 import android.content.Context;
+
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.model.SnapxDataDao;
+import com.snapxeats.common.model.SnapXDataDao;
 import com.snapxeats.common.model.foodGestures.FoodDislikes;
 import com.snapxeats.common.model.foodGestures.FoodDislikesDao;
 import com.snapxeats.common.model.foodGestures.FoodLikes;
@@ -22,7 +23,7 @@ import javax.inject.Singleton;
 @Singleton
 public class FoodStackDbHelper {
     private FoodWishlistsDao foodWishlistsDao;
-    private SnapxDataDao snapxDataDao;
+    private SnapXDataDao snapxDataDao;
     private FoodDislikesDao foodDislikesDao;
     private FoodLikesDao foodLikesDao;
 
@@ -45,7 +46,7 @@ public class FoodStackDbHelper {
         FoodWishlists item;
         foodWishlistsDao.deleteAll();
         for (FoodWishlists wishlists : foodWishlists) {
-            item = new FoodWishlists(wishlists.getRestaurant_dish_id(),false);
+            item = new FoodWishlists(wishlists.getRestaurant_dish_id(), false);
             foodWishlistsDao.insertOrReplace(item);
         }
     }

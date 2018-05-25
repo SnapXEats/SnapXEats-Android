@@ -5,9 +5,8 @@ import android.net.Uri;
 import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
+import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.dagger.AppContract;
-
-import okhttp3.MultipartBody;
 
 /**
  * Created by Prajakta Patil on 12/4/18.
@@ -19,7 +18,11 @@ public class ReviewContract {
     interface ReviewPresenter extends BasePresenter<ReviewView> {
         void presentScreen(Router.Screen screen);
 
-        void sendReview(String restId, Uri image, Uri audio, String txtReview, Integer rating);
+        void sendReview(String token, String restId, Uri image, Uri audio, String txtReview, Integer rating);
+
+        void getInstaInfo(String token);
+
+        void getUserdata(SnapXUserRequest snapXUserRequest);
     }
 
     interface ReviewRouter {

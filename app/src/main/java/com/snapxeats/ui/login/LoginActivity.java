@@ -1,11 +1,7 @@
 package com.snapxeats.ui.login;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
@@ -25,17 +21,13 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.BuildConfig;
 import com.snapxeats.R;
 import com.snapxeats.common.Router;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
+import com.snapxeats.common.utilities.LoginUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
-
-import net.hockeyapp.android.utils.Base64;
-
-import java.security.MessageDigest;
 
 import javax.inject.Inject;
 
@@ -44,6 +36,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.snapxeats.common.Router.Screen.HOME;
+import static com.snapxeats.common.constants.UIConstants.SX_VERSION;
 
 /**
  * Created by Prajakta Patil on 4/1/18.
@@ -73,6 +66,9 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
 
     private SnapXUserRequest snapXUserRequest;
 
+    @Inject
+    LoginUtility loginUtility;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,12 +84,14 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
 
     public void initView() {
         mLoginPresenter.addView(this);
+        loginUtility.setContext(this);
         mCallbackManager = CallbackManager.Factory.create();
-        getFbHashKey(this);
+        loginUtility.getFbHashKey(this);
         loginWithFacebook();
-        //TODO manage instagram session
         setVersionAndBuildLabel();
         initInstagram();
+
+        setVersionAndBuildLabel();
 
         //permission for getting token in logs
         if (BuildConfig.DEBUG) {
@@ -102,26 +100,8 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
         }
     }
 
-    //get facebook hash key for exachanging information between app and Facebook
-    @SuppressLint("PackageManagerGetSignatures")
-    public void getFbHashKey(Activity context) {
-        PackageInfo packageInfo;
-        try {
-            String packageName = context.getApplicationContext().getPackageName();
-            packageInfo = context.getPackageManager().getPackageInfo(packageName,
-                    PackageManager.GET_SIGNATURES);
-            for (Signature signature : packageInfo.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                String key = new String(Base64.encode(md.digest(), 0));
-                SnapXToast.debug("HashKey" + key);
-            }
-        } catch (Exception ignored) {
-        }
-    }
-
     private void setVersionAndBuildLabel() {
-        String versionName = "V " + BuildConfig.VERSION_NAME + " " + getString(R.string.build)
+        String versionName = SX_VERSION + BuildConfig.VERSION_NAME + " " + getString(R.string.build)
                 + " " + BuildConfig.VERSION_CODE;
         if (BuildConfig.BUILD_CAPTION) {
             mTxtVersion.setVisibility(View.VISIBLE);

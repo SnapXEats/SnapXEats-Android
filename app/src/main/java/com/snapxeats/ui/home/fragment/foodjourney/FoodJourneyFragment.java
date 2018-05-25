@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
@@ -48,7 +49,7 @@ public class FoodJourneyFragment extends BaseFragment implements
     SnapXDialog snapXDialog;
 
     @Inject
-    FoodJourneyContract.FoodJourneyPresenter presenter;
+    FoodJourneyContract.FoodJourneyPresenter mPresenter;
 
     @BindView(R.id.toolbar)
     protected Toolbar mToolbar;
@@ -63,6 +64,12 @@ public class FoodJourneyFragment extends BaseFragment implements
 
     @BindView(R.id.layout_parent)
     protected LinearLayout mParentLayout;
+
+    @BindView(R.id.txt_this_week)
+    protected TextView mTxtCurrentJourney;
+
+    @BindView(R.id.txt_older_journey)
+    protected TextView mTxtOlderJourney;
 
     @Inject
     public FoodJourneyFragment() {
@@ -125,9 +132,9 @@ public class FoodJourneyFragment extends BaseFragment implements
     public void initView() {
         utility.setContext(activity);
         snapXDialog.setContext(activity);
-        presenter.addView(this);
+        mPresenter.addView(this);
         showProgressDialog();
-        presenter.getFoodJourney();
+        mPresenter.getFoodJourney();
     }
 
     @Override
@@ -146,7 +153,8 @@ public class FoodJourneyFragment extends BaseFragment implements
     }
 
     private void setOlderJourney() {
-        if (null != mRootFoodJourney) {
+        if (null != mRootFoodJourney.getUserPastHistory()) {
+            mTxtOlderJourney.setVisibility(View.VISIBLE);
             OlderFoodJourneyAdapter olderFoodJourneyAdapter =
                     new OlderFoodJourneyAdapter(getActivity(), mRootFoodJourney.getUserPastHistory());
             mListOlderFoodJourney.setAdapter(olderFoodJourneyAdapter);
@@ -154,7 +162,8 @@ public class FoodJourneyFragment extends BaseFragment implements
     }
 
     public void setCurrentJourney() {
-        if (null != mRootFoodJourney) {
+        if (null != mRootFoodJourney.getUserCurrentWeekHistory()) {
+            mTxtCurrentJourney.setVisibility(View.VISIBLE);
             CurrentFoodJourneyAdapter currentFoodJourneyAdapter =
                     new CurrentFoodJourneyAdapter(getActivity(), mRootFoodJourney.getUserCurrentWeekHistory());
             mListFoodJourney.setAdapter(currentFoodJourneyAdapter);
@@ -173,12 +182,12 @@ public class FoodJourneyFragment extends BaseFragment implements
             if (!NetworkUtility.isNetworkAvailable(getActivity()) && null != mRootFoodJourney) {
                 AppContract.DialogListenerAction click = () -> {
                     showProgressDialog();
-                    presenter.getFoodJourney();
+                    mPresenter.getFoodJourney();
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
             } else {
                 showProgressDialog();
-                presenter.getFoodJourney();
+                mPresenter.getFoodJourney();
             }
         });
     }

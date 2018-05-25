@@ -13,6 +13,7 @@ import com.snapxeats.common.model.foodGestures.FoodWishlists;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
+import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
@@ -141,7 +142,7 @@ public class FoodStackInteractor {
             call.enqueue(new Callback<RootFoodGestures>() {
                 @Override
                 public void onResponse(Call<RootFoodGestures> call, Response<RootFoodGestures> response) {
-                    if (response.isSuccessful() && response.body() != null) {
+                    if (response.isSuccessful() && null != response.body()) {
                         //success message response
                     }
                 }
