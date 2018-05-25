@@ -27,7 +27,6 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.Button;
@@ -785,7 +784,6 @@ public class HomeActivity extends BaseActivity implements
     };
 
     private void setupRecyclerView() {
-
         if (null != mRestaurantList) {
             mAdapter = new CheckInAdapter(this, mRestaurantList, (position, isSelected) -> {
                 for (RestaurantInfo restaurantInfo : mRestaurantList) {

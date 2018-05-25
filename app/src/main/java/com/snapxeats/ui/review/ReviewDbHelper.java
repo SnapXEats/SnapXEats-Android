@@ -1,6 +1,7 @@
 package com.snapxeats.ui.review;
 
 import android.content.Context;
+
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.smartphotos.RestaurantAminities;
@@ -9,12 +10,16 @@ import com.snapxeats.common.model.smartphotos.SnapXDraftPhoto;
 import com.snapxeats.common.model.smartphotos.SnapXDraftPhotoDao;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftAdapter;
+
 import org.greenrobot.greendao.query.DeleteQuery;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**

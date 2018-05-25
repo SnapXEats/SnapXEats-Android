@@ -58,7 +58,6 @@ import static com.snapxeats.common.constants.UIConstants.ZERO;
 public class SnapShareFragment extends BaseFragment implements SnapShareContract.SnapShareView,
         AppContract.SnapXResults {
 
-    private Toolbar mToolbar;
     protected NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
     private Activity activity;

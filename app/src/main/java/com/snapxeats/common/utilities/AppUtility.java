@@ -38,6 +38,7 @@ import static com.snapxeats.common.constants.UIConstants.MILLIES_TWO;
 import static com.snapxeats.common.constants.UIConstants.MILLIS;
 import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC_CONVERSION;
 import static com.snapxeats.common.constants.UIConstants.TEN;
+import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**

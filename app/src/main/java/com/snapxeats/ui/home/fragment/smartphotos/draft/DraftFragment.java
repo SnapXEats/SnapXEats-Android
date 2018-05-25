@@ -1,7 +1,6 @@
 package com.snapxeats.ui.home.fragment.smartphotos.draft;
 
 import android.app.AlertDialog;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -168,7 +167,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         initView();
 
         mDraftPhotoList = reviewDbHelper.getDraftData();
-        if (null != mDraftPhotoList && ZERO != mDraftPhotoList.size()) {
+        if (null != mDraftPhotoList && 0 != mDraftPhotoList.size()) {
             mDraftAdapter = new DraftAdapter(getActivity(), mDraftPhotoList, (snapXDraftPhoto, viewShare) -> {
                 mSnapXDraftPhoto = snapXDraftPhoto;
 
@@ -315,7 +314,6 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
             window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             window.setGravity(Gravity.START);
         }
-
         mLayoutDescription = mDialog.findViewById(R.id.layout_description);
         mLayoutControls = mDialog.findViewById(R.id.layout_controls);
         mLayoutInfo = mDialog.findViewById(R.id.layout_info);
@@ -353,6 +351,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                         .dontTransform())
                 .thumbnail(THUMBNAIL)
                 .into(img);
+
         //Register listeners
         img.setOnClickListener(this);
         imgClose.setOnClickListener(this);
