@@ -156,6 +156,7 @@ public class CuisinePrefActivity extends BaseActivity implements
             for (int index = 0; index < mRootCuisineList.size(); index++) {
                 mRootCuisineList.get(index).set_cuisine_favourite(false);
                 mRootCuisineList.get(index).set_cuisine_like(false);
+                mRootCuisineList.get(index).setSelected(true);
                 selectedCuisineList.clear();
                 isDirty = true;
                 isCuisineDirty = true;

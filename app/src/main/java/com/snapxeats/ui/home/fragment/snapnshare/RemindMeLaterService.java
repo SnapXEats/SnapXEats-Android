@@ -42,7 +42,7 @@ public class RemindMeLaterService extends IntentService {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (null != alarmManager) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
-                    TimeUnit.SECONDS.toMillis(PHOTO_NOTIFICATION_TIME), pendingIntent);
+                    TimeUnit.MINUTES.toMillis(PHOTO_NOTIFICATION_TIME), pendingIntent);
         }
     }
 }

@@ -13,11 +13,13 @@ import com.snapxeats.common.model.foodGestures.RootDeleteWishlist;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserPreference;
+import com.snapxeats.common.model.smartphotos.SmartPhotoResponse;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
+import com.snapxeats.ui.home.fragment.snapnshare.CameraActivity;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 
 import java.util.List;
@@ -31,6 +33,7 @@ import retrofit2.Response;
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 import static com.snapxeats.common.utilities.NoNetworkResults.CHECKIN;
 import static com.snapxeats.common.utilities.NoNetworkResults.CHECKIN_RESTAURANTS;
+import static com.snapxeats.common.utilities.NoNetworkResults.SMART_PHOTO;
 
 /**
  * Created by Snehal Tembare on 28/2/18.
@@ -279,5 +282,28 @@ public class HomeInteractor {
         } else {
             homePresenter.response(SnapXResult.NONETWORK, CHECKIN);
         }
+    }
+
+    public void getSmartPhotoInfo(String dishId) {
+        if (NetworkUtility.isNetworkAvailable(mContext)){
+            ApiHelper apiHelper = ApiClient.getClient(mContext,BASE_URL).create(ApiHelper.class);
+            Call<SmartPhotoResponse> smartPhotoResponseCall = apiHelper.getSmartPhotoDetails(dishId);
+
+            smartPhotoResponseCall.enqueue(new Callback<SmartPhotoResponse>() {
+                @Override
+                public void onResponse(Call<SmartPhotoResponse> call, Response<SmartPhotoResponse> response) {
+                   homePresenter.response(SnapXResult.SUCCESS,response.body());
+                }
+
+                @Override
+                public void onFailure(Call<SmartPhotoResponse> call, Throwable t) {
+                    homePresenter.response(SnapXResult.SUCCESS,null);
+                }
+            });
+
+        }else {
+            homePresenter.response(SnapXResult.SUCCESS,SMART_PHOTO);
+        }
+
     }
 }

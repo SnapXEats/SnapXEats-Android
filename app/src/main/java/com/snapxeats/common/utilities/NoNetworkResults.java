@@ -7,7 +7,7 @@ package com.snapxeats.common.utilities;
 public enum  NoNetworkResults {
     CHECKIN("CheckIn"), LOGOUT("LogOut"), CHECKIN_RESTAURANTS("Checkin_Restaurants"),
     WISHLIST("Wishlist"), FOODSTACK_GESTURES("FoodStack_Gestures"),USER_PREFERENCES("User_Preferences"),
-    RESTAURANT_DETAILS("Restaurant_Details");
+    RESTAURANT_DETAILS("Restaurant_Details"),SMART_PHOTO("SMART_PHOTO");
 
     NoNetworkResults(String checkIn) {
     }

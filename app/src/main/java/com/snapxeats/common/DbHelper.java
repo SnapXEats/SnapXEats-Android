@@ -1,19 +1,17 @@
 package com.snapxeats.common;
 
 import android.content.Context;
-
 import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.model.SnapXDataDao;
-import com.snapxeats.common.model.draft.RestaurantAminitiesDao;
-import com.snapxeats.common.model.draft.SnapXDraftPhotoDao;
 import com.snapxeats.common.model.foodGestures.FoodDislikesDao;
+import com.snapxeats.common.model.smartphotos.RestaurantAminitiesDao;
+import com.snapxeats.common.model.smartphotos.SnapXDraftPhotoDao;
+import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.foodGestures.FoodLikesDao;
 import com.snapxeats.common.model.foodGestures.FoodWishlistsDao;
-import com.snapxeats.common.model.preference.DaoSession;
 import com.snapxeats.common.model.preference.UserCuisinePreferencesDao;
 import com.snapxeats.common.model.preference.UserFoodPreferencesDao;
 import com.snapxeats.common.model.preference.UserPreferenceDao;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 

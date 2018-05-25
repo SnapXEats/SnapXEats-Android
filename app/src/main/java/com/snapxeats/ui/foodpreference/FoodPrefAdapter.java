@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.preference.FoodPref;
@@ -97,6 +100,12 @@ public class FoodPrefAdapter extends RecyclerView.Adapter<FoodPrefAdapter.ViewHo
 
             Glide.with(mContext)
                     .load(foodPref.getFood_image_url())
+                    .apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .centerCrop()
+                            .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                            .dontAnimate()
+                            .dontTransform())
                     .thumbnail(THUMBNAIL)
                     .into(imgCuisinePref);
             txtCuisineName.setText(foodPref.getFood_name());

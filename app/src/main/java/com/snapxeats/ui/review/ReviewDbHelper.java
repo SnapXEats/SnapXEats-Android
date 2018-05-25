@@ -4,10 +4,10 @@ import android.content.Context;
 
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.model.draft.RestaurantAminities;
-import com.snapxeats.common.model.draft.RestaurantAminitiesDao;
-import com.snapxeats.common.model.draft.SnapXDraftPhoto;
-import com.snapxeats.common.model.draft.SnapXDraftPhotoDao;
+import com.snapxeats.common.model.smartphotos.RestaurantAminities;
+import com.snapxeats.common.model.smartphotos.RestaurantAminitiesDao;
+import com.snapxeats.common.model.smartphotos.SnapXDraftPhoto;
+import com.snapxeats.common.model.smartphotos.SnapXDraftPhotoDao;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftAdapter;
 

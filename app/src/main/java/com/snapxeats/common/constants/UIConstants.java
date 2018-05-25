@@ -138,4 +138,6 @@ public class UIConstants {
     public static final float THUMBNAIL = 0.5f;
     public static final double UNSELECT_OPACITY = 1.0;
     public static final double SELECT_OPACITY = 0.4;
+    public static final int IMAGE_WIDTH = 200;
+    public static final int IMAGE_HEIGHT = 150;
 }

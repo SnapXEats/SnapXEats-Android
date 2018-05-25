@@ -38,6 +38,16 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
@@ -114,6 +124,8 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private MediaRecorder mRecorder;
     private Chronometer mChronometer;
     private File savedAudioPath = null;
+
+    public static final int RequestPermissionCode = 1;
 
     private Button mBtnStartAudio;
     private Button mBtnStopReview;
@@ -212,6 +224,12 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
         Glide.with(this)
                 .load(image_path)
+                .apply(new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .centerCrop()
+                        .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                        .dontAnimate()
+                        .dontTransform())
                 .thumbnail(THUMBNAIL)
                 .into(mImgRestPhoto);
 
@@ -518,7 +536,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             }
 
             public void onFinish() {
-                resumePosition = 0;
+                resumePosition = ZERO;
                 mImgPlayRecAudio.setVisibility(View.VISIBLE);
                 mImgPauseRecAudio.setVisibility(View.GONE);
                 mTimer.setText(audioTime);

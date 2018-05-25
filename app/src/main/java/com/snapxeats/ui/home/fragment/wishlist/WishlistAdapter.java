@@ -8,6 +8,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.snapxeats.R;
 import com.snapxeats.common.model.foodGestures.Wishlist;
 import java.text.DateFormat;
@@ -85,7 +88,14 @@ public class WishlistAdapter extends BaseAdapter {
             } else {
                 mLayoutFg.setBackground(mContext.getDrawable(R.drawable.wishlist_layout_white));
             }
-            Glide.with(mContext).load(item.getDish_image_url())
+            Glide.with(mContext)
+                    .load(item.getDish_image_url())
+                    .apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .centerCrop()
+                            .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                            .dontAnimate()
+                            .dontTransform())
                     .thumbnail(THUMBNAIL)
                     .into(mImageView);
 

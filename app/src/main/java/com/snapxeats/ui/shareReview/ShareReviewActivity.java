@@ -13,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -98,8 +101,16 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         photoId = getIntent().getExtras().getString(getString(R.string.photo_id));
 
         if (null != mSnapResponse) {
-            Glide.with(this).load(mSnapResponse.getDish_image_url())
-                    .thumbnail(THUMBNAIL).into(mImgRest);
+            Glide.with(this)
+                    .load(mSnapResponse.getDish_image_url())
+                    .apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .centerCrop()
+                            .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                            .dontAnimate()
+                            .dontTransform())
+                    .thumbnail(THUMBNAIL)
+                    .into(mImgRest);
             mImgRestName.setText(mSnapResponse.getRestaurant_name());
             mTxtMessage.setText(mSnapResponse.getMessage());
         }
@@ -162,7 +173,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         dialog.show();
 
         Intent shareAnotherIntent = new Intent(this, HomeActivity.class);
-        shareAnotherIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        shareAnotherIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
 
         mBtnShare.setOnClickListener(v -> {
 

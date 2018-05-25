@@ -85,7 +85,7 @@ public class CuisinePrefDbHelper {
         UserCuisinePreferences userCuisinePreferences;
         if (null != rootCuisineList) {
             for (Cuisines cuisines : rootCuisineList) {
-                if (cuisines.isSelected()) {
+                if (cuisines.isSelected() && cuisines.is_cuisine_like() || cuisines.is_cuisine_favourite()) {
                     userCuisinePreferences = new UserCuisinePreferences(cuisines.getCuisine_info_id()
                             , cuisines.is_cuisine_like(), cuisines.is_cuisine_favourite(), "");
                     selectedCuisineList.add(userCuisinePreferences);

@@ -1,6 +1,4 @@
-package com.snapxeats.common.model.draft;
-
-import com.snapxeats.common.model.preference.DaoSession;
+package com.snapxeats.common.model.smartphotos;
 
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
@@ -9,6 +7,7 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.ToMany;
 
 import java.util.List;
+import com.snapxeats.common.model.foodGestures.DaoSession;
 
 /**
  * Created by Snehal Tembare on 11/5/18.
@@ -193,9 +192,12 @@ public class SnapXDraftPhoto {
         myDao.update(this);
     }
 
+
     /**
      * called by internal mechanisms, do not call yourself.
      */
+
+    /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 1415628995)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;

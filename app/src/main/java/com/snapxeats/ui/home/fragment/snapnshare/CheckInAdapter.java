@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.R;
 import com.snapxeats.common.OnRecyclerItemClickListener;
@@ -84,6 +87,12 @@ public class CheckInAdapter extends RecyclerView.Adapter<CheckInAdapter.ViewHold
             }
             Glide.with(mContext)
                     .load(restaurantInfo.getRestaurant_logo())
+                    .apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .centerCrop()
+                            .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                            .dontAnimate()
+                            .dontTransform())
                     .thumbnail(THUMBNAIL)
                     .into(mImgRestaurant);
 

@@ -120,8 +120,7 @@ public class Router {
 
     private void presentLogInScreen() {
         Intent intent = new Intent(mActivity, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK |
-                Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         mActivity.startActivity(intent);
     }
 }

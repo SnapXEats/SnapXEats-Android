@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
@@ -15,28 +16,28 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import com.google.gson.Gson;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.SnapXDataDao;
+import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.location.Location;
-import com.snapxeats.common.model.preference.DaoSession;
 import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
 import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.home.fragment.snapnshare.ViewPagerAdapter;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.snapxeats.common.constants.UIConstants.MARGIN;
 import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.MILLIES_TWO;
+import static com.snapxeats.common.constants.UIConstants.MILLIS;
+import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC_CONVERSION;
+import static com.snapxeats.common.constants.UIConstants.TEN;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -208,7 +209,6 @@ public class AppUtility {
         try {
             // Here 1 represent max location result to returned, by documents it recommended 1 to 5
             addresses = geocoder.getFromLocation(latitude, longitude, ONE);
-
             return addresses.get(ZERO);
 
         } catch (IOException e) {
@@ -287,4 +287,40 @@ public class AppUtility {
     }
 
 
+
+    /**
+     * Converts milliseconds to seconds
+     */
+    public String milliSecondsToTimer(long milliseconds) {
+        String finalTimerString ;
+        String secondsString;
+
+        // Convert total duration into time
+        int seconds = (int) ((milliseconds % (MILLIS)) % (MILLIES_TWO) / MILLI_TO_SEC_CONVERSION);
+
+        // Prepending 0 to seconds if it is one digit
+        if (TEN > seconds) {
+            secondsString = ZERO + "" + seconds;
+        } else {
+            secondsString = "" + seconds;
+        }
+
+        finalTimerString = mContext.getString(R.string.str_timer) + secondsString;
+
+        // return timer string
+        return finalTimerString;
+    }
+
+   /**
+    * Reset media player
+    */
+    public void resetMediaPlayer(MediaPlayer mediaPlayer) {
+        if (null != mediaPlayer) {
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.pause();
+                mediaPlayer.stop();
+                mediaPlayer.reset();
+            }
+        }
+    }
 }

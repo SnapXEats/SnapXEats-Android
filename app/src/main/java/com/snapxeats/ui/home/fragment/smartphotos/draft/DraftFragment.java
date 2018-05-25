@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -33,20 +34,31 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
-import com.snapxeats.common.model.draft.RestaurantAminities;
-import com.snapxeats.common.model.draft.RestaurantAminitiesDao;
-import com.snapxeats.common.model.draft.SnapXDraftPhoto;
+import com.snapxeats.common.model.smartphotos.RestaurantAminities;
+import com.snapxeats.common.model.smartphotos.RestaurantAminitiesDao;
+import com.snapxeats.common.model.smartphotos.SnapXDraftPhoto;
 import com.snapxeats.common.model.review.SnapNShareResponse;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.home.fragment.smartphotos.AminityAdapter;
 import com.snapxeats.ui.login.InstagramApp;
 import com.snapxeats.ui.login.InstagramDialog;
 import com.snapxeats.ui.review.ReviewDbHelper;
@@ -55,6 +67,7 @@ import com.snapxeats.ui.shareReview.ShareReviewActivity;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -67,6 +80,7 @@ import static com.snapxeats.common.constants.UIConstants.MILLIES_TWO;
 import static com.snapxeats.common.constants.UIConstants.MILLIS;
 import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC_CONVERSION;
 import static com.snapxeats.common.constants.UIConstants.TEN;
+import static android.app.Activity.RESULT_OK;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -91,7 +105,6 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
     private LinearLayout mLayoutReview;
     private LinearLayout mLayoutAudio;
     private ListView mListAminities;
-    private List<RestaurantAminities> mAminitiesList;
 
     private ImageView mImgInfo;
     private ImageView mImgAudioReview;
@@ -107,6 +120,8 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
 
     private DraftAdapter mDraftAdapter;
     private List<SnapXDraftPhoto> mDraftPhotoList;
+    private List<String> mAminitiesList;
+
     private boolean isImageTap;
     private boolean isInfoTap;
     private boolean isReviewTap;
@@ -120,7 +135,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
     private String textReview;
     private int rating;
 
-    MediaPlayer mMediaPlayer;
+    private MediaPlayer mMediaPlayer;
     private Handler mHandler = new Handler();
 
     private Dialog mDialog;
@@ -172,17 +187,21 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         initView();
 
         mDraftPhotoList = reviewDbHelper.getDraftData();
-        if (null != mDraftPhotoList && ZERO != mDraftPhotoList.size()) {
+        if (null != mDraftPhotoList && 0 != mDraftPhotoList.size()) {
             mDraftAdapter = new DraftAdapter(getActivity(), mDraftPhotoList, (snapXDraftPhoto, viewShare) -> {
                 mSnapXDraftPhoto = snapXDraftPhoto;
 
                 QueryBuilder<RestaurantAminities> queryBuilder = dbHelper.getRestaurantAminitiesDao().queryBuilder();
-                mAminitiesList = queryBuilder.
-                        where(RestaurantAminitiesDao.Properties.PhotoIdFk.eq(snapXDraftPhoto.getSmartPhoto_Draft_Stored_id())).list();
-                showDialog();
+                List<RestaurantAminities> aminitiesList = queryBuilder.where(RestaurantAminitiesDao.Properties.PhotoIdFk.eq(snapXDraftPhoto.getSmartPhoto_Draft_Stored_id())).list();
+                mAminitiesList = new ArrayList<>();
+                for (RestaurantAminities aminity : aminitiesList) {
+                    mAminitiesList.add(aminity.getAminity());
+                }
+
+                showSmartPhotoDialog();
                 ImageView imgShare = viewShare.findViewById(R.id.img_share);
-                //TODO- Need to check for non logged in user
                 imgShare.setOnClickListener(v -> {
+                    //Check for non logged in user
                     if (utility.isLoggedIn()) {
                         callApiReview();
                     } else {
@@ -307,7 +326,10 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         dialog.show();
     }
 
-    private void showDialog() {
+    /**
+     * show login dialog if user is not logged in
+     **/
+    private void showSmartPhotoDialog() {
         mDialog = new Dialog(getActivity());
         mDialog.setContentView(R.layout.draft_dialog_layout);
         Window window = mDialog.getWindow();
@@ -332,6 +354,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         mImgTextReview = mDialog.findViewById(R.id.img_text_review);
         mImgAudioReview = mDialog.findViewById(R.id.img_audio);
         ImageView imgShare = mDialog.findViewById(R.id.img_share);
+        imgShare.setVisibility(View.VISIBLE);
         mImgPlayAudio = mDialog.findViewById(R.id.img_play_audio);
         mListAminities = mDialog.findViewById(R.id.list_aminities);
 
@@ -343,6 +366,12 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
 
         Glide.with(getActivity())
                 .load(mSnapXDraftPhoto.getImageURL())
+                .apply(new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .centerCrop()
+                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                        .dontAnimate()
+                        .dontTransform())
                 .thumbnail(THUMBNAIL)
                 .into(img);
 
@@ -355,24 +384,6 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         imgShare.setOnClickListener(this);
         mImgPlayAudio.setOnClickListener(this);
         mDialog.show();
-    }
-
-    public String milliSecondsToTimer(long milliseconds) {
-        String finalTimerString;
-        String secondsString;
-
-        // Convert total duration into time
-        int seconds = (int) ((milliseconds % (MILLIS)) % (MILLIES_TWO) / MILLI_TO_SEC_CONVERSION);
-
-        // Prepending 0 to seconds if it is one digit
-        if (TEN > seconds) {
-            secondsString = ZERO + "" + seconds;
-        } else {
-            secondsString = "" + seconds;
-        }
-        finalTimerString = getString(R.string.str_timer) + secondsString;
-        // return timer string
-        return finalTimerString;
     }
 
     @Override
@@ -478,7 +489,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
 
                     mMediaPlayer = MediaPlayer.create(getActivity(), Uri.parse(mSnapXDraftPhoto.getAudioURL()));
                     mMediaPlayer.setOnCompletionListener(this);
-                    mTxtTimeOfAudio.setText(milliSecondsToTimer(mMediaPlayer.getCurrentPosition()));
+                    mTxtTimeOfAudio.setText(utility.milliSecondsToTimer(mMediaPlayer.getCurrentPosition()));
 
                 } else {
                     mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
@@ -508,12 +519,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 break;
 
             case R.id.img_share:
-                if(utility.isLoggedIn()){
-                    callApiReview();
-                }else {
-                    showLoginDialog();
-                }
-
+                callApiReview();
                 break;
         }
     }
@@ -551,7 +557,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 long currentDuration = mMediaPlayer.getCurrentPosition();
 
                 // Displaying time completed playing
-                mTxtTimeOfAudio.setText("" + milliSecondsToTimer(currentDuration));
+                mTxtTimeOfAudio.setText("" + utility.milliSecondsToTimer(currentDuration));
 
                 // Running this thread after 100 milliseconds
                 mHandler.postDelayed(this, 100);
@@ -611,9 +617,10 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 showSnackBar(mParentLayout, setClickListener(click));
             } else {
                 showProgressDialog();
-                mDraftPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+                mDraftPresenter.sendReview(mToken,restId, fileImageUri, audioFile, textReview, rating);
             }
         });
+
     }
 
     @Override
@@ -625,60 +632,12 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_play_review));
         mMediaPlayer = MediaPlayer.create(getActivity(), Uri.parse(mSnapXDraftPhoto.getAudioURL()));
         mMediaPlayer.setOnCompletionListener(this);
-        mTxtTimeOfAudio.setText(milliSecondsToTimer(mMediaPlayer.getCurrentPosition()));
+        mTxtTimeOfAudio.setText(utility.milliSecondsToTimer(mMediaPlayer.getCurrentPosition()));
     }
 
     @Override
     public void onReturnValue(String token) {
         showProgressDialog();
         mDraftPresenter.getInstaInfo(token);
-    }
-
-    class AminityAdapter extends BaseAdapter {
-        private Context mContext;
-        private List<RestaurantAminities> amenityList;
-
-        AminityAdapter(Context context, List<RestaurantAminities> amenityList) {
-            mContext = context;
-            this.amenityList = amenityList;
-        }
-
-        @Override
-        public int getCount() {
-            return amenityList.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return amenityList.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (null == convertView) {
-                convertView = View.inflate(mContext, R.layout.item_amenities, null);
-                new AminityAdapter.ViewHolder(convertView);
-            }
-
-            AminityAdapter.ViewHolder holder = (ViewHolder) convertView.getTag();
-            holder.mTxtAmenity.setText(amenityList.get(position).getAminity());
-            return convertView;
-        }
-
-        class ViewHolder {
-
-            @BindView(R.id.txt_amenity)
-            TextView mTxtAmenity;
-
-            public ViewHolder(View itemView) {
-                ButterKnife.bind(this, itemView);
-                itemView.setTag(this);
-            }
-        }
     }
 }

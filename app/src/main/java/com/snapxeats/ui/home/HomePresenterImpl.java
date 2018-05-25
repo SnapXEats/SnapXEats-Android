@@ -82,6 +82,11 @@ public class HomePresenterImpl implements HomeContract.HomePresenter {
     }
 
     @Override
+    public void getSmartPhotoInfo(String dishId) {
+        interactor.getSmartPhotoInfo(dishId);
+    }
+
+    @Override
     public void response(SnapXResult result, Object value) {
         if (null != homeView) {
             switch (result) {
