@@ -1,10 +1,11 @@
 package com.snapxeats.ui.home;
 
 import android.content.Context;
+
 import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.Logout;
-import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.model.checkin.CheckInResponse;
 import com.snapxeats.common.model.checkin.CheckInRestaurants;
@@ -20,11 +21,15 @@ import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
 import com.snapxeats.ui.home.fragment.snapnshare.CameraActivity;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
+
 import java.util.List;
+
 import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 import static com.snapxeats.common.utilities.NoNetworkResults.CHECKIN;
 import static com.snapxeats.common.utilities.NoNetworkResults.CHECKIN_RESTAURANTS;
@@ -69,7 +74,7 @@ public class HomeInteractor {
         this.homePresenter = homePresenter;
     }
 
-    List<SnapxData> getUserInfoFromDb() {
+    List<SnapXData> getUserInfoFromDb() {
         return homeDbHelper.getUserInfoFromDb();
     }
 
@@ -221,7 +226,7 @@ public class HomeInteractor {
     private void clearLocalDb() {
         utility.getSharedPreferences().edit().clear().apply();
 
-        dbHelper.getDaoSesion().getSnapxDataDao().deleteAll();
+        dbHelper.getDaoSesion().getSnapXDataDao().deleteAll();
         dbHelper.getDaoSesion().getFoodWishlistsDao().deleteAll();
         dbHelper.getDaoSesion().getFoodDislikesDao().deleteAll();
         dbHelper.getDaoSesion().getFoodLikesDao().deleteAll();

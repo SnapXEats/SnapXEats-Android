@@ -9,6 +9,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.snapxeats.R;
 import com.snapxeats.common.model.preference.Cuisines;
 import com.snapxeats.ui.cuisinepreference.OnDoubleTapListenr;
@@ -90,8 +93,17 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         }
 
         public void setItem(Cuisines cuisines) {
-            Glide.with(mContext).load(cuisines.getCuisine_image_url())
-                    .thumbnail(THUMBNAIL).into(imgCuisinePref);
+            Glide.with(mContext)
+                    .load(cuisines.getCuisine_image_url())
+                    .apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .centerCrop()
+                            .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                            .dontAnimate()
+                            .dontTransform())
+                    .thumbnail(THUMBNAIL)
+                    .into(imgCuisinePref);
+
             txtCuisineName.setText(cuisines.getCuisine_name());
 
             if (cuisines.is_cuisine_like()) {

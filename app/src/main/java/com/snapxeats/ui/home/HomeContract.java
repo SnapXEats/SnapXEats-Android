@@ -3,12 +3,13 @@ package com.snapxeats.ui.home;
 import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
-import com.snapxeats.common.model.SnapxData;
+import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.dagger.AppContract;
+
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public class HomeContract {
     }
 
     public interface HomePresenter extends BasePresenter<HomeView> {
-        List<SnapxData> getUserDataFromDb();
+        List<SnapXData> getUserDataFromDb();
 
         void updatePreferences(UserPreference mUserPreference);
 

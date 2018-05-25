@@ -10,6 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.RootCuisinePhotos;
@@ -44,6 +47,12 @@ public class MapsRestAdapter extends RecyclerView.Adapter<MapsRestAdapter.ViewHo
         if (ZERO != stackData.getDishesInfo().get(position).getRestaurantDishes().size()) {
             Glide.with(holder.itemView.getContext())
                     .load(String.valueOf(stackData.getDishesInfo().get(position).getRestaurantDishes().get(ZERO).getDish_image_url()))
+                    .apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .centerCrop()
+                            .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                            .dontAnimate()
+                            .dontTransform())
                     .thumbnail(THUMBNAIL)
                     .into(holder.imgRestaurant);
         }

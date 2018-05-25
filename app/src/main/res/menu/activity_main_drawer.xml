@@ -24,10 +24,6 @@
             android:id="@+id/nav_food_journey"
             android:title="Food Journeys" />
         <item
-            android:id="@+id/nav_rewards"
-            android:title="Rewards" />
-
-        <item
             android:id="@+id/nav_snap"
             android:title="Snap-N-Share" />
         <item

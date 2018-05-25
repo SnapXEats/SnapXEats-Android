@@ -75,9 +75,8 @@ public class ReviewDbHelper {
             }
             snapXDraftPhoto.setRestaurant_aminities(restaurant_aminities_list);
         }
-
-        new DraftAdapter().notifyDataSetChanged();
         dbHelper.getDraftPhotoDao().insert(snapXDraftPhoto);
+        new DraftAdapter().notifyDataSetChanged();
     }
 
     public List<SnapXDraftPhoto> getDraftData() {
@@ -87,7 +86,7 @@ public class ReviewDbHelper {
         return null;
     }
 
-    public void deleteDraftData(String photoId){
+    public void deleteDraftData(String photoId) {
         DeleteQuery<RestaurantAminities> deleteRestAminities = dbHelper.getDaoSesion()
                 .queryBuilder(RestaurantAminities.class)
                 .where(RestaurantAminitiesDao.Properties.PhotoIdFk.eq(photoId)).buildDelete();
@@ -99,7 +98,6 @@ public class ReviewDbHelper {
                 .buildDelete();
 
         deleteQuery.executeDeleteWithoutDetachingEntities();
-
         dbHelper.getDaoSesion().clear();
     }
 }

@@ -18,6 +18,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.model.googleDirections.GoogleDirDest;
@@ -293,8 +296,16 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
                     mLayoutRestSpecialties, false);
             ImageView imageView = view.findViewById(R.id.img_restaurant_specialties);
 
-            Glide.with(this).load(mRestaurantSpecialties.get(INDEX_REST_SPECIALTIES)
-                    .getDish_image_url()).thumbnail(THUMBNAIL)
+            Glide.with(this)
+                    .load(mRestaurantSpecialties.get(INDEX_REST_SPECIALTIES)
+                            .getDish_image_url())
+                    .apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .centerCrop()
+                            .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                            .dontAnimate()
+                            .dontTransform())
+                    .thumbnail(THUMBNAIL)
                     .into(imageView);
             mLayoutRestSpecialties.addView(view);
         }

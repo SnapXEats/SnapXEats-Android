@@ -32,10 +32,8 @@ public class InstagramApp {
 
             @Override
             public void onError(String error) {
-
             }
         };
-
         instagramDialog = new InstagramDialog(context, mAuthUrl, listener);
         ProgressDialog mProgress = new ProgressDialog(context);
         mProgress.setCancelable(false);

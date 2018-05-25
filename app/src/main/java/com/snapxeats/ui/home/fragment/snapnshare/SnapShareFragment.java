@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.InflateException;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -25,9 +26,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
+import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.restaurantInfo.RestaurantInfo;
 import com.snapxeats.common.model.restaurantInfo.RestaurantSpeciality;
@@ -84,6 +89,9 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
     AppUtility utility;
 
     @Inject
+    DbHelper dbHelper;
+
+    @Inject
     public SnapShareFragment() {
         // Required empty public constructor
     }
@@ -111,7 +119,9 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mToolbar = view.findViewById(R.id.toolbar);
+        initView();
+
+        Toolbar mToolbar = view.findViewById(R.id.toolbar);
 
         mNavigationView = activity.findViewById(R.id.nav_view);
         mDrawerLayout = activity.findViewById(R.id.drawer_layout);
@@ -120,20 +130,30 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
         ((BaseActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mToolbar.setNavigationOnClickListener(v -> mDrawerLayout.openDrawer(Gravity.START));
+        MenuItem smartPhotoMenu = mNavigationView.getMenu().findItem(R.id.nav_smart_photos);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                if (ZERO != dbHelper.getDraftPhotoDao().loadAll().size()) {
+                    smartPhotoMenu.setEnabled(true);
+                } else {
+                    smartPhotoMenu.setEnabled(false);
+                }
+            }
+        };
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
-        initView();
     }
 
     public void initView() {
         mPresenter.addView(this);
+        dbHelper.setContext(getActivity());
         if (null != getArguments()) {
             restaurantId = getArguments().getString(getString(R.string.intent_restaurant_id));
             isFromNotification = getArguments().getBoolean(getString(R.string.notification));
@@ -228,6 +248,12 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
             Glide.with(getActivity())
                     .load(restaurant_speciality.get(index).getDish_image_url())
+                    .apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .centerCrop()
+                            .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                            .dontAnimate()
+                            .dontTransform())
                     .thumbnail(THUMBNAIL)
                     .into(imageView);
             mLayoutRestSpecialties.addView(view);
@@ -267,7 +293,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
                 PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
-                TimeUnit.SECONDS.toMillis(PHOTO_NOTIFICATION_TIME), pendingIntent);
+                TimeUnit.MINUTES.toMillis(PHOTO_NOTIFICATION_TIME), pendingIntent);
 
     }
 }

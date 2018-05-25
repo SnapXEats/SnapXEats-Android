@@ -2,21 +2,14 @@ package com.snapxeats.ui.login;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 
-import com.facebook.AccessToken;
-import com.facebook.Profile;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.model.SnapXUser;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
-import com.snapxeats.common.model.SnapxData;
-import com.snapxeats.common.model.SnapxDataDao;
 import com.snapxeats.common.model.login.RootInstagram;
-import com.snapxeats.common.model.preference.SnapXPreference;
-import com.snapxeats.common.model.preference.UserPreferences;
 import com.snapxeats.common.utilities.AppUtility;
+import com.snapxeats.common.utilities.LoginUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
@@ -30,8 +23,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.snapxeats.common.constants.UIConstants.PROFILE_WIDTH_HEIGHT;
-import static com.snapxeats.common.constants.UIConstants.ZERO;
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 /**
@@ -40,11 +31,7 @@ import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 @Singleton
 public class LoginInteractor {
-
-    private LoginContract.LoginView mLoginLoginView;
     private LoginContract.LoginPresenter mLoginPresenter;
-    private SnapxDataDao snapxDataDao;
-    private SnapxData snapxData;
     private Context mContext;
     private RootInstagram rootInstagram;
     private String token;
@@ -62,6 +49,9 @@ public class LoginInteractor {
     LoginDbHelper loginDbHelper;
 
     @Inject
+    LoginUtility loginUtility;
+
+    @Inject
     public LoginInteractor() {
     }
 
@@ -75,11 +65,13 @@ public class LoginInteractor {
         dbHelper.setContext(mContext);
         loginDbHelper.setContext(mContext);
         wishlistDbHelper.setContext(mContext);
-        snapxDataDao = dbHelper.getSnapxDataDao();
-        snapxData = new SnapxData();
     }
 
-    //get instagram info
+    /**
+     * get instagram info
+     *
+     * @param token
+     */
     public void getInstaInfo(String token) {
         this.token = token;
         ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
@@ -116,23 +108,26 @@ public class LoginInteractor {
                 public void onResponse(Call<SnapXUserResponse> call, Response<SnapXUserResponse> response) {
                     if (response.isSuccessful() && null != response.body()) {
                         SnapXUserResponse snapXUser = response.body();
+
                         /** save userId to shared preferences **/
                         SharedPreferences settings = appUtility.getSharedPreferences();
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(mContext.getString(R.string.user_id), snapXUser.getUserInfo().getUser_id());
                         editor.putBoolean(mContext.getString(R.string.isFirstTimeUser), snapXUser.getUserInfo().isFirst_time_login());
                         editor.apply();
+
                         /** save instagram data **/
                         if (snapXUser.getUserInfo().getSocial_platform().
                                 equalsIgnoreCase(mContext.getString(R.string.platform_instagram))) {
-                            saveInstaDataInDb(snapXUser.getUserInfo(), token, rootInstagram);
-                            getUserPreferences(snapXUser.getUserInfo().getToken());
+                            loginUtility.saveInstaDataInDb(snapXUser.getUserInfo(), token, rootInstagram);
+                            loginUtility.getUserPreferences(snapXUser.getUserInfo().getToken());
                         }
+
                         /** save facebook data **/
                         if (snapXUser.getUserInfo().getSocial_platform().
                                 equalsIgnoreCase(mContext.getString(R.string.platform_facebook))) {
-                            saveFbDataInDb(snapXUser.getUserInfo());
-                            getUserPreferences(snapXUser.getUserInfo().getToken());
+                            loginUtility.saveFbDataInDb(snapXUser.getUserInfo(), rootInstagram);
+                            loginUtility.getUserPreferences(snapXUser.getUserInfo().getToken());
                         }
                         mLoginPresenter.response(SnapXResult.SUCCESS, snapXUser);
                     }
@@ -145,100 +140,6 @@ public class LoginInteractor {
             });
         } else {
             mLoginPresenter.response(SnapXResult.NONETWORK, null);
-        }
-    }
-
-    /**
-     * TODO- Relogin user
-     * GET- Get user preferences
-     */
-    private void getUserPreferences(String token) {
-
-        if (NetworkUtility.isNetworkAvailable(mContext)) {
-            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
-            Call<SnapXPreference> userPreferenceCall = apiHelper.getUserPreferences("Bearer " + token);
-
-            userPreferenceCall.enqueue(new Callback<SnapXPreference>() {
-                @Override
-                public void onResponse(Call<SnapXPreference> call, Response<SnapXPreference> response) {
-                    if (response.isSuccessful() && null != response.body())
-//                        mLoginPresenter.response(SnapXResult.SUCCESS, response.body());
-                        savePreferenceDataInDb(response.body().getUserPreferences());
-                }
-
-                @Override
-                public void onFailure(Call<SnapXPreference> call, Throwable t) {
-                    mLoginPresenter.response(SnapXResult.ERROR, null);
-                }
-            });
-        } else {
-            mLoginPresenter.response(SnapXResult.NONETWORK, null);
-        }
-    }
-
-    private void savePreferenceDataInDb(UserPreferences rootUserPreference) {
-        loginDbHelper.saveUserPrefDataInDb(rootUserPreference);
-    }
-
-    //save data to db
-    private void saveInstaDataInDb(SnapXUser snapXUser, String token, RootInstagram rootInstagram) {
-        //User data from server
-        saveServerDataInDb(snapXUser);
-        saveWishlistDataInDb(snapXUser);
-        snapxData.setSocialToken(token);
-        snapxData.setSocialUserId(rootInstagram.getData().getId());
-        snapxData.setUserName(rootInstagram.getData().getFull_name());
-        snapxData.setImageUrl(rootInstagram.getData().getProfile_picture());
-        if (snapxDataDao.loadAll().size() == ZERO) {
-            snapxDataDao.insert(snapxData);
-        } else {
-            snapxDataDao.update(snapxData);
-        }
-    }
-
-    private void saveServerDataInDb(SnapXUser snapXUser) {
-        snapxData.setUserId(snapXUser.getUser_id());
-        snapxData.setToken(snapXUser.getToken());
-        snapxData.setSocialPlatform(snapXUser.getSocial_platform());
-        snapxData.setIsFirstTimeUser(snapXUser.isFirst_time_login());
-        if (snapXUser.getSocial_platform().equalsIgnoreCase(mContext.getString(R.string.platform_facebook))) {
-            if (null != Profile.getCurrentProfile()) {
-                String userName = Profile.getCurrentProfile().getFirstName() + " "
-                        + Profile.getCurrentProfile().getLastName();
-                Uri profileUri = Profile.getCurrentProfile().getProfilePictureUri(PROFILE_WIDTH_HEIGHT,
-                        PROFILE_WIDTH_HEIGHT);
-                snapxData.setUserName(userName);
-                snapxData.setImageUrl(profileUri.toString());
-            }
-
-        } else if (snapXUser.getSocial_platform().equalsIgnoreCase(mContext.getString(R.string.platform_instagram))) {
-            snapxData.setImageUrl(rootInstagram.getData().getProfile_picture());
-            snapxData.setUserName(rootInstagram.getData().getFull_name());
-        }
-        if (snapxDataDao.loadAll().size() == ZERO) {
-            snapxDataDao.insert(snapxData);
-        } else {
-            snapxDataDao.update(snapxData);
-        }
-    }
-
-    private void saveFbDataInDb(SnapXUser snapXUser) {
-        saveServerDataInDb(snapXUser);
-        saveWishlistDataInDb(snapXUser);
-
-        snapxData.setUserId(AccessToken.getCurrentAccessToken().getUserId());
-        snapxData.setSocialToken(AccessToken.getCurrentAccessToken().getToken());
-        if (snapxDataDao.loadAll().size() == ZERO) {
-            snapxDataDao.insert(snapxData);
-        } else {
-            snapxDataDao.update(snapxData);
-        }
-    }
-
-    private void saveWishlistDataInDb(SnapXUser snapXUser) {
-        if (null != snapXUser.getUserWishList() &&
-                ZERO != snapXUser.getUserWishList().size()) {
-            wishlistDbHelper.saveWishlistDataInDb(snapXUser.getUserWishList());
         }
     }
 }

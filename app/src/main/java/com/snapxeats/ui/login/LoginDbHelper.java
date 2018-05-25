@@ -48,7 +48,7 @@ public class LoginDbHelper {
         utility.setContext(context);
     }
 
-    void saveUserPrefDataInDb(UserPreferences userPreferences) {
+    public void saveUserPrefDataInDb(UserPreferences userPreferences) {
         SharedPreferences preferences = utility.getSharedPreferences();
         String userId = preferences.getString(mContext.getString(R.string.user_id), "");
         UserPreference userPreference = new UserPreference(userId,

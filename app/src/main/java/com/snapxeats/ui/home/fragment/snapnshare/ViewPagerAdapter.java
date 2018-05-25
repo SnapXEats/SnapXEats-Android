@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.snapxeats.R;
 import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
 import java.util.List;
@@ -46,9 +49,15 @@ public class ViewPagerAdapter extends PagerAdapter {
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = mLayoutInflater.inflate(R.layout.layout_rest_pics, container, false);
         ImageView imageView = view.findViewById(R.id.img_restaurant_pics);
-        //Load image using picasso
+        //Load image using Glide
         Glide.with(mContext)
                 .load(mImageUrl.get(position).getDish_image_url())
+                .apply(new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .centerCrop()
+                        .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                        .dontAnimate()
+                        .dontTransform())
                 .thumbnail(THUMBNAIL)
                 .into(imageView);
         ViewPager viewPager = (ViewPager) container;
