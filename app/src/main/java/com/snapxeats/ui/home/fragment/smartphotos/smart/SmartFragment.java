@@ -64,6 +64,8 @@ public class SmartFragment extends BaseFragment implements SmartContract.SmartVi
     private LinearLayout mLayoutAudio;
     private ListView mListAminities;
 
+    private ImageView mImg;
+    private ImageView mImgClose;
     private ImageView mImgInfo;
     private ImageView mImgAudioReview;
     private ImageView mImgTextReview;
@@ -149,28 +151,8 @@ public class SmartFragment extends BaseFragment implements SmartContract.SmartVi
             window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             window.setGravity(Gravity.START);
         }
-        mLayoutDescription = mDialog.findViewById(R.id.layout_description);
-        mLayoutControls = mDialog.findViewById(R.id.layout_controls);
-        mLayoutInfo = mDialog.findViewById(R.id.layout_info);
-        mLayoutReview = mDialog.findViewById(R.id.layout_review);
-        mLayoutAudio = mDialog.findViewById(R.id.layout_audio);
 
-        mTxtRestName = mDialog.findViewById(R.id.txt_rest_name);
-        mTxtRestAddress = mDialog.findViewById(R.id.txt_rest_address);
-        mTxtRestReviewContents = mDialog.findViewById(R.id.txt_review_contents);
-        mTxtTimeOfAudio = mDialog.findViewById(R.id.timer_play);
-
-        ImageView img = mDialog.findViewById(R.id.image_view);
-        ImageView imgClose = mDialog.findViewById(R.id.img_close);
-        mImgInfo = mDialog.findViewById(R.id.img_info);
-        mImgTextReview = mDialog.findViewById(R.id.img_text_review);
-        mImgAudioReview = mDialog.findViewById(R.id.img_audio);
-        ImageView imgShare = mDialog.findViewById(R.id.img_share);
-        imgShare.setVisibility(View.GONE);
-
-        mImgPlayAudio = mDialog.findViewById(R.id.img_play_audio);
-        mListAminities = mDialog.findViewById(R.id.list_aminities);
-
+        initViewsForSmartPhotoDialog();
         if (null == mSmartPhoto.getTextReview() || mSmartPhoto.getTextReview().isEmpty())
             mImgTextReview.setVisibility(View.GONE);
 
@@ -186,16 +168,44 @@ public class SmartFragment extends BaseFragment implements SmartContract.SmartVi
                         .dontAnimate()
                         .dontTransform())
                 .thumbnail(THUMBNAIL)
-                .into(img);
+                .into(mImg);
 
         //Register listeners
-        img.setOnClickListener(this);
-        imgClose.setOnClickListener(this);
+        registerListeners();
+        mDialog.show();
+    }
+
+    private void registerListeners() {
+        mImg.setOnClickListener(this);
+        mImgClose.setOnClickListener(this);
         mImgInfo.setOnClickListener(this);
         mImgTextReview.setOnClickListener(this);
         mImgAudioReview.setOnClickListener(this);
         mImgPlayAudio.setOnClickListener(this);
-        mDialog.show();
+    }
+
+    private void initViewsForSmartPhotoDialog() {
+        mLayoutDescription = mDialog.findViewById(R.id.layout_description);
+        mLayoutControls = mDialog.findViewById(R.id.layout_controls);
+        mLayoutInfo = mDialog.findViewById(R.id.layout_info);
+        mLayoutReview = mDialog.findViewById(R.id.layout_review);
+        mLayoutAudio = mDialog.findViewById(R.id.layout_audio);
+
+        mTxtRestName = mDialog.findViewById(R.id.txt_rest_name);
+        mTxtRestAddress = mDialog.findViewById(R.id.txt_rest_address);
+        mTxtRestReviewContents = mDialog.findViewById(R.id.txt_review_contents);
+        mTxtTimeOfAudio = mDialog.findViewById(R.id.timer_play);
+
+        mImg = mDialog.findViewById(R.id.image_view);
+        mImgClose = mDialog.findViewById(R.id.img_close);
+        mImgInfo = mDialog.findViewById(R.id.img_info);
+        mImgTextReview = mDialog.findViewById(R.id.img_text_review);
+        mImgAudioReview = mDialog.findViewById(R.id.img_audio);
+        ImageView imgShare = mDialog.findViewById(R.id.img_share);
+        imgShare.setVisibility(View.GONE);
+
+        mImgPlayAudio = mDialog.findViewById(R.id.img_play_audio);
+        mListAminities = mDialog.findViewById(R.id.list_aminities);
     }
 
     @Override

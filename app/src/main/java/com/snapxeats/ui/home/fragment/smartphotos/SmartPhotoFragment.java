@@ -21,6 +21,7 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftFragment;
 import com.snapxeats.ui.home.fragment.smartphotos.smart.SmartFragment;
 import javax.inject.Inject;
@@ -107,7 +108,6 @@ public class SmartPhotoFragment extends BaseFragment {
 
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
         initView();
     }
 
@@ -132,18 +132,6 @@ public class SmartPhotoFragment extends BaseFragment {
     }
 
     private void changeUI() {
-        if (null != dbHelper.getSmartPhotoDao().loadAll()
-                && ZERO != dbHelper.getSmartPhotoDao().loadAll().size()) {
-            mBtnSmartPhotos.setEnabled(true);
-            mBtnSmartPhotos.setChecked(true);
-
-            fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.layout_main_contents, smartFragment);
-            fragmentTransaction.commit();
-        } else {
-            mBtnSmartPhotos.setEnabled(false);
-        }
-
         if (null != dbHelper.getDraftPhotoDao().loadAll()
                 && ZERO != dbHelper.getDraftPhotoDao().loadAll().size()) {
             mBtnDraft.setEnabled(true);
@@ -154,6 +142,18 @@ public class SmartPhotoFragment extends BaseFragment {
             fragmentTransaction.commit();
         } else {
             mBtnDraft.setEnabled(false);
+        }
+
+        if (null != dbHelper.getSmartPhotoDao().loadAll()
+                && ZERO != dbHelper.getSmartPhotoDao().loadAll().size()) {
+            mBtnSmartPhotos.setEnabled(true);
+            mBtnSmartPhotos.setChecked(true);
+
+            fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.layout_main_contents, smartFragment);
+            fragmentTransaction.commit();
+        } else {
+            mBtnSmartPhotos.setEnabled(false);
         }
     }
 

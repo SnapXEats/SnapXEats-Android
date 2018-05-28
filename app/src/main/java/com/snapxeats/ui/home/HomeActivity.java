@@ -204,6 +204,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private Dialog mSmartPhotoDialog;
     private SmartPhotoResponse mSmartPhoto;
     private ImageView mImg;
+    private ImageView mImgClose;
     private ImageView mImgInfo;
     private ImageView mImgAudioReview;
     private ImageView mImgTextReview;
@@ -1044,29 +1045,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             window.setGravity(Gravity.START);
         }
 
-        mLayoutDescription = mSmartPhotoDialog.findViewById(R.id.layout_description);
-        mLayoutControls = mSmartPhotoDialog.findViewById(R.id.layout_controls);
-        mLayoutInfo = mSmartPhotoDialog.findViewById(R.id.layout_info);
-        mLayoutReview = mSmartPhotoDialog.findViewById(R.id.layout_review);
-        mLayoutAudio = mSmartPhotoDialog.findViewById(R.id.layout_audio);
-        mLayoutDownloadSuccess = mSmartPhotoDialog.findViewById(R.id.layout_download_success);
-
-        mTxtSmartPhotoRestName = mSmartPhotoDialog.findViewById(R.id.txt_rest_name);
-        mTxtSmartRestAddress = mSmartPhotoDialog.findViewById(R.id.txt_rest_address);
-        mTxtRestReviewContents = mSmartPhotoDialog.findViewById(R.id.txt_review_contents);
-        mTxtTimeOfAudio = mSmartPhotoDialog.findViewById(R.id.timer_play);
-
-        ImageView img = mSmartPhotoDialog.findViewById(R.id.image_view);
-        ImageView imgClose = mSmartPhotoDialog.findViewById(R.id.img_close);
-        mImgInfo = mSmartPhotoDialog.findViewById(R.id.img_info);
-        mImgTextReview = mSmartPhotoDialog.findViewById(R.id.img_text_review);
-        mImgAudioReview = mSmartPhotoDialog.findViewById(R.id.img_audio);
-        mImgDownload = mSmartPhotoDialog.findViewById(R.id.img_download);
-        mProgressbar = new ProgressDialog(this);
-        mProgressbar.setMessage(getString(R.string.downloading));
-        mProgressbar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        mProgressbar.setCancelable(false);
-        mProgressbar.setMax(UIConstants.PERCENTAGE);
+        initViewsForSmartPhotoDialog();
 
         //Check duplicate entry for dish to download
         if (homeDbHelper.isDuplicateSmartPhoto(mSmartPhoto)) {
@@ -1093,18 +1072,48 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                         .dontAnimate()
                         .dontTransform())
                 .thumbnail(THUMBNAIL)
-                .into(img);
+                .into(mImg);
 
         //Register listeners
-        img.setOnClickListener(this);
-        imgClose.setOnClickListener(this);
+        registerListeners();
+        mSmartPhotoDialog.show();
+    }
+
+    private void registerListeners() {
+        mImg.setOnClickListener(this);
+        mImgClose.setOnClickListener(this);
         mImgInfo.setOnClickListener(this);
         mImgTextReview.setOnClickListener(this);
         mImgAudioReview.setOnClickListener(this);
         mImgDownload.setOnClickListener(this);
         mImgPlayAudio.setOnClickListener(this);
+    }
 
-        mSmartPhotoDialog.show();
+    private void initViewsForSmartPhotoDialog() {
+        mLayoutDescription = mSmartPhotoDialog.findViewById(R.id.layout_description);
+        mLayoutControls = mSmartPhotoDialog.findViewById(R.id.layout_controls);
+        mLayoutInfo = mSmartPhotoDialog.findViewById(R.id.layout_info);
+        mLayoutReview = mSmartPhotoDialog.findViewById(R.id.layout_review);
+        mLayoutAudio = mSmartPhotoDialog.findViewById(R.id.layout_audio);
+        mLayoutDownloadSuccess = mSmartPhotoDialog.findViewById(R.id.layout_download_success);
+
+        mTxtSmartPhotoRestName = mSmartPhotoDialog.findViewById(R.id.txt_rest_name);
+        mTxtSmartRestAddress = mSmartPhotoDialog.findViewById(R.id.txt_rest_address);
+        mTxtRestReviewContents = mSmartPhotoDialog.findViewById(R.id.txt_review_contents);
+        mTxtTimeOfAudio = mSmartPhotoDialog.findViewById(R.id.timer_play);
+
+        mImg = mSmartPhotoDialog.findViewById(R.id.image_view);
+       mImgClose = mSmartPhotoDialog.findViewById(R.id.img_close);
+        mImgInfo = mSmartPhotoDialog.findViewById(R.id.img_info);
+        mImgTextReview = mSmartPhotoDialog.findViewById(R.id.img_text_review);
+        mImgAudioReview = mSmartPhotoDialog.findViewById(R.id.img_audio);
+        mImgDownload = mSmartPhotoDialog.findViewById(R.id.img_download);
+
+        mProgressbar = new ProgressDialog(this);
+        mProgressbar.setMessage(getString(R.string.downloading));
+        mProgressbar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        mProgressbar.setCancelable(false);
+        mProgressbar.setMax(UIConstants.PERCENTAGE);
     }
 
     @Override
