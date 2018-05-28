@@ -19,13 +19,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -37,16 +34,10 @@ import com.facebook.login.widget.LoginButton;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
@@ -63,23 +54,13 @@ import com.snapxeats.ui.login.InstagramApp;
 import com.snapxeats.ui.login.InstagramDialog;
 import com.snapxeats.ui.review.ReviewDbHelper;
 import com.snapxeats.ui.shareReview.ShareReviewActivity;
-
 import org.greenrobot.greendao.query.QueryBuilder;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static android.app.Activity.RESULT_OK;
-import static com.snapxeats.common.constants.UIConstants.MILLIES_TWO;
-import static com.snapxeats.common.constants.UIConstants.MILLIS;
-import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC_CONVERSION;
-import static com.snapxeats.common.constants.UIConstants.TEN;
 import static android.app.Activity.RESULT_OK;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
@@ -88,8 +69,11 @@ import static com.snapxeats.common.constants.UIConstants.ZERO;
  * Created by Snehal Tembare on 15/5/18.
  */
 
-public class DraftFragment extends BaseFragment implements View.OnClickListener, DraftContract.DraftView,
-        AppContract.SnapXResults, MediaPlayer.OnCompletionListener, InstagramDialog.InstagramDialogListener {
+public class DraftFragment extends BaseFragment implements View.OnClickListener,
+        DraftContract.DraftView,
+        AppContract.SnapXResults,
+        MediaPlayer.OnCompletionListener,
+        InstagramDialog.InstagramDialogListener {
 
     @BindView(R.id.listview)
     protected RecyclerView mRecyclerview;
@@ -187,7 +171,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         initView();
 
         mDraftPhotoList = reviewDbHelper.getDraftData();
-        if (null != mDraftPhotoList && 0 != mDraftPhotoList.size()) {
+        if (null != mDraftPhotoList && ZERO != mDraftPhotoList.size()) {
             mDraftAdapter = new DraftAdapter(getActivity(), mDraftPhotoList, (snapXDraftPhoto, viewShare) -> {
                 mSnapXDraftPhoto = snapXDraftPhoto;
 
@@ -327,7 +311,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
     }
 
     /**
-     * show login dialog if user is not logged in
+     * Show smart photo Dialog
      **/
     private void showSmartPhotoDialog() {
         mDialog = new Dialog(getActivity());
@@ -399,13 +383,13 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
     @Override
     public void onPause() {
         super.onPause();
-        resetMediaPlayer();
+        utility.resetMediaPlayer(mMediaPlayer);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        resetMediaPlayer();
+        utility.resetMediaPlayer(mMediaPlayer);
     }
 
     @Override
@@ -421,12 +405,12 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                     mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review));
                     mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
                     mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info));
-                    resetMediaPlayer();
+                    utility.resetMediaPlayer(mMediaPlayer);
                 }
                 break;
 
             case R.id.img_close:
-                resetMediaPlayer();
+                utility.resetMediaPlayer(mMediaPlayer);
                 if (null != mMediaPlayer) {
                     mMediaPlayer.release();
                     mMediaPlayer = null;
@@ -437,7 +421,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
             case R.id.img_info:
                 isInfoTap = !isInfoTap;
                 if (isInfoTap) {
-                    resetMediaPlayer();
+                    utility.resetMediaPlayer(mMediaPlayer);
                     mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info_selected));
                     mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
                     mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review));
@@ -467,7 +451,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                     mLayoutReview.setVisibility(View.VISIBLE);
                     mLayoutInfo.setVisibility(View.GONE);
                     mTxtRestReviewContents.setText(mSnapXDraftPhoto.getTextReview());
-                    resetMediaPlayer();
+                    utility.resetMediaPlayer(mMediaPlayer);
 
                 } else {
                     mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review));
@@ -494,7 +478,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 } else {
                     mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
                     mLayoutAudio.setVisibility(View.GONE);
-                    resetMediaPlayer();
+                    utility.resetMediaPlayer(mMediaPlayer);
                 }
                 break;
 
@@ -524,16 +508,6 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         }
     }
 
-    private void resetMediaPlayer() {
-        if (null != mMediaPlayer) {
-            if (mMediaPlayer.isPlaying()) {
-                mMediaPlayer.pause();
-                mMediaPlayer.stop();
-                mMediaPlayer.reset();
-            }
-        }
-    }
-
     private void callApiReview() {
         textReview = mSnapXDraftPhoto.getTextReview();
         rating = mSnapXDraftPhoto.getRating();
@@ -560,7 +534,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 mTxtTimeOfAudio.setText("" + utility.milliSecondsToTimer(currentDuration));
 
                 // Running this thread after 100 milliseconds
-                mHandler.postDelayed(this, 100);
+                mHandler.postDelayed(this, UIConstants.PERCENTAGE);
             }
         }
     };
@@ -617,7 +591,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 showSnackBar(mParentLayout, setClickListener(click));
             } else {
                 showProgressDialog();
-                mDraftPresenter.sendReview(mToken,restId, fileImageUri, audioFile, textReview, rating);
+                mDraftPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
             }
         });
 

@@ -16,12 +16,18 @@ import com.snapxeats.common.model.preference.UserFoodPreferences;
 import com.snapxeats.common.model.preference.UserFoodPreferencesDao;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.model.preference.UserPreferenceDao;
+import com.snapxeats.common.model.smartphotos.RestaurantAminities;
+import com.snapxeats.common.model.smartphotos.SmartPhoto;
+import com.snapxeats.common.model.smartphotos.SmartPhotoResponse;
 import com.snapxeats.common.utilities.AppUtility;
-
+import com.snapxeats.ui.home.fragment.smartphotos.smart.SmartAdapter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Snehal Tembare on 21/3/18.
@@ -139,5 +145,44 @@ public class HomeDbHelper {
         List<FoodWishlists> usersWishlist = dbHelper.getFoodWishlistsDao().queryBuilder()
                 .where(FoodWishlistsDao.Properties.IsDeleted.eq(0)).list();
         return usersWishlist.size();
+    }
+
+    void saveSmartPhotoDataInDb(SmartPhotoResponse smartPhotoResponse) {
+        String smartPhoto_Draft_Stored_id =
+                new SimpleDateFormat(mContext.getString(R.string.date_time_pattern)).format(new Date());
+
+        SmartPhoto smartPhoto = new SmartPhoto();
+        smartPhoto.setRestaurantDishId(smartPhotoResponse.getRestaurant_dish_id());
+        smartPhoto.setSmartPhoto_Draft_Stored_id(smartPhoto_Draft_Stored_id);
+        smartPhoto.setRestaurantName(smartPhotoResponse.getRestaurant_name());
+        smartPhoto.setRestaurantAddress(smartPhotoResponse.getRestaurant_address());
+        smartPhoto.setDishImageURL(smartPhotoResponse.getDish_image_url());
+        smartPhoto.setAudioURL(smartPhotoResponse.getAudio_review_url());
+        smartPhoto.setTextReview(smartPhotoResponse.getText_review());
+        List<String> restaurantAminities = smartPhotoResponse.getRestaurant_aminities();
+
+        if (null != restaurantAminities && ZERO != restaurantAminities.size()) {
+            RestaurantAminities restaurantAminity = new RestaurantAminities();
+
+            List<RestaurantAminities> restaurant_aminities_list = new ArrayList<>();
+            for (int index = ZERO; index < restaurantAminities.size(); index++) {
+                restaurantAminity.setPhotoIdFk(smartPhoto.getSmartPhoto_Draft_Stored_id());
+                restaurantAminity.setAminity(restaurantAminities.get(index));
+                dbHelper.getRestaurantAminitiesDao().insert(restaurantAminity);
+                restaurant_aminities_list.add(restaurantAminity);
+            }
+            smartPhoto.setRestaurant_aminities(restaurant_aminities_list);
+        }
+        dbHelper.getSmartPhotoDao().insert(smartPhoto);
+        new SmartAdapter().notifyDataSetChanged();
+    }
+
+    boolean isDuplicateSmartPhoto(SmartPhotoResponse smartPhoto) {
+        List<SmartPhoto> smartPhotoList = dbHelper.getSmartPhotoDao().loadAll();
+        for (SmartPhoto photo : smartPhotoList)
+        if (smartPhoto.getRestaurant_dish_id().equalsIgnoreCase(photo.getRestaurantDishId())){
+            return true;
+        }
+        return false;
     }
 }

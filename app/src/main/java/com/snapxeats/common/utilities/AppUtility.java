@@ -1,6 +1,7 @@
 package com.snapxeats.common.utilities;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -12,10 +13,17 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
@@ -38,6 +46,7 @@ import static com.snapxeats.common.constants.UIConstants.MILLIES_TWO;
 import static com.snapxeats.common.constants.UIConstants.MILLIS;
 import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC_CONVERSION;
 import static com.snapxeats.common.constants.UIConstants.TEN;
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -323,4 +332,64 @@ public class AppUtility {
             }
         }
     }
+
+  /*  *//**
+     * Show smart photo Dialog
+     **//*
+    private void showSmartPhotoDialog() {
+        Dialog mDialog = new Dialog(mContext);
+        mDialog.setContentView(R.layout.draft_dialog_layout);
+        Window window = mDialog.getWindow();
+        if (null != window) {
+            window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            window.setGravity(Gravity.START);
+        }
+        mLayoutDescription = mDialog.findViewById(R.id.layout_description);
+        mLayoutControls = mDialog.findViewById(R.id.layout_controls);
+        mLayoutInfo = mDialog.findViewById(R.id.layout_info);
+        mLayoutReview = mDialog.findViewById(R.id.layout_review);
+        mLayoutAudio = mDialog.findViewById(R.id.layout_audio);
+
+        mTxtRestName = mDialog.findViewById(R.id.txt_rest_name);
+        mTxtRestAddress = mDialog.findViewById(R.id.txt_rest_address);
+        mTxtRestReviewContents = mDialog.findViewById(R.id.txt_review_contents);
+        mTxtTimeOfAudio = mDialog.findViewById(R.id.timer_play);
+
+        ImageView img = mDialog.findViewById(R.id.image_view);
+        ImageView imgClose = mDialog.findViewById(R.id.img_close);
+        mImgInfo = mDialog.findViewById(R.id.img_info);
+        mImgTextReview = mDialog.findViewById(R.id.img_text_review);
+        mImgAudioReview = mDialog.findViewById(R.id.img_audio);
+        ImageView imgShare = mDialog.findViewById(R.id.img_share);
+        imgShare.setVisibility(View.VISIBLE);
+        mImgPlayAudio = mDialog.findViewById(R.id.img_play_audio);
+        mListAminities = mDialog.findViewById(R.id.list_aminities);
+
+        if (null == mSnapXDraftPhoto.getTextReview() || mSnapXDraftPhoto.getTextReview().isEmpty())
+            mImgTextReview.setVisibility(View.GONE);
+
+        if (null == mSnapXDraftPhoto.getAudioURL() || mSnapXDraftPhoto.getAudioURL().isEmpty())
+            mImgAudioReview.setVisibility(View.GONE);
+
+        Glide.with(getActivity())
+                .load(mSnapXDraftPhoto.getImageURL())
+                .apply(new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .centerCrop()
+                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                        .dontAnimate()
+                        .dontTransform())
+                .thumbnail(THUMBNAIL)
+                .into(img);
+
+        //Register listeners
+        img.setOnClickListener(this.mContext);
+        imgClose.setOnClickListener(this);
+        mImgInfo.setOnClickListener(this);
+        mImgTextReview.setOnClickListener(this);
+        mImgAudioReview.setOnClickListener(this);
+        imgShare.setOnClickListener(this);
+        mImgPlayAudio.setOnClickListener(this);
+        mDialog.show();
+    }*/
 }

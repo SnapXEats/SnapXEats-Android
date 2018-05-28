@@ -1,4 +1,4 @@
-package com.snapxeats.ui.home.fragment.smartphotos.draft;
+package com.snapxeats.ui.home.fragment.smartphotos.smart;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -13,43 +13,43 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.snapxeats.R;
-import com.snapxeats.common.model.smartphotos.SnapXDraftPhoto;
+import com.snapxeats.common.model.smartphotos.SmartPhoto;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 
 /**
- * Created by Snehal Tembare on 16/5/18.
+ * Created by Snehal Tembare on 27/5/18.
  */
 
-public class DraftAdapter extends RecyclerView.Adapter<DraftAdapter.ViewHolder> {
+public class SmartAdapter extends RecyclerView.Adapter<SmartAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<SnapXDraftPhoto> mDraftPhotoList;
-    private OnItemClickListener onItemClickListener;
+    private List<SmartPhoto> mDraftPhotoList;
+    private SmartAdapter.OnItemClickListener onItemClickListener;
 
-    DraftAdapter(Context context,
-                 List<SnapXDraftPhoto> mDraftPhotoList,
-                 OnItemClickListener onItemClickListener) {
+    SmartAdapter(Context context,
+                 List<SmartPhoto> mDraftPhotoList,
+                 SmartAdapter.OnItemClickListener onItemClickListener) {
         mContext = context;
         this.mDraftPhotoList = mDraftPhotoList;
         this.onItemClickListener = onItemClickListener;
     }
 
-    public DraftAdapter() {
+    public SmartAdapter() {
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public SmartAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View row = LayoutInflater.from(mContext).inflate(R.layout.item_draft_photo, parent,
                 false);
-        return new DraftAdapter.ViewHolder(row);
+        return new SmartAdapter.ViewHolder(row);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull SmartAdapter.ViewHolder holder, int position) {
         holder.setData(mDraftPhotoList.get(position));
     }
 
@@ -72,14 +72,15 @@ public class DraftAdapter extends RecyclerView.Adapter<DraftAdapter.ViewHolder> 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            mImgShare.setVisibility(View.GONE);
             itemView.setOnClickListener(this);
         }
 
 
-        public void setData(SnapXDraftPhoto snapXDraftPhoto) {
+        public void setData(SmartPhoto smartPhoto) {
 
             Glide.with(mContext)
-                    .load(snapXDraftPhoto.getImageURL())
+                    .load(smartPhoto.getDishImageURL())
                     .apply(new RequestOptions()
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .centerCrop()
@@ -89,7 +90,7 @@ public class DraftAdapter extends RecyclerView.Adapter<DraftAdapter.ViewHolder> 
                     .thumbnail(THUMBNAIL)
                     .into(mImgView);
 
-            mTxtRestName.setText(snapXDraftPhoto.getRestaurantName());
+            mTxtRestName.setText(smartPhoto.getRestaurantName());
         }
 
         @Override
@@ -99,6 +100,6 @@ public class DraftAdapter extends RecyclerView.Adapter<DraftAdapter.ViewHolder> 
     }
 
     interface OnItemClickListener{
-        void onClick(SnapXDraftPhoto snapXDraftPhoto,View view);
+        void onClick(SmartPhoto smartPhoto,View view);
     }
 }

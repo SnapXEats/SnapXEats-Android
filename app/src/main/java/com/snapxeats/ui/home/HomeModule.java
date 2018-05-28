@@ -22,6 +22,7 @@ import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefInteractor;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefPresenterImpl;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefRouterImpl;
+import com.snapxeats.ui.home.fragment.smartphotos.smart.SmartContract;
 import com.snapxeats.ui.home.fragment.smartphotos.smart.SmartFragment;
 import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftContract;
 import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftFragment;
@@ -33,6 +34,9 @@ import com.snapxeats.ui.home.fragment.smartphotos.SmartPhotoRouterImpl;
 import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftInteractor;
 import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftPresenterImpl;
 import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftRouterImpl;
+import com.snapxeats.ui.home.fragment.smartphotos.smart.SmartInteractor;
+import com.snapxeats.ui.home.fragment.smartphotos.smart.SmartPresenterImpl;
+import com.snapxeats.ui.home.fragment.smartphotos.smart.SmartRouterImpl;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapShareContract;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapShareInteractor;
@@ -43,7 +47,6 @@ import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistInteractor;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistPresenterImpl;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistRouterImpl;
-
 import dagger.Module;
 import dagger.Provides;
 import dagger.android.ContributesAndroidInjector;
@@ -201,6 +204,20 @@ public abstract class HomeModule {
     static DraftRouterImpl provideDraftRouter(Router router) {
         DraftRouterImpl draftRouter = new DraftRouterImpl(router);
         return draftRouter;
+    }
+
+    @Provides
+    static SmartContract.SmartPresenter provideSmartPresenter(SmartInteractor interactor,
+                                                              SmartRouterImpl router) {
+        SmartContract.SmartPresenter smartPresenter = new SmartPresenterImpl(interactor, router);
+        interactor.setSmartPresenter(smartPresenter);
+        return smartPresenter;
+    }
+
+    @Provides
+    static SmartRouterImpl provideSmartRouter(Router router) {
+        SmartRouterImpl smartRouter = new SmartRouterImpl(router);
+        return smartRouter;
     }
 
     @Provides
