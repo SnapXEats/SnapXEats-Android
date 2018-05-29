@@ -240,5 +240,8 @@
     <string name="downloading">Downloading...</string>
     <string name="download_success_msg">Photo has been saved \n successfully. You can change it \nunder <b>Smart Photo</b> menu</string>
     <string name="successful">Successful</string>
+    <string name="enable_storage_permissions">Please enable storage Permissions</string>
+    <string name="downloads">Downloads</string>
+    <string name="download">Download_</string>
 
 </resources>

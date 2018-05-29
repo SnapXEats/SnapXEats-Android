@@ -140,4 +140,9 @@ public class UIConstants {
     public static final double SELECT_OPACITY = 0.4;
     public static final int IMAGE_WIDTH = 200;
     public static final int IMAGE_HEIGHT = 150;
+    public static final int PERCENTAGE = 100;
+    public static final int STORAGE_REQUEST_PERMISSION = 8;
+    public static final int CHANGE_PERMISSIONS = 9;
+    public static final int BUFFER_SIZE = 8192;
+    public static final int BYTES = 1024;
 }

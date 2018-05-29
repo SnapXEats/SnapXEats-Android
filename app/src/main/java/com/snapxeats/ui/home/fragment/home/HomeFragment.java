@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -41,6 +42,7 @@ import com.google.gson.Gson;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
+import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.model.SnapXUser;
@@ -66,6 +68,7 @@ import static com.snapxeats.common.Router.Screen.LOCATION;
 import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
 import static com.snapxeats.common.constants.UIConstants.ACTION_LOCATION_GET;
 import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Snehal Tembare on 3/1/18.
@@ -74,6 +77,8 @@ import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
 public class HomeFragment extends BaseFragment implements
         HomeFgmtContract.HomeFgmtView,
         AppContract.SnapXResults {
+
+    protected NavigationView mNavigationView;
 
     @BindView(R.id.txt_place_name)
     protected TextView mTxtPlaceName;
@@ -123,6 +128,9 @@ public class HomeFragment extends BaseFragment implements
     }
 
     @Inject
+    DbHelper dbHelper;
+
+    @Inject
     RootUserPreference mRootUserPreference;
 
     @Inject
@@ -149,6 +157,7 @@ public class HomeFragment extends BaseFragment implements
         snapXDialog.setContext(getActivity());
         utility.setContext(getActivity());
         presenter.addView(this);
+        dbHelper.setContext(getActivity());
         mTxtPlaceName.setSingleLine();
         cuisinesList = new ArrayList<>();
         selectedList = new ArrayList<>();
@@ -184,10 +193,24 @@ public class HomeFragment extends BaseFragment implements
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         mRecyclerView.setNestedScrollingEnabled(false);
 
+        mNavigationView = activity.findViewById(R.id.nav_view);
         mDrawerLayout = activity.findViewById(R.id.drawer_layout);
 
+        MenuItem smartPhotoMenu = mNavigationView.getMenu().findItem(R.id.nav_smart_photos);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                getActivity(), mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                getActivity(), mDrawerLayout, toolbar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close){
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                if (dbHelper.isSmartPhotoAvailable() || dbHelper.isDraftPhotoAvailable()) {
+                    smartPhotoMenu.setEnabled(true);
+                } else {
+                    smartPhotoMenu.setEnabled(false);
+                }
+            }
+        };
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -215,7 +238,7 @@ public class HomeFragment extends BaseFragment implements
         ViewTreeObserver treeObserver = mRecyclerView.getViewTreeObserver();
         treeObserver.addOnGlobalLayoutListener(() -> {
             List<Cuisines> list = getSelectedCuisineList();
-            if (null != list && 0 < list.size()) {
+            if (null != list && ZERO < list.size()) {
                 mTxtCuisineDone.setTextColor(ContextCompat.getColor(activity, R.color.colorPrimary));
                 mTxtCuisineDone.setClickable(true);
             } else {
@@ -263,7 +286,6 @@ public class HomeFragment extends BaseFragment implements
             if (mSnackBar != null) {
                 mSnackBar.dismiss();
             }
-
         } else {
             showNetworkErrorDialog((dialog, which) -> {
                 if (!NetworkUtility.isNetworkAvailable(activity)) {
@@ -285,7 +307,7 @@ public class HomeFragment extends BaseFragment implements
             }
         }
 
-        if (selectedList.size() != 0) {
+        if (ZERO != selectedList.size()) {
             if (null != mSelectedLocation) {
                 selectedCuisineList = homeFgmtHelper.getSelectedCusine(mLocationCuisine, selectedList);
                 //set selected cuisines data
@@ -532,8 +554,8 @@ public class HomeFragment extends BaseFragment implements
         List<UserCuisinePreferences> userCuisinePreferencesList = mRootUserPreference.getUserCuisinePreferences();
 
         if (null != userCuisinePreferencesList) {
-            for (int rowIndex = 0; rowIndex < userCuisinePreferencesList.size(); rowIndex++) {
-                for (int colIndex = 0; colIndex < cuisinesList.size(); colIndex++) {
+            for (int rowIndex = ZERO; rowIndex < userCuisinePreferencesList.size(); rowIndex++) {
+                for (int colIndex = ZERO; colIndex < cuisinesList.size(); colIndex++) {
                     if (userCuisinePreferencesList.get(rowIndex).getCuisine_info_id().
                             equalsIgnoreCase(cuisinesList.get(colIndex).getCuisine_info_id())) {
                         cuisinesList.get(colIndex).set_cuisine_like(userCuisinePreferencesList.get(rowIndex)

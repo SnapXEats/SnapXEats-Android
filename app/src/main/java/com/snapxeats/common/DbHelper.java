@@ -5,6 +5,7 @@ import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.model.SnapXDataDao;
 import com.snapxeats.common.model.foodGestures.FoodDislikesDao;
 import com.snapxeats.common.model.smartphotos.RestaurantAminitiesDao;
+import com.snapxeats.common.model.smartphotos.SmartPhotoDao;
 import com.snapxeats.common.model.smartphotos.SnapXDraftPhotoDao;
 import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.foodGestures.FoodLikesDao;
@@ -14,6 +15,8 @@ import com.snapxeats.common.model.preference.UserFoodPreferencesDao;
 import com.snapxeats.common.model.preference.UserPreferenceDao;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Snehal Tembare on 19/3/18.
@@ -74,6 +77,23 @@ public class DbHelper {
     public SnapXDraftPhotoDao getDraftPhotoDao() {
         daoSession = getDaoSesion();
         return daoSession.getSnapXDraftPhotoDao();
+    }
+
+    public SmartPhotoDao getSmartPhotoDao() {
+        daoSession = getDaoSesion();
+        return daoSession.getSmartPhotoDao();
+    }
+
+    public boolean isSmartPhotoAvailable() {
+        daoSession = getDaoSesion();
+        return null != daoSession.getSmartPhotoDao()
+                && ZERO != daoSession.getSmartPhotoDao().loadAll().size();
+    }
+
+    public boolean isDraftPhotoAvailable() {
+        daoSession = getDaoSesion();
+        return null != daoSession.getSnapXDraftPhotoDao()
+                && ZERO != daoSession.getSnapXDraftPhotoDao().loadAll().size();
     }
 
     public RestaurantAminitiesDao getRestaurantAminitiesDao() {

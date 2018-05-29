@@ -86,7 +86,7 @@
             <LinearLayout
                 android:id="@+id/layout_description"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/common_dimens_200"
                 android:orientation="vertical"
                 android:visibility="gone">
 
@@ -194,33 +194,6 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!--Download layout-->
-                <LinearLayout
-                    android:id="@+id/layout_download"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-
-                    <SeekBar
-                        android:id="@+id/seekbar"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical|center"
-                        android:layout_marginTop="@dimen/dimens_50dp" />
-
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginBottom="@dimen/common_dimens_10"
-                        android:layout_marginTop="@dimen/common_dimens_30"
-                        android:text="@string/downloading"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="@dimen/txt_size_16" />
-
-                </LinearLayout>
                 <!--Downloaded layout-->
                 <LinearLayout
                     android:id="@+id/layout_download_success"
@@ -230,8 +203,8 @@
                     android:visibility="gone">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/dimens_60"
+                        android:layout_height="@dimen/dimens_60"
                         android:layout_gravity="center_vertical|center"
                         android:src="@drawable/ic_download_success"/>
                     <TextView

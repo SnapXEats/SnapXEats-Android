@@ -136,7 +136,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
-                if (ZERO != dbHelper.getDraftPhotoDao().loadAll().size()) {
+                if (dbHelper.isSmartPhotoAvailable() || dbHelper.isDraftPhotoAvailable()) {
                     smartPhotoMenu.setEnabled(true);
                 } else {
                     smartPhotoMenu.setEnabled(false);

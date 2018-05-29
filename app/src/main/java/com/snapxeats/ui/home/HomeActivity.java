@@ -1,5 +1,6 @@
 package com.snapxeats.ui.home;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Dialog;
@@ -7,6 +8,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,10 +16,17 @@ import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
@@ -34,7 +43,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
@@ -43,6 +51,7 @@ import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.checkin.CheckInRequest;
@@ -55,6 +64,7 @@ import com.snapxeats.common.model.smartphotos.SmartPhotoResponse;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.NoNetworkResults;
+import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.foodstack.FoodStackDbHelper;
 import com.snapxeats.ui.home.fragment.checkin.CheckInFragment;
@@ -69,20 +79,29 @@ import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.squareup.picasso.Picasso;
-
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import static com.snapxeats.common.Router.Screen.LOGIN;
+import static com.snapxeats.common.constants.UIConstants.BUFFER_SIZE;
+import static com.snapxeats.common.constants.UIConstants.BYTES;
+import static com.snapxeats.common.constants.UIConstants.CHANGE_PERMISSIONS;
 import static com.snapxeats.common.constants.UIConstants.LAT;
 import static com.snapxeats.common.constants.UIConstants.LNG;
 import static com.snapxeats.common.constants.UIConstants.LOGOUT_DIALOG_HEIGHT;
 import static com.snapxeats.common.constants.UIConstants.NOTIFICATION_ID;
 import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.STORAGE_REQUEST_PERMISSION;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isCuisineDirty;
@@ -93,9 +112,11 @@ import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isFoo
  * Created by Snehal Tembare on 3/1/18.
  */
 
-public class HomeActivity extends BaseActivity implements
-        NavigationView.OnNavigationItemSelectedListener, HomeContract.HomeView,
-        AppContract.SnapXResults, View.OnClickListener, MediaPlayer.OnCompletionListener {
+public class HomeActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener,
+        HomeContract.HomeView,
+        AppContract.SnapXResults,
+        View.OnClickListener,
+        MediaPlayer.OnCompletionListener {
 
     @Inject
     HomeFragment homeFragment;
@@ -180,14 +201,19 @@ public class HomeActivity extends BaseActivity implements
     private CheckInRequest checkInRequest;
 
     //Smart photos
-    private Dialog mDialog;
+    private Dialog mSmartPhotoDialog;
     private SmartPhotoResponse mSmartPhoto;
     private ImageView mImg;
+    private ImageView mImgClose;
     private ImageView mImgInfo;
     private ImageView mImgAudioReview;
     private ImageView mImgTextReview;
     private ImageView mImgPlayAudio;
     private ImageView mImgDownload;
+    private ProgressDialog mProgressbar;
+    private int current = 0;
+    private String imagePath;
+    private String audioPath;
 
     private TextView mTxtSmartPhotoRestName;
     private TextView mTxtTimeOfAudio;
@@ -199,7 +225,6 @@ public class HomeActivity extends BaseActivity implements
     private LinearLayout mLayoutInfo;
     private LinearLayout mLayoutReview;
     private LinearLayout mLayoutAudio;
-    private LinearLayout mLayoutDownload;
     private LinearLayout mLayoutDownloadSuccess;
 
     private ListView mListAminities;
@@ -212,6 +237,9 @@ public class HomeActivity extends BaseActivity implements
     private String dishId;
     private MediaPlayer mMediaPlayer;
     private Handler mHandler = new Handler();
+
+    @Inject
+    SnapXDialog snapXDialog;
 
     @Inject
     FoodStackDbHelper foodStackDbHelper;
@@ -242,6 +270,7 @@ public class HomeActivity extends BaseActivity implements
         fragmentManager = getFragmentManager();
         transaction = fragmentManager.beginTransaction();
         foodStackDbHelper.setContext(this);
+        snapXDialog.setContext(this);
 
         // ATTENTION: This was auto-generated to handle app links.
         Intent appLinkIntent = getIntent();
@@ -300,15 +329,9 @@ public class HomeActivity extends BaseActivity implements
     private void changeItems() {
         Menu menu = mNavigationView.getMenu();
         //Disable smart photos option
-        MenuItem smartPhotoMenu = menu.findItem(R.id.nav_smart_photos);
         MenuItem snapNShareMenu = menu.findItem(R.id.nav_snap);
         MenuItem foodJourneyMenu = menu.findItem(R.id.nav_food_journey);
 
-        if (ZERO != dbHelper.getDraftPhotoDao().loadAll().size()) {
-            smartPhotoMenu.setEnabled(true);
-        } else {
-            smartPhotoMenu.setEnabled(false);
-        }
         snapNShareMenu.setEnabled(false);
         if (!utility.isLoggedIn()) {
             foodJourneyMenu.setEnabled(false);
@@ -589,7 +612,7 @@ public class HomeActivity extends BaseActivity implements
                 transaction.replace(R.id.frame_layout, snapShareFragment);
                 transaction.commit();
             });
-        }else if (value instanceof SmartPhotoResponse){
+        } else if (value instanceof SmartPhotoResponse) {
             mSmartPhoto = (SmartPhotoResponse) value;
             mAminitiesList = mSmartPhoto.getRestaurant_aminities();
             showSmartPhotoDialog();
@@ -673,7 +696,7 @@ public class HomeActivity extends BaseActivity implements
                     mMediaPlayer.release();
                     mMediaPlayer = null;
                 }
-                mDialog.dismiss();
+                mSmartPhotoDialog.dismiss();
                 break;
 
             case R.id.img_info:
@@ -765,16 +788,59 @@ public class HomeActivity extends BaseActivity implements
                 }
                 break;
             case R.id.img_download:
-                mImgDownload.setImageResource(R.drawable.ic_download_select);
-                mLayoutDescription.setVisibility(View.VISIBLE);
-                mLayoutDownload.setVisibility(View.VISIBLE);
-                mLayoutAudio.setVisibility(View.GONE);
-                mLayoutInfo.setVisibility(View.GONE);
-                mLayoutReview.setVisibility(View.GONE);
+                checkStoragePermission();
                 break;
 
         }
     }
+
+    /**
+     * Check permissions for external storage
+     */
+    private void checkStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    STORAGE_REQUEST_PERMISSION);
+        } else {
+            startDownloadingTask();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        for (int index = ZERO; index < permissions.length; index++) {
+            if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
+                startDownloadingTask();
+            } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
+                snapXDialog.showChangePermissionDialog();
+            } else {
+                mSmartPhotoDialog.dismiss();
+                SnapXToast.showToast(this, getString(R.string.enable_storage_permissions));
+            }
+        }
+    }
+
+    private void startDownloadingTask() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            if (NetworkUtility.isNetworkAvailable(this)) {
+                mImgDownload.setImageResource(R.drawable.ic_download_select);
+                mLayoutDescription.setVisibility(View.GONE);
+                mLayoutAudio.setVisibility(View.GONE);
+                mLayoutInfo.setVisibility(View.GONE);
+                mLayoutReview.setVisibility(View.GONE);
+
+                new DownloadImage().execute(mSmartPhoto.getDish_image_url(), mSmartPhoto.getAudio_review_url());
+            } else {
+                showNetworkErrorDialog((dialog, which) -> {
+                });
+            }
+        }
+    }
+
     private Runnable mUpdateTimeTask = new Runnable() {
         public void run() {
             if (null != mMediaPlayer) {
@@ -784,7 +850,7 @@ public class HomeActivity extends BaseActivity implements
                 mTxtTimeOfAudio.setText("" + utility.milliSecondsToTimer(currentDuration));
 
                 // Running this thread after 100 milliseconds
-                mHandler.postDelayed(this, 100);
+                mHandler.postDelayed(this, UIConstants.PERCENTAGE);
             }
         }
     };
@@ -819,7 +885,7 @@ public class HomeActivity extends BaseActivity implements
                         .apply(new RequestOptions()
                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                                 .centerCrop()
-                                .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                                 .dontAnimate()
                                 .dontTransform())
                         .thumbnail(THUMBNAIL)
@@ -911,7 +977,6 @@ public class HomeActivity extends BaseActivity implements
     @Override
     public void networkError(Object value) {
         showNetworkErrorDialog((dialog, which) -> {
-
         });
     }
 
@@ -972,40 +1037,25 @@ public class HomeActivity extends BaseActivity implements
      * Dialog to show smart photo information
      */
     private void showSmartPhotoDialog() {
-        mDialog = new Dialog(this);
-        mDialog.setContentView(R.layout.draft_dialog_layout);
-        Window window = mDialog.getWindow();
+        mSmartPhotoDialog = new Dialog(this);
+        mSmartPhotoDialog.setContentView(R.layout.draft_dialog_layout);
+        Window window = mSmartPhotoDialog.getWindow();
         if (null != window) {
             window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             window.setGravity(Gravity.START);
         }
 
-        mLayoutDescription = mDialog.findViewById(R.id.layout_description);
-        mLayoutControls = mDialog.findViewById(R.id.layout_controls);
-        mLayoutInfo = mDialog.findViewById(R.id.layout_info);
-        mLayoutReview = mDialog.findViewById(R.id.layout_review);
-        mLayoutAudio = mDialog.findViewById(R.id.layout_audio);
-        mLayoutDownload = mDialog.findViewById(R.id.layout_download);
-        mLayoutDownloadSuccess = mDialog.findViewById(R.id.layout_download_success);
+        initViewsForSmartPhotoDialog();
 
-        mTxtSmartPhotoRestName = mDialog.findViewById(R.id.txt_rest_name);
-        mTxtSmartRestAddress = mDialog.findViewById(R.id.txt_rest_address);
-        mTxtRestReviewContents = mDialog.findViewById(R.id.txt_review_contents);
-        mTxtTimeOfAudio = mDialog.findViewById(R.id.timer_play);
+        //Check duplicate entry for dish to download
+        if (homeDbHelper.isDuplicateSmartPhoto(mSmartPhoto)) {
+            mImgDownload.setVisibility(View.GONE);
+        } else {
+            mImgDownload.setVisibility(View.VISIBLE);
+        }
 
-        ImageView img = mDialog.findViewById(R.id.image_view);
-        ImageView imgClose = mDialog.findViewById(R.id.img_close);
-        mImgInfo = mDialog.findViewById(R.id.img_info);
-        mImgTextReview = mDialog.findViewById(R.id.img_text_review);
-        mImgAudioReview = mDialog.findViewById(R.id.img_audio);
-        mImgDownload = mDialog.findViewById(R.id.img_download);
-        /**
-         * TODO-Functionality yet to complete
-        */
-//        mImgDownload.setVisibility(View.VISIBLE);
-
-        mImgPlayAudio = mDialog.findViewById(R.id.img_play_audio);
-        mListAminities = mDialog.findViewById(R.id.list_aminities);
+        mImgPlayAudio = mSmartPhotoDialog.findViewById(R.id.img_play_audio);
+        mListAminities = mSmartPhotoDialog.findViewById(R.id.list_aminities);
 
         if (null == mSmartPhoto.getText_review() || mSmartPhoto.getText_review().isEmpty())
             mImgTextReview.setVisibility(View.GONE);
@@ -1018,22 +1068,52 @@ public class HomeActivity extends BaseActivity implements
                 .apply(new RequestOptions()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .centerCrop()
-                        .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                         .dontAnimate()
                         .dontTransform())
                 .thumbnail(THUMBNAIL)
-                .into(img);
+                .into(mImg);
 
         //Register listeners
-        img.setOnClickListener(this);
-        imgClose.setOnClickListener(this);
+        registerListeners();
+        mSmartPhotoDialog.show();
+    }
+
+    private void registerListeners() {
+        mImg.setOnClickListener(this);
+        mImgClose.setOnClickListener(this);
         mImgInfo.setOnClickListener(this);
         mImgTextReview.setOnClickListener(this);
         mImgAudioReview.setOnClickListener(this);
         mImgDownload.setOnClickListener(this);
         mImgPlayAudio.setOnClickListener(this);
+    }
 
-        mDialog.show();
+    private void initViewsForSmartPhotoDialog() {
+        mLayoutDescription = mSmartPhotoDialog.findViewById(R.id.layout_description);
+        mLayoutControls = mSmartPhotoDialog.findViewById(R.id.layout_controls);
+        mLayoutInfo = mSmartPhotoDialog.findViewById(R.id.layout_info);
+        mLayoutReview = mSmartPhotoDialog.findViewById(R.id.layout_review);
+        mLayoutAudio = mSmartPhotoDialog.findViewById(R.id.layout_audio);
+        mLayoutDownloadSuccess = mSmartPhotoDialog.findViewById(R.id.layout_download_success);
+
+        mTxtSmartPhotoRestName = mSmartPhotoDialog.findViewById(R.id.txt_rest_name);
+        mTxtSmartRestAddress = mSmartPhotoDialog.findViewById(R.id.txt_rest_address);
+        mTxtRestReviewContents = mSmartPhotoDialog.findViewById(R.id.txt_review_contents);
+        mTxtTimeOfAudio = mSmartPhotoDialog.findViewById(R.id.timer_play);
+
+        mImg = mSmartPhotoDialog.findViewById(R.id.image_view);
+       mImgClose = mSmartPhotoDialog.findViewById(R.id.img_close);
+        mImgInfo = mSmartPhotoDialog.findViewById(R.id.img_info);
+        mImgTextReview = mSmartPhotoDialog.findViewById(R.id.img_text_review);
+        mImgAudioReview = mSmartPhotoDialog.findViewById(R.id.img_audio);
+        mImgDownload = mSmartPhotoDialog.findViewById(R.id.img_download);
+
+        mProgressbar = new ProgressDialog(this);
+        mProgressbar.setMessage(getString(R.string.downloading));
+        mProgressbar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        mProgressbar.setCancelable(false);
+        mProgressbar.setMax(UIConstants.PERCENTAGE);
     }
 
     @Override
@@ -1041,13 +1121,113 @@ public class HomeActivity extends BaseActivity implements
         mImgPlayAudio.setImageDrawable(getDrawable(R.drawable.ic_play_review));
         mMediaPlayer = MediaPlayer.create(this, Uri.parse(mSmartPhoto.getAudio_review_url()));
         mMediaPlayer.setOnCompletionListener(this);
-        mTxtTimeOfAudio.setText(utility.milliSecondsToTimer(mMediaPlayer.getCurrentPosition()));    }
+        mTxtTimeOfAudio.setText(utility.milliSecondsToTimer(mMediaPlayer.getCurrentPosition()));
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case CHANGE_PERMISSIONS:
+                startDownloadingTask();
+                break;
+        }
+
+        /*TODO-Add this code in above switch according to your REQUEST_CODE
         Fragment fragment = getFragmentManager().findFragmentById(R.id.id_draft_fragment);
-        fragment.onActivityResult(requestCode, resultCode, data);
+        fragment.onActivityResult(requestCode, resultCode, data);*/
     }
 
+    private class DownloadImage extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressbar.show();
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            int count;
+            while (current < urls.length) {
+
+                try {
+                    URL url = new URL(urls[current]);
+                    URLConnection conection = url.openConnection();
+                    conection.connect();
+                    // getting file length
+                    int lenghtOfFile = conection.getContentLength();
+
+                    // input stream to read file - with 8k buffer
+                    InputStream input = new BufferedInputStream(url.openStream(), BUFFER_SIZE);
+
+                    String timeStamp = new SimpleDateFormat(getString(R.string.date_time_pattern)).format(new Date());
+
+                    File downloadDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                            + "/" + getString(R.string.app_name) + "/" + getString(R.string.downloads) + "/");
+                    if (!downloadDirectory.exists()) {
+                        if (!downloadDirectory.mkdirs()) {
+                            return null;
+                        }
+                    }
+                    // Output stream to write file
+                    OutputStream output;
+                    File outputFile;
+                    if (ZERO == current) {
+                        outputFile = new File(downloadDirectory, getString(R.string.download)
+                                + timeStamp + getString(R.string.image_extension));
+                        output = new FileOutputStream(outputFile);
+                        imagePath = outputFile.getPath();
+                    } else {
+                        outputFile = new File(downloadDirectory, getString(R.string.download)
+                                + timeStamp + getString(R.string.audio_extension));
+                        output = new FileOutputStream(outputFile);
+                        audioPath = outputFile.getPath();
+                    }
+
+                    byte data[] = new byte[BYTES];
+
+                    long total = ZERO;
+
+                    while (-ONE != (count = input.read(data))) {
+                        total += count;
+                        // publishing the progress....
+                        // After this onProgressUpdate will be called
+                        int percentage = (int) ((total * UIConstants.PERCENTAGE) / lenghtOfFile);
+                        publishProgress(String.valueOf(percentage));
+                        // writing data to file
+                        output.write(data, ZERO, count);
+                    }
+
+                    // flushing output
+                    output.flush();
+
+                    // closing streams
+                    output.close();
+                    input.close();
+                    current++;
+                } catch (Exception e) {
+                    SnapXToast.error(getString(R.string.error) + e.getMessage());
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            mProgressbar.setProgress(Integer.parseInt(values[0]));
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            mProgressbar.dismiss();
+            mImgDownload.setVisibility(View.GONE);
+            mLayoutDescription.setVisibility(View.VISIBLE);
+            mLayoutDownloadSuccess.setVisibility(View.VISIBLE);
+            mSmartPhoto.setDish_image_url(imagePath);
+            mSmartPhoto.setAudio_review_url(audioPath);
+            homeDbHelper.saveSmartPhotoDataInDb(mSmartPhoto);
+        }
+    }
 }

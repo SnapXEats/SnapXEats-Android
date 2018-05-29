@@ -1,6 +1,7 @@
 package com.snapxeats.common.utilities;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -12,10 +13,17 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
@@ -38,6 +46,7 @@ import static com.snapxeats.common.constants.UIConstants.MILLIES_TWO;
 import static com.snapxeats.common.constants.UIConstants.MILLIS;
 import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC_CONVERSION;
 import static com.snapxeats.common.constants.UIConstants.TEN;
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**

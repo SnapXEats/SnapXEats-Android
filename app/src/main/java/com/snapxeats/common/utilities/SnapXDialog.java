@@ -10,13 +10,10 @@ import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
-
 import com.snapxeats.R;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
+import static com.snapxeats.common.constants.UIConstants.CHANGE_PERMISSIONS;
 import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
 
 /**
@@ -118,7 +115,7 @@ public class SnapXDialog {
                             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                             Uri uri = Uri.fromParts("package", context.getPackageName(), null);
                             intent.setData(uri);
-                            context.startActivityForResult(intent, ACCESS_FINE_LOCATION);
+                            context.startActivityForResult(intent, CHANGE_PERMISSIONS);
                         });
 
         AlertDialog alertDialog = alertDialogBuilder.create();
