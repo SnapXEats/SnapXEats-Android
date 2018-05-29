@@ -88,6 +88,7 @@ public class CheckInAdapter extends RecyclerView.Adapter<CheckInAdapter.ViewHold
             Glide.with(mContext)
                     .load(restaurantInfo.getRestaurant_logo())
                     .apply(new RequestOptions()
+                            .placeholder(R.drawable.ic_pref_placeholder)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .centerCrop()
                             .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)

@@ -149,7 +149,7 @@ public class SmartFragment extends BaseFragment implements SmartContract.SmartVi
         Window window = mDialog.getWindow();
         if (null != window) {
             window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            window.setGravity(Gravity.START);
+            window.setGravity(Gravity.TOP);
         }
 
         initViewsForSmartPhotoDialog();
@@ -162,6 +162,7 @@ public class SmartFragment extends BaseFragment implements SmartContract.SmartVi
         Glide.with(getActivity())
                 .load(mSmartPhoto.getDishImageURL())
                 .apply(new RequestOptions()
+                        .placeholder(R.drawable.ic_restaurant_placeholder)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .centerCrop()
                         .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
@@ -279,6 +280,9 @@ public class SmartFragment extends BaseFragment implements SmartContract.SmartVi
             case R.id.img_info:
                 isInfoTap = !isInfoTap;
                 if (isInfoTap) {
+                    isAudioViewTap = false;
+                    isReviewTap = false;
+
                     utility.resetMediaPlayer(mMediaPlayer);
                     mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info_selected));
                     mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
@@ -294,13 +298,16 @@ public class SmartFragment extends BaseFragment implements SmartContract.SmartVi
                     mTxtRestAddress.setText(mSmartPhoto.getRestaurantAddress());
                 } else {
                     mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info));
-                    mLayoutInfo.setVisibility(View.GONE);
+                    mLayoutDescription.setVisibility(View.GONE);
                 }
                 break;
 
             case R.id.img_text_review:
                 isReviewTap = !isReviewTap;
                 if (isReviewTap) {
+                    isAudioViewTap = false;
+                    isInfoTap = false;
+
                     mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review_selected));
                     mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info));
                     mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
@@ -313,13 +320,16 @@ public class SmartFragment extends BaseFragment implements SmartContract.SmartVi
 
                 } else {
                     mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review));
-                    mLayoutReview.setVisibility(View.GONE);
+                    mLayoutDescription.setVisibility(View.GONE);
                 }
                 break;
 
             case R.id.img_audio:
                 isAudioViewTap = !isAudioViewTap;
                 if (isAudioViewTap) {
+                    isReviewTap = false;
+                    isInfoTap = false;
+
                     mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker_selected));
                     mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review));
                     mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info));
@@ -335,7 +345,7 @@ public class SmartFragment extends BaseFragment implements SmartContract.SmartVi
 
                 } else {
                     mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
-                    mLayoutAudio.setVisibility(View.GONE);
+                    mLayoutDescription.setVisibility(View.GONE);
                     utility.resetMediaPlayer(mMediaPlayer);
                 }
                 break;
@@ -344,11 +354,7 @@ public class SmartFragment extends BaseFragment implements SmartContract.SmartVi
                 isAudioPlayTap = !isAudioPlayTap;
 
                 if (isAudioPlayTap) {
-                    mLayoutDescription.setVisibility(View.VISIBLE);
                     mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_pause));
-                    mLayoutAudio.setVisibility(View.VISIBLE);
-                    mLayoutInfo.setVisibility(View.GONE);
-                    mLayoutReview.setVisibility(View.GONE);
 
                     mMediaPlayer.start();
                     mUpdateTimeTask.run();

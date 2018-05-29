@@ -736,6 +736,9 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             case R.id.img_info:
                 isInfoTap = !isInfoTap;
                 if (isInfoTap) {
+                    isAudioViewTap = false;
+                    isReviewTap = false;
+
                     utility.resetMediaPlayer(mMediaPlayer);
                     mImgInfo.setImageDrawable(getDrawable(R.drawable.ic_info_selected));
                     mImgAudioReview.setImageDrawable(getDrawable(R.drawable.ic_audio_speaker));
@@ -745,6 +748,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                     mLayoutInfo.setVisibility(View.VISIBLE);
                     mLayoutAudio.setVisibility(View.GONE);
                     mLayoutReview.setVisibility(View.GONE);
+                    mLayoutDownloadSuccess.setVisibility(View.GONE);
+
                     mListAminities.setAdapter(new AminityAdapter(this, mAminitiesList));
 
                     mTxtSmartPhotoRestName.setText(mSmartPhoto.getRestaurant_name());
@@ -752,12 +757,16 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                 } else {
                     mImgInfo.setImageDrawable(getDrawable(R.drawable.ic_info));
                     mLayoutInfo.setVisibility(View.GONE);
+                    mLayoutDescription.setVisibility(View.GONE);
                 }
                 break;
 
             case R.id.img_text_review:
                 isReviewTap = !isReviewTap;
                 if (isReviewTap) {
+                    isAudioViewTap = false;
+                    isInfoTap = false;
+
                     mImgTextReview.setImageDrawable(getDrawable(R.drawable.ic_text_review_selected));
                     mImgInfo.setImageDrawable(getDrawable(R.drawable.ic_info));
                     mImgAudioReview.setImageDrawable(getDrawable(R.drawable.ic_audio_speaker));
@@ -765,18 +774,24 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                     mLayoutDescription.setVisibility(View.VISIBLE);
                     mLayoutReview.setVisibility(View.VISIBLE);
                     mLayoutInfo.setVisibility(View.GONE);
+                    mLayoutDownloadSuccess.setVisibility(View.GONE);
+
                     mTxtRestReviewContents.setText(mSmartPhoto.getText_review());
                     utility.resetMediaPlayer(mMediaPlayer);
 
                 } else {
                     mImgTextReview.setImageDrawable(getDrawable(R.drawable.ic_text_review));
                     mLayoutReview.setVisibility(View.GONE);
+                    mLayoutDescription.setVisibility(View.GONE);
                 }
                 break;
 
             case R.id.img_audio:
                 isAudioViewTap = !isAudioViewTap;
                 if (isAudioViewTap) {
+                    isReviewTap = false;
+                    isInfoTap = false;
+
                     mImgAudioReview.setImageDrawable(getDrawable(R.drawable.ic_audio_speaker_selected));
                     mImgTextReview.setImageDrawable(getDrawable(R.drawable.ic_text_review));
                     mImgInfo.setImageDrawable(getDrawable(R.drawable.ic_info));
@@ -785,6 +800,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                     mLayoutAudio.setVisibility(View.VISIBLE);
                     mLayoutInfo.setVisibility(View.GONE);
                     mLayoutReview.setVisibility(View.GONE);
+                    mLayoutDownloadSuccess.setVisibility(View.GONE);
 
                     if (null == mMediaPlayer) {
                         mMediaPlayer = MediaPlayer.create(getActivity(), Uri.parse(mSmartPhoto.getAudio_review_url()));
@@ -796,6 +812,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                 } else {
                     mImgAudioReview.setImageDrawable(getDrawable(R.drawable.ic_audio_speaker));
                     mLayoutAudio.setVisibility(View.GONE);
+                    mLayoutDescription.setVisibility(View.GONE);
                     utility.resetMediaPlayer(mMediaPlayer);
                 }
                 break;
@@ -809,6 +826,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                     mLayoutAudio.setVisibility(View.VISIBLE);
                     mLayoutInfo.setVisibility(View.GONE);
                     mLayoutReview.setVisibility(View.GONE);
+                    mLayoutDownloadSuccess.setVisibility(View.GONE);
 
                     if (null != mMediaPlayer) {
                         mMediaPlayer.start();
@@ -851,7 +869,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
                 snapXDialog.showChangePermissionDialog();
             } else {
-                mSmartPhotoDialog.dismiss();
                 SnapXToast.showToast(this, getString(R.string.enable_storage_permissions));
             }
         }
@@ -903,6 +920,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                 Glide.with(this)
                         .load(restaurantInfo.getRestaurant_logo())
                         .apply(new RequestOptions()
+                                .placeholder(R.drawable.ic_pref_placeholder)
                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                                 .centerCrop()
                                 .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
@@ -1084,6 +1102,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         Glide.with(this)
                 .load(mSmartPhoto.getDish_image_url())
                 .apply(new RequestOptions()
+                        .placeholder(R.drawable.ic_rest_info_placeholder)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .centerCrop()
                         .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
@@ -1215,7 +1234,10 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                     // input stream to read file - with 8k buffer
                     InputStream input = new BufferedInputStream(url.openStream(), BUFFER_SIZE);
 
-                    String timeStamp = new SimpleDateFormat(getString(R.string.date_time_pattern)).format(new Date());
+                    String timeStamp = new SimpleDateFormat(getString(R.string.file_name_pattern)).format(new Date());
+                    SimpleDateFormat df = new SimpleDateFormat(getString(R.string.file_name_pattern));
+                    Date date = df.parse(timeStamp);
+                    long fileName = date.getTime();
 
                     File downloadDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
                             + "/" + getString(R.string.app_name) + "/" + getString(R.string.downloads) + "/");
@@ -1229,12 +1251,12 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                     File outputFile;
                     if (ZERO == current) {
                         outputFile = new File(downloadDirectory, getString(R.string.download)
-                                + timeStamp + getString(R.string.image_extension));
+                                + fileName + getString(R.string.image_extension));
                         output = new FileOutputStream(outputFile);
                         imagePath = outputFile.getPath();
                     } else {
                         outputFile = new File(downloadDirectory, getString(R.string.download)
-                                + timeStamp + getString(R.string.audio_extension));
+                                + fileName + getString(R.string.audio_extension));
                         output = new FileOutputStream(outputFile);
                         audioPath = outputFile.getPath();
                     }

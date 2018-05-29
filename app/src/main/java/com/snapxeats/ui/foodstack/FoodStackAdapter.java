@@ -46,6 +46,7 @@ public class FoodStackAdapter extends ArrayAdapter<FoodStackData> {
         Glide.with(getContext())
                 .load(stackData.getUrl().get(position))
                 .apply(new RequestOptions()
+                        .placeholder(R.drawable.ic_foodstack_placeholder)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .centerCrop()
                         .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)

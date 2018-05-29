@@ -20,6 +20,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
+import static com.snapxeats.common.constants.UIConstants.TIME_DELAY;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -59,7 +60,6 @@ public class FoodPrefAdapter extends RecyclerView.Adapter<FoodPrefAdapter.ViewHo
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private static final long TIME_DELAY = 250;
 
         @BindView(R.id.txt_cuisine_pref_name)
         TextView txtCuisineName;
@@ -101,6 +101,7 @@ public class FoodPrefAdapter extends RecyclerView.Adapter<FoodPrefAdapter.ViewHo
             Glide.with(mContext)
                     .load(foodPref.getFood_image_url())
                     .apply(new RequestOptions()
+                            .placeholder(R.drawable.ic_pref_placeholder)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .centerCrop()
                             .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)

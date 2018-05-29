@@ -96,6 +96,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
             Glide.with(mContext)
                     .load(cuisines.getCuisine_image_url())
                     .apply(new RequestOptions()
+                            .placeholder(R.drawable.ic_pref_placeholder)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .centerCrop()
                             .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)

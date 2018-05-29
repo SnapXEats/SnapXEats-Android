@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
@@ -50,6 +49,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.baoyz.swipemenulistview.SwipeMenuListView.DIRECTION_LEFT;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Snehal Tembare on 22/3/18.
@@ -180,7 +180,7 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
             toggle.setDrawerIndicatorEnabled(false);
             toggle.setHomeAsUpIndicator(R.drawable.close);
             isMultipleDeleted = true;
-            mSwipeMenuList.setSwipeDirection(0);
+            mSwipeMenuList.setSwipeDirection(ZERO);
         } else if ((mTxtWishlistEdit.getText()).equals(UIConstants.DELETE)) {
             boolean isItemDeleted = false;
             for (Wishlist wishlist : mWishlist) {
@@ -202,7 +202,7 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
 
         builder.setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> {
             //Clear local db
-            for (int index = 0; index < mWishlist.size(); index++) {
+            for (int index = ZERO; index < mWishlist.size(); index++) {
                 if (mWishlist.get(index).isDeleted()) {
                     wishlistDbHelper.setWishlistItemStatus(mWishlist.get(index).getRestaurant_dish_id());
                     mAdapter.wishlist.remove(index);
@@ -215,7 +215,7 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
 
         builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
             //TODO-Comment following code to save delete items state on cancel action
-            for (int index = 0; index < mWishlist.size(); index++) {
+            for (int index = ZERO; index < mWishlist.size(); index++) {
                 if (mWishlist.get(index).isDeleted()) {
                     mWishlist.get(index).setDeleted(false);
                 }

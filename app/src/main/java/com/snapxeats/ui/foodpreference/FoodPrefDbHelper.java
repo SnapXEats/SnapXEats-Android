@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Snehal Tembare on 28/2/18.
@@ -46,9 +47,9 @@ public class FoodPrefDbHelper {
 
     List<FoodPref> getFoodPrefData(List<FoodPref> rootFoodPrefList,
                                    List<UserFoodPreferences> userFoodPreferencesList) {
-        if (null != userFoodPreferencesList && 0 < userFoodPreferencesList.size()) {
-            for (int index = 0; index < userFoodPreferencesList.size(); index++) {
-                for (int rootIndex = 0; rootIndex < rootFoodPrefList.size(); rootIndex++) {
+        if (null != userFoodPreferencesList && ZERO < userFoodPreferencesList.size()) {
+            for (int index = ZERO; index < userFoodPreferencesList.size(); index++) {
+                for (int rootIndex = ZERO; rootIndex < rootFoodPrefList.size(); rootIndex++) {
                     if (userFoodPreferencesList.get(index).getFood_type_info_id().equalsIgnoreCase
                             (rootFoodPrefList.get(rootIndex).getFood_type_info_id())) {
                         rootFoodPrefList.get(rootIndex).set_food_favourite(userFoodPreferencesList.get(index).getIs_food_favourite());

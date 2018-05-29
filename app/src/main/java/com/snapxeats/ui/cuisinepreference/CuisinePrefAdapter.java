@@ -21,6 +21,7 @@ import butterknife.ButterKnife;
 import static com.snapxeats.common.constants.UIConstants.DOUBLE_TAP;
 import static com.snapxeats.common.constants.UIConstants.SINGLE_TAP;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
+import static com.snapxeats.common.constants.UIConstants.TIME_DELAY;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -66,7 +67,6 @@ public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private static final long TIME_DELAY = 250;
 
         @BindView(R.id.txt_cuisine_pref_name)
         TextView txtCuisineName;
@@ -88,6 +88,7 @@ public class CuisinePrefAdapter extends RecyclerView.Adapter<CuisinePrefAdapter.
             Glide.with(mContext)
                     .load(cuisines.getCuisine_image_url())
                     .apply(new RequestOptions()
+                            .placeholder(R.drawable.ic_pref_placeholder)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .centerCrop()
                             .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)

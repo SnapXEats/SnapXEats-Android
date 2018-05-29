@@ -53,6 +53,7 @@ public class ViewPagerAdapter extends PagerAdapter {
         Glide.with(mContext)
                 .load(mImageUrl.get(position).getDish_image_url())
                 .apply(new RequestOptions()
+                        .placeholder(R.drawable.ic_rest_info_placeholder)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .centerCrop()
                         .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -146,6 +147,7 @@ public class SmartPhotoFragment extends BaseFragment {
             fragmentTransaction.commit();
         } else {
             mBtnDraft.setEnabled(false);
+            mBtnDraft.setTextColor(ContextCompat.getColor(getActivity(),R.color.text_color_tertiary));
         }
 
         if (null != dbHelper.getSmartPhotoDao().loadAll()
@@ -158,6 +160,7 @@ public class SmartPhotoFragment extends BaseFragment {
             fragmentTransaction.commit();
         } else {
             mBtnSmartPhotos.setEnabled(false);
+            mBtnSmartPhotos.setTextColor(ContextCompat.getColor(getActivity(),R.color.text_color_tertiary));
         }
     }
 

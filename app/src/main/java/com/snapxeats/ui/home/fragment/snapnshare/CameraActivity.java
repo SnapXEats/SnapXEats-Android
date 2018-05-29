@@ -19,6 +19,7 @@ import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.ui.review.ReviewActivity;
 
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -91,9 +92,18 @@ public class CameraActivity extends AppCompatActivity {
                 return null;
             }
         }
-        String timeStamp = new SimpleDateFormat(getString(R.string.date_time_pattern)).format(new Date());
+        String timeStamp = new SimpleDateFormat(getString(R.string.file_name_pattern)).format(new Date());
+        SimpleDateFormat df = new SimpleDateFormat(getString(R.string.file_name_pattern));
+        Date date = null;
+        try {
+            date = df.parse(timeStamp);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        long fileName = date.getTime();
+
         return new File(fileMediaStorDir.getPath() + File.separator +
-                getString(R.string.img) + timeStamp + getString(R.string.image_extension));
+                getString(R.string.img) + fileName + getString(R.string.image_extension));
     }
 
     @Override

@@ -48,6 +48,7 @@ public class MapsRestAdapter extends RecyclerView.Adapter<MapsRestAdapter.ViewHo
             Glide.with(holder.itemView.getContext())
                     .load(String.valueOf(stackData.getDishesInfo().get(position).getRestaurantDishes().get(ZERO).getDish_image_url()))
                     .apply(new RequestOptions()
+                            .placeholder(R.drawable.ic_pref_placeholder)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .centerCrop()
                             .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
