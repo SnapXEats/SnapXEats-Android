@@ -10,13 +10,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-    <!-- TODO storage permissions for future use -->
-    <!--
-      <uses-permission
-     android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-     tools:node="replace"/>
-    -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -73,10 +66,11 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
-                    android:scheme="http"
                     android:host="18.216.193.78"
-                    android:port="3000" />
+                    android:port="3000"
+                    android:scheme="http" />
             </intent-filter>
         </activity>
         <activity

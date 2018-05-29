@@ -72,7 +72,7 @@ public class DraftInteractor {
      * @param txtReview
      * @param rating
      */
-    void sendReview(String token, String restId, Uri image, Uri audio, String txtReview, Integer rating) {
+    void sendReview(String token,String restId, Uri image, Uri audio, String txtReview, Integer rating) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             MultipartBody.Part audioUpload = null;
@@ -94,13 +94,13 @@ public class DraftInteractor {
             MultipartBody.Part imageUpload = MultipartBody.Part.createFormData
                     (mContext.getString(R.string.review_dishPicture), fileImg.getName(), mFileImage);
 
-            if (utility.isLoggedIn()) {
+            if (token.isEmpty()) {
                 serverToken = utility.getAuthToken(mContext);
             } else {
                 serverToken = SX_BEARER + token;
             }
             Call<SnapNShareResponse> snapXUserCall = apiHelper.sendUserReview(
-                    serverToken, id, imageUpload, audioUpload, review, rating);
+                     serverToken, id, imageUpload, audioUpload, review, rating);
             snapXUserCall.enqueue(new Callback<SnapNShareResponse>() {
                 @Override
                 public void onResponse(Call<SnapNShareResponse> call,
@@ -196,5 +196,4 @@ public class DraftInteractor {
             mpresenter.response(SnapXResult.NONETWORK, null);
         }
     }
-
 }

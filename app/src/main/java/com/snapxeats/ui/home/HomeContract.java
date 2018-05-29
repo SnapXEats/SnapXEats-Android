@@ -4,6 +4,7 @@ import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.SnapXData;
+import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.preference.RootUserPreference;
@@ -41,6 +42,10 @@ public class HomeContract {
         void checkIn(CheckInRequest checkInRequest);
 
         void getSmartPhotoInfo(String dishId);
+
+        void getInstaInfo(String token);
+
+        void getUserdata(SnapXUserRequest snapXUserRequest);
     }
 
     public interface HomeRouter {

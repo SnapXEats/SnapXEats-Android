@@ -31,23 +31,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
@@ -124,8 +117,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private MediaRecorder mRecorder;
     private Chronometer mChronometer;
     private File savedAudioPath = null;
-
-    public static final int RequestPermissionCode = 1;
 
     private Button mBtnStartAudio;
     private Button mBtnStopReview;
@@ -227,7 +218,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                 .apply(new RequestOptions()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .centerCrop()
-                        .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                         .dontAnimate()
                         .dontTransform())
                 .thumbnail(THUMBNAIL)
@@ -281,7 +272,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     }
 
     private void showInstaWebView() {
-
         if (NetworkUtility.isNetworkAvailable(this)) {
             mApp.authorize();
 
@@ -339,6 +329,12 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     }
 
     @Override
+    public void onReturnValue(String token) {
+        showProgressDialog();
+        mPresenter.getInstaInfo(token);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
@@ -355,7 +351,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         builder.setNeutralButton(getString(R.string.ok), (dialog, which) -> finish());
         AlertDialog alert = builder.create();
         alert.show();
-
     }
 
     /*webservice call to send review*/
@@ -744,9 +739,8 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (null != mPlayer && mPlayer.isPlaying()) {
-            mPlayer.release();
-        }
+        utility.resetMediaPlayer(mPlayer);
+
     }
 
     /**
@@ -785,8 +779,9 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     }
 
     @Override
-    public void onReturnValue(String token) {
-        showProgressDialog();
-        mPresenter.getInstaInfo(token);
+    public void onPause() {
+        super.onPause();
+        utility.resetMediaPlayer(mPlayer);
     }
+
 }

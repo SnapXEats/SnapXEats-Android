@@ -29,6 +29,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
+import static com.snapxeats.common.constants.UIConstants.ZERO;
+
 /**
  * Created by Snehal Tembare on 21/3/18.
  */
@@ -81,7 +83,7 @@ public class HomeDbHelper {
         String userId = preferences.getString(mContext.getString(R.string.user_id), "");
         rootUserPreference.setUser_Id(userId);
 
-        if (userPreferenceDao != null && userPreferenceDao.loadAll().size() != 0) {
+        if (null != userPreferenceDao && userPreferenceDao.loadAll().size() != 0) {
 
             UserPreference userPreference = userPreferenceDao.loadAll().get(0);
 
@@ -114,7 +116,6 @@ public class HomeDbHelper {
                 rootUserPreference.setSort_by_distance(true);
             }
 
-
             List<UserCuisinePreferences> selectedCuisineList = cuisineDao.queryBuilder().
                     whereOr(UserCuisinePreferencesDao.Properties.Is_cuisine_favourite.eq(1),
                             (UserCuisinePreferencesDao.Properties.Is_cuisine_like.eq(1))).list();
@@ -143,7 +144,7 @@ public class HomeDbHelper {
 
     public int getWishlistCount() {
         List<FoodWishlists> usersWishlist = dbHelper.getFoodWishlistsDao().queryBuilder()
-                .where(FoodWishlistsDao.Properties.IsDeleted.eq(0)).list();
+                .where(FoodWishlistsDao.Properties.IsDeleted.eq(ZERO)).list();
         return usersWishlist.size();
     }
 

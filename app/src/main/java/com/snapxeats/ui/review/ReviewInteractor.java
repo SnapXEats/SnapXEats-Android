@@ -44,7 +44,6 @@ public class ReviewInteractor {
     private Context mContext;
     private RootInstagram rootInstagram;
     private String insttaToken;
-    private String serverToken;
 
     @Inject
     public AppUtility appUtility;
@@ -105,6 +104,7 @@ public class ReviewInteractor {
             MultipartBody.Part imageUpload = MultipartBody.Part.createFormData
                     (mContext.getString(R.string.review_dishPicture), fileImg.getName(), mFileImage);
 
+            String serverToken;
             if (token.isEmpty()) {
                 serverToken = appUtility.getAuthToken(mContext);
             } else {

@@ -62,6 +62,7 @@ public class SmartPhotoFragment extends BaseFragment {
     DbHelper dbHelper;
 
     private Fragment selectedFragment;
+
     private FragmentTransaction fragmentTransaction;
 
     @Inject

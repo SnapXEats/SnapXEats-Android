@@ -43,10 +43,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
@@ -54,6 +61,8 @@ import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.SnapXData;
+import com.snapxeats.common.model.SnapXUserRequest;
+import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.model.checkin.CheckInResponse;
 import com.snapxeats.common.model.checkin.CheckInRestaurants;
@@ -65,6 +74,7 @@ import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.NoNetworkResults;
 import com.snapxeats.common.utilities.SnapXDialog;
+import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.foodstack.FoodStackDbHelper;
 import com.snapxeats.ui.home.fragment.checkin.CheckInFragment;
@@ -78,7 +88,9 @@ import com.snapxeats.ui.home.fragment.snapnshare.SnapNotificationReceiver;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
+import com.snapxeats.ui.login.InstagramDialog;
 import com.squareup.picasso.Picasso;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -89,9 +101,12 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 import static com.snapxeats.common.Router.Screen.LOGIN;
 import static com.snapxeats.common.constants.UIConstants.BUFFER_SIZE;
 import static com.snapxeats.common.constants.UIConstants.BYTES;
@@ -116,7 +131,9 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         HomeContract.HomeView,
         AppContract.SnapXResults,
         View.OnClickListener,
-        MediaPlayer.OnCompletionListener {
+        MediaPlayer.OnCompletionListener, InstagramDialog.InstagramDialogListener {
+
+    private SelectedBundle selectedBundle;
 
     @Inject
     HomeFragment homeFragment;
@@ -151,6 +168,10 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
     @BindView(R.id.parent_layout)
     protected View mParentLayout;
+
+    private SnapXUserRequest snapXUserRequest;
+
+    private CallbackManager mCallbackManager;
 
     //CheckIndialog
     protected LinearLayout mSingleRestLayout;
@@ -191,7 +212,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private View mNavHeader;
     private TextView txtUserName;
     private TextView txtNotLoggedIn;
-    private TextView txtRewards;
     private LinearLayout mLayoutUserData;
     private UserPreference mUserPreference;
     private Dialog mCheckInDialog;
@@ -237,6 +257,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private String dishId;
     private MediaPlayer mMediaPlayer;
     private Handler mHandler = new Handler();
+    private TextView txtRewards;
+    private ImageView img, imgClose;
 
     @Inject
     SnapXDialog snapXDialog;
@@ -271,10 +293,11 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         transaction = fragmentManager.beginTransaction();
         foodStackDbHelper.setContext(this);
         snapXDialog.setContext(this);
+        mCallbackManager = CallbackManager.Factory.create();
 
         // ATTENTION: This was auto-generated to handle app links.
         Intent appLinkIntent = getIntent();
-        if (appLinkIntent != null && appLinkIntent.getData() != null) {
+        if (null != appLinkIntent && null != appLinkIntent.getData()) {
             dishId = appLinkIntent.getData().getSchemeSpecificPart().split("id=")[ONE];
             showProgressDialog();
             mPresenter.getSmartPhotoInfo(dishId);
@@ -378,11 +401,9 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     public void setUserInfo() {
         initNavHeaderViews();
         if (isLoggedIn() && null != mSnapxData && mSnapxData.size() > ZERO) {
-
             Picasso.with(this).load(mSnapxData.get(ZERO).getImageUrl())
                     .placeholder(R.drawable.user_image).into(imgUser);
             txtUserName.setText(mSnapxData.get(ZERO).getUserName());
-
         } else {
             mLayoutUserData.setVisibility(View.GONE);
             txtNotLoggedIn.setVisibility(View.VISIBLE);
@@ -398,6 +419,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onResume() {
         super.onResume();
         setWishlistCount();
+        setUserInfo();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -468,7 +490,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                     } else {
                         //For non logged in user
                         FragmentManager fragmentManager = getFragmentManager();
-                        FragmentTransaction transaction = fragmentManager.beginTransaction();
+                        transaction = fragmentManager.beginTransaction();
                         transaction.replace(R.id.frame_layout, homeFragment);
                         mNavigationView.setCheckedItem(R.id.nav_home);
                         mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -547,7 +569,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         dismissProgressDialog();
         if (value instanceof UserPreference) {
             FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction = fragmentManager.beginTransaction();
             transaction.replace(R.id.frame_layout, homeFragment);
             mNavigationView.setCheckedItem(R.id.nav_home);
             mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -616,6 +638,10 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             mSmartPhoto = (SmartPhotoResponse) value;
             mAminitiesList = mSmartPhoto.getRestaurant_aminities();
             showSmartPhotoDialog();
+        } else if (value instanceof SnapXUserResponse) {
+            SnapXUserResponse snapXUserResponse = (SnapXUserResponse) value;
+            String mToken = snapXUserResponse.getUserInfo().getToken();
+            selectedBundle.onBundleSelect(mToken);
         }
     }
 
@@ -919,7 +945,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             if (!NetworkUtility.isNetworkAvailable(this)) {
                 AppContract.DialogListenerAction click = () -> {
                     showProgressDialog();
-
                     switch (api) {
                         case CHECKIN_RESTAURANTS:
                             mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
@@ -1007,7 +1032,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void enableReceiver() {
-
         ComponentName receiver = new ComponentName(this, SnapNotificationReceiver.class);
         PackageManager pm = getPackageManager();
 
@@ -1103,7 +1127,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         mTxtTimeOfAudio = mSmartPhotoDialog.findViewById(R.id.timer_play);
 
         mImg = mSmartPhotoDialog.findViewById(R.id.image_view);
-       mImgClose = mSmartPhotoDialog.findViewById(R.id.img_close);
+        mImgClose = mSmartPhotoDialog.findViewById(R.id.img_close);
         mImgInfo = mSmartPhotoDialog.findViewById(R.id.img_info);
         mImgTextReview = mSmartPhotoDialog.findViewById(R.id.img_text_review);
         mImgAudioReview = mSmartPhotoDialog.findViewById(R.id.img_audio);
@@ -1132,10 +1156,16 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                 startDownloadingTask();
                 break;
         }
+        //login facebook callback
+        if (resultCode == RESULT_OK) {
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
-        /*TODO-Add this code in above switch according to your REQUEST_CODE
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.id_draft_fragment);
-        fragment.onActivityResult(requestCode, resultCode, data);*/
+    @Override
+    public void onReturnValue(String token) {
+        showProgressDialog();
+        mPresenter.getInstaInfo(token);
     }
 
     private class DownloadImage extends AsyncTask<String, String, String> {
@@ -1229,5 +1259,36 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             mSmartPhoto.setAudio_review_url(audioPath);
             homeDbHelper.saveSmartPhotoDataInDb(mSmartPhoto);
         }
+    }
+
+    public interface SelectedBundle {
+        void onBundleSelect(String bundle);
+    }
+
+    public void setOnBundleSelected(SelectedBundle selectedBundle) {
+        this.selectedBundle = selectedBundle;
+    }
+
+    public void loginWithFacebook() {
+        LoginManager.getInstance().registerCallback(mCallbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        snapXUserRequest = new SnapXUserRequest(AccessToken.getCurrentAccessToken().getToken(),
+                                getString(R.string.platform_facebook), AccessToken.getCurrentAccessToken().getUserId());
+                        showProgressDialog();
+                        mPresenter.getUserdata(snapXUserRequest);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        mPresenter.response(SnapXResult.NETWORKERROR, null);
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        mPresenter.response(SnapXResult.ERROR, null);
+                    }
+                });
     }
 }

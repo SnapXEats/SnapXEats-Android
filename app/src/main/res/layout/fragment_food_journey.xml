@@ -43,12 +43,13 @@
                 android:layout_marginStart="@dimen/common_dimens_20"
                 android:layout_marginTop="@dimen/common_dimens_10"
                 android:text="@string/this_week"
-                android:visibility="gone"
                 android:textColor="@color/colorDarkerGrey"
                 android:textSize="@dimen/txt_size_16"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
 
-            <ListView
+            <LinearLayout
+                android:orientation="vertical"
                 android:id="@+id/list_current_food_journey"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -61,18 +62,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/common_dimens_20"
                 android:text="@string/Older"
-                android:visibility="gone"
                 android:textColor="@color/colorDarkerGrey"
                 android:textSize="@dimen/txt_size_16"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
 
-            <ListView
+            <LinearLayout
+                android:orientation="vertical"
                 android:id="@+id/list_older_food_journey"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/common_dimens_10"
                 android:divider="@null" />
         </LinearLayout>
-
     </FrameLayout>
 </ScrollView>

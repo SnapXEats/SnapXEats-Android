@@ -1,8 +1,8 @@
 package com.snapxeats.ui.home.fragment.smartphotos.draft;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -23,45 +23,44 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.facebook.login.widget.LoginButton;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.constants.WebConstants;
-import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
+import com.snapxeats.common.model.review.SnapNShareResponse;
 import com.snapxeats.common.model.smartphotos.RestaurantAminities;
 import com.snapxeats.common.model.smartphotos.RestaurantAminitiesDao;
 import com.snapxeats.common.model.smartphotos.SnapXDraftPhoto;
-import com.snapxeats.common.model.review.SnapNShareResponse;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.home.HomeActivity;
 import com.snapxeats.ui.home.fragment.smartphotos.AminityAdapter;
 import com.snapxeats.ui.login.InstagramApp;
-import com.snapxeats.ui.login.InstagramDialog;
 import com.snapxeats.ui.review.ReviewDbHelper;
 import com.snapxeats.ui.shareReview.ShareReviewActivity;
+
 import org.greenrobot.greendao.query.QueryBuilder;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import static android.app.Activity.RESULT_OK;
+
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -72,13 +71,10 @@ import static com.snapxeats.common.constants.UIConstants.ZERO;
 public class DraftFragment extends BaseFragment implements View.OnClickListener,
         DraftContract.DraftView,
         AppContract.SnapXResults,
-        MediaPlayer.OnCompletionListener,
-        InstagramDialog.InstagramDialogListener {
+        MediaPlayer.OnCompletionListener {
 
     @BindView(R.id.listview)
     protected RecyclerView mRecyclerview;
-
-    private SnapXUserRequest snapXUserRequest;
 
     @BindView(R.id.parent_layout)
     protected LinearLayout mParentLayout;
@@ -137,12 +133,14 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
     AppUtility utility;
 
     private String mToken;
-    private CallbackManager mCallbackManager;
 
     @Inject
     DraftContract.DraftPresenter mDraftPresenter;
 
     private AlertDialog dialog;
+
+    @Inject
+    HomeActivity homeActivity;
 
     @Inject
     public DraftFragment() {
@@ -165,6 +163,12 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         } catch (InflateException e) {
             e.printStackTrace();
         }
+        ((HomeActivity) getActivity()).setOnBundleSelected(value -> {
+            SnapXToast.showToast(getActivity(), value);
+            mToken = value;
+            dialog.dismiss();
+            callApiReview();
+        });
         return view;
     }
 
@@ -184,11 +188,10 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 for (RestaurantAminities aminity : aminitiesList) {
                     mAminitiesList.add(aminity.getAminity());
                 }
-
                 showSmartPhotoDialog();
+                homeActivity.loginWithFacebook();
                 ImageView imgShare = viewShare.findViewById(R.id.img_share);
                 imgShare.setOnClickListener(v -> {
-                    //Check for non logged in user
                     if (utility.isLoggedIn()) {
                         callApiReview();
                     } else {
@@ -213,8 +216,6 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         LoginButton btnFb = alertLayout.findViewById(R.id.btn_facebook_login);
         Button btnInsta = alertLayout.findViewById(R.id.btn_instagram_login);
 
-        loginWithFacebook();
-
         btnCustomFb.setOnClickListener(v -> {
             if (v == btnCustomFb) {
                 if (NetworkUtility.isNetworkAvailable(getActivity())) {
@@ -233,9 +234,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
             }
         });
 
-        btnInsta.setOnClickListener(v -> {
-            showInstaWebView();
-        });
+        btnInsta.setOnClickListener(v -> showInstaWebView());
 
         txtShareLater.setOnClickListener(v -> dialog.dismiss());
     }
@@ -256,36 +255,12 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         }
     }
 
-    private void loginWithFacebook() {
-        LoginManager.getInstance().registerCallback(mCallbackManager,
-                new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        snapXUserRequest = new SnapXUserRequest(AccessToken.getCurrentAccessToken().getToken(),
-                                getString(R.string.platform_facebook), AccessToken.getCurrentAccessToken().getUserId());
-                        showProgressDialog();
-                        mDraftPresenter.getUserdata(snapXUserRequest);
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        mDraftPresenter.response(SnapXResult.NETWORKERROR, null);
-                    }
-
-                    @Override
-                    public void onError(FacebookException exception) {
-                        mDraftPresenter.response(SnapXResult.ERROR, null);
-                    }
-                });
-    }
-
     private void initInstagram() {
         mApp = new InstagramApp(getActivity(), WebConstants.INSTA_CLIENT_ID, WebConstants.INSTA_CALLBACK_URL);
         mApp.setListener(new InstagramApp.OAuthAuthenticationListener() {
 
             @Override
             public void onSuccess() {
-                //TODO data passed null for now
                 mDraftPresenter.response(SnapXResult.SUCCESS, null);
             }
 
@@ -294,14 +269,6 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 mDraftPresenter.response(SnapXResult.NETWORKERROR, null);
             }
         });
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            mCallbackManager.onActivityResult(requestCode, resultCode, data);
-        }
     }
 
     /*initialize components for alert dialog*/
@@ -384,7 +351,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
 
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Activity context) {
         super.onAttach(context);
     }
 
@@ -497,7 +464,6 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
 
             case R.id.img_play_audio:
                 isAudioPlayTap = !isAudioPlayTap;
-
                 if (isAudioPlayTap) {
                     mLayoutDescription.setVisibility(View.VISIBLE);
                     mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_pause));
@@ -516,7 +482,18 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 break;
 
             case R.id.img_share:
-                callApiReview();
+                //TODO Non-login flow
+                if (utility.isLoggedIn()) {
+                    callApiReview();
+                } else {
+                    showLoginDialog();
+                }
+                //TODO functionality in progress
+//                if (utility.isLoggedIn()) {
+//                    callApiReview();
+//                } else {
+//                    SnapXToast.showToast(getActivity(), "User not logged in");
+//                }
                 break;
         }
     }
@@ -557,8 +534,6 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         reviewDbHelper.setContext(getActivity());
         dbHelper.setContext(getActivity());
         mDraftPresenter.addView(this);
-        /** initialize facebook login **/
-        mCallbackManager = CallbackManager.Factory.create();
         initInstagram();
     }
 
@@ -607,7 +582,6 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 mDraftPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
             }
         });
-
     }
 
     @Override
@@ -620,11 +594,5 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         mMediaPlayer = MediaPlayer.create(getActivity(), Uri.parse(mSnapXDraftPhoto.getAudioURL()));
         mMediaPlayer.setOnCompletionListener(this);
         mTxtTimeOfAudio.setText(utility.milliSecondsToTimer(mMediaPlayer.getCurrentPosition()));
-    }
-
-    @Override
-    public void onReturnValue(String token) {
-        showProgressDialog();
-        mDraftPresenter.getInstaInfo(token);
     }
 }
