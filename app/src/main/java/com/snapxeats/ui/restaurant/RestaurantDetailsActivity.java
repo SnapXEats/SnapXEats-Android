@@ -300,6 +300,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
                     .load(mRestaurantSpecialties.get(INDEX_REST_SPECIALTIES)
                             .getDish_image_url())
                     .apply(new RequestOptions()
+                            .placeholder(R.drawable.ic_speciality_placeholder)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .centerCrop()
                             .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)

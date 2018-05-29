@@ -82,6 +82,7 @@ public class SmartAdapter extends RecyclerView.Adapter<SmartAdapter.ViewHolder> 
             Glide.with(mContext)
                     .load(smartPhoto.getDishImageURL())
                     .apply(new RequestOptions()
+                            .placeholder(R.drawable.ic_rest_info_placeholder)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .centerCrop()
                             .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)

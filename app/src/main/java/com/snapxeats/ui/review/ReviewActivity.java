@@ -79,6 +79,7 @@ import static com.snapxeats.common.constants.UIConstants.INT_TEN;
 import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC;
 import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.REQUEST_PERMISSION_CODE;
+import static com.snapxeats.common.constants.UIConstants.SX_BEARER;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.TIME_HOUR;
 import static com.snapxeats.common.constants.UIConstants.TIME_MINUTE;
@@ -94,22 +95,31 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     @BindView(R.id.toolbar_review)
     protected Toolbar mToolbar;
+
     @BindView(R.id.img_rest_photo)
     protected ImageView mImgRestPhoto;
+
     @BindView(R.id.rating_review)
     protected RatingBar mRatingBar;
+
     @BindView(R.id.edt_txt_review)
     protected EditText mEditTxtReview;
+
     @BindView(R.id.txt_length_error)
     protected TextView mTxtLengthError;
+
     @BindView(R.id.timer_audio_time)
     protected Chronometer mAudioTime;
+
     @BindView(R.id.img_play_review)
     protected ImageView mImgPlayAudio;
+
     @BindView(R.id.img_audio_review)
     protected ImageView mImgAddAudio;
+
     @BindView(R.id.layout_main_review)
     protected LinearLayout mParentLayout;
+
     @Inject
     SnapXDialog snapXDialog;
     @Inject
@@ -196,6 +206,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         Glide.with(this)
                 .load(image_path)
                 .apply(new RequestOptions()
+                        .placeholder(R.drawable.ic_rest_info_placeholder)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .centerCrop()
                         .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
@@ -405,7 +416,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             if (mToken == null) {
                 mPresenter.sendReview(utility.getAuthToken(this), restId, fileImageUri, audioFile, textReview, rating);
             } else {
-                mPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+                mPresenter.sendReview(SX_BEARER + mToken, restId, fileImageUri, audioFile, textReview, rating);
             }
         }
     }
@@ -683,7 +694,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                     if (null == mToken) {
                         mPresenter.sendReview(utility.getAuthToken(this), restId, fileImageUri, audioFile, textReview, rating);
                     } else {
-                        mPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+                        mPresenter.sendReview(SX_BEARER + mToken, restId, fileImageUri, audioFile, textReview, rating);
                     }
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
@@ -692,7 +703,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                 if (null == mToken) {
                     mPresenter.sendReview(utility.getAuthToken(this), restId, fileImageUri, audioFile, textReview, rating);
                 } else {
-                    mPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+                    mPresenter.sendReview(SX_BEARER + mToken, restId, fileImageUri, audioFile, textReview, rating);
                 }
             }
         });

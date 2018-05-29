@@ -82,6 +82,7 @@ public class DraftAdapter extends RecyclerView.Adapter<DraftAdapter.ViewHolder> 
             Glide.with(mContext)
                     .load(snapXDraftPhoto.getImageURL())
                     .apply(new RequestOptions()
+                            .placeholder(R.drawable.ic_rest_info_placeholder)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .centerCrop()
                             .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)

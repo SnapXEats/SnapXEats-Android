@@ -7,6 +7,7 @@ import org.greenrobot.greendao.annotation.ToMany;
 import java.util.List;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.DaoException;
+import com.snapxeats.common.model.foodGestures.DaoSession;
 
 /**
  * Created by Snehal Tembare on 27/5/18.

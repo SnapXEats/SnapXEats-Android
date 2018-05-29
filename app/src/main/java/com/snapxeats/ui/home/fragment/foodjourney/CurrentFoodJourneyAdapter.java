@@ -82,6 +82,7 @@ public class CurrentFoodJourneyAdapter extends BaseAdapter {
             Glide.with(mContext)
                     .load(item.getRestaurant_image_url())
                     .apply(new RequestOptions()
+                            .placeholder(R.drawable.ic_pref_placeholder)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .centerCrop()
                             .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)

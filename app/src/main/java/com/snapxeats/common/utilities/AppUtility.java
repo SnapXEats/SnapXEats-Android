@@ -16,15 +16,14 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import com.google.gson.Gson;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.SnapXDataDao;
+import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.location.Location;
 import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
-import com.snapxeats.common.model.smartphotos.DaoSession;
 import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.home.fragment.snapnshare.ViewPagerAdapter;
 

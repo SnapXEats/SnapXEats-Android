@@ -173,6 +173,7 @@
     <string name="share_photo_of_the_dish">Share photo of the dish</string>
     <string name="file_path">file_path</string>
     <string name="date_time_pattern">yyyyMMdd_HHmmss</string>
+    <string name="file_name_pattern">MMM dd yyyy HH:mm:ss.SSS zzz</string>
     <string name="img">IMG_</string>
     <string name="txt_review_audio">AUD_</string>
     <string name="image_extension">.jpg</string>

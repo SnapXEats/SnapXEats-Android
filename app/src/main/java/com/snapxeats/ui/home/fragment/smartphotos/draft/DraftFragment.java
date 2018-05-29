@@ -60,6 +60,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.snapxeats.common.constants.UIConstants.SX_BEARER;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -77,16 +78,22 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
 
     @BindView(R.id.parent_layout)
     protected LinearLayout mParentLayout;
+
     @Inject
     ReviewDbHelper reviewDbHelper;
+
     @Inject
     DbHelper dbHelper;
+
     @Inject
     AppUtility utility;
+
     @Inject
     DraftContract.DraftPresenter mDraftPresenter;
+
     @Inject
     HomeActivity homeActivity;
+
     private LinearLayout mLayoutControls;
     private LinearLayout mLayoutDescription;
     private LinearLayout mLayoutInfo;
@@ -295,6 +302,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         Glide.with(getActivity())
                 .load(mSnapXDraftPhoto.getImageURL())
                 .apply(new RequestOptions()
+                        .placeholder(R.drawable.ic_rest_info_placeholder)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .centerCrop()
                         .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
@@ -393,6 +401,9 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
             case R.id.img_info:
                 isInfoTap = !isInfoTap;
                 if (isInfoTap) {
+                    isAudioViewTap = false;
+                    isReviewTap = false;
+
                     utility.resetMediaPlayer(mMediaPlayer);
                     mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info_selected));
                     mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
@@ -408,13 +419,16 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                     mTxtRestAddress.setText(mSnapXDraftPhoto.getRestaurantAddress());
                 } else {
                     mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info));
-                    mLayoutInfo.setVisibility(View.GONE);
+                    mLayoutDescription.setVisibility(View.GONE);
                 }
                 break;
 
             case R.id.img_text_review:
                 isReviewTap = !isReviewTap;
                 if (isReviewTap) {
+                    isAudioViewTap = false;
+                    isInfoTap = false;
+
                     mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review_selected));
                     mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info));
                     mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
@@ -427,13 +441,16 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
 
                 } else {
                     mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review));
-                    mLayoutReview.setVisibility(View.GONE);
+                    mLayoutDescription.setVisibility(View.GONE);
                 }
                 break;
 
             case R.id.img_audio:
                 isAudioViewTap = !isAudioViewTap;
                 if (isAudioViewTap) {
+                    isReviewTap = false;
+                    isInfoTap = false;
+
                     mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker_selected));
                     mImgTextReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_text_review));
                     mImgInfo.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info));
@@ -449,7 +466,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
 
                 } else {
                     mImgAudioReview.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_speaker));
-                    mLayoutAudio.setVisibility(View.GONE);
+                    mLayoutDescription.setVisibility(View.GONE);
                     utility.resetMediaPlayer(mMediaPlayer);
                 }
                 break;
@@ -457,11 +474,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
             case R.id.img_play_audio:
                 isAudioPlayTap = !isAudioPlayTap;
                 if (isAudioPlayTap) {
-                    mLayoutDescription.setVisibility(View.VISIBLE);
                     mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_pause));
-                    mLayoutAudio.setVisibility(View.VISIBLE);
-                    mLayoutInfo.setVisibility(View.GONE);
-                    mLayoutReview.setVisibility(View.GONE);
 
                     mMediaPlayer.start();
                     mUpdateTimeTask.run();
@@ -499,7 +512,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
             if (null == mToken) {
                 mDraftPresenter.sendReview(utility.getAuthToken(getActivity()), restId, fileImageUri, audioFile, textReview, rating);
             } else {
-                mDraftPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+                mDraftPresenter.sendReview(SX_BEARER + mToken, restId, fileImageUri, audioFile, textReview, rating);
             }
         }
     }
@@ -553,7 +566,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                         mDraftPresenter.sendReview(utility.getAuthToken(getActivity()), restId, fileImageUri, audioFile,
                                 textReview, rating);
                     } else {
-                        mDraftPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+                        mDraftPresenter.sendReview(SX_BEARER + mToken, restId, fileImageUri, audioFile, textReview, rating);
                     }
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
@@ -563,7 +576,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                     mDraftPresenter.sendReview(utility.getAuthToken(getActivity()), restId, fileImageUri, audioFile,
                             textReview, rating);
                 } else {
-                    mDraftPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+                    mDraftPresenter.sendReview(SX_BEARER + mToken, restId, fileImageUri, audioFile, textReview, rating);
                 }
             }
         });

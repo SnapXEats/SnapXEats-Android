@@ -104,6 +104,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
             Glide.with(this)
                     .load(mSnapResponse.getDish_image_url())
                     .apply(new RequestOptions()
+                            .placeholder(R.drawable.ic_rest_info_placeholder)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .centerCrop()
                             .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
