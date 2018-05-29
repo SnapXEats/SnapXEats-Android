@@ -2,6 +2,7 @@ package com.snapxeats.ui.home;
 
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.SnapXData;
+import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.preference.RootUserPreference;
@@ -84,6 +85,16 @@ public class HomePresenterImpl implements HomeContract.HomePresenter {
     @Override
     public void getSmartPhotoInfo(String dishId) {
         interactor.getSmartPhotoInfo(dishId);
+    }
+
+    @Override
+    public void getInstaInfo(String token) {
+        interactor.getInstaInfo(token);
+    }
+
+    @Override
+    public void getUserdata(SnapXUserRequest snapXUserRequest) {
+interactor.getUserData(snapXUserRequest);
     }
 
     @Override

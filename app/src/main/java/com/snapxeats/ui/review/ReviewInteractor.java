@@ -31,7 +31,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.snapxeats.common.constants.UIConstants.FILE_MEDIATYPE;
-import static com.snapxeats.common.constants.UIConstants.SX_BEARER;
 import static com.snapxeats.common.constants.UIConstants.TEXT_TYPE;
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
@@ -40,26 +39,20 @@ import static com.snapxeats.common.constants.WebConstants.BASE_URL;
  */
 public class ReviewInteractor {
 
+    @Inject
+    public AppUtility appUtility;
+    @Inject
+    DbHelper dbHelper;
+    @Inject
+    WishlistDbHelper wishlistDbHelper;
+    @Inject
+    LoginDbHelper loginDbHelper;
+    @Inject
+    LoginUtility loginUtility;
     private ReviewContract.ReviewPresenter mReviewPresenter;
     private Context mContext;
     private RootInstagram rootInstagram;
     private String insttaToken;
-    private String serverToken;
-
-    @Inject
-    public AppUtility appUtility;
-
-    @Inject
-    DbHelper dbHelper;
-
-    @Inject
-    WishlistDbHelper wishlistDbHelper;
-
-    @Inject
-    LoginDbHelper loginDbHelper;
-
-    @Inject
-    LoginUtility loginUtility;
 
     @Inject
     ReviewInteractor() {
@@ -104,13 +97,7 @@ public class ReviewInteractor {
 
             MultipartBody.Part imageUpload = MultipartBody.Part.createFormData
                     (mContext.getString(R.string.review_dishPicture), fileImg.getName(), mFileImage);
-
-            if (token.isEmpty()) {
-                serverToken = appUtility.getAuthToken(mContext);
-            } else {
-                serverToken = SX_BEARER + token;
-            }
-            Call<SnapNShareResponse> snapXUserCall = apiHelper.sendUserReview(serverToken
+            Call<SnapNShareResponse> snapXUserCall = apiHelper.sendUserReview(token
                     , id, imageUpload, audioUpload, review, rating);
             snapXUserCall.enqueue(new Callback<SnapNShareResponse>() {
                 @Override
@@ -138,24 +125,29 @@ public class ReviewInteractor {
      * @param token
      */
     public void getInstaInfo(String token) {
-        this.insttaToken = token;
-        ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
-        Call<RootInstagram> snapXUserCall = apiHelper.getInstagramInfo(token);
-        snapXUserCall.enqueue(new Callback<RootInstagram>() {
-            @Override
-            public void onResponse(Call<RootInstagram> call, Response<RootInstagram> response) {
-                if (response.isSuccessful() && null != response.body()) {
-                    rootInstagram = response.body();
-                    SnapXUserRequest snapXUserRequest = new SnapXUserRequest(rootInstagram.getInstagramToken(),
-                            mContext.getString(R.string.platform_instagram), rootInstagram.getData().getId());
-                    getUserData(snapXUserRequest);
+        if (NetworkUtility.isNetworkAvailable(mContext)) {
+            this.insttaToken = token;
+            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            Call<RootInstagram> snapXUserCall = apiHelper.getInstagramInfo(token);
+            snapXUserCall.enqueue(new Callback<RootInstagram>() {
+                @Override
+                public void onResponse(Call<RootInstagram> call, Response<RootInstagram> response) {
+                    if (response.isSuccessful() && null != response.body()) {
+                        rootInstagram = response.body();
+                        SnapXUserRequest snapXUserRequest = new SnapXUserRequest(rootInstagram.getInstagramToken(),
+                                mContext.getString(R.string.platform_instagram), rootInstagram.getData().getId());
+                        getUserData(snapXUserRequest);
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<RootInstagram> call, Throwable t) {
-            }
-        });
+                @Override
+                public void onFailure(Call<RootInstagram> call, Throwable t) {
+                    mReviewPresenter.response(SnapXResult.FAILURE, null);
+                }
+            });
+        } else {
+            mReviewPresenter.response(SnapXResult.NONETWORK, null);
+        }
     }
 
     /**
@@ -186,10 +178,7 @@ public class ReviewInteractor {
                                 equalsIgnoreCase(mContext.getString(R.string.platform_instagram))) {
                             loginUtility.saveInstaDataInDb(snapXUser.getUserInfo(), insttaToken, rootInstagram);
                             loginUtility.getUserPreferences(snapXUser.getUserInfo().getToken());
-                        }
-
-                        /** save facebook data **/
-                        if (snapXUser.getUserInfo().getSocial_platform().
+                        } else if (snapXUser.getUserInfo().getSocial_platform().
                                 equalsIgnoreCase(mContext.getString(R.string.platform_facebook))) {
                             loginUtility.saveFbDataInDb(snapXUser.getUserInfo(), rootInstagram);
                             loginUtility.getUserPreferences(snapXUser.getUserInfo().getToken());

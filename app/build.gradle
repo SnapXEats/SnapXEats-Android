@@ -18,7 +18,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField 'boolean', 'BUILD_CAPTION', 'true'
+            buildConfigField 'boolean', 'BUILD_CAPTION', 'false'
         }
 
         debug {
@@ -136,5 +136,7 @@ dependencies {
     implementation project(':cardstackviewlibrary')
     //horizantal scrollview library
     compile 'com.yarolegovich:discrete-scrollview:1.4.6'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+
     implementation 'com.squareup.picasso:picasso:2.5.2'
 }

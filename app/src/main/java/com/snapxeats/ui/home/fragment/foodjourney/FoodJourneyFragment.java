@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.snapxeats.BaseActivity;
@@ -31,6 +30,8 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Prajakta Patil on 14/5/18.
@@ -55,10 +56,10 @@ public class FoodJourneyFragment extends BaseFragment implements
     protected Toolbar mToolbar;
 
     @BindView(R.id.list_current_food_journey)
-    protected ListView mListFoodJourney;
+    protected LinearLayout mListFoodJourney;
 
     @BindView(R.id.list_older_food_journey)
-    protected ListView mListOlderFoodJourney;
+    protected LinearLayout mListOlderFoodJourney;
 
     private RootFoodJourney mRootFoodJourney;
 
@@ -153,20 +154,30 @@ public class FoodJourneyFragment extends BaseFragment implements
     }
 
     private void setOlderJourney() {
-        if (null != mRootFoodJourney.getUserPastHistory()) {
+        if (null != mRootFoodJourney.getUserPastHistory()&& ZERO != mRootFoodJourney.getUserPastHistory().size()) {
             mTxtOlderJourney.setVisibility(View.VISIBLE);
             OlderFoodJourneyAdapter olderFoodJourneyAdapter =
                     new OlderFoodJourneyAdapter(getActivity(), mRootFoodJourney.getUserPastHistory());
-            mListOlderFoodJourney.setAdapter(olderFoodJourneyAdapter);
+            for (int row = ZERO; row < olderFoodJourneyAdapter.getCount(); row++) {
+                View view = olderFoodJourneyAdapter.getView(row, null, mListOlderFoodJourney);
+                mListOlderFoodJourney.addView(view);
+            }
+        } else {
+            mTxtOlderJourney.setVisibility(View.GONE);
         }
     }
 
     public void setCurrentJourney() {
-        if (null != mRootFoodJourney.getUserCurrentWeekHistory()) {
+        if (null != mRootFoodJourney.getUserCurrentWeekHistory() && ZERO != mRootFoodJourney.getUserCurrentWeekHistory().size()) {
             mTxtCurrentJourney.setVisibility(View.VISIBLE);
             CurrentFoodJourneyAdapter currentFoodJourneyAdapter =
                     new CurrentFoodJourneyAdapter(getActivity(), mRootFoodJourney.getUserCurrentWeekHistory());
-            mListFoodJourney.setAdapter(currentFoodJourneyAdapter);
+            for (int row = ZERO; row < currentFoodJourneyAdapter.getCount(); row++) {
+                View view = currentFoodJourneyAdapter.getView(row, null, mListFoodJourney);
+                mListFoodJourney.addView(view);
+            }
+        } else {
+            mTxtCurrentJourney.setVisibility(View.GONE);
         }
     }
 
@@ -194,6 +205,5 @@ public class FoodJourneyFragment extends BaseFragment implements
 
     @Override
     public void networkError(Object value) {
-
     }
 }

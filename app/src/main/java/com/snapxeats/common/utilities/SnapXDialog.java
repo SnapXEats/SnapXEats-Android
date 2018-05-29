@@ -10,11 +10,15 @@ import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+
 import com.snapxeats.R;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import static com.snapxeats.common.constants.UIConstants.CHANGE_PERMISSIONS;
 import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
+import static com.snapxeats.common.constants.UIConstants.PACKAGE;
 
 /**
  * Created by Snehal Tembare on 11/1/18.
@@ -23,10 +27,8 @@ import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
 @Singleton
 public class SnapXDialog {
     private ProgressDialog mDialog;
-    private AlertDialog.Builder mNetworkErrorDialog;
     private Activity context;
-    protected AlertDialog.Builder mDenyDialog;
-    private Snackbar mSnackbar;
+
     @Inject
     public SnapXDialog() {
     }
@@ -49,7 +51,7 @@ public class SnapXDialog {
      * Dismiss Progress dialog
      */
     public void dismissProgressSialog() {
-        if (mDialog != null) {
+        if (null != mDialog) {
             mDialog.dismiss();
         }
     }
@@ -58,7 +60,7 @@ public class SnapXDialog {
      * Show Network Error dialog
      */
     public void showNetworkErrorDialog(DialogInterface.OnClickListener click) {
-        mNetworkErrorDialog = new AlertDialog.Builder(context);
+        AlertDialog.Builder mNetworkErrorDialog = new AlertDialog.Builder(context);
         mNetworkErrorDialog.setMessage(context.getString(R.string.network_error));
         mNetworkErrorDialog.setPositiveButton(context.getString(R.string.ok), click);
         mNetworkErrorDialog.show();
@@ -69,7 +71,7 @@ public class SnapXDialog {
      */
     public void showResetDialog(DialogInterface.OnClickListener negativeClick,
                                 DialogInterface.OnClickListener positiveClick) {
-        mDenyDialog = new AlertDialog.Builder(context);
+        AlertDialog.Builder mDenyDialog = new AlertDialog.Builder(context);
         mDenyDialog.setMessage(context.getString(R.string.preference_reset_message));
 
         mDenyDialog.setNegativeButton(context.getString(R.string.cancel), negativeClick);
@@ -97,8 +99,6 @@ public class SnapXDialog {
         Dialog alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
-
-
     }
 
     /**
@@ -113,7 +113,7 @@ public class SnapXDialog {
                 .setPositiveButton(context.getString(R.string.go_to_settings),
                         (dialog, id) -> {
                             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+                            Uri uri = Uri.fromParts(PACKAGE, context.getPackageName(), null);
                             intent.setData(uri);
                             context.startActivityForResult(intent, CHANGE_PERMISSIONS);
                         });
@@ -126,7 +126,7 @@ public class SnapXDialog {
      * Show Snackbar for network error
      */
     public Snackbar showSnackBar(View view, View.OnClickListener positiveClick) {
-        mSnackbar = Snackbar.make(view, context.getString(R.string.check_network), Snackbar.LENGTH_INDEFINITE);
+        Snackbar mSnackbar = Snackbar.make(view, context.getString(R.string.check_network), Snackbar.LENGTH_INDEFINITE);
         mSnackbar.setAction(context.getString(R.string.retry), positiveClick);
         mSnackbar.show();
         return mSnackbar;

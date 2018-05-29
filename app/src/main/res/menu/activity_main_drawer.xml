@@ -22,7 +22,7 @@
             android:title="Preferences" />
         <item
             android:id="@+id/nav_food_journey"
-            android:title="Food Journeys" />
+            android:title="Food Journey" />
         <item
             android:id="@+id/nav_snap"
             android:title="Snap-N-Share" />

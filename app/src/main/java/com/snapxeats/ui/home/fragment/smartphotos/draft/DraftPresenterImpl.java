@@ -51,8 +51,8 @@ public class DraftPresenterImpl implements DraftContract.DraftPresenter {
     }
 
     @Override
-    public void sendReview(String token, String restId, Uri fileImageUri, Uri audioFile, String textReview, int rating) {
-        interactor.sendReview(token, restId, fileImageUri, audioFile, textReview, rating);
+    public void sendReview(String token,String restId, Uri fileImageUri, Uri audioFile, String textReview, int rating) {
+        interactor.sendReview(token,restId, fileImageUri, audioFile, textReview, rating);
     }
 
     @Override

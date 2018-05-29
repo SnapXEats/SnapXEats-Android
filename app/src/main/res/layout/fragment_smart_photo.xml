@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/id_smart_photo_fragment"
     tools:context="com.snapxeats.ui.home.fragment.checkin.CheckInFragment">
 
     <LinearLayout
-        android:id="@+id/layout_parent"
+        android:id="@+id/layout_parent_smart_photo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fontFamily="Roboto-Medium"

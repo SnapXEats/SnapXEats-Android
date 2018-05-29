@@ -28,7 +28,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.snapxeats.common.constants.UIConstants.FILE_MEDIATYPE;
-import static com.snapxeats.common.constants.UIConstants.SX_BEARER;
 import static com.snapxeats.common.constants.UIConstants.TEXT_TYPE;
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
@@ -38,10 +37,9 @@ import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 public class DraftInteractor {
     private Context mContext;
-    private DraftContract.DraftPresenter mpresenter;
+    private DraftContract.DraftPresenter mPresenter;
     private RootInstagram rootInstagram;
     private String instaToken;
-    private String serverToken;
     @Inject
     AppUtility utility;
 
@@ -52,9 +50,8 @@ public class DraftInteractor {
     DraftInteractor() {
     }
 
-
     public void setDraftPresenter(DraftContract.DraftPresenter draftPresenter) {
-        mpresenter = draftPresenter;
+        mPresenter = draftPresenter;
     }
 
     public void setContext(DraftContract.DraftView view) {
@@ -76,14 +73,15 @@ public class DraftInteractor {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             MultipartBody.Part audioUpload = null;
+
             if (null != audio) {
                 String fileAudioPath = utility.getRealPathFromURIPath(audio, mContext);
                 File fileAud = new File(fileAudioPath);
                 RequestBody mFileAudio = RequestBody.create(MediaType.parse(FILE_MEDIATYPE), fileAud);
                 audioUpload = MultipartBody.Part.createFormData
                         (mContext.getString(R.string.review_audioReview), fileAud.getName(), mFileAudio);
-
             }
+
             String fileImagePath = utility.getRealPathFromURIPath(image, mContext);
             File fileImg = new File(fileImagePath);
             RequestBody mFileImage = RequestBody.create(MediaType.parse(FILE_MEDIATYPE), fileImg);
@@ -94,30 +92,25 @@ public class DraftInteractor {
             MultipartBody.Part imageUpload = MultipartBody.Part.createFormData
                     (mContext.getString(R.string.review_dishPicture), fileImg.getName(), mFileImage);
 
-            if (utility.isLoggedIn()) {
-                serverToken = utility.getAuthToken(mContext);
-            } else {
-                serverToken = SX_BEARER + token;
-            }
             Call<SnapNShareResponse> snapXUserCall = apiHelper.sendUserReview(
-                    serverToken, id, imageUpload, audioUpload, review, rating);
+                    token, id, imageUpload, audioUpload, review, rating);
             snapXUserCall.enqueue(new Callback<SnapNShareResponse>() {
                 @Override
                 public void onResponse(Call<SnapNShareResponse> call,
                                        Response<SnapNShareResponse> response) {
                     if (response.isSuccessful() && null != response.body()) {
                         SnapNShareResponse nShareResponse = response.body();
-                        mpresenter.response(SnapXResult.SUCCESS, nShareResponse);
+                        mPresenter.response(SnapXResult.SUCCESS, nShareResponse);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SnapNShareResponse> call, Throwable t) {
-                    mpresenter.response(SnapXResult.FAILURE, null);
+                    mPresenter.response(SnapXResult.FAILURE, null);
                 }
             });
         } else {
-            mpresenter.response(SnapXResult.NONETWORK, null);
+            mPresenter.response(SnapXResult.NONETWORK, null);
         }
     }
 
@@ -183,18 +176,17 @@ public class DraftInteractor {
                             loginUtility.saveFbDataInDb(snapXUser.getUserInfo(), rootInstagram);
                             loginUtility.getUserPreferences(snapXUser.getUserInfo().getToken());
                         }
-                        mpresenter.response(SnapXResult.SUCCESS, snapXUser);
+                        mPresenter.response(SnapXResult.SUCCESS, snapXUser);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SnapXUserResponse> call, Throwable t) {
-                    mpresenter.response(SnapXResult.FAILURE, null);
+                    mPresenter.response(SnapXResult.FAILURE, null);
                 }
             });
         } else {
-            mpresenter.response(SnapXResult.NONETWORK, null);
+            mPresenter.response(SnapXResult.NONETWORK, null);
         }
     }
-
 }

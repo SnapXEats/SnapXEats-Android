@@ -8,13 +8,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.snapxeats.R;
 import com.snapxeats.common.model.smartphotos.SnapXDraftPhoto;
+
 import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
@@ -75,15 +78,13 @@ public class DraftAdapter extends RecyclerView.Adapter<DraftAdapter.ViewHolder> 
             itemView.setOnClickListener(this);
         }
 
-
         public void setData(SnapXDraftPhoto snapXDraftPhoto) {
-
             Glide.with(mContext)
                     .load(snapXDraftPhoto.getImageURL())
                     .apply(new RequestOptions()
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .centerCrop()
-                            .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                            .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                             .dontAnimate()
                             .dontTransform())
                     .thumbnail(THUMBNAIL)
@@ -94,11 +95,11 @@ public class DraftAdapter extends RecyclerView.Adapter<DraftAdapter.ViewHolder> 
 
         @Override
         public void onClick(View v) {
-            onItemClickListener.onClick(mDraftPhotoList.get(getAdapterPosition()),v);
+            onItemClickListener.onClick(mDraftPhotoList.get(getAdapterPosition()), v);
         }
     }
 
-    interface OnItemClickListener{
-        void onClick(SnapXDraftPhoto snapXDraftPhoto,View view);
+    interface OnItemClickListener {
+        void onClick(SnapXDraftPhoto snapXDraftPhoto, View view);
     }
 }
