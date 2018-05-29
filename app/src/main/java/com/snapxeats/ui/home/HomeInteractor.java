@@ -46,33 +46,26 @@ import static com.snapxeats.common.utilities.NoNetworkResults.SMART_PHOTO;
  */
 
 public class HomeInteractor {
-    private Context mContext;
-
     @Inject
     AppUtility utility;
-
     @Inject
     HomeDbHelper homeDbHelper;
-
     @Inject
     DbHelper dbHelper;
-
     @Inject
     WishlistDbHelper wishlistDbHelper;
-
     @Inject
     RootUserPreference rootUserPreference;
-
     @Inject
     LoginUtility loginUtility;
+    private Context mContext;
     private RootInstagram rootInstagram;
     private String instaToken;
+    private HomeContract.HomePresenter homePresenter;
 
     @Inject
     HomeInteractor() {
     }
-
-    private HomeContract.HomePresenter homePresenter;
 
     public void setContext(HomeContract.HomeView context) {
         this.mContext = context.getActivity();
@@ -324,24 +317,29 @@ public class HomeInteractor {
      * @param token
      */
     public void getInstaInfo(String token) {
-        this.instaToken = token;
-        ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
-        Call<RootInstagram> snapXUserCall = apiHelper.getInstagramInfo(token);
-        snapXUserCall.enqueue(new Callback<RootInstagram>() {
-            @Override
-            public void onResponse(Call<RootInstagram> call, Response<RootInstagram> response) {
-                if (response.isSuccessful() && null != response.body()) {
-                    rootInstagram = response.body();
-                    SnapXUserRequest snapXUserRequest = new SnapXUserRequest(rootInstagram.getInstagramToken(),
-                            mContext.getString(R.string.platform_instagram), rootInstagram.getData().getId());
-                    getUserData(snapXUserRequest);
+        if (NetworkUtility.isNetworkAvailable(mContext)) {
+            this.instaToken = token;
+            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            Call<RootInstagram> snapXUserCall = apiHelper.getInstagramInfo(token);
+            snapXUserCall.enqueue(new Callback<RootInstagram>() {
+                @Override
+                public void onResponse(Call<RootInstagram> call, Response<RootInstagram> response) {
+                    if (response.isSuccessful() && null != response.body()) {
+                        rootInstagram = response.body();
+                        SnapXUserRequest snapXUserRequest = new SnapXUserRequest(rootInstagram.getInstagramToken(),
+                                mContext.getString(R.string.platform_instagram), rootInstagram.getData().getId());
+                        getUserData(snapXUserRequest);
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<RootInstagram> call, Throwable t) {
-            }
-        });
+                @Override
+                public void onFailure(Call<RootInstagram> call, Throwable t) {
+                    homePresenter.response(SnapXResult.FAILURE, null);
+                }
+            });
+        } else {
+            homePresenter.response(SnapXResult.NONETWORK, null);
+        }
     }
 
     /**
@@ -372,11 +370,9 @@ public class HomeInteractor {
                                 equalsIgnoreCase(mContext.getString(R.string.platform_instagram))) {
                             loginUtility.saveInstaDataInDb(snapXUser.getUserInfo(), instaToken, rootInstagram);
                             loginUtility.getUserPreferences(snapXUser.getUserInfo().getToken());
-                        }
-
-                        /** save facebook data **/
-                        if (snapXUser.getUserInfo().getSocial_platform().
+                        } else if (snapXUser.getUserInfo().getSocial_platform().
                                 equalsIgnoreCase(mContext.getString(R.string.platform_facebook))) {
+                            /** save facebook data **/
                             loginUtility.saveFbDataInDb(snapXUser.getUserInfo(), rootInstagram);
                             loginUtility.getUserPreferences(snapXUser.getUserInfo().getToken());
                         }

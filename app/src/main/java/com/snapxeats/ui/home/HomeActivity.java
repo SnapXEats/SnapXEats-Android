@@ -110,7 +110,6 @@ import butterknife.ButterKnife;
 import static com.snapxeats.common.Router.Screen.LOGIN;
 import static com.snapxeats.common.constants.UIConstants.BUFFER_SIZE;
 import static com.snapxeats.common.constants.UIConstants.BYTES;
-import static com.snapxeats.common.constants.UIConstants.CHANGE_PERMISSIONS;
 import static com.snapxeats.common.constants.UIConstants.LAT;
 import static com.snapxeats.common.constants.UIConstants.LNG;
 import static com.snapxeats.common.constants.UIConstants.LOGOUT_DIALOG_HEIGHT;
@@ -133,46 +132,12 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         View.OnClickListener,
         MediaPlayer.OnCompletionListener, InstagramDialog.InstagramDialogListener {
 
-    private SelectedBundle selectedBundle;
-
-    @Inject
-    HomeFragment homeFragment;
-
-    @Inject
-    NavPrefFragment navPrefFragment;
-
-    @Inject
-    WishlistFragment wishlistFragment;
-
-    @Inject
-    CheckInFragment checkInFragment;
-
-    @Inject
-    FoodJourneyFragment foodJourneyFragment;
-
-    @Inject
-    SmartPhotoFragment smartPhotoFragment;
-
-    @Inject
-    SnapShareFragment snapShareFragment;
-
     @BindView(R.id.drawer_layout)
     protected DrawerLayout mDrawerLayout;
-
-    private FragmentTransaction transaction;
-
-    private FragmentManager fragmentManager;
-
     @BindView(R.id.nav_view)
     protected NavigationView mNavigationView;
-
     @BindView(R.id.parent_layout)
     protected View mParentLayout;
-
-    private SnapXUserRequest snapXUserRequest;
-
-    private CallbackManager mCallbackManager;
-
     //CheckIndialog
     protected LinearLayout mSingleRestLayout;
     protected LinearLayout mNoRestLayout;
@@ -183,33 +148,48 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     protected TextView mTxtRestName;
     protected TextView mTxtCancel;
     protected Button mBtnCheckIn;
-    private String restaurantId;
-
+    @Inject
+    HomeFragment homeFragment;
+    @Inject
+    NavPrefFragment navPrefFragment;
+    @Inject
+    WishlistFragment wishlistFragment;
+    @Inject
+    CheckInFragment checkInFragment;
+    @Inject
+    FoodJourneyFragment foodJourneyFragment;
+    @Inject
+    SmartPhotoFragment smartPhotoFragment;
+    @Inject
+    SnapShareFragment snapShareFragment;
     @Inject
     HomeContract.HomePresenter mPresenter;
-
-    private List<SnapXData> mSnapxData;
-
     @Inject
     AppUtility mAppUtility;
-
-    private SharedPreferences preferences;
-    private String userId;
-
     @Inject
     AppUtility utility;
-
     @Inject
     HomeDbHelper homeDbHelper;
-
     @Inject
     WishlistDbHelper wishlistDbHelper;
-
     @Inject
     RootUserPreference mRootUserPreference;
-
+    @Inject
+    SnapXDialog snapXDialog;
+    @Inject
+    FoodStackDbHelper foodStackDbHelper;
+    @Inject
+    DbHelper dbHelper;
+    private SelectedBundle selectedBundle;
+    private FragmentTransaction transaction;
+    private FragmentManager fragmentManager;
+    private SnapXUserRequest snapXUserRequest;
+    private CallbackManager mCallbackManager;
+    private String restaurantId;
+    private List<SnapXData> mSnapxData;
+    private SharedPreferences preferences;
+    private String userId;
     private CircularImageView imgUser;
-    private View mNavHeader;
     private TextView txtUserName;
     private TextView txtNotLoggedIn;
     private LinearLayout mLayoutUserData;
@@ -219,7 +199,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private List<RestaurantInfo> mRestaurantList;
     private CheckInAdapter mAdapter;
     private CheckInRequest checkInRequest;
-
+    private String rewards;
     //Smart photos
     private Dialog mSmartPhotoDialog;
     private SmartPhotoResponse mSmartPhoto;
@@ -231,22 +211,19 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private ImageView mImgPlayAudio;
     private ImageView mImgDownload;
     private ProgressDialog mProgressbar;
-    private int current = 0;
+    private int current = ZERO;
     private String imagePath;
     private String audioPath;
-
     private TextView mTxtSmartPhotoRestName;
     private TextView mTxtTimeOfAudio;
     private TextView mTxtSmartRestAddress;
     private TextView mTxtRestReviewContents;
-
     private LinearLayout mLayoutControls;
     private LinearLayout mLayoutDescription;
     private LinearLayout mLayoutInfo;
     private LinearLayout mLayoutReview;
     private LinearLayout mLayoutAudio;
     private LinearLayout mLayoutDownloadSuccess;
-
     private ListView mListAminities;
     private List<String> mAminitiesList;
     private boolean isImageTap;
@@ -257,17 +234,21 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private String dishId;
     private MediaPlayer mMediaPlayer;
     private Handler mHandler = new Handler();
-    private TextView txtRewards;
-    private ImageView img, imgClose;
 
-    @Inject
-    SnapXDialog snapXDialog;
 
-    @Inject
-    FoodStackDbHelper foodStackDbHelper;
+    private Runnable mUpdateTimeTask = new Runnable() {
+        public void run() {
+            if (null != mMediaPlayer) {
+                long currentDuration = mMediaPlayer.getCurrentPosition();
 
-    @Inject
-    DbHelper dbHelper;
+                // Displaying time completed playing
+                mTxtTimeOfAudio.setText("" + utility.milliSecondsToTimer(currentDuration));
+
+                // Running this thread after 100 milliseconds
+                mHandler.postDelayed(this, UIConstants.PERCENTAGE);
+            }
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -296,12 +277,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         mCallbackManager = CallbackManager.Factory.create();
 
         // ATTENTION: This was auto-generated to handle app links.
-        Intent appLinkIntent = getIntent();
-        if (null != appLinkIntent && null != appLinkIntent.getData()) {
-            dishId = appLinkIntent.getData().getSchemeSpecificPart().split("id=")[ONE];
-            showProgressDialog();
-            mPresenter.getSmartPhotoInfo(dishId);
-        }
+        setAppLink();
 
         userId = preferences.getString(getString(R.string.user_id), "");
         mRootUserPreference = mPresenter.getUserPreferenceFromDb();
@@ -321,6 +297,14 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         mNavigationView.setCheckedItem(R.id.nav_home);
 
         //Notification for take photo
+        setNotificationForPhoto();
+
+        transaction.commit();
+        changeItems();
+        enableReceiver();
+    }
+
+    private void setNotificationForPhoto() {
         Intent intent = getIntent();
         boolean isFromNotification = intent.getBooleanExtra(getString(R.string.notification), false);
         boolean isShareAnother = intent.getBooleanExtra(getString(R.string.share_another), false);
@@ -334,7 +318,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                 NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
                 managerCompat.cancel(NOTIFICATION_ID);
                 cancelReminder();
-                bundle.putBoolean(getString(R.string.notification), isFromNotification);
+                bundle.putBoolean(getString(R.string.notification), true);
             }
             bundle.putString(getString(R.string.intent_restaurant_id), restaurantId);
             snapShareFragment.setArguments(bundle);
@@ -343,10 +327,15 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         } else if (isSetPref) {
             transaction.replace(R.id.frame_layout, navPrefFragment);
         }
+    }
 
-        transaction.commit();
-        changeItems();
-        enableReceiver();
+    private void setAppLink() {
+        Intent appLinkIntent = getIntent();
+        if (null != appLinkIntent && null != appLinkIntent.getData()) {
+            dishId = appLinkIntent.getData().getSchemeSpecificPart().split("id=")[ONE];
+            showProgressDialog();
+            mPresenter.getSmartPhotoInfo(dishId);
+        }
     }
 
     private void changeItems() {
@@ -390,17 +379,17 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     public void initNavHeaderViews() {
-        mNavHeader = mNavigationView.getHeaderView(ZERO);
+        View mNavHeader = mNavigationView.getHeaderView(ZERO);
         imgUser = mNavHeader.findViewById(R.id.img_user);
         txtUserName = mNavHeader.findViewById(R.id.txt_user_name);
         txtNotLoggedIn = mNavHeader.findViewById(R.id.txt_nav_not_logged_in);
-        txtRewards = mNavHeader.findViewById(R.id.txt_nav_rewards);
+        TextView txtRewards = mNavHeader.findViewById(R.id.txt_nav_rewards);
         mLayoutUserData = mNavHeader.findViewById(R.id.layout_user_data);
     }
 
     public void setUserInfo() {
         initNavHeaderViews();
-        if (isLoggedIn() && null != mSnapxData && mSnapxData.size() > ZERO) {
+        if (isLoggedIn() && null != mSnapxData && ZERO < mSnapxData.size()) {
             Picasso.with(this).load(mSnapxData.get(ZERO).getImageUrl())
                     .placeholder(R.drawable.user_image).into(imgUser);
             txtUserName.setText(mSnapxData.get(ZERO).getUserName());
@@ -421,6 +410,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         setWishlistCount();
         setUserInfo();
     }
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -489,7 +479,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                         postOrPutUserPreferences();
                     } else {
                         //For non logged in user
-                        FragmentManager fragmentManager = getFragmentManager();
                         transaction = fragmentManager.beginTransaction();
                         transaction.replace(R.id.frame_layout, homeFragment);
                         mNavigationView.setCheckedItem(R.id.nav_home);
@@ -568,72 +557,17 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     public void success(Object value) {
         dismissProgressDialog();
         if (value instanceof UserPreference) {
-            FragmentManager fragmentManager = getFragmentManager();
-            transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.frame_layout, homeFragment);
-            mNavigationView.setCheckedItem(R.id.nav_home);
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-            isDirty = false;
-            isCuisineDirty = false;
-            isFoodDirty = false;
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean(getString(R.string.isFirstTimeUser), false);
-            editor.apply();
-            transaction.commit();
+            setUserPrefData();
         } else if (value instanceof Boolean) {
             if ((boolean) value) {
                 mPresenter.presentScreen(LOGIN);
             }
         } else if (value instanceof CheckInRestaurants) {
-            mCheckInDialog.show();
             mRestaurantList = ((CheckInRestaurants) value).getRestaurants_info();
-            if (ONE == mRestaurantList.size()) {
-                mNoRestLayout.setVisibility(View.GONE);
-                mSingleRestLayout.setVisibility(View.VISIBLE);
-                mMultipleRestLayout.setVisibility(View.GONE);
-                mBtnLayout.setVisibility(View.VISIBLE);
-                setSingleCheckInView(mRestaurantList.get(ZERO));
-            } else if (ZERO < mRestaurantList.size()) {
-                mNoRestLayout.setVisibility(View.GONE);
-                mSingleRestLayout.setVisibility(View.GONE);
-                mMultipleRestLayout.setVisibility(View.VISIBLE);
-                mBtnLayout.setVisibility(View.VISIBLE);
-                setupRecyclerView();
-            } else {
-                mNoRestLayout.setVisibility(View.VISIBLE);
-                mBtnLayout.setVisibility(View.GONE);
-                mSingleRestLayout.setVisibility(View.GONE);
-                mMultipleRestLayout.setVisibility(View.GONE);
-            }
+            setDataForCheckIn();
         } else if (value instanceof CheckInResponse) {
-            mRewardDialog = new Dialog(this);
-            mRewardDialog.setContentView(R.layout.layout_reward_message);
-            Window window = mRewardDialog.getWindow();
-            if (null != window) {
-                window.setLayout(UIConstants.REWARD_DIALOG_WIDTH, UIConstants.REWARD_DIALOG_HEIGHT);
-                window.setBackgroundDrawable(getDrawable(R.drawable.reward_background));
-            }
-            dismissCheckInDialog();
-            mRewardDialog.show();
-            TextView mTxtRewards = mRewardDialog.findViewById(R.id.txt_reward_points);
-            String rewards = ((CheckInResponse) value).getReward_point() + " " + getString(R.string.reward_points);
-            mTxtRewards.setText(rewards);
-
-            mRewardDialog.findViewById(R.id.btn_continue).setOnClickListener(v -> {
-                String restaurantId = null;
-                for (RestaurantInfo restaurantInfo : mRestaurantList) {
-                    if (restaurantInfo.isSelected()) {
-                        restaurantId = restaurantInfo.getRestaurant_info_id();
-                    }
-                }
-                mRewardDialog.dismiss();
-                transaction = fragmentManager.beginTransaction();
-                Bundle bundle = new Bundle();
-                bundle.putString(getString(R.string.intent_restaurant_id), restaurantId);
-                snapShareFragment.setArguments(bundle);
-                transaction.replace(R.id.frame_layout, snapShareFragment);
-                transaction.commit();
-            });
+            rewards = ((CheckInResponse) value).getReward_point() + " " + getString(R.string.reward_points);
+            showCheckInResponseDialog();
         } else if (value instanceof SmartPhotoResponse) {
             mSmartPhoto = (SmartPhotoResponse) value;
             mAminitiesList = mSmartPhoto.getRestaurant_aminities();
@@ -645,6 +579,80 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
+    /**
+     * set CheckInResponse data values
+     **/
+    private void showCheckInResponseDialog() {
+        mRewardDialog = new Dialog(this);
+        mRewardDialog.setContentView(R.layout.layout_reward_message);
+        Window window = mRewardDialog.getWindow();
+        if (null != window) {
+            window.setLayout(UIConstants.REWARD_DIALOG_WIDTH, UIConstants.REWARD_DIALOG_HEIGHT);
+            window.setBackgroundDrawable(getDrawable(R.drawable.reward_background));
+        }
+        dismissCheckInDialog();
+        mRewardDialog.show();
+        TextView mTxtRewards = mRewardDialog.findViewById(R.id.txt_reward_points);
+        mTxtRewards.setText(rewards);
+
+        mRewardDialog.findViewById(R.id.btn_continue).setOnClickListener(v -> {
+            String restaurantId = null;
+            for (RestaurantInfo restaurantInfo : mRestaurantList) {
+                if (restaurantInfo.isSelected()) {
+                    restaurantId = restaurantInfo.getRestaurant_info_id();
+                }
+            }
+            mRewardDialog.dismiss();
+            transaction = fragmentManager.beginTransaction();
+            Bundle bundle = new Bundle();
+            bundle.putString(getString(R.string.intent_restaurant_id), restaurantId);
+            snapShareFragment.setArguments(bundle);
+            transaction.replace(R.id.frame_layout, snapShareFragment);
+            transaction.commit();
+        });
+    }
+
+    /**
+     * set CheckInRestaurants data values
+     **/
+    private void setDataForCheckIn() {
+        mCheckInDialog.show();
+        if (ONE == mRestaurantList.size()) {
+            mNoRestLayout.setVisibility(View.GONE);
+            mSingleRestLayout.setVisibility(View.VISIBLE);
+            mMultipleRestLayout.setVisibility(View.GONE);
+            mBtnLayout.setVisibility(View.VISIBLE);
+            setSingleCheckInView(mRestaurantList.get(ZERO));
+        } else if (ZERO < mRestaurantList.size()) {
+            mNoRestLayout.setVisibility(View.GONE);
+            mSingleRestLayout.setVisibility(View.GONE);
+            mMultipleRestLayout.setVisibility(View.VISIBLE);
+            mBtnLayout.setVisibility(View.VISIBLE);
+            setupRecyclerView();
+        } else {
+            mNoRestLayout.setVisibility(View.VISIBLE);
+            mBtnLayout.setVisibility(View.GONE);
+            mSingleRestLayout.setVisibility(View.GONE);
+            mMultipleRestLayout.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * set UserPreference data values
+     **/
+    private void setUserPrefData() {
+        transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.frame_layout, homeFragment);
+        mNavigationView.setCheckedItem(R.id.nav_home);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        isDirty = false;
+        isCuisineDirty = false;
+        isFoodDirty = false;
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(getString(R.string.isFirstTimeUser), false);
+        editor.apply();
+        transaction.commit();
+    }
 
     /**
      * Show check-In dialog
@@ -866,20 +874,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             }
         }
     }
-
-    private Runnable mUpdateTimeTask = new Runnable() {
-        public void run() {
-            if (null != mMediaPlayer) {
-                long currentDuration = mMediaPlayer.getCurrentPosition();
-
-                // Displaying time completed playing
-                mTxtTimeOfAudio.setText("" + utility.milliSecondsToTimer(currentDuration));
-
-                // Running this thread after 100 milliseconds
-                mHandler.postDelayed(this, UIConstants.PERCENTAGE);
-            }
-        }
-    };
 
     private void setupRecyclerView() {
         if (null != mRestaurantList) {
@@ -1151,11 +1145,11 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case CHANGE_PERMISSIONS:
-                startDownloadingTask();
-                break;
-        }
+//        switch (requestCode) {
+//            case CHANGE_PERMISSIONS:
+//                startDownloadingTask();
+//                break;
+//        }
         //login facebook callback
         if (resultCode == RESULT_OK) {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
@@ -1166,6 +1160,37 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     public void onReturnValue(String token) {
         showProgressDialog();
         mPresenter.getInstaInfo(token);
+    }
+
+    public void setInstaValue(SelectedBundle selectedBundle) {
+        this.selectedBundle = selectedBundle;
+    }
+
+    public void loginWithFacebook() {
+        LoginManager.getInstance().registerCallback(mCallbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        snapXUserRequest = new SnapXUserRequest(AccessToken.getCurrentAccessToken().getToken(),
+                                getString(R.string.platform_facebook), AccessToken.getCurrentAccessToken().getUserId());
+                        showProgressDialog();
+                        mPresenter.getUserdata(snapXUserRequest);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        mPresenter.response(SnapXResult.NETWORKERROR, null);
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        mPresenter.response(SnapXResult.ERROR, null);
+                    }
+                });
+    }
+
+    public interface SelectedBundle {
+        void onBundleSelect(String bundle);
     }
 
     private class DownloadImage extends AsyncTask<String, String, String> {
@@ -1245,7 +1270,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-            mProgressbar.setProgress(Integer.parseInt(values[0]));
+            mProgressbar.setProgress(Integer.parseInt(values[ZERO]));
+
         }
 
         @Override
@@ -1259,36 +1285,5 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             mSmartPhoto.setAudio_review_url(audioPath);
             homeDbHelper.saveSmartPhotoDataInDb(mSmartPhoto);
         }
-    }
-
-    public interface SelectedBundle {
-        void onBundleSelect(String bundle);
-    }
-
-    public void setOnBundleSelected(SelectedBundle selectedBundle) {
-        this.selectedBundle = selectedBundle;
-    }
-
-    public void loginWithFacebook() {
-        LoginManager.getInstance().registerCallback(mCallbackManager,
-                new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        snapXUserRequest = new SnapXUserRequest(AccessToken.getCurrentAccessToken().getToken(),
-                                getString(R.string.platform_facebook), AccessToken.getCurrentAccessToken().getUserId());
-                        showProgressDialog();
-                        mPresenter.getUserdata(snapXUserRequest);
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        mPresenter.response(SnapXResult.NETWORKERROR, null);
-                    }
-
-                    @Override
-                    public void onError(FacebookException exception) {
-                        mPresenter.response(SnapXResult.ERROR, null);
-                    }
-                });
     }
 }

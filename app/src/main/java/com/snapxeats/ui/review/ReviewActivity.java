@@ -92,59 +92,46 @@ import static com.snapxeats.common.constants.UIConstants.ZERO;
 public class ReviewActivity extends BaseActivity implements ReviewContract.ReviewView,
         AppContract.SnapXResults, InstagramDialog.InstagramDialogListener {
 
-    @Inject
-    SnapXDialog snapXDialog;
-
-    @Inject
-    AppUtility utility;
-
-    @Inject
-    DbHelper dbHelper;
-
-    @Inject
-    ReviewContract.ReviewPresenter mPresenter;
-
-    @Inject
-    ReviewDbHelper reviewDbHelper;
-
     @BindView(R.id.toolbar_review)
     protected Toolbar mToolbar;
-
     @BindView(R.id.img_rest_photo)
     protected ImageView mImgRestPhoto;
-
+    @BindView(R.id.rating_review)
+    protected RatingBar mRatingBar;
+    @BindView(R.id.edt_txt_review)
+    protected EditText mEditTxtReview;
+    @BindView(R.id.txt_length_error)
+    protected TextView mTxtLengthError;
+    @BindView(R.id.timer_audio_time)
+    protected Chronometer mAudioTime;
+    @BindView(R.id.img_play_review)
+    protected ImageView mImgPlayAudio;
+    @BindView(R.id.img_audio_review)
+    protected ImageView mImgAddAudio;
+    @BindView(R.id.layout_main_review)
+    protected LinearLayout mParentLayout;
+    @Inject
+    SnapXDialog snapXDialog;
+    @Inject
+    AppUtility utility;
+    @Inject
+    DbHelper dbHelper;
+    @Inject
+    ReviewContract.ReviewPresenter mPresenter;
+    @Inject
+    ReviewDbHelper reviewDbHelper;
+    @Inject
+    LoginUtility loginUtility;
     private MediaPlayer mPlayer;
     private MediaRecorder mRecorder;
     private Chronometer mChronometer;
     private File savedAudioPath = null;
-
     private Button mBtnStartAudio;
     private Button mBtnStopReview;
-
-    @BindView(R.id.rating_review)
-    protected RatingBar mRatingBar;
-
-    @BindView(R.id.edt_txt_review)
-    protected EditText mEditTxtReview;
-
-    @BindView(R.id.txt_length_error)
-    protected TextView mTxtLengthError;
-
-    @BindView(R.id.timer_audio_time)
-    protected Chronometer mAudioTime;
-
-    @BindView(R.id.img_play_review)
-    protected ImageView mImgPlayAudio;
-
-    @BindView(R.id.img_audio_review)
-    protected ImageView mImgAddAudio;
-
     private Uri fileImageUri;
     private String restId;
-
     private String image_path;
     private int resumePosition;
-
     private boolean isPaused = false;
     private boolean isCanceled = false;
     private int seconds;
@@ -154,16 +141,9 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private TextView mTimer;
     private ImageView mImgPlayRecAudio, mImgPauseRecAudio;
     private RootRestaurantInfo mRootRestaurantInfo;
-
-    @BindView(R.id.layout_main_review)
-    protected LinearLayout mParentLayout;
-
     private Uri audioFile;
     private int rating;
     private String textReview;
-
-    @Inject
-    LoginUtility loginUtility;
     private CallbackManager mCallbackManager;
     private SnapXUserRequest snapXUserRequest;
     private InstagramApp mApp;
@@ -422,7 +402,11 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             if (null != savedAudioPath) {
                 audioFile = Uri.fromFile(savedAudioPath);
             }
-            mPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+            if (mToken == null) {
+                mPresenter.sendReview(utility.getAuthToken(this), restId, fileImageUri, audioFile, textReview, rating);
+            } else {
+                mPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+            }
         }
     }
 
@@ -696,12 +680,20 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             if (!NetworkUtility.isNetworkAvailable(getActivity())) {
                 AppContract.DialogListenerAction click = () -> {
                     showProgressDialog();
-                    mPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+                    if (null == mToken) {
+                        mPresenter.sendReview(utility.getAuthToken(this), restId, fileImageUri, audioFile, textReview, rating);
+                    } else {
+                        mPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+                    }
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
             } else {
                 showProgressDialog();
-                mPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+                if (null == mToken) {
+                    mPresenter.sendReview(utility.getAuthToken(this), restId, fileImageUri, audioFile, textReview, rating);
+                } else {
+                    mPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+                }
             }
         });
     }

@@ -32,7 +32,6 @@ import com.facebook.login.widget.LoginButton;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.constants.WebConstants;
 import com.snapxeats.common.model.SnapXUserResponse;
@@ -78,69 +77,64 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
 
     @BindView(R.id.parent_layout)
     protected LinearLayout mParentLayout;
-
+    @Inject
+    ReviewDbHelper reviewDbHelper;
+    @Inject
+    DbHelper dbHelper;
+    @Inject
+    AppUtility utility;
+    @Inject
+    DraftContract.DraftPresenter mDraftPresenter;
+    @Inject
+    HomeActivity homeActivity;
     private LinearLayout mLayoutControls;
     private LinearLayout mLayoutDescription;
     private LinearLayout mLayoutInfo;
     private LinearLayout mLayoutReview;
     private LinearLayout mLayoutAudio;
     private ListView mListAminities;
-
     private ImageView mImg;
     private ImageView mImgClose;
     private ImageView mImgInfo;
     private ImageView mImgShare;
     private ImageView mImgAudioReview;
     private ImageView mImgTextReview;
-
     private ImageView mImgPlayAudio;
-
     private TextView mTxtRestName;
     private TextView mTxtTimeOfAudio;
     private TextView mTxtRestAddress;
     private TextView mTxtRestReviewContents;
     private SnapXDraftPhoto mSnapXDraftPhoto;
-
-    private DraftAdapter mDraftAdapter;
-    private List<SnapXDraftPhoto> mDraftPhotoList;
     private List<String> mAminitiesList;
-
     private boolean isImageTap;
     private boolean isInfoTap;
     private boolean isReviewTap;
     private boolean isAudioViewTap;
     private boolean isAudioPlayTap;
     private InstagramApp mApp;
-
     private Uri fileImageUri;
     private Uri audioFile;
     private String restId;
     private String textReview;
     private int rating;
-
     private MediaPlayer mMediaPlayer;
     private Handler mHandler = new Handler();
-
     private Dialog mDialog;
-
-    @Inject
-    ReviewDbHelper reviewDbHelper;
-
-    @Inject
-    DbHelper dbHelper;
-
-    @Inject
-    AppUtility utility;
-
     private String mToken;
-
-    @Inject
-    DraftContract.DraftPresenter mDraftPresenter;
-
     private AlertDialog dialog;
+    private Runnable mUpdateTimeTask = new Runnable() {
+        public void run() {
+            if (null != mMediaPlayer) {
+                long currentDuration = mMediaPlayer.getCurrentPosition();
 
-    @Inject
-    HomeActivity homeActivity;
+                // Displaying time completed playing
+                mTxtTimeOfAudio.setText("" + utility.milliSecondsToTimer(currentDuration));
+
+                // Running this thread after 100 milliseconds
+                mHandler.postDelayed(this, UIConstants.PERCENTAGE);
+            }
+        }
+    };
 
     @Inject
     public DraftFragment() {
@@ -163,8 +157,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         } catch (InflateException e) {
             e.printStackTrace();
         }
-        ((HomeActivity) getActivity()).setOnBundleSelected(value -> {
-            SnapXToast.showToast(getActivity(), value);
+        ((HomeActivity) getActivity()).setInstaValue(value -> {
             mToken = value;
             dialog.dismiss();
             callApiReview();
@@ -177,9 +170,9 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         super.onViewCreated(view, savedInstanceState);
         initView();
 
-        mDraftPhotoList = reviewDbHelper.getDraftData();
+        List<SnapXDraftPhoto> mDraftPhotoList = reviewDbHelper.getDraftData();
         if (null != mDraftPhotoList && ZERO != mDraftPhotoList.size()) {
-            mDraftAdapter = new DraftAdapter(getActivity(), mDraftPhotoList, (snapXDraftPhoto, viewShare) -> {
+            DraftAdapter mDraftAdapter = new DraftAdapter(getActivity(), mDraftPhotoList, (snapXDraftPhoto, viewShare) -> {
                 mSnapXDraftPhoto = snapXDraftPhoto;
 
                 QueryBuilder<RestaurantAminities> queryBuilder = dbHelper.getRestaurantAminitiesDao().queryBuilder();
@@ -349,7 +342,6 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         mImgPlayAudio.setOnClickListener(this);
     }
 
-
     @Override
     public void onAttach(Activity context) {
         super.onAttach(context);
@@ -482,18 +474,11 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 break;
 
             case R.id.img_share:
-                //TODO Non-login flow
                 if (utility.isLoggedIn()) {
                     callApiReview();
                 } else {
                     showLoginDialog();
                 }
-                //TODO functionality in progress
-//                if (utility.isLoggedIn()) {
-//                    callApiReview();
-//                } else {
-//                    SnapXToast.showToast(getActivity(), "User not logged in");
-//                }
                 break;
         }
     }
@@ -511,23 +496,13 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 audioFile = Uri.fromFile(file);
             }
             showProgressDialog();
-            mDraftPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
-        }
-    }
-
-    private Runnable mUpdateTimeTask = new Runnable() {
-        public void run() {
-            if (null != mMediaPlayer) {
-                long currentDuration = mMediaPlayer.getCurrentPosition();
-
-                // Displaying time completed playing
-                mTxtTimeOfAudio.setText("" + utility.milliSecondsToTimer(currentDuration));
-
-                // Running this thread after 100 milliseconds
-                mHandler.postDelayed(this, UIConstants.PERCENTAGE);
+            if (null == mToken) {
+                mDraftPresenter.sendReview(utility.getAuthToken(getActivity()), restId, fileImageUri, audioFile, textReview, rating);
+            } else {
+                mDraftPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
             }
         }
-    };
+    }
 
     @Override
     public void initView() {
@@ -574,12 +549,22 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
             if (!NetworkUtility.isNetworkAvailable(getActivity())) {
                 AppContract.DialogListenerAction click = () -> {
                     showProgressDialog();
-                    mDraftPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+                    if (null == mToken) {
+                        mDraftPresenter.sendReview(utility.getAuthToken(getActivity()), restId, fileImageUri, audioFile,
+                                textReview, rating);
+                    } else {
+                        mDraftPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+                    }
                 };
                 showSnackBar(mParentLayout, setClickListener(click));
             } else {
                 showProgressDialog();
-                mDraftPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+                if (null == mToken) {
+                    mDraftPresenter.sendReview(utility.getAuthToken(getActivity()), restId, fileImageUri, audioFile,
+                            textReview, rating);
+                } else {
+                    mDraftPresenter.sendReview(mToken, restId, fileImageUri, audioFile, textReview, rating);
+                }
             }
         });
     }

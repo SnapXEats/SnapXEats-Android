@@ -31,7 +31,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.snapxeats.common.constants.UIConstants.FILE_MEDIATYPE;
-import static com.snapxeats.common.constants.UIConstants.SX_BEARER;
 import static com.snapxeats.common.constants.UIConstants.TEXT_TYPE;
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
@@ -40,25 +39,20 @@ import static com.snapxeats.common.constants.WebConstants.BASE_URL;
  */
 public class ReviewInteractor {
 
+    @Inject
+    public AppUtility appUtility;
+    @Inject
+    DbHelper dbHelper;
+    @Inject
+    WishlistDbHelper wishlistDbHelper;
+    @Inject
+    LoginDbHelper loginDbHelper;
+    @Inject
+    LoginUtility loginUtility;
     private ReviewContract.ReviewPresenter mReviewPresenter;
     private Context mContext;
     private RootInstagram rootInstagram;
     private String insttaToken;
-
-    @Inject
-    public AppUtility appUtility;
-
-    @Inject
-    DbHelper dbHelper;
-
-    @Inject
-    WishlistDbHelper wishlistDbHelper;
-
-    @Inject
-    LoginDbHelper loginDbHelper;
-
-    @Inject
-    LoginUtility loginUtility;
 
     @Inject
     ReviewInteractor() {
@@ -103,14 +97,7 @@ public class ReviewInteractor {
 
             MultipartBody.Part imageUpload = MultipartBody.Part.createFormData
                     (mContext.getString(R.string.review_dishPicture), fileImg.getName(), mFileImage);
-
-            String serverToken;
-            if (token.isEmpty()) {
-                serverToken = appUtility.getAuthToken(mContext);
-            } else {
-                serverToken = SX_BEARER + token;
-            }
-            Call<SnapNShareResponse> snapXUserCall = apiHelper.sendUserReview(serverToken
+            Call<SnapNShareResponse> snapXUserCall = apiHelper.sendUserReview(token
                     , id, imageUpload, audioUpload, review, rating);
             snapXUserCall.enqueue(new Callback<SnapNShareResponse>() {
                 @Override

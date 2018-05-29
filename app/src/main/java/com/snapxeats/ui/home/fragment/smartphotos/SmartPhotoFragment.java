@@ -17,17 +17,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftFragment;
 import com.snapxeats.ui.home.fragment.smartphotos.smart.SmartFragment;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import info.hoang8f.android.segmented.SegmentedGroup;
+
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**

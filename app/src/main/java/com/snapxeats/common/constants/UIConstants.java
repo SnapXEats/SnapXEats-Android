@@ -14,6 +14,7 @@ public class UIConstants {
     public static final int WEBVIEW_SCALE = 210;
     public static final String SX_VERSION = "V ";
     public static final String SNAPX_DB_NAME = "SnapXDb";
+    public static final String PACKAGE = "package";
 
     /*NavPrefFragment*/
     public static final int PRICE_AUTO = 0;

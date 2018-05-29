@@ -1,7 +1,6 @@
 package com.snapxeats.common.utilities;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -13,17 +12,11 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
@@ -34,19 +27,21 @@ import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
 import com.snapxeats.common.model.smartphotos.DaoSession;
 import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.home.fragment.snapnshare.ViewPagerAdapter;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.snapxeats.common.constants.UIConstants.MARGIN;
-import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.MILLIES_TWO;
 import static com.snapxeats.common.constants.UIConstants.MILLIS;
 import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC_CONVERSION;
+import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.TEN;
-import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -73,7 +68,7 @@ public class AppUtility {
         snapXDialog.setContext((Activity) context);
         DaoSession daoSession = ((SnapXApplication) context.getApplicationContext()).getDaoSession();
         SnapXDataDao snapxDataDao = daoSession.getSnapXDataDao();
-        if (snapxDataDao.loadAll() != null && snapxDataDao.loadAll().size() > ZERO) {
+        if (null != snapxDataDao.loadAll() && ZERO < snapxDataDao.loadAll().size()) {
             snapXData = snapxDataDao.loadAll().get(ZERO);
         }
     }
@@ -118,7 +113,7 @@ public class AppUtility {
             token = app.getToken();
             if (null != token && !token.isEmpty()) {
                 //TODO: fetch it from DB, assign it to app.token & return that token
-                if (snapXData != null && !snapXData.getToken().isEmpty()) {
+                if (null != snapXData && !snapXData.getToken().isEmpty()) {
                     token = snapXData.getToken(); // fetch it from DB
                 }
                 app.setToken(token);
@@ -128,8 +123,9 @@ public class AppUtility {
 
     public void hideKeyboard() {
         View view = ((Activity) mContext).getCurrentFocus();
-        if (view != null) {
+        if (null != view) {
             InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+            assert null != imm;
             imm.hideSoftInputFromWindow(view.getWindowToken(), ZERO);
         }
     }
@@ -188,7 +184,7 @@ public class AppUtility {
             mCurrentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
 
-        if (mCurrentLocation != null) {
+        if (null != mCurrentLocation) {
             double lat = mCurrentLocation.getLatitude();
             double lng = mCurrentLocation.getLongitude();
         }
@@ -200,11 +196,11 @@ public class AppUtility {
         String placeName = "";
         Address locationAddress = getAddress(location.getLatitude(), location.getLongitude());
 
-        if (locationAddress != null) {
+        if (null != locationAddress) {
 
-            if (locationAddress.getSubLocality() != null) {
+            if (null != locationAddress.getSubLocality()) {
                 placeName = locationAddress.getSubLocality();
-            } else if (locationAddress.getThoroughfare() != null) {
+            } else if (null != locationAddress.getThoroughfare()) {
                 placeName = locationAddress.getThoroughfare();
             }
         }
@@ -296,12 +292,11 @@ public class AppUtility {
     }
 
 
-
     /**
      * Converts milliseconds to seconds
      */
     public String milliSecondsToTimer(long milliseconds) {
-        String finalTimerString ;
+        String finalTimerString;
         String secondsString;
 
         // Convert total duration into time
@@ -320,9 +315,9 @@ public class AppUtility {
         return finalTimerString;
     }
 
-   /**
-    * Reset media player
-    */
+    /**
+     * Reset media player
+     */
     public void resetMediaPlayer(MediaPlayer mediaPlayer) {
         if (null != mediaPlayer) {
             if (mediaPlayer.isPlaying()) {
