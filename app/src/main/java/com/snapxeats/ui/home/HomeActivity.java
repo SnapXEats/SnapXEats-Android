@@ -408,7 +408,30 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onResume() {
         super.onResume();
         setWishlistCount();
-        setUserInfo();
+        updateNavDrawer();
+    }
+
+    private void updateNavDrawer() {
+        initNavHeaderViews();
+        if (dbHelper.getSnapxDataDao().loadAll().size() > ZERO) {
+            txtNotLoggedIn.setVisibility(View.GONE);
+            mLayoutUserData.setVisibility(View.VISIBLE);
+            Picasso.with(getActivity()).load(dbHelper.getSnapxDataDao().loadAll().get(ZERO).getImageUrl())
+                    .placeholder(R.drawable.user_image).into(imgUser);
+            txtUserName.setText(dbHelper.getSnapxDataDao().loadAll().get(ZERO).getUserName());
+            Menu menu = mNavigationView.getMenu();
+            MenuItem menuItem = menu.findItem(R.id.nav_logout);
+            menuItem.setTitle(getString(R.string.log_out));
+
+        } else {
+            mLayoutUserData.setVisibility(View.GONE);
+            txtNotLoggedIn.setVisibility(View.VISIBLE);
+            if (!isLoggedIn()) {
+                Menu menu = mNavigationView.getMenu();
+                MenuItem menuItem = menu.findItem(R.id.nav_logout);
+                menuItem.setTitle(getString(R.string.log_in));
+            }
+        }
     }
 
 

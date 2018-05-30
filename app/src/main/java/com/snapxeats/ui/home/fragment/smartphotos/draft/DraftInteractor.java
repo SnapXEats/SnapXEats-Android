@@ -36,15 +36,14 @@ import static com.snapxeats.common.constants.WebConstants.BASE_URL;
  */
 
 public class DraftInteractor {
+    @Inject
+    AppUtility utility;
+    @Inject
+    LoginUtility loginUtility;
     private Context mContext;
     private DraftContract.DraftPresenter mPresenter;
     private RootInstagram rootInstagram;
     private String instaToken;
-    @Inject
-    AppUtility utility;
-
-    @Inject
-    LoginUtility loginUtility;
 
     @Inject
     DraftInteractor() {
@@ -168,10 +167,7 @@ public class DraftInteractor {
                                 equalsIgnoreCase(mContext.getString(R.string.platform_instagram))) {
                             loginUtility.saveInstaDataInDb(snapXUser.getUserInfo(), instaToken, rootInstagram);
                             loginUtility.getUserPreferences(snapXUser.getUserInfo().getToken());
-                        }
-
-                        /** save facebook data **/
-                        if (snapXUser.getUserInfo().getSocial_platform().
+                        } else if (snapXUser.getUserInfo().getSocial_platform().
                                 equalsIgnoreCase(mContext.getString(R.string.platform_facebook))) {
                             loginUtility.saveFbDataInDb(snapXUser.getUserInfo(), rootInstagram);
                             loginUtility.getUserPreferences(snapXUser.getUserInfo().getToken());

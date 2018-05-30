@@ -3,8 +3,9 @@ package com.snapxeats;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import com.snapxeats.common.model.foodGestures.DaoMaster;
-import com.snapxeats.common.model.foodGestures.DaoSession;
+
+import com.snapxeats.common.model.smartphotos.DaoMaster;
+import com.snapxeats.common.model.smartphotos.DaoSession;
 import com.snapxeats.dagger.AppComponent;
 import com.snapxeats.dagger.DaggerAppComponent;
 import dagger.android.AndroidInjector;
