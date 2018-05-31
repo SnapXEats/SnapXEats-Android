@@ -16,13 +16,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
@@ -40,6 +40,7 @@ import java.util.List;
 import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import static com.snapxeats.common.constants.UIConstants.DIALOG_Y_POSITION;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -147,10 +148,12 @@ public class SmartFragment extends BaseFragment implements SmartContract.SmartVi
         mDialog = new Dialog(getActivity());
         mDialog.setContentView(R.layout.draft_dialog_layout);
         Window window = mDialog.getWindow();
-        if (null != window) {
-            window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            window.setGravity(Gravity.TOP);
-        }
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.y = DIALOG_Y_POSITION;
+
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        window.setGravity(Gravity.TOP);
+        window.setAttributes(params);
 
         initViewsForSmartPhotoDialog();
         if (null == mSmartPhoto.getTextReview() || mSmartPhoto.getTextReview().isEmpty())
@@ -161,13 +164,10 @@ public class SmartFragment extends BaseFragment implements SmartContract.SmartVi
 
         Glide.with(getActivity())
                 .load(mSmartPhoto.getDishImageURL())
-                .apply(new RequestOptions()
-                        .placeholder(R.drawable.ic_restaurant_placeholder)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop()
-                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                        .dontAnimate()
-                        .dontTransform())
+                .asBitmap()
+                .placeholder(R.drawable.ic_restaurant_placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .thumbnail(THUMBNAIL)
                 .into(mImg);
 

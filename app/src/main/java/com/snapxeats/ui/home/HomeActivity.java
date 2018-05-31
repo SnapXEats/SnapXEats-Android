@@ -38,15 +38,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -89,7 +88,6 @@ import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.snapxeats.ui.login.InstagramDialog;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -100,15 +98,13 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import static com.snapxeats.common.Router.Screen.LOGIN;
 import static com.snapxeats.common.constants.UIConstants.BUFFER_SIZE;
 import static com.snapxeats.common.constants.UIConstants.BYTES;
+import static com.snapxeats.common.constants.UIConstants.DIALOG_Y_POSITION;
 import static com.snapxeats.common.constants.UIConstants.LAT;
 import static com.snapxeats.common.constants.UIConstants.LNG;
 import static com.snapxeats.common.constants.UIConstants.LOGOUT_DIALOG_HEIGHT;
@@ -293,9 +289,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         snapXDialog.setContext(this);
         mCallbackManager = CallbackManager.Factory.create();
 
-        // ATTENTION: This was auto-generated to handle app links.
-        setAppLink();
-
         userId = preferences.getString(getString(R.string.user_id), "");
         mRootUserPreference = mPresenter.getUserPreferenceFromDb();
         mSnapxData = mPresenter.getUserDataFromDb();
@@ -352,6 +345,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
+    // ATTENTION: This was auto-generated to handle app links.
     private void setAppLink() {
         Intent appLinkIntent = getIntent();
         if (null != appLinkIntent && null != appLinkIntent.getData()) {
@@ -398,6 +392,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onResume() {
         super.onResume();
+        setAppLink();
         setWishlistCount();
         utility.setUserInfo(mNavigationView);
     }
@@ -909,13 +904,10 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
                 Glide.with(this)
                         .load(restaurantInfo.getRestaurant_logo())
-                        .apply(new RequestOptions()
-                                .placeholder(R.drawable.ic_pref_placeholder)
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .centerCrop()
-                                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                                .dontAnimate()
-                                .dontTransform())
+                        .asBitmap()
+                        .placeholder(R.drawable.ic_pref_placeholder)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                         .thumbnail(THUMBNAIL)
                         .into(mImgRestaurant);
             }
@@ -1066,11 +1058,12 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         mSmartPhotoDialog = new Dialog(this);
         mSmartPhotoDialog.setContentView(R.layout.draft_dialog_layout);
         Window window = mSmartPhotoDialog.getWindow();
-        if (null != window) {
-            window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            window.setGravity(Gravity.START);
-        }
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.y = DIALOG_Y_POSITION;
 
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        window.setGravity(Gravity.TOP);
+        window.setAttributes(params);
         initViewsForSmartPhotoDialog();
 
         //Check duplicate entry for dish to download
@@ -1091,13 +1084,10 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
         Glide.with(this)
                 .load(mSmartPhoto.getDish_image_url())
-                .apply(new RequestOptions()
-                        .placeholder(R.drawable.ic_rest_info_placeholder)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop()
-                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                        .dontAnimate()
-                        .dontTransform())
+                .asBitmap()
+                .placeholder(R.drawable.ic_rest_info_placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .thumbnail(THUMBNAIL)
                 .into(mImg);
 

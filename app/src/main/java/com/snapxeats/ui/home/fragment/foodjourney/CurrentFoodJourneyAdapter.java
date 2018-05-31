@@ -6,17 +6,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.snapxeats.R;
 import com.snapxeats.common.model.foodJourney.UserCurrentWeekHistory;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 
 /**
@@ -81,14 +78,9 @@ public class CurrentFoodJourneyAdapter extends BaseAdapter {
 
             Glide.with(mContext)
                     .load(item.getRestaurant_image_url())
-                    .apply(new RequestOptions()
-                            .placeholder(R.drawable.ic_pref_placeholder)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .centerCrop()
-                            .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
-                            .dontAnimate()
-                            .dontTransform())
-                    .thumbnail(THUMBNAIL)
+                    .placeholder(R.drawable.ic_pref_placeholder)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).thumbnail(THUMBNAIL)
                     .into(mImageView);
 
             mTxtRestaurantName.setText(item.getRestaurant_name());

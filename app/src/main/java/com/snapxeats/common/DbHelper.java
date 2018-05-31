@@ -3,8 +3,8 @@ package com.snapxeats.common;
 import android.content.Context;
 import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.model.SnapXDataDao;
+import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.foodGestures.FoodDislikesDao;
-import com.snapxeats.common.model.smartphotos.DaoSession;
 import com.snapxeats.common.model.smartphotos.RestaurantAminitiesDao;
 import com.snapxeats.common.model.smartphotos.SmartPhotoDao;
 import com.snapxeats.common.model.smartphotos.SnapXDraftPhotoDao;
@@ -15,7 +15,6 @@ import com.snapxeats.common.model.preference.UserFoodPreferencesDao;
 import com.snapxeats.common.model.preference.UserPreferenceDao;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**

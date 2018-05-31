@@ -223,8 +223,6 @@ public class HomeFragment extends BaseFragment implements
         //refresh facebook token
         AccessToken.refreshCurrentAccessTokenAsync();
 
-        mRecyclerView.setNestedScrollingEnabled(false);
-
         selectedCuisineList = new SelectedCuisineList();
 
         preferences = utility.getSharedPreferences();
@@ -344,7 +342,6 @@ public class HomeFragment extends BaseFragment implements
     public void setRecyclerView() {
         getDataFromLocalDB();
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(activity, 2);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         adapter = new HomeAdapter(activity, cuisinesList, new OnDoubleTapListenr() {
             Cuisines cuisines;

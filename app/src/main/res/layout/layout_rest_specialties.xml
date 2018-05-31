@@ -7,7 +7,7 @@
     <ImageView
         android:id="@+id/img_restaurant_specialties"
         android:layout_width="@dimen/dimen_162"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_margin="@dimen/common_dimens_5"
         android:scaleType="centerCrop" />
 </LinearLayout>

@@ -18,15 +18,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.facebook.login.widget.LoginButton;
 import com.snapxeats.BaseFragment;
@@ -48,18 +47,14 @@ import com.snapxeats.ui.home.fragment.smartphotos.AminityAdapter;
 import com.snapxeats.ui.login.InstagramApp;
 import com.snapxeats.ui.review.ReviewDbHelper;
 import com.snapxeats.ui.shareReview.ShareReviewActivity;
-
 import org.greenrobot.greendao.query.QueryBuilder;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
+import static com.snapxeats.common.constants.UIConstants.DIALOG_Y_POSITION;
 import static com.snapxeats.common.constants.UIConstants.SX_BEARER;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
@@ -287,10 +282,13 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
         mDialog = new Dialog(getActivity());
         mDialog.setContentView(R.layout.draft_dialog_layout);
         Window window = mDialog.getWindow();
-        if (null != window) {
-            window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            window.setGravity(Gravity.START);
-        }
+
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.y = DIALOG_Y_POSITION;
+
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        window.setGravity(Gravity.TOP);
+        window.setAttributes(params);
 
         initViewsForSmartPhotoDialog();
         if (null == mSnapXDraftPhoto.getTextReview() || mSnapXDraftPhoto.getTextReview().isEmpty())
@@ -301,14 +299,10 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
 
         Glide.with(getActivity())
                 .load(mSnapXDraftPhoto.getImageURL())
-                .apply(new RequestOptions()
-                        .placeholder(R.drawable.ic_rest_info_placeholder)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop()
-                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                        .dontAnimate()
-                        .dontTransform())
-                .thumbnail(THUMBNAIL)
+                .asBitmap()
+                .placeholder(R.drawable.ic_rest_info_placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).thumbnail(THUMBNAIL)
                 .into(mImg);
 
         //Register listeners

@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.snapxeats.R;
 import com.snapxeats.common.model.smartphotos.SmartPhoto;
@@ -81,14 +80,10 @@ public class SmartAdapter extends RecyclerView.Adapter<SmartAdapter.ViewHolder> 
 
             Glide.with(mContext)
                     .load(smartPhoto.getDishImageURL())
-                    .apply(new RequestOptions()
-                            .placeholder(R.drawable.ic_rest_info_placeholder)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .centerCrop()
-                            .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
-                            .dontAnimate()
-                            .dontTransform())
-                    .thumbnail(THUMBNAIL)
+                    .asBitmap()
+                    .placeholder(R.drawable.ic_rest_info_placeholder)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).thumbnail(THUMBNAIL)
                     .into(mImgView);
 
             mTxtRestName.setText(smartPhoto.getRestaurantName());
