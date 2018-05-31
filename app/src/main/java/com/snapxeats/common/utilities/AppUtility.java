@@ -358,12 +358,11 @@ public class AppUtility {
         initNavHeaderViews(mNavigationView);
         Menu menu = mNavigationView.getMenu();
         MenuItem menuLogoutItem = menu.findItem(R.id.nav_logout);
-        List<SnapXData> data = dbHelper.getSnapxDataDao().loadAll();
-        if (null != snapXData && ZERO < data.size()) {
+        if (null != snapXData) {
             txtNotLoggedIn.setVisibility(View.GONE);
             mLayoutUserData.setVisibility(View.VISIBLE);
-            Picasso.with(mContext).load(data.get(ZERO).getImageUrl()).placeholder(R.drawable.user_image).into(imgUser);
-            txtUserName.setText(data.get(ZERO).getUserName());
+            Picasso.with(mContext).load(snapXData.getImageUrl()).placeholder(R.drawable.user_image).into(imgUser);
+            txtUserName.setText(snapXData.getUserName());
             menuLogoutItem.setTitle(mContext.getString(R.string.log_out));
         } else {
             mLayoutUserData.setVisibility(View.GONE);

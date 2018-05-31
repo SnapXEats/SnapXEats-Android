@@ -301,7 +301,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         mSnapxData = mPresenter.getUserDataFromDb();
         utility.setUserInfo(mNavigationView);
 
-        if (null != mSnapxData && mSnapxData.size() > ZERO) {
+        if (isDataLoaded()) {
             if (mSnapxData.get(ZERO).getIsFirstTimeUser()) {
                 transaction.replace(R.id.frame_layout, navPrefFragment);
             } else {
@@ -318,6 +318,13 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         transaction.commit();
         changeItems();
         enableReceiver();
+    }
+
+    /**
+     * Check id SnapXData is loaded or not
+     */
+    public boolean isDataLoaded() {
+        return null != mSnapxData && ZERO < mSnapxData.size();
     }
 
     private void setNotificationForPhoto() {
@@ -370,7 +377,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         LinearLayout linearLayout = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
                 .getActionView().findViewById(R.id.layout_wishlist_count);
 
-        if (null != mSnapxData && ZERO < mSnapxData.size() && utility.isLoggedIn()) {
+        if (isDataLoaded() && utility.isLoggedIn()) {
             linearLayout.setVisibility(View.VISIBLE);
             TextView view = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
                     .getActionView().findViewById(R.id.txt_count_wishlist);
@@ -709,7 +716,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
             case R.id.img_close:
                 utility.resetMediaPlayer(mMediaPlayer);
-                if (mMediaPlayer != null) {
+                if (null != mMediaPlayer) {
                     mMediaPlayer.release();
                     mMediaPlayer = null;
                 }

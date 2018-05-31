@@ -160,7 +160,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private SnapXUserRequest snapXUserRequest;
     private InstagramApp mApp;
     private String mToken;
-
+    private boolean isDeleted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -415,7 +415,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             if (null != savedAudioPath) {
                 audioFile = Uri.fromFile(savedAudioPath);
             }
-            if (mToken == null) {
+            if (null == mToken) {
                 mPresenter.sendReview(utility.getAuthToken(this), restId, fileImageUri, audioFile, textReview, rating);
             } else {
                 mPresenter.sendReview(SX_BEARER + mToken, restId, fileImageUri, audioFile, textReview, rating);
@@ -469,11 +469,9 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                 setAudioTimer(timeRemaining);
                 mPlayer.seekTo(resumePosition);
                 mPlayer.start();
-            } else {
-                if (null != mPlayer && mPlayer.isPlaying()) {
-                    mPlayer.stop();
-                    mPlayer.reset();
-                }
+            } else if (null != mPlayer && mPlayer.isPlaying()) {
+                mPlayer.stop();
+                mPlayer.reset();
             }
         });
 
@@ -495,6 +493,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             builder1.setMessage(getString(R.string.msg_delete_review))
                     .setPositiveButton(getString(R.string.yes), (dialog1, which) -> {
                         mPlayer = new MediaPlayer();
+                        isPaused = false;
                         mPlayer.stop();
                         mPlayer.reset();
                         mPlayer.release();
@@ -537,7 +536,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                     timeRemaining = millisUntilFinished;
                 }
             }
-
             public void onFinish() {
                 resumePosition = ZERO;
                 mImgPlayRecAudio.setVisibility(View.VISIBLE);
