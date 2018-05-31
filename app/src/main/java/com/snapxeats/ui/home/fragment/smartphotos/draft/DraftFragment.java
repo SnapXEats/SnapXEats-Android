@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -314,7 +313,6 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
 
         //Register listeners
         registerListeners();
-
         mDialog.show();
     }
 
@@ -476,7 +474,6 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 isAudioPlayTap = !isAudioPlayTap;
                 if (isAudioPlayTap) {
                     mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_pause));
-
                     mMediaPlayer.start();
                     mUpdateTimeTask.run();
                 } else {

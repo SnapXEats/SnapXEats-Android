@@ -66,6 +66,7 @@ public class AppUtility {
     private TextView txtUserName;
     private TextView txtNotLoggedIn;
     private LinearLayout mLayoutUserData;
+
     @Inject
     DbHelper dbHelper;
 
@@ -332,12 +333,10 @@ public class AppUtility {
      * Reset media player
      */
     public void resetMediaPlayer(MediaPlayer mediaPlayer) {
-        if (null != mediaPlayer) {
-            if (mediaPlayer.isPlaying()) {
-                mediaPlayer.pause();
-                mediaPlayer.stop();
-                mediaPlayer.reset();
-            }
+        if (null != mediaPlayer && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            mediaPlayer.stop();
+            mediaPlayer.reset();
         }
     }
 
@@ -355,25 +354,22 @@ public class AppUtility {
     /**
      * set user info in navigation drawer
      */
-
-    public void setUserInfo(NavigationView mNavigationView, List<SnapXData> data) {
+    public void setUserInfo(NavigationView mNavigationView) {
         initNavHeaderViews(mNavigationView);
+        Menu menu = mNavigationView.getMenu();
+        MenuItem menuLogoutItem = menu.findItem(R.id.nav_logout);
+        List<SnapXData> data = dbHelper.getSnapxDataDao().loadAll();
         if (null != snapXData && ZERO < data.size()) {
             txtNotLoggedIn.setVisibility(View.GONE);
             mLayoutUserData.setVisibility(View.VISIBLE);
             Picasso.with(mContext).load(data.get(ZERO).getImageUrl()).placeholder(R.drawable.user_image).into(imgUser);
             txtUserName.setText(data.get(ZERO).getUserName());
-            Menu menu = mNavigationView.getMenu();
-            MenuItem menuItem = menu.findItem(R.id.nav_logout);
-            menuItem.setTitle(mContext.getString(R.string.log_out));
-
+            menuLogoutItem.setTitle(mContext.getString(R.string.log_out));
         } else {
             mLayoutUserData.setVisibility(View.GONE);
             txtNotLoggedIn.setVisibility(View.VISIBLE);
             if (!isLoggedIn()) {
-                Menu menu = mNavigationView.getMenu();
-                MenuItem menuItem = menu.findItem(R.id.nav_logout);
-                menuItem.setTitle(mContext.getString(R.string.log_in));
+                menuLogoutItem.setTitle(mContext.getString(R.string.log_in));
             }
         }
     }

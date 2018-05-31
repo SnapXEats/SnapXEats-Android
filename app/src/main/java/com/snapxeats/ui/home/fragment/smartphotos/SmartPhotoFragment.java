@@ -122,7 +122,7 @@ public class SmartPhotoFragment extends BaseFragment {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
-                appUtility.setUserInfo(mNavigationView, dbHelper.getSnapxDataDao().loadAll());
+                appUtility.setUserInfo(mNavigationView);
             }
         };
 

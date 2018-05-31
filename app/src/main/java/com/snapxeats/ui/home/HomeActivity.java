@@ -89,7 +89,6 @@ import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.snapxeats.ui.login.InstagramDialog;
-import com.squareup.picasso.Picasso;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -206,10 +205,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private List<SnapXData> mSnapxData;
     private SharedPreferences preferences;
     private String userId;
-    private CircularImageView imgUser;
-    private TextView txtUserName;
-    private TextView txtNotLoggedIn;
-    private LinearLayout mLayoutUserData;
     private UserPreference mUserPreference;
     private Dialog mCheckInDialog;
     private Dialog mRewardDialog;
@@ -304,8 +299,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         userId = preferences.getString(getString(R.string.user_id), "");
         mRootUserPreference = mPresenter.getUserPreferenceFromDb();
         mSnapxData = mPresenter.getUserDataFromDb();
-
-        setUserInfo();
+        utility.setUserInfo(mNavigationView);
 
         if (null != mSnapxData && mSnapxData.size() > ZERO) {
             if (mSnapxData.get(ZERO).getIsFirstTimeUser()) {
@@ -394,36 +388,11 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
-    public void initNavHeaderViews() {
-        View mNavHeader = mNavigationView.getHeaderView(ZERO);
-        imgUser = mNavHeader.findViewById(R.id.img_user);
-        txtUserName = mNavHeader.findViewById(R.id.txt_user_name);
-        txtNotLoggedIn = mNavHeader.findViewById(R.id.txt_nav_not_logged_in);
-        mLayoutUserData = mNavHeader.findViewById(R.id.layout_user_data);
-    }
-
-    public void setUserInfo() {
-        initNavHeaderViews();
-        if (utility.isLoggedIn() && null != mSnapxData && ZERO < mSnapxData.size()) {
-            Picasso.with(this).load(mSnapxData.get(ZERO).getImageUrl())
-                    .placeholder(R.drawable.user_image).into(imgUser);
-            txtUserName.setText(mSnapxData.get(ZERO).getUserName());
-        } else {
-            mLayoutUserData.setVisibility(View.GONE);
-            txtNotLoggedIn.setVisibility(View.VISIBLE);
-            if (!utility.isLoggedIn()) {
-                Menu menu = mNavigationView.getMenu();
-                MenuItem menuItem = menu.findItem(R.id.nav_logout);
-                menuItem.setTitle(getString(R.string.log_in));
-            }
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
         setWishlistCount();
-        utility.setUserInfo(mNavigationView, dbHelper.getSnapxDataDao().loadAll());
+        utility.setUserInfo(mNavigationView);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

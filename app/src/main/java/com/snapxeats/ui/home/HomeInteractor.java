@@ -265,7 +265,6 @@ public class HomeInteractor {
                         homePresenter.response(SnapXResult.SUCCESS, response.body());
                     }
                 }
-
                 @Override
                 public void onFailure(Call<CheckInRestaurants> call, Throwable t) {
                     homePresenter.response(SnapXResult.FAILURE, null);

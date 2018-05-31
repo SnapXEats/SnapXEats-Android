@@ -78,7 +78,6 @@ public class SplashActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
         checkForCrashes();
-      //  checkLoginStatus();
     }
 
     @Override

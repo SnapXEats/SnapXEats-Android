@@ -206,23 +206,25 @@
                         android:layout_width="@dimen/dimens_60"
                         android:layout_height="@dimen/dimens_60"
                         android:layout_gravity="center_vertical|center"
-                        android:src="@drawable/ic_download_success"/>
+                        android:src="@drawable/ic_download_success" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/common_dimens_5"
                         android:gravity="center_horizontal"
                         android:text="@string/successful"
-                        android:textSize="@dimen/text_size_16"
                         android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/text_size_16"
                         android:textStyle="bold"
-                        android:theme="@style/TextViewStyle"/>
+                        android:theme="@style/TextViewStyle" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
                         android:layout_marginBottom="@dimen/common_dimens_10"
                         android:layout_marginTop="@dimen/common_dimens_10"
+                        android:gravity="center_horizontal"
                         android:text="@string/download_success_msg"
                         android:textColor="@color/text_color_primary"
                         android:textSize="@dimen/txt_size_16" />
