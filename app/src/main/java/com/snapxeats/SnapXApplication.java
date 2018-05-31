@@ -24,9 +24,6 @@ public final class SnapXApplication extends DaggerApplication {
     public void onCreate() {
         super.onCreate();
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, SNAPX_DB_NAME);
-
-        /* While upgrading DB */
-//        helper.onUpgrade(helper.getWritableDatabase(),701,702);
         SQLiteDatabase db = helper.getWritableDatabase();
         daoSession = new DaoMaster(db).newSession();
     }
