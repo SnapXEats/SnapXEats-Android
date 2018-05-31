@@ -134,10 +134,13 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
     @BindView(R.id.drawer_layout)
     protected DrawerLayout mDrawerLayout;
+
     @BindView(R.id.nav_view)
     protected NavigationView mNavigationView;
+
     @BindView(R.id.parent_layout)
     protected View mParentLayout;
+
     //CheckIndialog
     protected LinearLayout mSingleRestLayout;
     protected LinearLayout mNoRestLayout;
@@ -148,38 +151,52 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     protected TextView mTxtRestName;
     protected TextView mTxtCancel;
     protected Button mBtnCheckIn;
+
     @Inject
     HomeFragment homeFragment;
+
     @Inject
     NavPrefFragment navPrefFragment;
+
     @Inject
     WishlistFragment wishlistFragment;
+
     @Inject
     CheckInFragment checkInFragment;
+
     @Inject
     FoodJourneyFragment foodJourneyFragment;
+
     @Inject
     SmartPhotoFragment smartPhotoFragment;
+
     @Inject
     SnapShareFragment snapShareFragment;
+
     @Inject
     HomeContract.HomePresenter mPresenter;
-    @Inject
-    AppUtility mAppUtility;
+
     @Inject
     AppUtility utility;
+
     @Inject
     HomeDbHelper homeDbHelper;
+
     @Inject
     WishlistDbHelper wishlistDbHelper;
+
     @Inject
     RootUserPreference mRootUserPreference;
+
     @Inject
     SnapXDialog snapXDialog;
+
     @Inject
     FoodStackDbHelper foodStackDbHelper;
+
     @Inject
     DbHelper dbHelper;
+
     private SelectedBundle selectedBundle;
     private FragmentTransaction transaction;
     private FragmentManager fragmentManager;
@@ -200,6 +217,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private CheckInAdapter mAdapter;
     private CheckInRequest checkInRequest;
     private String rewards;
+
     //Smart photos
     private Dialog mSmartPhotoDialog;
     private SmartPhotoResponse mSmartPhoto;
@@ -214,10 +232,12 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private int current = ZERO;
     private String imagePath;
     private String audioPath;
+
     private TextView mTxtSmartPhotoRestName;
     private TextView mTxtTimeOfAudio;
     private TextView mTxtSmartRestAddress;
     private TextView mTxtRestReviewContents;
+
     private LinearLayout mLayoutControls;
     private LinearLayout mLayoutDescription;
     private LinearLayout mLayoutInfo;
@@ -226,11 +246,13 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private LinearLayout mLayoutDownloadSuccess;
     private ListView mListAminities;
     private List<String> mAminitiesList;
+
     private boolean isImageTap;
     private boolean isInfoTap;
     private boolean isReviewTap;
     private boolean isAudioViewTap;
     private boolean isAudioPlayTap;
+
     private String dishId;
     private MediaPlayer mMediaPlayer;
     private Handler mHandler = new Handler();
@@ -354,7 +376,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         LinearLayout linearLayout = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
                 .getActionView().findViewById(R.id.layout_wishlist_count);
 
-        if (null != mSnapxData && ZERO < mSnapxData.size() && isLoggedIn()) {
+        if (null != mSnapxData && ZERO < mSnapxData.size() && utility.isLoggedIn()) {
             linearLayout.setVisibility(View.VISIBLE);
             TextView view = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
                     .getActionView().findViewById(R.id.txt_count_wishlist);
@@ -372,31 +394,24 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
-    public boolean isLoggedIn() {
-        SharedPreferences preferences = mAppUtility.getSharedPreferences();
-        String serverUserId = preferences.getString(getString(R.string.user_id), "");
-        return !serverUserId.isEmpty();
-    }
-
     public void initNavHeaderViews() {
         View mNavHeader = mNavigationView.getHeaderView(ZERO);
         imgUser = mNavHeader.findViewById(R.id.img_user);
         txtUserName = mNavHeader.findViewById(R.id.txt_user_name);
         txtNotLoggedIn = mNavHeader.findViewById(R.id.txt_nav_not_logged_in);
-        TextView txtRewards = mNavHeader.findViewById(R.id.txt_nav_rewards);
         mLayoutUserData = mNavHeader.findViewById(R.id.layout_user_data);
     }
 
     public void setUserInfo() {
         initNavHeaderViews();
-        if (isLoggedIn() && null != mSnapxData && ZERO < mSnapxData.size()) {
+        if (utility.isLoggedIn() && null != mSnapxData && ZERO < mSnapxData.size()) {
             Picasso.with(this).load(mSnapxData.get(ZERO).getImageUrl())
                     .placeholder(R.drawable.user_image).into(imgUser);
             txtUserName.setText(mSnapxData.get(ZERO).getUserName());
         } else {
             mLayoutUserData.setVisibility(View.GONE);
             txtNotLoggedIn.setVisibility(View.VISIBLE);
-            if (!isLoggedIn()) {
+            if (!utility.isLoggedIn()) {
                 Menu menu = mNavigationView.getMenu();
                 MenuItem menuItem = menu.findItem(R.id.nav_logout);
                 menuItem.setTitle(getString(R.string.log_in));
@@ -408,32 +423,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onResume() {
         super.onResume();
         setWishlistCount();
-        updateNavDrawer();
+        utility.setUserInfo(mNavigationView, dbHelper.getSnapxDataDao().loadAll());
     }
-
-    private void updateNavDrawer() {
-        initNavHeaderViews();
-        if (dbHelper.getSnapxDataDao().loadAll().size() > ZERO) {
-            txtNotLoggedIn.setVisibility(View.GONE);
-            mLayoutUserData.setVisibility(View.VISIBLE);
-            Picasso.with(getActivity()).load(dbHelper.getSnapxDataDao().loadAll().get(ZERO).getImageUrl())
-                    .placeholder(R.drawable.user_image).into(imgUser);
-            txtUserName.setText(dbHelper.getSnapxDataDao().loadAll().get(ZERO).getUserName());
-            Menu menu = mNavigationView.getMenu();
-            MenuItem menuItem = menu.findItem(R.id.nav_logout);
-            menuItem.setTitle(getString(R.string.log_out));
-
-        } else {
-            mLayoutUserData.setVisibility(View.GONE);
-            txtNotLoggedIn.setVisibility(View.VISIBLE);
-            if (!isLoggedIn()) {
-                Menu menu = mNavigationView.getMenu();
-                MenuItem menuItem = menu.findItem(R.id.nav_logout);
-                menuItem.setTitle(getString(R.string.log_in));
-            }
-        }
-    }
-
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override

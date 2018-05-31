@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -15,8 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.InflateException;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -31,7 +28,6 @@ import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftFragment;
 import com.snapxeats.ui.home.fragment.smartphotos.smart.SmartFragment;
-import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
 
@@ -76,13 +72,13 @@ public class SmartPhotoFragment extends BaseFragment {
 
     private FragmentTransaction fragmentTransaction;
 
+    @Inject
+    AppUtility appUtility;
+
     private CircularImageView imgUser;
     private TextView txtUserName;
     private TextView txtNotLoggedIn;
     private LinearLayout mLayoutUserData;
-
-    @Inject
-    AppUtility appUtility;
 
     @Inject
     public SmartPhotoFragment() {
@@ -126,7 +122,7 @@ public class SmartPhotoFragment extends BaseFragment {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
-                setUserInfo();
+                appUtility.setUserInfo(mNavigationView, dbHelper.getSnapxDataDao().loadAll());
             }
         };
 
@@ -136,44 +132,6 @@ public class SmartPhotoFragment extends BaseFragment {
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         initView();
-    }
-
-    public boolean isLoggedIn() {
-        SharedPreferences preferences = appUtility.getSharedPreferences();
-        String serverUserId = preferences.getString(getString(R.string.user_id), "");
-        return !serverUserId.isEmpty();
-    }
-
-    public void initNavHeaderViews() {
-        View mNavHeader = mNavigationView.getHeaderView(ZERO);
-        imgUser = mNavHeader.findViewById(R.id.img_user);
-        txtUserName = mNavHeader.findViewById(R.id.txt_user_name);
-        txtNotLoggedIn = mNavHeader.findViewById(R.id.txt_nav_not_logged_in);
-        TextView txtRewards = mNavHeader.findViewById(R.id.txt_nav_rewards);
-        mLayoutUserData = mNavHeader.findViewById(R.id.layout_user_data);
-    }
-
-    public void setUserInfo() {
-        initNavHeaderViews();
-        if (dbHelper.getSnapxDataDao().loadAll().size() > ZERO) {
-            txtNotLoggedIn.setVisibility(View.GONE);
-            mLayoutUserData.setVisibility(View.VISIBLE);
-            Picasso.with(getActivity()).load(dbHelper.getSnapxDataDao().loadAll().get(ZERO).getImageUrl())
-                    .placeholder(R.drawable.user_image).into(imgUser);
-            txtUserName.setText(dbHelper.getSnapxDataDao().loadAll().get(ZERO).getUserName());
-            Menu menu = mNavigationView.getMenu();
-            MenuItem menuItem = menu.findItem(R.id.nav_logout);
-            menuItem.setTitle(getString(R.string.log_out));
-
-        } else {
-            mLayoutUserData.setVisibility(View.GONE);
-            txtNotLoggedIn.setVisibility(View.VISIBLE);
-            if (!isLoggedIn()) {
-                Menu menu = mNavigationView.getMenu();
-                MenuItem menuItem = menu.findItem(R.id.nav_logout);
-                menuItem.setTitle(getString(R.string.log_in));
-            }
-        }
     }
 
     private void initView() {

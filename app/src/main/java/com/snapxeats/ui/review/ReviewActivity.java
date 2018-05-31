@@ -91,7 +91,8 @@ import static com.snapxeats.common.constants.UIConstants.ZERO;
  */
 
 public class ReviewActivity extends BaseActivity implements ReviewContract.ReviewView,
-        AppContract.SnapXResults, InstagramDialog.InstagramDialogListener {
+        AppContract.SnapXResults, InstagramDialog.InstagramDialogListener,
+        MediaPlayer.OnCompletionListener {
 
     @BindView(R.id.toolbar_review)
     protected Toolbar mToolbar;
@@ -742,8 +743,9 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        utility.resetMediaPlayer(mPlayer);
-
+        if (null != mPlayer) {
+            mPlayer.stop();
+        }
     }
 
     /**
@@ -769,7 +771,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             public void afterTextChanged(Editable s) {
             }
         });
-
     }
 
     /**
@@ -784,7 +785,15 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     @Override
     public void onPause() {
         super.onPause();
-        utility.resetMediaPlayer(mPlayer);
+        if (null != mPlayer) {
+            mPlayer.pause();
+        }
     }
 
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_play_review));
+        mPlayer.setOnCompletionListener(this);
+        mTimer.setText(utility.milliSecondsToTimer(mPlayer.getCurrentPosition()));
+    }
 }

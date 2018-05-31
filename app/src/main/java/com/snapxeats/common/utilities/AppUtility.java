@@ -10,15 +10,22 @@ import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import com.google.gson.Gson;
+import com.pkmmte.view.CircularImageView;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
+import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.SnapXDataDao;
 import com.snapxeats.common.model.location.Location;
@@ -26,6 +33,7 @@ import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
 import com.snapxeats.common.model.smartphotos.DaoSession;
 import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.home.fragment.snapnshare.ViewPagerAdapter;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.List;
@@ -54,6 +62,12 @@ public class AppUtility {
     private SnapXData snapXData;
     private int dotsCount;
     private ImageView[] dots;
+    private CircularImageView imgUser;
+    private TextView txtUserName;
+    private TextView txtNotLoggedIn;
+    private LinearLayout mLayoutUserData;
+    @Inject
+    DbHelper dbHelper;
 
     @Inject
     public AppUtility() {
@@ -323,6 +337,43 @@ public class AppUtility {
                 mediaPlayer.pause();
                 mediaPlayer.stop();
                 mediaPlayer.reset();
+            }
+        }
+    }
+
+    /**
+     * initialize navigation drawer views
+     */
+    public void initNavHeaderViews(NavigationView mNavigationView) {
+        View mNavHeader = mNavigationView.getHeaderView(ZERO);
+        imgUser = mNavHeader.findViewById(R.id.img_user);
+        txtUserName = mNavHeader.findViewById(R.id.txt_user_name);
+        txtNotLoggedIn = mNavHeader.findViewById(R.id.txt_nav_not_logged_in);
+        mLayoutUserData = mNavHeader.findViewById(R.id.layout_user_data);
+    }
+
+    /**
+     * set user info in navigation drawer
+     */
+
+    public void setUserInfo(NavigationView mNavigationView, List<SnapXData> data) {
+        initNavHeaderViews(mNavigationView);
+        if (null != snapXData && ZERO < data.size()) {
+            txtNotLoggedIn.setVisibility(View.GONE);
+            mLayoutUserData.setVisibility(View.VISIBLE);
+            Picasso.with(mContext).load(data.get(ZERO).getImageUrl()).placeholder(R.drawable.user_image).into(imgUser);
+            txtUserName.setText(data.get(ZERO).getUserName());
+            Menu menu = mNavigationView.getMenu();
+            MenuItem menuItem = menu.findItem(R.id.nav_logout);
+            menuItem.setTitle(mContext.getString(R.string.log_out));
+
+        } else {
+            mLayoutUserData.setVisibility(View.GONE);
+            txtNotLoggedIn.setVisibility(View.VISIBLE);
+            if (!isLoggedIn()) {
+                Menu menu = mNavigationView.getMenu();
+                MenuItem menuItem = menu.findItem(R.id.nav_logout);
+                menuItem.setTitle(mContext.getString(R.string.log_in));
             }
         }
     }

@@ -17,11 +17,15 @@ import com.snapxeats.ui.login.LoginActivity;
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 
 import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.TIME_SECONDS;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 import static com.snapxeats.common.model.SnapXDataDao.Properties.UserId;
 
 /**
@@ -54,23 +58,27 @@ public class SplashActivity extends BaseActivity {
             snapXData = snapxDataDao.queryBuilder()
                     .where(UserId.eq(settings.getString(getString(R.string.user_id), ""))).limit(ONE).unique();
         }
+        checkLoginStatus();
+    }
+
+    public void checkLoginStatus() {
+        new Handler().postDelayed(() -> {
+            //check if facebook user is logged in or not
+            List<SnapXData> snapXData = dbHelper.getSnapxDataDao().loadAll();
+            if (ZERO < snapXData.size() && null != snapXData.get(ZERO).getUserId()) {
+                startActivity(new Intent(this, HomeActivity.class));
+            } else {
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
+            }
+        }, TIME_SECONDS);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         checkForCrashes();
-        int TIME_OUT = 1000;
-        new Handler().postDelayed(() -> {
-            //check if facebook user is logged in or not
-            if (null != snapXData && !snapXData.getUserId().isEmpty()) {
-                startActivity(new Intent(this, HomeActivity.class));
-            } else {
-                startActivity(new Intent(this, LoginActivity.class));
-                finish();
-            }
-        }, TIME_OUT);
-
+      //  checkLoginStatus();
     }
 
     @Override
