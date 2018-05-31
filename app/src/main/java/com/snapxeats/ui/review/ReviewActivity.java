@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -91,7 +92,8 @@ import static com.snapxeats.common.constants.UIConstants.ZERO;
  */
 
 public class ReviewActivity extends BaseActivity implements ReviewContract.ReviewView,
-        AppContract.SnapXResults, InstagramDialog.InstagramDialogListener {
+        AppContract.SnapXResults, InstagramDialog.InstagramDialogListener,
+        MediaPlayer.OnCompletionListener {
 
     @BindView(R.id.toolbar_review)
     protected Toolbar mToolbar;
@@ -158,7 +160,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private SnapXUserRequest snapXUserRequest;
     private InstagramApp mApp;
     private String mToken;
-
+    private boolean isDeleted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,7 +188,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         getReviewData();
         loginUtility.setContext(this);
 
-        /** initialize facebook login **/
+        /** initialize facebook and instagram login **/
         mCallbackManager = CallbackManager.Factory.create();
         initInstagram();
     }
@@ -413,7 +415,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             if (null != savedAudioPath) {
                 audioFile = Uri.fromFile(savedAudioPath);
             }
-            if (mToken == null) {
+            if (null == mToken) {
                 mPresenter.sendReview(utility.getAuthToken(this), restId, fileImageUri, audioFile, textReview, rating);
             } else {
                 mPresenter.sendReview(SX_BEARER + mToken, restId, fileImageUri, audioFile, textReview, rating);
@@ -462,29 +464,25 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             mImgPlayRecAudio.setVisibility(View.GONE);
             mImgPauseRecAudio.setVisibility(View.VISIBLE);
             setAudioTimer((long) seconds * MILLI_TO_SEC);
-            mPlayer = new MediaPlayer();
-            try {
-                mPlayer.setDataSource(savedAudioPath.toString());
-                mPlayer.prepare();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            initMediaPlayer();
             if (ZERO != resumePosition) {
                 setAudioTimer(timeRemaining);
                 mPlayer.seekTo(resumePosition);
                 mPlayer.start();
-            } else {
-                mPlayer.start();
+            } else if (null != mPlayer && mPlayer.isPlaying()) {
+                mPlayer.stop();
+                mPlayer.reset();
             }
         });
 
         /*Finish audio review*/
         mBtnDoneAudio.setOnClickListener(v -> {
             isCanceled = true;
-            if (mPlayer.isPlaying()) {
+            if (null != mPlayer && mPlayer.isPlaying()) {
                 isPaused = false;
                 resumePosition = ZERO;
                 mPlayer.stop();
+                mPlayer.reset();
             }
             dialog.dismiss();
         });
@@ -495,7 +493,9 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             builder1.setMessage(getString(R.string.msg_delete_review))
                     .setPositiveButton(getString(R.string.yes), (dialog1, which) -> {
                         mPlayer = new MediaPlayer();
+                        isPaused = false;
                         mPlayer.stop();
+                        mPlayer.reset();
                         mPlayer.release();
                         boolean deleted = savedAudioPath.delete();
                         if (deleted) {
@@ -511,6 +511,18 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         });
     }
 
+    private void initMediaPlayer() {
+        mPlayer = new MediaPlayer();
+        try {
+            mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mPlayer.setDataSource(savedAudioPath.toString());
+            mPlayer.prepare();
+            mPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setAudioTimer(long millisInFuture) {
         isPaused = false;
         isCanceled = false;
@@ -524,7 +536,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                     timeRemaining = millisUntilFinished;
                 }
             }
-
             public void onFinish() {
                 resumePosition = ZERO;
                 mImgPlayRecAudio.setVisibility(View.VISIBLE);
@@ -742,8 +753,10 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        utility.resetMediaPlayer(mPlayer);
-
+        if (null != mPlayer && mPlayer.isPlaying()) {
+            mPlayer.stop();
+            mPlayer.reset();
+        }
     }
 
     /**
@@ -769,7 +782,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             public void afterTextChanged(Editable s) {
             }
         });
-
     }
 
     /**
@@ -784,7 +796,20 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     @Override
     public void onPause() {
         super.onPause();
-        utility.resetMediaPlayer(mPlayer);
+        if (null != mPlayer && mPlayer.isPlaying()) {
+            mPlayer.pause();
+        }
     }
 
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_play_review));
+        try {
+            mPlayer.setDataSource(savedAudioPath.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mPlayer.setOnCompletionListener(this);
+        mTimer.setText(utility.milliSecondsToTimer(mPlayer.getCurrentPosition()));
+    }
 }

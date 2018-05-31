@@ -313,7 +313,6 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
 
         //Register listeners
         registerListeners();
-
         mDialog.show();
     }
 
@@ -475,7 +474,6 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
                 isAudioPlayTap = !isAudioPlayTap;
                 if (isAudioPlayTap) {
                     mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_pause));
-
                     mMediaPlayer.start();
                     mUpdateTimeTask.run();
                 } else {

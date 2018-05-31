@@ -3,6 +3,7 @@ package com.snapxeats.ui.home;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.facebook.login.LoginManager;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.DbHelper;
@@ -48,16 +49,22 @@ import static com.snapxeats.common.utilities.NoNetworkResults.SMART_PHOTO;
 public class HomeInteractor {
     @Inject
     AppUtility utility;
+
     @Inject
     HomeDbHelper homeDbHelper;
+
     @Inject
     DbHelper dbHelper;
+
     @Inject
     WishlistDbHelper wishlistDbHelper;
+
     @Inject
     RootUserPreference rootUserPreference;
+
     @Inject
     LoginUtility loginUtility;
+
     private Context mContext;
     private RootInstagram rootInstagram;
     private String instaToken;
@@ -224,7 +231,6 @@ public class HomeInteractor {
 
         } else {
             homePresenter.response(SnapXResult.NONETWORK, null);
-
         }
     }
 
@@ -238,6 +244,9 @@ public class HomeInteractor {
         dbHelper.getDaoSesion().getUserFoodPreferencesDao().deleteAll();
         dbHelper.getDaoSesion().getUserCuisinePreferencesDao().deleteAll();
         dbHelper.getDaoSesion().getUserPreferenceDao().deleteAll();
+        //clear facebook session
+        LoginManager.getInstance().logOut();
+
         dbHelper.getDaoSesion().clear();
 
         SnapXApplication app = (SnapXApplication) mContext.getApplicationContext();
@@ -256,7 +265,6 @@ public class HomeInteractor {
                         homePresenter.response(SnapXResult.SUCCESS, response.body());
                     }
                 }
-
                 @Override
                 public void onFailure(Call<CheckInRestaurants> call, Throwable t) {
                     homePresenter.response(SnapXResult.FAILURE, null);

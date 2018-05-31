@@ -143,17 +143,11 @@ public class LoginUtility {
             snapXData.setImageUrl(rootInstagram.getData().getProfile_picture());
             snapXData.setUserName(rootInstagram.getData().getFull_name());
         }
-        if (ZERO == snapxDataDao.loadAll().size()) {
-            snapxDataDao.insert(snapXData);
-        } else {
-            snapxDataDao.update(snapXData);
-        }
     }
 
     public void saveFbDataInDb(SnapXUser snapXUser, RootInstagram rootInstagram) {
         saveServerDataInDb(snapXUser, rootInstagram);
         saveWishlistDataInDb(snapXUser);
-
         snapXData.setUserId(AccessToken.getCurrentAccessToken().getUserId());
         snapXData.setSocialToken(AccessToken.getCurrentAccessToken().getToken());
         if (ZERO == snapxDataDao.loadAll().size()) {

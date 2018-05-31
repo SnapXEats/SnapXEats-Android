@@ -18,11 +18,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
+import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftFragment;
 import com.snapxeats.ui.home.fragment.smartphotos.smart.SmartFragment;
 
@@ -70,6 +73,14 @@ public class SmartPhotoFragment extends BaseFragment {
     private FragmentTransaction fragmentTransaction;
 
     @Inject
+    AppUtility appUtility;
+
+    private CircularImageView imgUser;
+    private TextView txtUserName;
+    private TextView txtNotLoggedIn;
+    private LinearLayout mLayoutUserData;
+
+    @Inject
     public SmartPhotoFragment() {
         // Required empty public constructor
     }
@@ -107,7 +118,14 @@ public class SmartPhotoFragment extends BaseFragment {
         mToolbar.setNavigationOnClickListener(v -> mDrawerLayout.openDrawer(Gravity.START));
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                appUtility.setUserInfo(mNavigationView);
+            }
+        };
+
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -147,7 +165,7 @@ public class SmartPhotoFragment extends BaseFragment {
             fragmentTransaction.commit();
         } else {
             mBtnDraft.setEnabled(false);
-            mBtnDraft.setTextColor(ContextCompat.getColor(getActivity(),R.color.text_color_tertiary));
+            mBtnDraft.setTextColor(ContextCompat.getColor(getActivity(), R.color.text_color_tertiary));
         }
 
         if (null != dbHelper.getSmartPhotoDao().loadAll()
@@ -160,7 +178,7 @@ public class SmartPhotoFragment extends BaseFragment {
             fragmentTransaction.commit();
         } else {
             mBtnSmartPhotos.setEnabled(false);
-            mBtnSmartPhotos.setTextColor(ContextCompat.getColor(getActivity(),R.color.text_color_tertiary));
+            mBtnSmartPhotos.setTextColor(ContextCompat.getColor(getActivity(), R.color.text_color_tertiary));
         }
     }
 

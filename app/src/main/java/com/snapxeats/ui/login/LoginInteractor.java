@@ -31,25 +31,20 @@ import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 @Singleton
 public class LoginInteractor {
+    @Inject
+    public AppUtility appUtility;
+    @Inject
+    DbHelper dbHelper;
+    @Inject
+    WishlistDbHelper wishlistDbHelper;
+    @Inject
+    LoginDbHelper loginDbHelper;
+    @Inject
+    LoginUtility loginUtility;
     private LoginContract.LoginPresenter mLoginPresenter;
     private Context mContext;
     private RootInstagram rootInstagram;
     private String token;
-
-    @Inject
-    public AppUtility appUtility;
-
-    @Inject
-    DbHelper dbHelper;
-
-    @Inject
-    WishlistDbHelper wishlistDbHelper;
-
-    @Inject
-    LoginDbHelper loginDbHelper;
-
-    @Inject
-    LoginUtility loginUtility;
 
     @Inject
     public LoginInteractor() {
@@ -73,24 +68,29 @@ public class LoginInteractor {
      * @param token
      */
     public void getInstaInfo(String token) {
-        this.token = token;
-        ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
-        Call<RootInstagram> snapXUserCall = apiHelper.getInstagramInfo(token);
-        snapXUserCall.enqueue(new Callback<RootInstagram>() {
-            @Override
-            public void onResponse(Call<RootInstagram> call, Response<RootInstagram> response) {
-                if (response.isSuccessful() && null != response.body()) {
-                    rootInstagram = response.body();
-                    SnapXUserRequest snapXUserRequest = new SnapXUserRequest(rootInstagram.getInstagramToken(),
-                            mContext.getString(R.string.platform_instagram), rootInstagram.getData().getId());
-                    getUserData(snapXUserRequest);
+        if (NetworkUtility.isNetworkAvailable(mContext)) {
+            this.token = token;
+            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            Call<RootInstagram> snapXUserCall = apiHelper.getInstagramInfo(token);
+            snapXUserCall.enqueue(new Callback<RootInstagram>() {
+                @Override
+                public void onResponse(Call<RootInstagram> call, Response<RootInstagram> response) {
+                    if (response.isSuccessful() && null != response.body()) {
+                        rootInstagram = response.body();
+                        SnapXUserRequest snapXUserRequest = new SnapXUserRequest(rootInstagram.getInstagramToken(),
+                                mContext.getString(R.string.platform_instagram), rootInstagram.getData().getId());
+                        getUserData(snapXUserRequest);
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<RootInstagram> call, Throwable t) {
-            }
-        });
+                @Override
+                public void onFailure(Call<RootInstagram> call, Throwable t) {
+                    mLoginPresenter.response(SnapXResult.FAILURE, null);
+                }
+            });
+        } else {
+            mLoginPresenter.response(SnapXResult.NONETWORK, null);
+        }
     }
 
     /**
@@ -121,10 +121,7 @@ public class LoginInteractor {
                                 equalsIgnoreCase(mContext.getString(R.string.platform_instagram))) {
                             loginUtility.saveInstaDataInDb(snapXUser.getUserInfo(), token, rootInstagram);
                             loginUtility.getUserPreferences(snapXUser.getUserInfo().getToken());
-                        }
-
-                        /** save facebook data **/
-                        if (snapXUser.getUserInfo().getSocial_platform().
+                        } else if (snapXUser.getUserInfo().getSocial_platform().
                                 equalsIgnoreCase(mContext.getString(R.string.platform_facebook))) {
                             loginUtility.saveFbDataInDb(snapXUser.getUserInfo(), rootInstagram);
                             loginUtility.getUserPreferences(snapXUser.getUserInfo().getToken());

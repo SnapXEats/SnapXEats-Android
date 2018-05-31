@@ -89,7 +89,6 @@ import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.snapxeats.ui.login.InstagramDialog;
-import com.squareup.picasso.Picasso;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -134,10 +133,13 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
     @BindView(R.id.drawer_layout)
     protected DrawerLayout mDrawerLayout;
+
     @BindView(R.id.nav_view)
     protected NavigationView mNavigationView;
+
     @BindView(R.id.parent_layout)
     protected View mParentLayout;
+
     //CheckIndialog
     protected LinearLayout mSingleRestLayout;
     protected LinearLayout mNoRestLayout;
@@ -148,38 +150,52 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     protected TextView mTxtRestName;
     protected TextView mTxtCancel;
     protected Button mBtnCheckIn;
+
     @Inject
     HomeFragment homeFragment;
+
     @Inject
     NavPrefFragment navPrefFragment;
+
     @Inject
     WishlistFragment wishlistFragment;
+
     @Inject
     CheckInFragment checkInFragment;
+
     @Inject
     FoodJourneyFragment foodJourneyFragment;
+
     @Inject
     SmartPhotoFragment smartPhotoFragment;
+
     @Inject
     SnapShareFragment snapShareFragment;
+
     @Inject
     HomeContract.HomePresenter mPresenter;
-    @Inject
-    AppUtility mAppUtility;
+
     @Inject
     AppUtility utility;
+
     @Inject
     HomeDbHelper homeDbHelper;
+
     @Inject
     WishlistDbHelper wishlistDbHelper;
+
     @Inject
     RootUserPreference mRootUserPreference;
+
     @Inject
     SnapXDialog snapXDialog;
+
     @Inject
     FoodStackDbHelper foodStackDbHelper;
+
     @Inject
     DbHelper dbHelper;
+
     private SelectedBundle selectedBundle;
     private FragmentTransaction transaction;
     private FragmentManager fragmentManager;
@@ -189,10 +205,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private List<SnapXData> mSnapxData;
     private SharedPreferences preferences;
     private String userId;
-    private CircularImageView imgUser;
-    private TextView txtUserName;
-    private TextView txtNotLoggedIn;
-    private LinearLayout mLayoutUserData;
     private UserPreference mUserPreference;
     private Dialog mCheckInDialog;
     private Dialog mRewardDialog;
@@ -200,6 +212,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private CheckInAdapter mAdapter;
     private CheckInRequest checkInRequest;
     private String rewards;
+
     //Smart photos
     private Dialog mSmartPhotoDialog;
     private SmartPhotoResponse mSmartPhoto;
@@ -214,10 +227,12 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private int current = ZERO;
     private String imagePath;
     private String audioPath;
+
     private TextView mTxtSmartPhotoRestName;
     private TextView mTxtTimeOfAudio;
     private TextView mTxtSmartRestAddress;
     private TextView mTxtRestReviewContents;
+
     private LinearLayout mLayoutControls;
     private LinearLayout mLayoutDescription;
     private LinearLayout mLayoutInfo;
@@ -226,11 +241,13 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private LinearLayout mLayoutDownloadSuccess;
     private ListView mListAminities;
     private List<String> mAminitiesList;
+
     private boolean isImageTap;
     private boolean isInfoTap;
     private boolean isReviewTap;
     private boolean isAudioViewTap;
     private boolean isAudioPlayTap;
+
     private String dishId;
     private MediaPlayer mMediaPlayer;
     private Handler mHandler = new Handler();
@@ -282,10 +299,9 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         userId = preferences.getString(getString(R.string.user_id), "");
         mRootUserPreference = mPresenter.getUserPreferenceFromDb();
         mSnapxData = mPresenter.getUserDataFromDb();
+        utility.setUserInfo(mNavigationView);
 
-        setUserInfo();
-
-        if (null != mSnapxData && mSnapxData.size() > ZERO) {
+        if (isDataLoaded()) {
             if (mSnapxData.get(ZERO).getIsFirstTimeUser()) {
                 transaction.replace(R.id.frame_layout, navPrefFragment);
             } else {
@@ -302,6 +318,13 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         transaction.commit();
         changeItems();
         enableReceiver();
+    }
+
+    /**
+     * Check id SnapXData is loaded or not
+     */
+    public boolean isDataLoaded() {
+        return null != mSnapxData && ZERO < mSnapxData.size();
     }
 
     private void setNotificationForPhoto() {
@@ -354,7 +377,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         LinearLayout linearLayout = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
                 .getActionView().findViewById(R.id.layout_wishlist_count);
 
-        if (null != mSnapxData && ZERO < mSnapxData.size() && isLoggedIn()) {
+        if (isDataLoaded() && utility.isLoggedIn()) {
             linearLayout.setVisibility(View.VISIBLE);
             TextView view = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
                     .getActionView().findViewById(R.id.txt_count_wishlist);
@@ -372,45 +395,12 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
-    public boolean isLoggedIn() {
-        SharedPreferences preferences = mAppUtility.getSharedPreferences();
-        String serverUserId = preferences.getString(getString(R.string.user_id), "");
-        return !serverUserId.isEmpty();
-    }
-
-    public void initNavHeaderViews() {
-        View mNavHeader = mNavigationView.getHeaderView(ZERO);
-        imgUser = mNavHeader.findViewById(R.id.img_user);
-        txtUserName = mNavHeader.findViewById(R.id.txt_user_name);
-        txtNotLoggedIn = mNavHeader.findViewById(R.id.txt_nav_not_logged_in);
-        TextView txtRewards = mNavHeader.findViewById(R.id.txt_nav_rewards);
-        mLayoutUserData = mNavHeader.findViewById(R.id.layout_user_data);
-    }
-
-    public void setUserInfo() {
-        initNavHeaderViews();
-        if (isLoggedIn() && null != mSnapxData && ZERO < mSnapxData.size()) {
-            Picasso.with(this).load(mSnapxData.get(ZERO).getImageUrl())
-                    .placeholder(R.drawable.user_image).into(imgUser);
-            txtUserName.setText(mSnapxData.get(ZERO).getUserName());
-        } else {
-            mLayoutUserData.setVisibility(View.GONE);
-            txtNotLoggedIn.setVisibility(View.VISIBLE);
-            if (!isLoggedIn()) {
-                Menu menu = mNavigationView.getMenu();
-                MenuItem menuItem = menu.findItem(R.id.nav_logout);
-                menuItem.setTitle(getString(R.string.log_in));
-            }
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
         setWishlistCount();
-        setUserInfo();
+        utility.setUserInfo(mNavigationView);
     }
-
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -726,7 +716,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
             case R.id.img_close:
                 utility.resetMediaPlayer(mMediaPlayer);
-                if (mMediaPlayer != null) {
+                if (null != mMediaPlayer) {
                     mMediaPlayer.release();
                     mMediaPlayer = null;
                 }

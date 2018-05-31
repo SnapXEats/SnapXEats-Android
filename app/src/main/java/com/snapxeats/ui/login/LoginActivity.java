@@ -162,7 +162,6 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     public void btnLoginInstagram(View view) {
         if (NetworkUtility.isNetworkAvailable(this)) {
             mApp.authorize();
-
         } else {
             showNetworkErrorDialog((dialog, which) -> {
                 if (!NetworkUtility.isNetworkAvailable(getActivity())) {
