@@ -27,7 +27,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
@@ -247,14 +246,9 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
 
             Glide.with(getActivity())
                     .load(restaurant_speciality.get(index).getDish_image_url())
-                    .apply(new RequestOptions()
-                            .placeholder(R.drawable.ic_rest_info_placeholder)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .centerCrop()
-                            .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
-                            .dontAnimate()
-                            .dontTransform())
-                    .thumbnail(THUMBNAIL)
+                    .placeholder(R.drawable.ic_rest_info_placeholder)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).thumbnail(THUMBNAIL)
                     .into(imageView);
             mLayoutRestSpecialties.addView(view);
         }

@@ -30,10 +30,8 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -61,19 +59,15 @@ import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.login.InstagramApp;
 import com.snapxeats.ui.login.InstagramDialog;
 import com.snapxeats.ui.shareReview.ShareReviewActivity;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.snapxeats.common.constants.UIConstants.INT_TEN;
@@ -205,15 +199,12 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             }
         }
 
-        Glide.with(this)
+        Glide.with(getActivity())
                 .load(image_path)
-                .apply(new RequestOptions()
-                        .placeholder(R.drawable.ic_rest_info_placeholder)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop()
-                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                        .dontAnimate()
-                        .dontTransform())
+                .asBitmap()
+                .placeholder(R.drawable.ic_rest_info_placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .thumbnail(THUMBNAIL)
                 .into(mImgRestPhoto);
 
@@ -471,7 +462,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                 mPlayer.start();
             } else if (null != mPlayer && mPlayer.isPlaying()) {
                 mPlayer.stop();
-                mPlayer.reset();
             }
         });
 
@@ -482,7 +472,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                 isPaused = false;
                 resumePosition = ZERO;
                 mPlayer.stop();
-                mPlayer.reset();
             }
             dialog.dismiss();
         });

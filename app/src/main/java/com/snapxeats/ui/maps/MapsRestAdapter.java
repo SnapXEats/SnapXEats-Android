@@ -8,10 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
@@ -19,7 +17,6 @@ import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.ui.restaurantInfo.RestaurantInfoActivity;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -45,15 +42,12 @@ public class MapsRestAdapter extends RecyclerView.Adapter<MapsRestAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (ZERO != stackData.getDishesInfo().get(position).getRestaurantDishes().size()) {
-            Glide.with(holder.itemView.getContext())
+
+            Glide.with(mContext)
                     .load(String.valueOf(stackData.getDishesInfo().get(position).getRestaurantDishes().get(ZERO).getDish_image_url()))
-                    .apply(new RequestOptions()
-                            .placeholder(R.drawable.ic_pref_placeholder)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .centerCrop()
-                            .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
-                            .dontAnimate()
-                            .dontTransform())
+                    .placeholder(R.drawable.ic_pref_placeholder)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                     .thumbnail(THUMBNAIL)
                     .into(holder.imgRestaurant);
         }

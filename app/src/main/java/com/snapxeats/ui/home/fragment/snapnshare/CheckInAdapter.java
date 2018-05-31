@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.R;
@@ -20,7 +19,6 @@ import com.snapxeats.common.model.checkin.RestaurantInfo;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 
 /**
@@ -85,15 +83,12 @@ public class CheckInAdapter extends RecyclerView.Adapter<CheckInAdapter.ViewHold
             } else {
                 mParentLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorWhite));
             }
+
             Glide.with(mContext)
                     .load(restaurantInfo.getRestaurant_logo())
-                    .apply(new RequestOptions()
-                            .placeholder(R.drawable.ic_pref_placeholder)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .centerCrop()
-                            .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
-                            .dontAnimate()
-                            .dontTransform())
+                    .placeholder(R.drawable.ic_pref_placeholder)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                     .thumbnail(THUMBNAIL)
                     .into(mImgRestaurant);
 

@@ -149,5 +149,6 @@ public class UIConstants {
     public static final int BYTES = 1024;
     public static final int DOWNLOAD_PERMISSION_CODE = 10;
     public static final long TIME_DELAY = 250;
+    public static final int DIALOG_Y_POSITION = 120;
 
 }

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.AppUtility;
@@ -242,6 +243,22 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
 
         /*set adapter for restaurant images*/
         RestImagesAdapter mRestInfoAdapter = new RestImagesAdapter(RestaurantInfoActivity.this, mRestaurantPicsList);
+        mRestInfoViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                SnapXToast.showToast(RestaurantInfoActivity.this,"ViewPager clicked");
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         mRestInfoViewPager.setAdapter(mRestInfoAdapter);
     }
 

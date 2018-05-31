@@ -8,16 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.snapxeats.R;
 import com.snapxeats.common.model.smartphotos.SnapXDraftPhoto;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
@@ -79,16 +75,13 @@ public class DraftAdapter extends RecyclerView.Adapter<DraftAdapter.ViewHolder> 
         }
 
         public void setData(SnapXDraftPhoto snapXDraftPhoto) {
+
             Glide.with(mContext)
                     .load(snapXDraftPhoto.getImageURL())
-                    .apply(new RequestOptions()
-                            .placeholder(R.drawable.ic_rest_info_placeholder)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .centerCrop()
-                            .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                            .dontAnimate()
-                            .dontTransform())
-                    .thumbnail(THUMBNAIL)
+                    .asBitmap()
+                    .placeholder(R.drawable.ic_rest_info_placeholder)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).thumbnail(THUMBNAIL)
                     .into(mImgView);
 
             mTxtRestName.setText(snapXDraftPhoto.getRestaurantName());

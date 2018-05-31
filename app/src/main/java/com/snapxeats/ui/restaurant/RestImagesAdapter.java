@@ -8,15 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.snapxeats.R;
 import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
 import java.util.List;
-
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 
 /**
@@ -52,14 +49,11 @@ public class RestImagesAdapter extends PagerAdapter {
 
         Glide.with(mContext)
                 .load(restaurantPicsList.get(position).getDish_image_url())
-                .apply(new RequestOptions()
-                        .placeholder(R.drawable.ic_rest_info_placeholder)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop()
-                        .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
-                        .dontAnimate()
-                        .dontTransform())
-                .thumbnail(THUMBNAIL).into(imageView);
+                .placeholder(R.drawable.ic_rest_info_placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).thumbnail(THUMBNAIL)
+                .into(imageView);
+
         container.addView(itemView);
         return itemView;
     }

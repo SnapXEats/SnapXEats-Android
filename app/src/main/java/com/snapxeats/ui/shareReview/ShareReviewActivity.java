@@ -11,10 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -101,16 +99,12 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         photoId = getIntent().getExtras().getString(getString(R.string.photo_id));
 
         if (null != mSnapResponse) {
+
             Glide.with(this)
                     .load(mSnapResponse.getDish_image_url())
-                    .apply(new RequestOptions()
-                            .placeholder(R.drawable.ic_rest_info_placeholder)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .centerCrop()
-                            .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
-                            .dontAnimate()
-                            .dontTransform())
-                    .thumbnail(THUMBNAIL)
+                    .placeholder(R.drawable.ic_rest_info_placeholder)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).thumbnail(THUMBNAIL)
                     .into(mImgRest);
             mImgRestName.setText(mSnapResponse.getRestaurant_name());
             mTxtMessage.setText(mSnapResponse.getMessage());

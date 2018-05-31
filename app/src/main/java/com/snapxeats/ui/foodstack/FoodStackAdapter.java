@@ -8,10 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.snapxeats.R;
 import java.util.List;
@@ -43,15 +41,12 @@ public class FoodStackAdapter extends ArrayAdapter<FoodStackData> {
         }
         FoodStackData stackData = dataList.get(position);
         holder.mTxtDishName.setText(stackData.getName());
+
         Glide.with(getContext())
                 .load(stackData.getUrl().get(position))
-                .apply(new RequestOptions()
-                        .placeholder(R.drawable.ic_foodstack_placeholder)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop()
-                        .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
-                        .dontAnimate()
-                        .dontTransform())
+                .placeholder(R.drawable.ic_foodstack_placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .thumbnail(THUMBNAIL)
                 .into(holder.mImgDishes);
         return contentView;
