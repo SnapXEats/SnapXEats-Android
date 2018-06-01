@@ -10,6 +10,7 @@ import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -32,6 +33,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +46,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
@@ -88,6 +91,7 @@ import com.snapxeats.ui.home.fragment.snapnshare.SnapShareFragment;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.snapxeats.ui.login.InstagramDialog;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -95,12 +99,19 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 import static com.snapxeats.common.Router.Screen.LOGIN;
 import static com.snapxeats.common.constants.UIConstants.BUFFER_SIZE;
 import static com.snapxeats.common.constants.UIConstants.BYTES;
@@ -110,6 +121,8 @@ import static com.snapxeats.common.constants.UIConstants.LNG;
 import static com.snapxeats.common.constants.UIConstants.LOGOUT_DIALOG_HEIGHT;
 import static com.snapxeats.common.constants.UIConstants.NOTIFICATION_ID;
 import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.PHOTO_NOTIFICATION_REQUEST_CODE;
+import static com.snapxeats.common.constants.UIConstants.PHOTO_NOTIFICATION_TIME;
 import static com.snapxeats.common.constants.UIConstants.STORAGE_REQUEST_PERMISSION;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
@@ -643,6 +656,24 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
      * Show check-In dialog
      */
     private void showCheckInDialog() {
+        initCheckInViews();
+        viewTreeObsCheckIn();
+        showProgressDialog();
+        mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
+    }
+
+    private void viewTreeObsCheckIn() {
+        ViewTreeObserver viewTreeObserver = mRecyclerView.getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener(() -> {
+            for (RestaurantInfo restaurantInfo : mRestaurantList) {
+                if (restaurantInfo.isSelected()) {
+                    mBtnCheckIn.setBackground(getDrawable(R.drawable.custom_button_selected));
+                    mBtnCheckIn.setEnabled(true);
+                }
+            }
+        });
+    }
+    private void initCheckInViews() {
         mCheckInDialog = new Dialog(this);
         mCheckInDialog.setContentView(R.layout.manual_checkin_dialog);
         mCheckInDialog.setCancelable(true);
@@ -667,19 +698,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         mCheckInDialog.findViewById(R.id.btn_check_in).setOnClickListener(this);
         mCheckInDialog.findViewById(R.id.txt_cancel).setOnClickListener(this);
         mCheckInDialog.findViewById(R.id.btn_okay).setOnClickListener(this);
-
-        ViewTreeObserver viewTreeObserver = mRecyclerView.getViewTreeObserver();
-        viewTreeObserver.addOnGlobalLayoutListener(() -> {
-            for (RestaurantInfo restaurantInfo : mRestaurantList) {
-                if (restaurantInfo.isSelected()) {
-                    mBtnCheckIn.setBackground(getDrawable(R.drawable.custom_button_selected));
-                    mBtnCheckIn.setEnabled(true);
-                }
-            }
-        });
-
-        showProgressDialog();
-        mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
     }
 
     @Override

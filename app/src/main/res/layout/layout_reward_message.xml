@@ -10,8 +10,8 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="@dimen/dimen_120"
+            android:layout_height="@dimen/dimen_120"
             android:layout_margin="@dimen/common_dimens_30"
             android:src="@drawable/ic_reward_box" />
 
@@ -40,6 +40,57 @@
             android:gravity="center_horizontal"
             android:padding="@dimen/common_dimens_5"
             android:text="@string/reward_points" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         <Button
             android:id="@+id/btn_continue"

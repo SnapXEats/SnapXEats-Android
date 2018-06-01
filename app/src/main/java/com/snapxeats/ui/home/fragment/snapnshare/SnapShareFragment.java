@@ -103,7 +103,6 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = null;
         try {
             view = inflater.inflate(R.layout.fragment_snap_share, container, false);

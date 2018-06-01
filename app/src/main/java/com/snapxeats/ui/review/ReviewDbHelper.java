@@ -46,14 +46,14 @@ public class ReviewDbHelper {
         dbHelper.setContext(mContext);
     }
 
-    void saveSnapDataInDb(String restId,
-                          String restaurant_name,
-                          String restAddress,
-                          String image_path,
-                          String audio_path,
-                          String textReview,
-                          int rating,
-                          List<String> restaurantAminities) {
+    String saveSnapDataInDb(String restId,
+                            String restaurant_name,
+                            String restAddress,
+                            String image_path,
+                            String audio_path,
+                            String textReview,
+                            int rating,
+                            List<String> restaurantAminities) {
 
         String smartPhoto_Draft_Stored_id =
                 new SimpleDateFormat(mContext.getString(R.string.date_time_pattern)).format(new Date());
@@ -82,6 +82,7 @@ public class ReviewDbHelper {
         }
         dbHelper.getDraftPhotoDao().insert(snapXDraftPhoto);
         new DraftAdapter().notifyDataSetChanged();
+        return smartPhoto_Draft_Stored_id;
     }
 
     public List<SnapXDraftPhoto> getDraftData() {
