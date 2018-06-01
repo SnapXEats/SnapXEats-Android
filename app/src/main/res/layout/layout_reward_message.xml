@@ -41,67 +41,16 @@
             android:padding="@dimen/common_dimens_5"
             android:text="@string/reward_points" />
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         <Button
             android:id="@+id/btn_continue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/Continue"
-            android:textColor="@color/colorPrimary"
             android:layout_margin="@dimen/common_dimens_25"
+            android:background="@drawable/continue_button"
             android:paddingLeft="@dimen/common_dimens_30"
             android:paddingRight="@dimen/common_dimens_30"
-            android:background="@drawable/continue_button"/>
+            android:text="@string/Continue"
+            android:textColor="@color/colorPrimary" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

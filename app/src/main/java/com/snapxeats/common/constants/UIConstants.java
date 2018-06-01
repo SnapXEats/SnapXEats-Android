@@ -9,7 +9,6 @@ public class UIConstants {
     public static final int ONE = 1;
 
     public static final int PROFILE_WIDTH_HEIGHT = 50;
-    public static final int PROFILE_HEIGHT = 50;
     public static final int PADDING = 20;
     public static final int WEBVIEW_SCALE = 210;
     public static final String SX_VERSION = "V ";
@@ -89,7 +88,6 @@ public class UIConstants {
     /*HomeInteractor*/
     public static final int ACCESS_FINE_LOCATION = 1;
     public static final int DEVICE_LOCATION = 2;
-    public static final int ROUTE_PADDING = (int) 0.80;
     public static final int CHECKIN_DIALOG_WIDTH = 950;
     public static final int CHECKIN_DIALOG_HEIGHT = 1250;
     public static final int CHECKIN_SINGLE_ITEM_DIALOG_HEIGHT = 1000;
@@ -99,11 +97,9 @@ public class UIConstants {
     public static final int REWARD_DIALOG_WIDTH = 800;
     public static final int REWARD_DIALOG_HEIGHT = 1100;
     public static final int LOGOUT_DIALOG_HEIGHT = 500;
-    public static final int WISHLIST_DIALOG_WIDTH = 800;
 
     public static final String ACTION_LOCATION_GET = "snapxeats.GET_LOCATION";
     public static final int REQUEST_PERMISSION_CODE = 1;
-
 
     /*Snap N Share*/
     public static final int MARGIN = 8;
@@ -135,19 +131,16 @@ public class UIConstants {
     public static final long MILLI_TO_SEC = 1000;
     public static final long MILLI_TO_SEC_CONVERSION = 1000;
     public static final long MILLIS = 1000 * 60 * 60;
-    public static final long MILLIES_TWO = 1000 * 60 ;
+    public static final long MILLIES_TWO = 1000 * 60;
     public static final long TEN = 10;
     public static final float THUMBNAIL = 0.5f;
     public static final double UNSELECT_OPACITY = 1.0;
     public static final double SELECT_OPACITY = 0.4;
-    public static final int IMAGE_WIDTH = 200;
-    public static final int IMAGE_HEIGHT = 150;
     public static final int PERCENTAGE = 100;
     public static final int STORAGE_REQUEST_PERMISSION = 8;
     public static final int CHANGE_PERMISSIONS = 9;
     public static final int BUFFER_SIZE = 8192;
     public static final int BYTES = 1024;
-    public static final int DOWNLOAD_PERMISSION_CODE = 10;
     public static final long TIME_DELAY = 250;
     public static final int DIALOG_Y_POSITION = 120;
 
