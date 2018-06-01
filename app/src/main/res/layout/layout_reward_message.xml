@@ -10,8 +10,8 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="@dimen/dimen_120"
+            android:layout_height="@dimen/dimen_120"
             android:layout_margin="@dimen/common_dimens_30"
             android:src="@drawable/ic_reward_box" />
 
@@ -45,12 +45,12 @@
             android:id="@+id/btn_continue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/Continue"
-            android:textColor="@color/colorPrimary"
             android:layout_margin="@dimen/common_dimens_25"
+            android:background="@drawable/continue_button"
             android:paddingLeft="@dimen/common_dimens_30"
             android:paddingRight="@dimen/common_dimens_30"
-            android:background="@drawable/continue_button"/>
+            android:text="@string/Continue"
+            android:textColor="@color/colorPrimary" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

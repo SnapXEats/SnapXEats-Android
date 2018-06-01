@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
@@ -39,12 +40,16 @@ import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.dagger.AppContract;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static com.snapxeats.common.constants.UIConstants.PHOTO_NOTIFICATION_REQUEST_CODE;
 import static com.snapxeats.common.constants.UIConstants.PHOTO_NOTIFICATION_TIME;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
@@ -103,7 +108,6 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = null;
         try {
             view = inflater.inflate(R.layout.fragment_snap_share, container, false);
@@ -131,7 +135,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
         MenuItem smartPhotoMenu = mNavigationView.getMenu().findItem(R.id.nav_smart_photos);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+                getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);

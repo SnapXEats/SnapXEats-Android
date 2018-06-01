@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
@@ -59,15 +60,19 @@ import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.login.InstagramApp;
 import com.snapxeats.ui.login.InstagramDialog;
 import com.snapxeats.ui.shareReview.ShareReviewActivity;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.snapxeats.common.constants.UIConstants.INT_TEN;
@@ -154,7 +159,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private SnapXUserRequest snapXUserRequest;
     private InstagramApp mApp;
     private String mToken;
-    private boolean isDeleted;
+    private String photoId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -340,36 +345,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     /*webservice call to send review*/
     @OnClick(R.id.img_share_review)
     public void imgSendReview() {
-        //Save share data in local db for Smart photo 'Draft'
-        List<String> restaurantAminities = null;
-        String restName = null;
-        String restAddress = null;
-        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities()
-                && ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size())
-            restaurantAminities = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities();
-
-        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name() &&
-                !mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name().isEmpty())
-            restName = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name();
-
-        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address() &&
-                !mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address().isEmpty())
-            restAddress = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address();
-
-        String audioFile = null;
-        if (null != savedAudioPath) audioFile = Uri.fromFile(savedAudioPath).getPath();
-        textReview = mEditTxtReview.getText().toString();
-        int rating = (int) mRatingBar.getRating();
-
-        reviewDbHelper.saveSnapDataInDb(restId,
-                restName
-                , restAddress
-                , Uri.parse(image_path).getPath()
-                , audioFile,
-                textReview,
-                rating,
-                restaurantAminities);
-
+        rating = (int) mRatingBar.getRating();
         if (ZERO != rating) {
             if (utility.isLoggedIn()) {
                 dialogShareReview();
@@ -393,13 +369,13 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.msg_share_review))
                 .setPositiveButton(getString(R.string.review_continue), (dialog, which) -> callApiReview())
-                .setNegativeButton(getString(R.string.review_discard), (dialog, which) -> dialog.dismiss())
+                .setNegativeButton(getString(R.string.review_discard), (dialog, which) -> finish())
                 .show();
     }
 
     private void callApiReview() {
+        saveReviewDataInDb();
         textReview = mEditTxtReview.getText().toString();
-        rating = (int) mRatingBar.getRating();
         if (null != restId && null != fileImageUri && ZERO != rating) {
             showProgressDialog();
             audioFile = null;
@@ -525,6 +501,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                     timeRemaining = millisUntilFinished;
                 }
             }
+
             public void onFinish() {
                 resumePosition = ZERO;
                 mImgPlayRecAudio.setVisibility(View.VISIBLE);
@@ -670,6 +647,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             intent.putExtra(getString(R.string.intent_review), mSnapResponse);
             intent.putExtra(getString(R.string.image_path), image_path);
             intent.putExtra(getString(R.string.review_rest_id), restId);
+            intent.putExtra(getString(R.string.photo_id), photoId);
             startActivity(intent);
         }
         if (value instanceof SnapXUserResponse) {
@@ -678,6 +656,36 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             dialog.dismiss();
             callApiReview();
         }
+    }
+
+    private void saveReviewDataInDb() {
+        List<String> restaurantAminities = null;
+        String restName = null;
+        String restAddress = null;
+        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities()
+                && ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size())
+            restaurantAminities = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities();
+
+        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name() &&
+                !mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name().isEmpty())
+            restName = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name();
+
+        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address() &&
+                !mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address().isEmpty())
+            restAddress = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address();
+
+        String audioFile = null;
+        if (null != savedAudioPath) audioFile = Uri.fromFile(savedAudioPath).getPath();
+        textReview = mEditTxtReview.getText().toString();
+
+        photoId = reviewDbHelper.saveSnapDataInDb(restId,
+                restName
+                , restAddress
+                , Uri.parse(image_path).getPath()
+                , audioFile,
+                textReview,
+                rating,
+                restaurantAminities);
     }
 
     @Override
@@ -793,11 +801,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     @Override
     public void onCompletion(MediaPlayer mp) {
         mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_play_review));
-        try {
-            mPlayer.setDataSource(savedAudioPath.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         mPlayer.setOnCompletionListener(this);
         mTimer.setText(utility.milliSecondsToTimer(mPlayer.getCurrentPosition()));
     }
