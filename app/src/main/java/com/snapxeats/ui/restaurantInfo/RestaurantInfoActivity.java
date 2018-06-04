@@ -333,13 +333,11 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
 
     private void setVisibilityForDownload() {
         //Check duplicate entry for dish to download
-        if (null != homeDbHelper && null != mRestaurantPic && homeDbHelper.isDuplicateSmartPhoto(mRestaurantPic.getRestaurant_dish_id())
-                && null != mImgDownload) {
+        if ((null != homeDbHelper) && (null != mRestaurantPic) && homeDbHelper.isDuplicateSmartPhoto(mRestaurantPic.getRestaurant_dish_id())
+                && (null != mImgDownload)) {
             mImgDownload.setVisibility(View.GONE);
-        } else {
-            if (mImgDownload != null) {
-                mImgDownload.setVisibility(View.VISIBLE);
-            }
+        } else if (null != mImgDownload) {
+            mImgDownload.setVisibility(View.VISIBLE);
         }
     }
 

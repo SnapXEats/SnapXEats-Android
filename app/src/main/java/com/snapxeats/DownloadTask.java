@@ -143,8 +143,8 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
 
         if (null != connection) {
             String type = connection.guessContentTypeFromName(downloadedFileName);
-            if (null != type && !type.isEmpty() && type.contains(IMAGE +
-                    downloadedFileName.substring(downloadedFileName.lastIndexOf(".") + ONE))) {
+
+            if (null != type && !type.isEmpty() && isImageType(type)) {
                 //It's a image file
                 mSmartPhoto.setDish_image_url(downloadedFileName);
             } else {
@@ -153,6 +153,13 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
             }
         }
         return output;
+    }
+
+    /**
+     * Check image type
+     */
+    private boolean isImageType(String type) {
+        return type.contains(IMAGE + downloadedFileName.substring(downloadedFileName.lastIndexOf(".") + ONE));
     }
 
     private InputStream inputStreamToFile(URL link) {
