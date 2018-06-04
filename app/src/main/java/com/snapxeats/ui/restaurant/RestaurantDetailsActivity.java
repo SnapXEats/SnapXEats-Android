@@ -305,7 +305,8 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             mLayoutRestSpecialties.addView(view);
         }
         /*set adapter for restaurant images*/
-        RestImagesAdapter mRestPicsAdapter = new RestImagesAdapter(RestaurantDetailsActivity.this, mRestaurantPicsList);
+        RestImagesAdapter mRestPicsAdapter = new RestImagesAdapter(RestaurantDetailsActivity.this,
+                null,mRestaurantPicsList,null);
         mRestviewPager.setAdapter(mRestPicsAdapter);
     }
 

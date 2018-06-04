@@ -1,25 +1,45 @@
 package com.snapxeats.ui.restaurantInfo;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.snapxeats.BaseActivity;
+import com.snapxeats.DownloadTask;
 import com.snapxeats.R;
+import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.constants.SnapXToast;
+import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
+import com.snapxeats.common.model.smartphotos.SmartPhotoResponse;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.home.HomeActivity;
+import com.snapxeats.ui.home.HomeDbHelper;
 import com.snapxeats.ui.restaurant.RestImagesAdapter;
 
 import java.text.DateFormat;
@@ -37,13 +57,14 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.snapxeats.common.constants.UIConstants.STORAGE_REQUEST_PERMISSION;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Prajakta Patil on 05/02/18.
  */
 public class RestaurantInfoActivity extends BaseActivity implements RestaurantInfoContract.RestaurantInfoView,
-        AppContract.SnapXResults {
+        AppContract.SnapXResults, View.OnClickListener, DownloadTask.OnDownloadCompleted, MediaPlayer.OnCompletionListener {
 
     @Inject
     RestaurantInfoContract.RestaurantInfoPresenter mRestaurantPresenter;
@@ -53,6 +74,9 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
 
     @Inject
     AppUtility utility;
+
+    @Inject
+    HomeDbHelper homeDbHelper;
 
     @BindView(R.id.toolbar_rest_info)
     protected Toolbar mToolbar;
@@ -93,6 +117,21 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     @BindView(R.id.layout_dots)
     protected LinearLayout mSliderDotsPanel;
 
+    private boolean isImageTap;
+    private RestaurantPics mRestaurantPic;
+    private ImageView mImgTextReview;
+    private ImageView mImgAudioReview;
+    private ImageView mImgDownload;
+    private ImageView mImgPlayAudio;
+    private TextView mTxtTimeOfAudio;
+    private LinearLayout mLayoutControls;
+    private Dialog mDialog;
+    private Window mWindow;
+    private MediaPlayer mMediaPlayer;
+    private boolean isAudioPlayTap;
+    private Handler mHandler = new Handler();
+    private RestImagesAdapter mRestInfoAdapter;
+    private SmartPhotoResponse mSmartPhoto;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,6 +154,9 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getString(R.string.toolbar_rest_info));
         initRestaurantInfo();
+        mDialog = new Dialog(this);
+        mDialog.setCancelable(false);
+
     }
 
     public void initRestaurantInfo() {
@@ -242,16 +284,55 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         }
 
         /*set adapter for restaurant images*/
-        RestImagesAdapter mRestInfoAdapter = new RestImagesAdapter(RestaurantInfoActivity.this, mRestaurantPicsList);
+     mRestInfoAdapter = new RestImagesAdapter(RestaurantInfoActivity.this, homeDbHelper,
+                mRestaurantPicsList,
+                (restaurantPic, itemView) -> {
+                    mRestaurantPic = restaurantPic;
+                    mImgTextReview = itemView.findViewById(R.id.img_text_review);
+                    mImgAudioReview = itemView.findViewById(R.id.img_audio_review);
+                    mImgDownload = itemView.findViewById(R.id.img_download);
+
+                    mImgTextReview.setOnClickListener(this);
+                    mImgAudioReview.setOnClickListener(this);
+                    mImgDownload.setOnClickListener(this);
+
+                    mLayoutControls = itemView.findViewById(R.id.layout_controls);
+                    isImageTap = !isImageTap;
+                    if (isImageTap) {
+                        //Check duplicate entry for dish to download
+                        if (null != homeDbHelper && homeDbHelper.isDuplicateSmartPhoto(mRestaurantPic.getRestaurant_dish_id())
+                                && mImgDownload != null) {
+                            mImgDownload.setVisibility(View.GONE);
+                        } else {
+                            mImgDownload.setVisibility(View.VISIBLE);
+                        }
+
+                        mLayoutControls.setVisibility(View.VISIBLE);
+                    } else {
+                        mLayoutControls.setVisibility(View.GONE);
+                    }
+                });
+
         mRestInfoViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+                if (null != mLayoutControls) {
+                    mLayoutControls.setVisibility(View.GONE);
+                }
+                //Check duplicate entry for dish to download
+                if (null != homeDbHelper) {
+                    if (homeDbHelper.isDuplicateSmartPhoto(mRestaurantPicsList.get(position).getRestaurant_dish_id())) {
+                        if (mImgDownload != null)
+                            mImgDownload.setVisibility(View.GONE);
+                    } else {
+                        if (mImgDownload != null)
+                            mImgDownload.setVisibility(View.VISIBLE);
+                    }
+                }
             }
-
             @Override
             public void onPageSelected(int position) {
-                SnapXToast.showToast(RestaurantInfoActivity.this,"ViewPager clicked");
+
             }
 
             @Override
@@ -263,9 +344,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     }
 
     @Override
-    public void error(Object value) {
-
-    }
+    public void error(Object value) {    }
 
     @Override
     public void noNetwork(Object value) {
@@ -287,5 +366,180 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     @Override
     public void networkError(Object value) {
         dismissProgressDialog();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.img_text_review:
+                setTextReview();
+                break;
+
+            case R.id.img_audio_review:
+                setAudioReview();
+                break;
+            case R.id.btn_okay:
+                if (null != mMediaPlayer && mMediaPlayer.isPlaying()) {
+                    utility.resetMediaPlayer(mMediaPlayer);
+                }
+                mDialog.dismiss();
+                break;
+
+            case R.id.img_play_audio:
+                isAudioPlayTap = !isAudioPlayTap;
+
+                if (isAudioPlayTap) {
+                    mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_audio_pause));
+
+                    mMediaPlayer.start();
+                    mUpdateTimeTask.run();
+                } else {
+                    mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_play_review));
+                    if (mMediaPlayer.isPlaying()) {
+                        mMediaPlayer.pause();
+                    }
+                }
+                break;
+
+            case R.id.img_download:
+                checkStoragePermission();
+                break;
+        }
+    }
+    /**
+     * Check permissions for external storage
+     */
+    private void checkStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    STORAGE_REQUEST_PERMISSION);
+        } else {
+            startDownloadingTask();
+        }
+    }
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        for (int index = ZERO; index < permissions.length; index++) {
+            if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
+                startDownloadingTask();
+            } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
+                snapXDialog.showChangePermissionDialog();
+            } else {
+                SnapXToast.showToast(this, getString(R.string.enable_storage_permissions));
+            }
+        }
+    }
+
+    private void startDownloadingTask() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            if (NetworkUtility.isNetworkAvailable(this)) {
+
+                mapRestInfoToSmartPhoto();
+
+                new DownloadTask(RestaurantInfoActivity.this,this,mSmartPhoto)
+                        .execute(mRestaurantPic.getDish_image_url(), mRestaurantPic.getAudio_review_url());
+            } else {
+                showNetworkErrorDialog((dialog, which) -> {
+                });
+            }
+        }
+    }
+
+    private void mapRestInfoToSmartPhoto() {
+        mSmartPhoto = new SmartPhotoResponse();
+
+        mSmartPhoto.setRestaurant_dish_id(mRestaurantPic.getRestaurant_dish_id());
+        mSmartPhoto.setPic_taken_date(mRestaurantPic.getCreated_date());
+        mSmartPhoto.setText_review(mRestaurantPic.getText_review());
+
+        mSmartPhoto.setRestaurant_name(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name());
+        mSmartPhoto.setRestaurant_address(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address());
+        mSmartPhoto.setRestaurant_aminities(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities());
+        mSmartPhoto.setDish_image_url(mRestaurantPic.getDish_image_url());
+        mSmartPhoto.setAudio_review_url(mRestaurantPic.getAudio_review_url());
+    }
+
+    private Runnable mUpdateTimeTask = new Runnable() {
+        public void run() {
+            if (null != mMediaPlayer) {
+                long currentDuration = mMediaPlayer.getCurrentPosition();
+
+                // Displaying time completed playing
+                mTxtTimeOfAudio.setText("" + utility.milliSecondsToTimer(currentDuration));
+
+                // Running this thread after 100 milliseconds
+                mHandler.postDelayed(this, UIConstants.PERCENTAGE);
+            }
+        }
+    };
+
+    /**
+     * Set Text review view
+     */
+    private void setTextReview() {
+        mDialog.setContentView(R.layout.rest_smart_text_review_layout);
+        mWindow = mDialog.getWindow();
+        if (null != mWindow){
+            mWindow.setLayout(UIConstants.NO_DATA_DIALOG_WIDTH, LinearLayout.LayoutParams.WRAP_CONTENT);
+            mWindow.setGravity(Gravity.CENTER);
+        }
+        mDialog.show();
+        TextView textView = mDialog.findViewById(R.id.txt_review_contents);
+        textView.setText(mRestaurantPic.getText_review());
+        mDialog.findViewById(R.id.btn_okay).setOnClickListener(this);
+    }
+
+    /**
+     * Set Audio review view
+     */
+    private void setAudioReview() {
+        mDialog.setContentView(R.layout.rest_smart_audio_layout);
+        mWindow = mDialog.getWindow();
+        if (null != mWindow){
+            mWindow.setLayout(UIConstants.NO_DATA_DIALOG_WIDTH, LinearLayout.LayoutParams.WRAP_CONTENT);
+            mWindow.setGravity(Gravity.CENTER);
+        }
+        mMediaPlayer = MediaPlayer.create(getActivity(), Uri.parse(mRestaurantPic.getAudio_review_url()));
+        mMediaPlayer.setOnCompletionListener(this);
+        mTxtTimeOfAudio = mDialog.findViewById(R.id.timer_play);
+        mImgPlayAudio = mDialog.findViewById(R.id.img_play_audio);
+        mTxtTimeOfAudio.setText(utility.milliSecondsToTimer(mMediaPlayer.getCurrentPosition()));
+        mDialog.show();
+        mDialog.findViewById(R.id.btn_okay).setOnClickListener(this);
+        mDialog.findViewById(R.id.img_play_audio).setOnClickListener(this);
+    }
+
+
+    @Override
+    public void isDownloadComplete(boolean isComplete, SmartPhotoResponse smartPhotoResponse) {
+        mDialog.setContentView(R.layout.rest_photo_download_success_layout);
+        mWindow = mDialog.getWindow();
+        if (null != mWindow){
+            mWindow.setLayout(UIConstants.NO_DATA_DIALOG_WIDTH, LinearLayout.LayoutParams.WRAP_CONTENT);
+            mWindow.setGravity(Gravity.CENTER);
+        }
+        mDialog.show();
+        mDialog.findViewById(R.id.btn_okay).setOnClickListener(this);
+        mRestaurantPic.setAudio_review_url(smartPhotoResponse.getAudio_review_url());
+
+        mSmartPhoto.setDish_image_url(smartPhotoResponse.getDish_image_url());
+        mSmartPhoto.setAudio_review_url(smartPhotoResponse.getAudio_review_url());
+        homeDbHelper.saveSmartPhotoDataInDb(mSmartPhoto);
+        if (null != mLayoutControls) {
+            mLayoutControls.setVisibility(View.GONE);
+        }
+        mRestInfoAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        mImgPlayAudio.setImageDrawable(getActivity().getDrawable(R.drawable.ic_play_review));
+        mMediaPlayer = MediaPlayer.create(getActivity(), Uri.parse(mRestaurantPic.getAudio_review_url()));
+        mMediaPlayer.setOnCompletionListener(this);
+        mTxtTimeOfAudio.setText(utility.milliSecondsToTimer(mMediaPlayer.getCurrentPosition()));
     }
 }

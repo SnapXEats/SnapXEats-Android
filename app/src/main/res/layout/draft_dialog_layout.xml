@@ -86,7 +86,7 @@
             <LinearLayout
                 android:id="@+id/layout_description"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/map_cardview_height"
+                android:layout_height="@dimen/common_dimens_200"
                 android:orientation="vertical"
                 android:visibility="gone">
 
@@ -206,7 +206,8 @@
                         android:layout_width="@dimen/dimens_60"
                         android:layout_height="@dimen/dimens_60"
                         android:layout_gravity="center_vertical|center"
-                        android:src="@drawable/ic_download_success" />
+                        android:src="@drawable/ic_download_success"
+                        android:layout_marginTop="@dimen/common_dimens_20"/>
 
                     <TextView
                         android:layout_width="match_parent"

@@ -47,13 +47,13 @@ public class ReviewDbHelper {
     }
 
     String saveSnapDataInDb(String restId,
-                            String restaurant_name,
-                            String restAddress,
-                            String image_path,
-                            String audio_path,
-                            String textReview,
-                            int rating,
-                            List<String> restaurantAminities) {
+                          String restaurant_name,
+                          String restAddress,
+                          String image_path,
+                          String audio_path,
+                          String textReview,
+                          int rating,
+                          List<String> restaurantAminities) {
 
         String smartPhoto_Draft_Stored_id =
                 new SimpleDateFormat(mContext.getString(R.string.date_time_pattern)).format(new Date());

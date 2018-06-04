@@ -28,9 +28,9 @@ import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.SnapXDataDao;
+import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.location.Location;
 import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
-import com.snapxeats.common.model.smartphotos.DaoSession;
 import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.home.fragment.snapnshare.ViewPagerAdapter;
 import com.squareup.picasso.Picasso;
@@ -358,10 +358,10 @@ public class AppUtility {
         initNavHeaderViews(mNavigationView);
         Menu menu = mNavigationView.getMenu();
         MenuItem menuLogoutItem = menu.findItem(R.id.nav_logout);
-        if (null != snapXData) {
+        if (null != snapXData && isLoggedIn()) {
             txtNotLoggedIn.setVisibility(View.GONE);
             mLayoutUserData.setVisibility(View.VISIBLE);
-            Picasso.with(mContext).load(snapXData.getImageUrl()).placeholder(R.drawable.user_image).into(imgUser);
+            Picasso.with(mContext).load(snapXData.getImageUrl()).placeholder(R.drawable.ic_profile_placeholder).into(imgUser);
             txtUserName.setText(snapXData.getUserName());
             menuLogoutItem.setTitle(mContext.getString(R.string.log_out));
         } else {

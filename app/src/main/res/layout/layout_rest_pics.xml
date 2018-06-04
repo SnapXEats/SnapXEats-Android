@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center" />
-   <!-- <LinearLayout
+    <LinearLayout
+        android:id="@+id/layout_controls"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
@@ -17,7 +18,7 @@
         android:layout_gravity="bottom"
         android:layout_marginBottom="@dimen/common_dimens_10">
         <ImageView
-            android:id="@+id/img_txt_review"
+            android:id="@+id/img_text_review"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/common_dimens_15"
@@ -35,5 +36,5 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/common_dimens_15"
             android:src="@drawable/ic_download_white" />
-    </LinearLayout>-->
+    </LinearLayout>
 </FrameLayout>
