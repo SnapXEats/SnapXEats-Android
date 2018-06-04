@@ -186,13 +186,4 @@ public class HomeDbHelper {
             }
         return false;
     }
-
-    /*boolean isDuplicateSmartPhoto(SmartPhotoResponse smartPhoto) {
-        List<SmartPhoto> smartPhotoList = dbHelper.getSmartPhotoDao().loadAll();
-        for (SmartPhoto photo : smartPhotoList)
-        if (smartPhoto.getRestaurant_dish_id().equalsIgnoreCase(photo.getRestaurantDishId())){
-            return true;
-        }
-        return false;
-    }*/
 }

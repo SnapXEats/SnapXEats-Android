@@ -143,7 +143,5 @@ public class UIConstants {
     public static final int BYTES = 1024;
     public static final long TIME_DELAY = 250;
     public static final int DIALOG_Y_POSITION = 120;
-    public static final int SMART_REVIEW_DIALOG_WIDTH = 400;
-    public static final int SMART_REVIEW_DIALOG_HEIGHT = 600;
 
 }

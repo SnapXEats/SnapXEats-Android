@@ -408,7 +408,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         saveReviewDataInDb();
 
         textReview = mEditTxtReview.getText().toString();
-//        rating = (int) mRatingBar.getRating();
         if (null != restId && null != fileImageUri && ZERO != rating) {
             showProgressDialog();
             audioFile = null;
