@@ -15,6 +15,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.SnapXToast;
@@ -26,15 +27,21 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.LocationHelper;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
 import static com.snapxeats.common.constants.UIConstants.ACTION_LOCATION_GET;
+import static com.snapxeats.common.constants.UIConstants.CHANGE_LOCATION_PERMISSIONS;
 import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Snehal Tembare on 5/1/18.
@@ -133,7 +140,7 @@ public class LocationActivity extends BaseActivity implements
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.length() == 0)
+                if (s.length() == ZERO)
                     if (null != resultList) {
                         resetViews();
                     }
@@ -144,7 +151,7 @@ public class LocationActivity extends BaseActivity implements
             String address = (String) parent.getItemAtPosition(position);
 
             utility.hideKeyboard();
-            if (null != predictionList && predictionList.size() != 0) {
+            if (null != predictionList && predictionList.size() != ZERO) {
                 placeId = predictionList.get(position).getPlace_id();
                 locationPresenter.getPlaceDetails(placeId);
             }
@@ -182,7 +189,7 @@ public class LocationActivity extends BaseActivity implements
      * Set icon to clear text
      */
     private void setClearIcon(CharSequence sequence) {
-        if (sequence.length() > 0) {
+        if (sequence.length() > ZERO) {
             mImgeClearText.setVisibility(View.VISIBLE);
         } else {
             mImgeClearText.setVisibility(View.INVISIBLE);
@@ -225,13 +232,14 @@ public class LocationActivity extends BaseActivity implements
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            if (utility.checkPermissions()) {
-                getData();
+        for (int index = ZERO; index < permissions.length; index++) {
+            if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
+                if (utility.checkPermissions()) {
+                    getData();
+                }
+            } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
+                snapXDialog.showChangePermissionDialog(CHANGE_LOCATION_PERMISSIONS);
             }
-            //To add data in preferences
-        } else if (!shouldShowRequestPermissionRationale(permissions[0])) {
-            snapXDialog.showChangePermissionDialog();
         }
     }
 
@@ -240,6 +248,12 @@ public class LocationActivity extends BaseActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case DEVICE_LOCATION:
+                if (utility.checkPermissions()) {
+                    getData();
+                }
+                break;
+
+            case CHANGE_LOCATION_PERMISSIONS:
                 if (utility.checkPermissions()) {
                     getData();
                 }
@@ -298,7 +312,7 @@ public class LocationActivity extends BaseActivity implements
                 };
                 utility.hideKeyboard();
                 showSnackBar(mParentLayout, setClickListener(click));
-            }else {
+            } else {
                 utility.hideKeyboard();
                 showProgressDialog();
                 locationPresenter.getPlaceDetails(placeId);
@@ -316,9 +330,9 @@ public class LocationActivity extends BaseActivity implements
         resultList.clear();
         this.predictionList = predictionList;
         if (null != predictionList
-                && predictionList.size() != 0) {
+                && predictionList.size() != ZERO) {
             mImgLoader.setVisibility(View.INVISIBLE);
-            for (int index = 0; index < predictionList.size(); index++) {
+            for (int index = ZERO; index < predictionList.size(); index++) {
                 resultList.add(predictionList.get(index).getDescription());
             }
         } else {

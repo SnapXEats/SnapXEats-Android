@@ -107,7 +107,7 @@ public class UIConstants {
     /*AddReview screen*/
     public static final String INSTA_PACKAGE_NAME = "com.instagram.android";
     public static final String IMAGE_TYPE = "image/*";
-    public static final String IMAGE_JPEG_TYPE = "image/jpeg";
+    public static final String IMAGE = "image/";
     public static final String FILE_MEDIATYPE = "*/*";
     public static final String TEXT_TYPE = "text/plain";
     public static final String FB_SHA = "SHA";
@@ -139,7 +139,7 @@ public class UIConstants {
     public static final double SELECT_OPACITY = 0.4;
     public static final int PERCENTAGE = 100;
     public static final int STORAGE_REQUEST_PERMISSION = 8;
-    public static final int CHANGE_PERMISSIONS = 9;
+    public static final int CHANGE_LOCATION_PERMISSIONS = 9;
     public static final int BUFFER_SIZE = 8192;
     public static final int BYTES = 1024;
     public static final long TIME_DELAY = 250;

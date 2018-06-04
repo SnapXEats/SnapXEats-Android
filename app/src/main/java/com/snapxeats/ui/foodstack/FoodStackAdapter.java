@@ -42,7 +42,7 @@ public class FoodStackAdapter extends ArrayAdapter<FoodStackData> {
         FoodStackData stackData = dataList.get(position);
         holder.mTxtDishName.setText(stackData.getName());
 
-        Glide.with(getContext())
+        Glide.with(getContext().getApplicationContext())
                 .load(stackData.getUrl().get(position))
                 .placeholder(R.drawable.ic_foodstack_placeholder)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)

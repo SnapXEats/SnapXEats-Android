@@ -21,6 +21,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.R;
@@ -33,7 +36,6 @@ import com.snapxeats.common.model.location.Location;
 import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
 import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.home.fragment.snapnshare.ViewPagerAdapter;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,6 +51,7 @@ import static com.snapxeats.common.constants.UIConstants.MILLIS;
 import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC_CONVERSION;
 import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.TEN;
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -361,7 +364,14 @@ public class AppUtility {
         if (null != snapXData && isLoggedIn()) {
             txtNotLoggedIn.setVisibility(View.GONE);
             mLayoutUserData.setVisibility(View.VISIBLE);
-            Picasso.with(mContext).load(snapXData.getImageUrl()).placeholder(R.drawable.ic_profile_placeholder).into(imgUser);
+
+            Glide.with(mContext.getApplicationContext())
+                    .load(snapXData.getImageUrl())
+                    .placeholder(R.drawable.ic_profile_placeholder)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                    .thumbnail(THUMBNAIL) .into(imgUser);
+
             txtUserName.setText(snapXData.getUserName());
             menuLogoutItem.setTitle(mContext.getString(R.string.log_out));
         } else {
