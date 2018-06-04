@@ -31,6 +31,9 @@ public class RestImagesAdapter extends PagerAdapter {
     private OnViewpagerTap onViewpagerTap;
 
     HomeDbHelper homeDbHelper;
+    private ImageView mImgDownload;
+    private ImageView mImgAudioReview;
+    private ImageView mImgTextReview;
 
     public RestImagesAdapter(Context mContext,
                              HomeDbHelper homeDbHelper,
@@ -57,9 +60,9 @@ public class RestImagesAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, final int position) {
         View itemView = layoutInflater.inflate(R.layout.layout_rest_pics, container, false);
-        ImageView mImgTextReview = itemView.findViewById(R.id.img_text_review);
-        ImageView mImgAudioReview = itemView.findViewById(R.id.img_audio_review);
-        ImageView mImgDownload = itemView.findViewById(R.id.img_download);
+        mImgTextReview = itemView.findViewById(R.id.img_text_review);
+        mImgAudioReview = itemView.findViewById(R.id.img_audio_review);
+        mImgDownload = itemView.findViewById(R.id.img_download);
         ImageView imageView = itemView.findViewById(R.id.img_restaurant_pics);
         LinearLayout layoutControls = itemView.findViewById(R.id.layout_controls);
 
@@ -71,26 +74,9 @@ public class RestImagesAdapter extends PagerAdapter {
                 .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).thumbnail(THUMBNAIL)
                 .into(imageView);
 
-        //Check duplicate entry for dish to download
-        if (null != homeDbHelper) {
-            if (homeDbHelper.isDuplicateSmartPhoto(restaurantPic.getRestaurant_dish_id())) {
-                mImgDownload.setVisibility(View.GONE);
-            } else {
-                mImgDownload.setVisibility(View.VISIBLE);
-            }
-        }
-
-        if (null != restaurantPic.getAudio_review_url() && !restaurantPic.getAudio_review_url().isEmpty()) {
-            mImgAudioReview.setVisibility(View.VISIBLE);
-        } else {
-            mImgAudioReview.setVisibility(View.GONE);
-        }
-
-        if (null != restaurantPic.getText_review() && !restaurantPic.getText_review().isEmpty()) {
-            mImgTextReview.setVisibility(View.VISIBLE);
-        } else {
-            mImgTextReview.setVisibility(View.GONE);
-        }
+        setVisibilityForDownload(restaurantPic);
+        setVisibilityForAudio(restaurantPic);
+        setVisibilityForTextReview(restaurantPic);
 
         imageView.setOnClickListener(v -> {
             if (onViewpagerTap != null) {
@@ -100,6 +86,33 @@ public class RestImagesAdapter extends PagerAdapter {
 
         container.addView(itemView);
         return itemView;
+    }
+
+    private void setVisibilityForTextReview(RestaurantPics restaurantPic) {
+        if (null != restaurantPic.getText_review() && !restaurantPic.getText_review().isEmpty()) {
+            mImgTextReview.setVisibility(View.VISIBLE);
+        } else {
+            mImgTextReview.setVisibility(View.GONE);
+        }
+    }
+
+    private void setVisibilityForAudio(RestaurantPics restaurantPic) {
+        if (null != restaurantPic.getAudio_review_url() && !restaurantPic.getAudio_review_url().isEmpty()) {
+            mImgAudioReview.setVisibility(View.VISIBLE);
+        } else {
+            mImgAudioReview.setVisibility(View.GONE);
+        }
+    }
+
+    private void setVisibilityForDownload(RestaurantPics restaurantPic) {
+        //Check duplicate entry for dish to download
+        if (null != homeDbHelper) {
+            if (homeDbHelper.isDuplicateSmartPhoto(restaurantPic.getRestaurant_dish_id())) {
+                mImgDownload.setVisibility(View.GONE);
+            } else {
+                mImgDownload.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override

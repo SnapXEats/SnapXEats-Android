@@ -296,18 +296,15 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
                     mImgAudioReview.setOnClickListener(this);
                     mImgDownload.setOnClickListener(this);
 
-                   mLayoutControls = itemView.findViewById(R.id.layout_controls);
+                    mLayoutControls = itemView.findViewById(R.id.layout_controls);
                     isImageTap = !isImageTap;
                     if (isImageTap) {
                         //Check duplicate entry for dish to download
-                        if (null != homeDbHelper) {
-                            if (homeDbHelper.isDuplicateSmartPhoto(mRestaurantPic.getRestaurant_dish_id())) {
-                                if (mImgDownload != null)
-                                    mImgDownload.setVisibility(View.GONE);
-                            } else {
-                                if (mImgDownload != null)
-                                    mImgDownload.setVisibility(View.VISIBLE);
-                            }
+                        if (null != homeDbHelper && homeDbHelper.isDuplicateSmartPhoto(mRestaurantPic.getRestaurant_dish_id())
+                                && mImgDownload != null) {
+                            mImgDownload.setVisibility(View.GONE);
+                        } else {
+                            mImgDownload.setVisibility(View.VISIBLE);
                         }
 
                         mLayoutControls.setVisibility(View.VISIBLE);
@@ -315,6 +312,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
                         mLayoutControls.setVisibility(View.GONE);
                     }
                 });
+
         mRestInfoViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -526,7 +524,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         }
         mDialog.show();
         mDialog.findViewById(R.id.btn_okay).setOnClickListener(this);
-        mRestaurantPic.setAudio_review_url(smartPhotoResponse.getAudio_review_url());
+//        mRestaurantPic.setAudio_review_url(smartPhotoResponse.getAudio_review_url());
 
         mSmartPhoto.setDish_image_url(smartPhotoResponse.getDish_image_url());
         mSmartPhoto.setAudio_review_url(smartPhotoResponse.getAudio_review_url());
