@@ -65,7 +65,7 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
     @Override
     protected String doInBackground(String... urls) {
         InputStream input = null;
-        OutputStream output= null;
+        OutputStream output = null;
         for (String url : urls) {
             try {
                 URL link = new URL(url);
@@ -87,7 +87,7 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
 
                 output = outputStreamToFile(url, connection);
 
-                updateProgress(input,output);
+                updateProgress(input, output);
 
                 // flushing output
                 output.flush();
@@ -141,7 +141,7 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
             downloadedFileName = outputFile.getPath();
         }
 
-        if (connection != null) {
+        if (null != connection) {
             String type = connection.guessContentTypeFromName(downloadedFileName);
             if (null != type && !type.isEmpty() && type.contains(IMAGE_JPEG_TYPE)) {
                 //It's a image file
@@ -157,7 +157,7 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
     private InputStream inputStreamToFile(URL link) {
         // input stream to read file - with 8k buffer
         InputStream input = null;
-        if (link != null) {
+        if (null != link) {
             try {
                 input = new BufferedInputStream(link.openStream(), BUFFER_SIZE);
                 String timeStamp = new SimpleDateFormat(mContext.getString(R.string.file_name_pattern)).format(new Date());
