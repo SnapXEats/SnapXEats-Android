@@ -25,7 +25,6 @@ import java.util.Date;
 import static com.snapxeats.common.constants.UIConstants.BUFFER_SIZE;
 import static com.snapxeats.common.constants.UIConstants.BYTES;
 import static com.snapxeats.common.constants.UIConstants.IMAGE_JPEG_TYPE;
-import static com.snapxeats.common.constants.UIConstants.IMAGE_TYPE;
 import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -39,11 +38,9 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
     private String downloadedFileName;
     private SmartPhotoResponse mSmartPhoto;
     private OnDownloadCompleted onDownloadCompleted;
-    private InputStream input = null;
-    private OutputStream output;
+
     private long fileName;
     private File downloadDirectory;
-    private int count;
     private int lenghtOfFile;
 
     public DownloadTask(OnDownloadCompleted onDownloadCompleted,
@@ -67,6 +64,8 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
 
     @Override
     protected String doInBackground(String... urls) {
+        InputStream input = null;
+        OutputStream output= null;
         for (String url : urls) {
             try {
                 URL link = new URL(url);
@@ -76,7 +75,7 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
                 // getting file length
                 lenghtOfFile = connection.getContentLength();
 
-                inputStreamToFile(link);
+                input = inputStreamToFile(link);
 
                 downloadDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
                         + "/" + mContext.getString(R.string.app_name) + "/" + mContext.getString(R.string.downloads) + "/");
@@ -86,9 +85,9 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
                     }
                 }
 
-                outputStreamToFile(url, connection);
+                output = outputStreamToFile(url, connection);
 
-                updateProgress();
+                updateProgress(input,output);
 
                 // flushing output
                 output.flush();
@@ -104,7 +103,9 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
         return null;
     }
 
-    private void updateProgress() {
+    private void updateProgress(InputStream input, OutputStream output) {
+        int count;
+
         byte data[] = new byte[BYTES];
 
         long total = ZERO;
@@ -124,10 +125,10 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
         }
     }
 
-    private void outputStreamToFile(String url, URLConnection connection) {
+    private OutputStream outputStreamToFile(String url, URLConnection connection) {
         // Output stream to write file
         File outputFile;
-
+        OutputStream output = null;
         if (null != url && !url.isEmpty()) {
             String ext = url.substring(url.lastIndexOf("."));
             outputFile = new File(downloadDirectory, mContext.getString(R.string.download)
@@ -150,10 +151,12 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
                 mSmartPhoto.setAudio_review_url(downloadedFileName);
             }
         }
+        return output;
     }
 
-    private void inputStreamToFile(URL link) {
+    private InputStream inputStreamToFile(URL link) {
         // input stream to read file - with 8k buffer
+        InputStream input = null;
         if (link != null) {
             try {
                 input = new BufferedInputStream(link.openStream(), BUFFER_SIZE);
@@ -165,6 +168,7 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
                 e.printStackTrace();
             }
         }
+        return input;
     }
 
     @Override

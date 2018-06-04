@@ -841,6 +841,10 @@ public class HomeActivity extends BaseActivity implements
                 }
                 break;
             case R.id.img_download:
+                mImgInfo.setImageDrawable(getDrawable(R.drawable.ic_info));
+                mImgTextReview.setImageDrawable(getDrawable(R.drawable.ic_text_review));
+                mImgAudioReview.setImageDrawable(getDrawable(R.drawable.ic_audio_speaker));
+
                 checkStoragePermission();
                 break;
 

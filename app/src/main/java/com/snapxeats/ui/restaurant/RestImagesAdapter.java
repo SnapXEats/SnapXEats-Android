@@ -64,7 +64,6 @@ public class RestImagesAdapter extends PagerAdapter {
         mImgAudioReview = itemView.findViewById(R.id.img_audio_review);
         mImgDownload = itemView.findViewById(R.id.img_download);
         ImageView imageView = itemView.findViewById(R.id.img_restaurant_pics);
-        LinearLayout layoutControls = itemView.findViewById(R.id.layout_controls);
 
         RestaurantPics restaurantPic = restaurantPicsList.get(position);
         Glide.with(mContext)
