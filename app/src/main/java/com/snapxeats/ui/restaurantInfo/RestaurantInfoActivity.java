@@ -524,7 +524,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         }
         mDialog.show();
         mDialog.findViewById(R.id.btn_okay).setOnClickListener(this);
-//        mRestaurantPic.setAudio_review_url(smartPhotoResponse.getAudio_review_url());
+        mRestaurantPic.setAudio_review_url(smartPhotoResponse.getAudio_review_url());
 
         mSmartPhoto.setDish_image_url(smartPhotoResponse.getDish_image_url());
         mSmartPhoto.setAudio_review_url(smartPhotoResponse.getAudio_review_url());
