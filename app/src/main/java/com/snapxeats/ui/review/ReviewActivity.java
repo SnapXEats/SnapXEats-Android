@@ -357,6 +357,37 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         }
     }
 
+    private void saveReviewDataInDb() {
+        //Save share data in local db for Smart photo 'Draft'
+        List<String> restaurantAminities = null;
+        String restName = null;
+        String restAddress = null;
+        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities()
+                && ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size())
+            restaurantAminities = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities();
+
+        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name() &&
+                !mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name().isEmpty())
+            restName = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name();
+
+        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address() &&
+                !mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address().isEmpty())
+            restAddress = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address();
+
+        String audioFile = null;
+        if (null != savedAudioPath) audioFile = Uri.fromFile(savedAudioPath).getPath();
+        textReview = mEditTxtReview.getText().toString();
+
+        photoId = reviewDbHelper.saveSnapDataInDb(restId,
+                restName
+                , restAddress
+                , Uri.parse(image_path).getPath()
+                , audioFile,
+                textReview,
+                rating,
+                restaurantAminities);
+    }
+
     private void dialogSetRating() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.msg_set_rating))
@@ -375,7 +406,9 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     private void callApiReview() {
         saveReviewDataInDb();
+
         textReview = mEditTxtReview.getText().toString();
+//        rating = (int) mRatingBar.getRating();
         if (null != restId && null != fileImageUri && ZERO != rating) {
             showProgressDialog();
             audioFile = null;
@@ -656,36 +689,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             dialog.dismiss();
             callApiReview();
         }
-    }
-
-    private void saveReviewDataInDb() {
-        List<String> restaurantAminities = null;
-        String restName = null;
-        String restAddress = null;
-        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities()
-                && ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size())
-            restaurantAminities = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities();
-
-        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name() &&
-                !mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name().isEmpty())
-            restName = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_name();
-
-        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address() &&
-                !mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address().isEmpty())
-            restAddress = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address();
-
-        String audioFile = null;
-        if (null != savedAudioPath) audioFile = Uri.fromFile(savedAudioPath).getPath();
-        textReview = mEditTxtReview.getText().toString();
-
-        photoId = reviewDbHelper.saveSnapDataInDb(restId,
-                restName
-                , restAddress
-                , Uri.parse(image_path).getPath()
-                , audioFile,
-                textReview,
-                rating,
-                restaurantAminities);
     }
 
     @Override

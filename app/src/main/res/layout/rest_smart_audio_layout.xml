@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--Audio layout-->
+    <LinearLayout
+        android:id="@+id/layout_audio"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/common_dimens_10"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/audio_review"
+            android:layout_margin="@dimen/dimens_20"
+            android:textSize="@dimen/text_size_18"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:textColor="@color/colorPrimary"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/img_play_audio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/common_dimens_30"
+                android:src="@drawable/ic_play_review"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/timer_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/common_dimens_10"
+                android:layout_marginTop="@dimen/common_dimens_10"
+                android:text="@string/audio_init_time"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="@dimen/txt_size_16" />
+            <Button
+                android:id="@+id/btn_okay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/custom_button_selected"
+                android:paddingLeft="@dimen/dimen_50"
+                android:paddingRight="@dimen/dimen_50"
+                android:text="@string/okay"
+                android:textColor="@color/colorWhite"
+                android:layout_marginRight="@dimen/dimens_20"
+                android:layout_marginLeft="@dimen/dimens_20"
+                android:layout_marginTop="@dimen/dimens_20"
+                android:layout_marginBottom="@dimen/dimens_20"
+                />
+        </LinearLayout>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

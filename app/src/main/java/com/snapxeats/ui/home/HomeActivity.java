@@ -56,6 +56,7 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
+import com.snapxeats.DownloadTask;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.constants.SnapXToast;
@@ -109,6 +110,7 @@ import butterknife.ButterKnife;
 import static com.snapxeats.common.Router.Screen.LOGIN;
 import static com.snapxeats.common.constants.UIConstants.BUFFER_SIZE;
 import static com.snapxeats.common.constants.UIConstants.BYTES;
+import static com.snapxeats.common.constants.UIConstants.CHANGE_PERMISSIONS;
 import static com.snapxeats.common.constants.UIConstants.DIALOG_Y_POSITION;
 import static com.snapxeats.common.constants.UIConstants.LAT;
 import static com.snapxeats.common.constants.UIConstants.LNG;
@@ -126,11 +128,14 @@ import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isFoo
  * Created by Snehal Tembare on 3/1/18.
  */
 
-public class HomeActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener,
+public class HomeActivity extends BaseActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
         HomeContract.HomeView,
         AppContract.SnapXResults,
         View.OnClickListener,
-        MediaPlayer.OnCompletionListener, InstagramDialog.InstagramDialogListener {
+        MediaPlayer.OnCompletionListener,
+        InstagramDialog.InstagramDialogListener,
+        DownloadTask.OnDownloadCompleted {
 
     @BindView(R.id.drawer_layout)
     protected DrawerLayout mDrawerLayout;
@@ -880,7 +885,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                 mLayoutInfo.setVisibility(View.GONE);
                 mLayoutReview.setVisibility(View.GONE);
 
-                new DownloadImage().execute(mSmartPhoto.getDish_image_url(), mSmartPhoto.getAudio_review_url());
+                new DownloadTask(HomeActivity.this,this,mSmartPhoto)
+                        .execute(mSmartPhoto.getDish_image_url(), mSmartPhoto.getAudio_review_url());
             } else {
                 showNetworkErrorDialog((dialog, which) -> {
                 });
@@ -1078,7 +1084,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         initViewsForSmartPhotoDialog();
 
         //Check duplicate entry for dish to download
-        if (homeDbHelper.isDuplicateSmartPhoto(mSmartPhoto)) {
+        if (homeDbHelper.isDuplicateSmartPhoto(mSmartPhoto.getRestaurant_dish_id())) {
             mImgDownload.setVisibility(View.GONE);
         } else {
             mImgDownload.setVisibility(View.VISIBLE);
@@ -1155,11 +1161,11 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        switch (requestCode) {
-//            case CHANGE_PERMISSIONS:
-//                startDownloadingTask();
-//                break;
-//        }
+        switch (requestCode) {
+            case CHANGE_PERMISSIONS:
+                startDownloadingTask();
+                break;
+        }
         //login facebook callback
         if (resultCode == RESULT_OK) {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
@@ -1197,6 +1203,19 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                         mPresenter.response(SnapXResult.ERROR, null);
                     }
                 });
+    }
+
+    @Override
+    public void isDownloadComplete(boolean isComplete,SmartPhotoResponse smartPhotoResponse) {
+        if (isComplete){
+            mProgressbar.dismiss();
+            mImgDownload.setVisibility(View.GONE);
+            mLayoutDescription.setVisibility(View.VISIBLE);
+            mLayoutDownloadSuccess.setVisibility(View.VISIBLE);
+            mSmartPhoto.setDish_image_url(smartPhotoResponse.getDish_image_url());
+            mSmartPhoto.setAudio_review_url(smartPhotoResponse.getAudio_review_url());
+            homeDbHelper.saveSmartPhotoDataInDb(mSmartPhoto);
+        }
     }
 
     public interface SelectedBundle {

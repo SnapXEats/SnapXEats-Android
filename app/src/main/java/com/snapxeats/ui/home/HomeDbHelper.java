@@ -148,7 +148,7 @@ public class HomeDbHelper {
         return usersWishlist.size();
     }
 
-    void saveSmartPhotoDataInDb(SmartPhotoResponse smartPhotoResponse) {
+    public void saveSmartPhotoDataInDb(SmartPhotoResponse smartPhotoResponse) {
         String smartPhoto_Draft_Stored_id =
                 new SimpleDateFormat(mContext.getString(R.string.date_time_pattern)).format(new Date());
 
@@ -178,12 +178,21 @@ public class HomeDbHelper {
         new SmartAdapter().notifyDataSetChanged();
     }
 
-    boolean isDuplicateSmartPhoto(SmartPhotoResponse smartPhoto) {
+    public boolean isDuplicateSmartPhoto(String dishId) {
+        List<SmartPhoto> smartPhotoList = dbHelper.getSmartPhotoDao().loadAll();
+        for (SmartPhoto photo : smartPhotoList)
+            if (dishId.equalsIgnoreCase(photo.getRestaurantDishId())) {
+                return true;
+            }
+        return false;
+    }
+
+    /*boolean isDuplicateSmartPhoto(SmartPhotoResponse smartPhoto) {
         List<SmartPhoto> smartPhotoList = dbHelper.getSmartPhotoDao().loadAll();
         for (SmartPhoto photo : smartPhotoList)
         if (smartPhoto.getRestaurant_dish_id().equalsIgnoreCase(photo.getRestaurantDishId())){
             return true;
         }
         return false;
-    }
+    }*/
 }
