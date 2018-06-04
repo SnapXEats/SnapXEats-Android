@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -132,6 +133,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     private Handler mHandler = new Handler();
     private RestImagesAdapter mRestInfoAdapter;
     private SmartPhotoResponse mSmartPhoto;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -284,7 +286,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         }
 
         /*set adapter for restaurant images*/
-     mRestInfoAdapter = new RestImagesAdapter(RestaurantInfoActivity.this, homeDbHelper,
+        mRestInfoAdapter = new RestImagesAdapter(RestaurantInfoActivity.this, homeDbHelper,
                 mRestaurantPicsList,
                 (restaurantPic, itemView) -> {
                     mRestaurantPic = restaurantPic;
@@ -299,13 +301,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
                     mLayoutControls = itemView.findViewById(R.id.layout_controls);
                     isImageTap = !isImageTap;
                     if (isImageTap) {
-                        //Check duplicate entry for dish to download
-                        if (null != homeDbHelper && homeDbHelper.isDuplicateSmartPhoto(mRestaurantPic.getRestaurant_dish_id())
-                                && mImgDownload != null) {
-                            mImgDownload.setVisibility(View.GONE);
-                        } else {
-                            mImgDownload.setVisibility(View.VISIBLE);
-                        }
+                        setVisibilityForDownload();
 
                         mLayoutControls.setVisibility(View.VISIBLE);
                     } else {
@@ -319,17 +315,9 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
                 if (null != mLayoutControls) {
                     mLayoutControls.setVisibility(View.GONE);
                 }
-                //Check duplicate entry for dish to download
-                if (null != homeDbHelper) {
-                    if (homeDbHelper.isDuplicateSmartPhoto(mRestaurantPicsList.get(position).getRestaurant_dish_id())) {
-                        if (mImgDownload != null)
-                            mImgDownload.setVisibility(View.GONE);
-                    } else {
-                        if (mImgDownload != null)
-                            mImgDownload.setVisibility(View.VISIBLE);
-                    }
-                }
+                setVisibilityForDownload();
             }
+
             @Override
             public void onPageSelected(int position) {
 
@@ -343,8 +331,19 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         mRestInfoViewPager.setAdapter(mRestInfoAdapter);
     }
 
+    private void setVisibilityForDownload() {
+        //Check duplicate entry for dish to download
+        if ((null != homeDbHelper) && (null != mRestaurantPic) && homeDbHelper.isDuplicateSmartPhoto(mRestaurantPic.getRestaurant_dish_id())
+                && (null != mImgDownload)) {
+            mImgDownload.setVisibility(View.GONE);
+        } else if (null != mImgDownload) {
+            mImgDownload.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Override
-    public void error(Object value) {    }
+    public void error(Object value) {
+    }
 
     @Override
     public void noNetwork(Object value) {
@@ -370,7 +369,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.img_text_review:
                 setTextReview();
                 break;
@@ -406,6 +405,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
                 break;
         }
     }
+
     /**
      * Check permissions for external storage
      */
@@ -418,6 +418,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
             startDownloadingTask();
         }
     }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -426,10 +427,20 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
             if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
                 startDownloadingTask();
             } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
-                snapXDialog.showChangePermissionDialog();
+                snapXDialog.showChangePermissionDialog(STORAGE_REQUEST_PERMISSION);
             } else {
                 SnapXToast.showToast(this, getString(R.string.enable_storage_permissions));
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case STORAGE_REQUEST_PERMISSION:
+                startDownloadingTask();
+                break;
         }
     }
 
@@ -440,7 +451,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
 
                 mapRestInfoToSmartPhoto();
 
-                new DownloadTask(RestaurantInfoActivity.this,this,mSmartPhoto)
+                new DownloadTask(RestaurantInfoActivity.this, this, mSmartPhoto)
                         .execute(mRestaurantPic.getDish_image_url(), mRestaurantPic.getAudio_review_url());
             } else {
                 showNetworkErrorDialog((dialog, which) -> {
@@ -483,7 +494,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     private void setTextReview() {
         mDialog.setContentView(R.layout.rest_smart_text_review_layout);
         mWindow = mDialog.getWindow();
-        if (null != mWindow){
+        if (null != mWindow) {
             mWindow.setLayout(UIConstants.NO_DATA_DIALOG_WIDTH, LinearLayout.LayoutParams.WRAP_CONTENT);
             mWindow.setGravity(Gravity.CENTER);
         }
@@ -499,7 +510,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     private void setAudioReview() {
         mDialog.setContentView(R.layout.rest_smart_audio_layout);
         mWindow = mDialog.getWindow();
-        if (null != mWindow){
+        if (null != mWindow) {
             mWindow.setLayout(UIConstants.NO_DATA_DIALOG_WIDTH, LinearLayout.LayoutParams.WRAP_CONTENT);
             mWindow.setGravity(Gravity.CENTER);
         }
@@ -518,7 +529,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     public void isDownloadComplete(boolean isComplete, SmartPhotoResponse smartPhotoResponse) {
         mDialog.setContentView(R.layout.rest_photo_download_success_layout);
         mWindow = mDialog.getWindow();
-        if (null != mWindow){
+        if (null != mWindow) {
             mWindow.setLayout(UIConstants.NO_DATA_DIALOG_WIDTH, LinearLayout.LayoutParams.WRAP_CONTENT);
             mWindow.setGravity(Gravity.CENTER);
         }

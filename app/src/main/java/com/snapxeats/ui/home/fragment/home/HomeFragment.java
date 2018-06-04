@@ -37,6 +37,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.facebook.AccessToken;
 import com.google.gson.Gson;
 import com.snapxeats.BaseActivity;
@@ -57,16 +58,21 @@ import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.cuisinepreference.OnDoubleTapListenr;
 import com.snapxeats.ui.foodstack.FoodStackActivity;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static com.snapxeats.common.Router.Screen.LOCATION;
 import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
 import static com.snapxeats.common.constants.UIConstants.ACTION_LOCATION_GET;
+import static com.snapxeats.common.constants.UIConstants.CHANGE_LOCATION_PERMISSIONS;
 import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -200,7 +206,7 @@ public class HomeFragment extends BaseFragment implements
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 getActivity(), mDrawerLayout, toolbar, R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close){
+                R.string.navigation_drawer_close) {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
@@ -397,6 +403,9 @@ public class HomeFragment extends BaseFragment implements
             case DEVICE_LOCATION:
                 mSelectedLocation = detectCurrentLocation();
                 break;
+            case CHANGE_LOCATION_PERMISSIONS:
+                mSelectedLocation = detectCurrentLocation();
+                break;
         }
     }
 
@@ -415,13 +424,13 @@ public class HomeFragment extends BaseFragment implements
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
-        for (int index = 0; index < permissions.length; index++) {
+        for (int index = ZERO; index < permissions.length; index++) {
             if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
                 if (utility.checkPermissions()) {
                     mSelectedLocation = detectCurrentLocation();
                 }
             } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
-                snapXDialog.showChangePermissionDialog();
+                snapXDialog.showChangePermissionDialog(CHANGE_LOCATION_PERMISSIONS);
             } else {
                 presenter.presentScreen(LOCATION);
             }

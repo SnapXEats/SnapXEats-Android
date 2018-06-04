@@ -16,7 +16,6 @@ import com.snapxeats.R;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static com.snapxeats.common.constants.UIConstants.CHANGE_PERMISSIONS;
 import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
 import static com.snapxeats.common.constants.UIConstants.PACKAGE;
 
@@ -104,7 +103,7 @@ public class SnapXDialog {
     /**
      * Show dialog when user denies permissions permanently
      */
-    public void showChangePermissionDialog() {
+    public void showChangePermissionDialog(int requestCode) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle(context.getString(R.string.change_permissions));
         alertDialogBuilder
@@ -115,7 +114,7 @@ public class SnapXDialog {
                             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                             Uri uri = Uri.fromParts(PACKAGE, context.getPackageName(), null);
                             intent.setData(uri);
-                            context.startActivityForResult(intent, CHANGE_PERMISSIONS);
+                            context.startActivityForResult(intent, requestCode);
                         });
 
         AlertDialog alertDialog = alertDialogBuilder.create();

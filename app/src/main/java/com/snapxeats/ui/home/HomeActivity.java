@@ -110,7 +110,6 @@ import butterknife.ButterKnife;
 import static com.snapxeats.common.Router.Screen.LOGIN;
 import static com.snapxeats.common.constants.UIConstants.BUFFER_SIZE;
 import static com.snapxeats.common.constants.UIConstants.BYTES;
-import static com.snapxeats.common.constants.UIConstants.CHANGE_PERMISSIONS;
 import static com.snapxeats.common.constants.UIConstants.DIALOG_Y_POSITION;
 import static com.snapxeats.common.constants.UIConstants.LAT;
 import static com.snapxeats.common.constants.UIConstants.LNG;
@@ -302,6 +301,7 @@ public class HomeActivity extends BaseActivity implements
         userId = preferences.getString(getString(R.string.user_id), "");
         mRootUserPreference = mPresenter.getUserPreferenceFromDb();
         mSnapxData = mPresenter.getUserDataFromDb();
+        setAppLink();
         utility.setUserInfo(mNavigationView);
 
         if (isDataLoaded()) {
@@ -402,7 +402,6 @@ public class HomeActivity extends BaseActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        setAppLink();
         setWishlistCount();
         utility.setUserInfo(mNavigationView);
     }
@@ -872,7 +871,7 @@ public class HomeActivity extends BaseActivity implements
             if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
                 startDownloadingTask();
             } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
-                snapXDialog.showChangePermissionDialog();
+                snapXDialog.showChangePermissionDialog(STORAGE_REQUEST_PERMISSION);
             } else {
                 SnapXToast.showToast(this, getString(R.string.enable_storage_permissions));
             }
@@ -889,7 +888,7 @@ public class HomeActivity extends BaseActivity implements
                 mLayoutInfo.setVisibility(View.GONE);
                 mLayoutReview.setVisibility(View.GONE);
 
-                new DownloadTask(HomeActivity.this,this,mSmartPhoto)
+                new DownloadTask(HomeActivity.this, this, mSmartPhoto)
                         .execute(mSmartPhoto.getDish_image_url(), mSmartPhoto.getAudio_review_url());
             } else {
                 showNetworkErrorDialog((dialog, which) -> {
@@ -1166,7 +1165,7 @@ public class HomeActivity extends BaseActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case CHANGE_PERMISSIONS:
+            case STORAGE_REQUEST_PERMISSION:
                 startDownloadingTask();
                 break;
         }
@@ -1210,8 +1209,8 @@ public class HomeActivity extends BaseActivity implements
     }
 
     @Override
-    public void isDownloadComplete(boolean isComplete,SmartPhotoResponse smartPhotoResponse) {
-        if (isComplete){
+    public void isDownloadComplete(boolean isComplete, SmartPhotoResponse smartPhotoResponse) {
+        if (isComplete) {
             mProgressbar.dismiss();
             mImgDownload.setVisibility(View.GONE);
             mLayoutDescription.setVisibility(View.VISIBLE);

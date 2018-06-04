@@ -24,7 +24,7 @@ import java.util.Date;
 
 import static com.snapxeats.common.constants.UIConstants.BUFFER_SIZE;
 import static com.snapxeats.common.constants.UIConstants.BYTES;
-import static com.snapxeats.common.constants.UIConstants.IMAGE_JPEG_TYPE;
+import static com.snapxeats.common.constants.UIConstants.IMAGE;
 import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -143,7 +143,8 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
 
         if (null != connection) {
             String type = connection.guessContentTypeFromName(downloadedFileName);
-            if (null != type && !type.isEmpty() && type.contains(IMAGE_JPEG_TYPE)) {
+
+            if (null != type && !type.isEmpty() && isImageType(type)) {
                 //It's a image file
                 mSmartPhoto.setDish_image_url(downloadedFileName);
             } else {
@@ -152,6 +153,13 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
             }
         }
         return output;
+    }
+
+    /**
+     * Check image type
+     */
+    private boolean isImageType(String type) {
+        return type.contains(IMAGE + downloadedFileName.substring(downloadedFileName.lastIndexOf(".") + ONE));
     }
 
     private InputStream inputStreamToFile(URL link) {

@@ -333,6 +333,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     /*save to draft dialog on 'share later' action*/
     private void dialogSaveToDraft() {
+        saveReviewDataInDb();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
         builder.setTitle(getString(R.string.draft));
