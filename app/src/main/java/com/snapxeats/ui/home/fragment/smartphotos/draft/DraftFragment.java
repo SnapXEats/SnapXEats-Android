@@ -281,6 +281,8 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
     private void showSmartPhotoDialog() {
         mDialog = new Dialog(getActivity());
         mDialog.setContentView(R.layout.draft_dialog_layout);
+        mDialog.setOnCancelListener(dialog -> utility.resetMediaPlayer(mMediaPlayer));
+
         Window window = mDialog.getWindow();
 
         WindowManager.LayoutParams params = window.getAttributes();

@@ -68,7 +68,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
     protected NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
     private Activity activity;
-    private boolean isFromNotification;
+    private boolean isFromNotification = true;
 
     @BindView(R.id.txt_rest_name)
     protected TextView mTxtRestName;

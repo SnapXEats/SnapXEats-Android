@@ -65,7 +65,10 @@ public class ReviewDbHelper {
         snapXDraftPhoto.setRestaurantAddress(restAddress);
         snapXDraftPhoto.setImageURL(image_path);
         snapXDraftPhoto.setAudioURL(audio_path);
-        snapXDraftPhoto.setTextReview(textReview);
+
+        if (null != textReview && !textReview.isEmpty() && textReview.trim().length() > ZERO) {
+            snapXDraftPhoto.setTextReview(textReview);
+        }
         snapXDraftPhoto.setRating(rating);
 
         if (null != restaurantAminities && ZERO != restaurantAminities.size()) {

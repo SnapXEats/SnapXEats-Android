@@ -279,14 +279,18 @@ public class AppUtility {
         dots = new ImageView[dotsCount];
 
         for (int index = ZERO; index < dotsCount; index++) {
-            dots[index] = new ImageView(getApplicationContext());
-            dots[index].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(MARGIN, ZERO, MARGIN, ZERO);
-            layout.addView(dots[index], params);
+            if (null != dots[index]) {
+                dots[index] = new ImageView(getApplicationContext());
+                dots[index].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins(MARGIN, ZERO, MARGIN, ZERO);
+                layout.addView(dots[index], params);
+            }
         }
-        dots[ZERO].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+        if (null != dots[ZERO]) {
+            dots[ZERO].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+        }
     }
 
     /**
@@ -303,9 +307,13 @@ public class AppUtility {
             @Override
             public void onPageSelected(int position) {
                 for (int index = ZERO; index < dotsCount; index++) {
-                    dots[index].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
+                    if (null != dots[index]) {
+                        dots[index].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
+                    }
                 }
-                dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+                if (null != dots[position]) {
+                    dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+                }
             }
 
             @Override
@@ -427,13 +435,12 @@ public class AppUtility {
         int checkoutTime = (int) (mills / (CHECKOUT_DURATION * MILLIS));
 
         if (checkoutTime > CHECKOUT_DURATION) {
-            snapNShareMenu.setEnabled(true);
-            checkInMenu.setTitle(mContext.getString(R.string.checkout));
-        }
-        //change nav item status from 'checkout to checkin' after 2 hours
-        if (checkInMenu.getTitle().toString().equals(mContext.getString(R.string.checkout))) {
             snapNShareMenu.setEnabled(false);
-            checkInMenu.setTitle(mContext.getString(R.string.check_in));
+            if (checkInMenu.getTitle().toString().equals(mContext.getString(R.string.check_in))) {
+                checkInMenu.setTitle(mContext.getString(R.string.checkout));
+            } else {
+                checkInMenu.setTitle(mContext.getString(R.string.check_in));
+            }
         }
 
         return true;

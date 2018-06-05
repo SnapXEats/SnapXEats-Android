@@ -108,6 +108,7 @@ public class UIConstants {
     public static final String INSTA_PACKAGE_NAME = "com.instagram.android";
     public static final String IMAGE_TYPE = "image/*";
     public static final String IMAGE = "image/";
+    public static final String AUDIO = "audio/";
     public static final String FILE_MEDIATYPE = "*/*";
     public static final String TEXT_TYPE = "text/plain";
     public static final String FB_SHA = "SHA";

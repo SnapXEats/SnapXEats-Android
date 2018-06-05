@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.snapxeats.common.constants.UIConstants.AUDIO;
 import static com.snapxeats.common.constants.UIConstants.BUFFER_SIZE;
 import static com.snapxeats.common.constants.UIConstants.BYTES;
 import static com.snapxeats.common.constants.UIConstants.IMAGE;
@@ -147,7 +148,7 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
             if (null != type && !type.isEmpty() && isImageType(type)) {
                 //It's a image file
                 mSmartPhoto.setDish_image_url(downloadedFileName);
-            } else {
+            } else if (null != type && !type.isEmpty() && isAudioType(type)) {
                 //It's a audio file
                 mSmartPhoto.setAudio_review_url(downloadedFileName);
             }
@@ -155,11 +156,15 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
         return output;
     }
 
+    private boolean isAudioType(String type) {
+        return type.contains(AUDIO);
+    }
+
     /**
      * Check image type
      */
     private boolean isImageType(String type) {
-        return type.contains(IMAGE + downloadedFileName.substring(downloadedFileName.lastIndexOf(".") + ONE));
+        return type.contains(IMAGE);
     }
 
     private InputStream inputStreamToFile(URL link) {
