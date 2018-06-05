@@ -29,7 +29,6 @@ import android.widget.TextView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.DownloadTask;
 import com.snapxeats.R;
-import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
@@ -39,7 +38,6 @@ import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
-import com.snapxeats.ui.home.HomeActivity;
 import com.snapxeats.ui.home.HomeDbHelper;
 import com.snapxeats.ui.restaurant.RestImagesAdapter;
 
@@ -157,8 +155,6 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         getSupportActionBar().setTitle(getString(R.string.toolbar_rest_info));
         initRestaurantInfo();
         mDialog = new Dialog(this);
-        mDialog.setCancelable(false);
-
     }
 
     public void initRestaurantInfo() {
@@ -313,6 +309,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (null != mLayoutControls) {
+                    isImageTap = false;
                     mLayoutControls.setVisibility(View.GONE);
                 }
                 setVisibilityForDownload();
@@ -509,6 +506,8 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
      */
     private void setAudioReview() {
         mDialog.setContentView(R.layout.rest_smart_audio_layout);
+        mDialog.setOnCancelListener(dialog -> utility.resetMediaPlayer(mMediaPlayer));
+
         mWindow = mDialog.getWindow();
         if (null != mWindow) {
             mWindow.setLayout(UIConstants.NO_DATA_DIALOG_WIDTH, LinearLayout.LayoutParams.WRAP_CONTENT);
