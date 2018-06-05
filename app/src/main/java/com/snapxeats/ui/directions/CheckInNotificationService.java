@@ -14,6 +14,7 @@ import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.ui.home.HomeActivity;
 
 import static com.snapxeats.common.constants.UIConstants.CHECKIN_NOTIFICATION_ID;
+import static com.snapxeats.common.constants.UIConstants.CHECKIN_SERVICE;
 import static com.snapxeats.common.constants.UIConstants.REQUEST_CODE_CHECKIN_ACTION;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -23,7 +24,7 @@ import static com.snapxeats.common.constants.UIConstants.ZERO;
 public class CheckInNotificationService extends IntentService {
 
     public CheckInNotificationService() {
-        super("CheckInNotificationService");
+        super(CHECKIN_SERVICE);
     }
 
     @Override

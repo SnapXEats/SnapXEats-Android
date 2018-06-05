@@ -44,7 +44,6 @@ public class CheckInDbHelper {
             dbHelper.getCheckInDataDao().insert(checkInData);
         } else {
             dbHelper.getCheckInDataDao().update(checkInData);
-
         }
     }
 

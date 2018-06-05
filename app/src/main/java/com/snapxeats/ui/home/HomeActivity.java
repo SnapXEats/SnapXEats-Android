@@ -104,7 +104,9 @@ import static com.snapxeats.common.constants.UIConstants.LNG;
 import static com.snapxeats.common.constants.UIConstants.LOGOUT_DIALOG_HEIGHT;
 import static com.snapxeats.common.constants.UIConstants.NOTIFICATION_ID;
 import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.PREF_DEFAULT_STRING;
 import static com.snapxeats.common.constants.UIConstants.STORAGE_REQUEST_PERMISSION;
+import static com.snapxeats.common.constants.UIConstants.STRING_SPACE;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isCuisineDirty;
@@ -245,7 +247,6 @@ public class HomeActivity extends BaseActivity implements
     @Inject
     CheckInDbHelper checkInDbHelper;
 
-    private String checkdInTime;
     private MenuItem snapNShareMenu, foodJourneyMenu, checkInMenu;
     private Runnable mUpdateTimeTask = new Runnable() {
         public void run() {
@@ -291,7 +292,7 @@ public class HomeActivity extends BaseActivity implements
         date = new Date();
         simpleDateFormat = new SimpleDateFormat(getString(R.string.format_checkedIn));
 
-        userId = preferences.getString(getString(R.string.user_id), "");
+        userId = preferences.getString(getString(R.string.user_id), PREF_DEFAULT_STRING);
         mRootUserPreference = mPresenter.getUserPreferenceFromDb();
         mSnapxData = mPresenter.getUserDataFromDb();
         setAppLink();
@@ -549,7 +550,7 @@ public class HomeActivity extends BaseActivity implements
     }
 
     private void saveCheckInDataToDb() {
-        checkdInTime = simpleDateFormat.format(date);
+        String checkdInTime = simpleDateFormat.format(date);
         String restId = mRestaurantList.get(ZERO).getRestaurant_info_id();
         if (utility.isLoggedIn()) {
             checkInDbHelper.saveCheckInDataInDb(restId, userId, checkdInTime, true);
@@ -625,8 +626,9 @@ public class HomeActivity extends BaseActivity implements
             mRestaurantList = ((CheckInRestaurants) value).getRestaurants_info();
             setDataForCheckIn();
         } else if (value instanceof CheckInResponse) {
-            rewards = ((CheckInResponse) value).getReward_point() + " " + getString(R.string.reward_points);
+            rewards = ((CheckInResponse) value).getReward_point() + STRING_SPACE + getString(R.string.reward_points);
             showCheckInResponseDialog();
+            saveCheckInDataToDb();
         } else if (value instanceof SmartPhotoResponse) {
             mSmartPhoto = (SmartPhotoResponse) value;
             mAminitiesList = mSmartPhoto.getRestaurant_aminities();

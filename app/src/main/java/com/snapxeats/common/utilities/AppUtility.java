@@ -377,7 +377,6 @@ public class AppUtility {
         foodJourneyMenu = menu.findItem(R.id.nav_food_journey);
         checkInMenu = menu.findItem(R.id.nav_check_in);
         menuLogoutItem = menu.findItem(R.id.nav_logout);
-
     }
 
     /**
@@ -394,7 +393,7 @@ public class AppUtility {
                     .placeholder(R.drawable.ic_profile_placeholder)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                    .thumbnail(THUMBNAIL) .into(imgUser);
+                    .thumbnail(THUMBNAIL).into(imgUser);
 
             txtUserName.setText(snapXData.getUserName());
             menuLogoutItem.setTitle(mContext.getString(R.string.log_out));
@@ -425,12 +424,18 @@ public class AppUtility {
         long timeDiff = parsedCheckedIn.getTime() - parsedCurrentTime.getTime();
         long mills = Math.abs(timeDiff);
 
-        int checkoutTime = (int) (mills / MILLIS);
+        int checkoutTime = (int) (mills / (CHECKOUT_DURATION * MILLIS));
 
         if (checkoutTime > CHECKOUT_DURATION) {
             snapNShareMenu.setEnabled(true);
             checkInMenu.setTitle(mContext.getString(R.string.checkout));
         }
+        //change nav item status from 'checkout to checkin' after 2 hours
+        if (checkInMenu.getTitle().toString().equals(mContext.getString(R.string.checkout))) {
+            snapNShareMenu.setEnabled(false);
+            checkInMenu.setTitle(mContext.getString(R.string.check_in));
+        }
+
         return true;
     }
 

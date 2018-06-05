@@ -81,6 +81,7 @@ import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_ONE;
 import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_THREE;
 import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_TWO;
 import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.STRING_SPACE;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -296,7 +297,7 @@ public class DirectionsActivity extends BaseActivity
                     Date d1 = format.parse(s1);
                     Date d2 = format.parse(s2);
                     if (d1.equals(d2)) {
-                        return s1.substring(s1.indexOf(" ") + ONE).compareTo(s2.substring(s2.indexOf(" ") + ONE));
+                        return s1.substring(s1.indexOf(STRING_SPACE) + ONE).compareTo(s2.substring(s2.indexOf(STRING_SPACE) + ONE));
                     } else {
                         Calendar cal1 = Calendar.getInstance();
                         Calendar cal2 = Calendar.getInstance();
@@ -464,7 +465,7 @@ public class DirectionsActivity extends BaseActivity
         dist = Math.acos(dist);
         dist = rad2deg(dist);
         NumberFormat distance = new DecimalFormat(UIConstants.DIST_FORMAT);
-        mTxtRestDist.setText(distance.format(dist) + " " + getString(R.string.mi));
+        mTxtRestDist.setText(distance.format(dist) + STRING_SPACE + getString(R.string.mi));
     }
 
     private double deg2rad(double deg) {

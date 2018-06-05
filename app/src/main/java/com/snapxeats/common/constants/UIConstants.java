@@ -118,6 +118,9 @@ public class UIConstants {
     public static final String NOTIFICATION_MESSAGE = "Its Time to take some food snap " +
             "\nBy sharing photos you can earn rewards";
     public static final String CHECKIN_NOTIFICATION_MESSAGE = "CheckIn and earn reward points";
+    public static final String CHECKIN_SERVICE = "CheckInNotificationService";
+    public static final String STRING_SPACE = " ";
+    public static final String PREF_DEFAULT_STRING = "";
     public static final int NOTIFICATION_ID = 101;
 
     public static final int REVIEW_LENGTH_LIMIT = 140;
