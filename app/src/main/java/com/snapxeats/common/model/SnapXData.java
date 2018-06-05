@@ -27,6 +27,7 @@ public class SnapXData {
         this.token = token;
         this.userId = userId;
         this.socialToken = socialToken;
+
         this.socialUserId = socialUserId;
         this.imageUrl = imageUrl;
         this.userName = userName;

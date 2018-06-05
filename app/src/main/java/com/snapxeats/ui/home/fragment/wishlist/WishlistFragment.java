@@ -142,6 +142,10 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
                 setWishlistCount();
+                if(dbHelper.getCheckInDataDao().loadAll().size() > ZERO &&
+                        dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()){
+                    utility.getCheckedInTimeDiff();
+                }
             }
         };
 

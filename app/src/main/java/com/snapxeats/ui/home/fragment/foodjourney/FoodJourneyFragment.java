@@ -20,12 +20,12 @@ import android.widget.TextView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
+import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.foodJourney.RootFoodJourney;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
-
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -73,6 +73,9 @@ public class FoodJourneyFragment extends BaseFragment implements
     protected TextView mTxtOlderJourney;
 
     @Inject
+    DbHelper dbHelper;
+
+    @Inject
     public FoodJourneyFragment() {
         // Required empty public constructor
     }
@@ -112,7 +115,16 @@ public class FoodJourneyFragment extends BaseFragment implements
         mToolbar.setNavigationOnClickListener(v -> mDrawerLayout.openDrawer(Gravity.START));
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                if(dbHelper.getCheckInDataDao().loadAll().size() > ZERO &&
+                        dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()){
+                    utility.getCheckedInTimeDiff();
+                }
+            }
+        };
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         initView();
@@ -154,7 +166,7 @@ public class FoodJourneyFragment extends BaseFragment implements
     }
 
     private void setOlderJourney() {
-        if (null != mRootFoodJourney.getUserPastHistory()&& ZERO != mRootFoodJourney.getUserPastHistory().size()) {
+        if (null != mRootFoodJourney.getUserPastHistory() && ZERO != mRootFoodJourney.getUserPastHistory().size()) {
             mTxtOlderJourney.setVisibility(View.VISIBLE);
             OlderFoodJourneyAdapter olderFoodJourneyAdapter =
                     new OlderFoodJourneyAdapter(getActivity(), mRootFoodJourney.getUserPastHistory());

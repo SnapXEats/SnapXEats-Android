@@ -52,9 +52,6 @@ public class SmartPhotoFragment extends BaseFragment {
     @BindView(R.id.btn_draft)
     protected RadioButton mBtnDraft;
 
-    @BindView(R.id.layout_main_contents)
-    protected LinearLayout mLayoutMainContents;
-
     protected NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
     private Activity activity;
@@ -74,11 +71,6 @@ public class SmartPhotoFragment extends BaseFragment {
 
     @Inject
     AppUtility appUtility;
-
-    private CircularImageView imgUser;
-    private TextView txtUserName;
-    private TextView txtNotLoggedIn;
-    private LinearLayout mLayoutUserData;
 
     @Inject
     public SmartPhotoFragment() {
@@ -122,12 +114,13 @@ public class SmartPhotoFragment extends BaseFragment {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
-                appUtility.setUserInfo(mNavigationView);
+                    appUtility.setUserInfo(mNavigationView);
+                if (dbHelper.getCheckInDataDao().loadAll().size() > ZERO &&
+                        dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()) {
+                    appUtility.getCheckedInTimeDiff();
+                }
             }
         };
-
-        mDrawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
 
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();

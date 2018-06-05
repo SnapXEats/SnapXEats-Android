@@ -1,8 +1,13 @@
 package com.snapxeats.common.utilities;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
@@ -31,20 +36,29 @@ import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.SnapXDataDao;
-import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.location.Location;
 import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
 import com.snapxeats.network.LocationHelper;
+import com.snapxeats.ui.home.fragment.checkin.CheckInData;
+import com.snapxeats.ui.home.fragment.checkin.CheckInDataDao;
+import com.snapxeats.ui.home.fragment.checkin.DaoSession;
+import com.snapxeats.ui.home.fragment.snapnshare.SnapNotificationReceiver;
 import com.snapxeats.ui.home.fragment.snapnshare.ViewPagerAdapter;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import static android.content.Context.ALARM_SERVICE;
 import static com.facebook.FacebookSdk.getApplicationContext;
+import static com.snapxeats.common.constants.UIConstants.CHECKOUT_DURATION;
 import static com.snapxeats.common.constants.UIConstants.MARGIN;
 import static com.snapxeats.common.constants.UIConstants.MILLIES_TWO;
 import static com.snapxeats.common.constants.UIConstants.MILLIS;
@@ -69,6 +83,8 @@ public class AppUtility {
     private TextView txtUserName;
     private TextView txtNotLoggedIn;
     private LinearLayout mLayoutUserData;
+    private CheckInData checkInData;
+    private MenuItem snapNShareMenu, foodJourneyMenu, checkInMenu, menuLogoutItem;
 
     @Inject
     DbHelper dbHelper;
@@ -85,8 +101,12 @@ public class AppUtility {
         snapXDialog.setContext((Activity) context);
         DaoSession daoSession = ((SnapXApplication) context.getApplicationContext()).getDaoSession();
         SnapXDataDao snapxDataDao = daoSession.getSnapXDataDao();
+        CheckInDataDao checkInDataDao = daoSession.getCheckInDataDao();
         if (null != snapxDataDao.loadAll() && ZERO < snapxDataDao.loadAll().size()) {
             snapXData = snapxDataDao.loadAll().get(ZERO);
+        }
+        if (null != checkInDataDao.loadAll() && ZERO < checkInDataDao.loadAll().size()) {
+            checkInData = checkInDataDao.loadAll().get(ZERO);
         }
     }
 
@@ -308,7 +328,6 @@ public class AppUtility {
         }
     }
 
-
     /**
      * Converts milliseconds to seconds
      */
@@ -348,10 +367,17 @@ public class AppUtility {
      */
     public void initNavHeaderViews(NavigationView mNavigationView) {
         View mNavHeader = mNavigationView.getHeaderView(ZERO);
+        Menu menu = mNavigationView.getMenu();
         imgUser = mNavHeader.findViewById(R.id.img_user);
         txtUserName = mNavHeader.findViewById(R.id.txt_user_name);
         txtNotLoggedIn = mNavHeader.findViewById(R.id.txt_nav_not_logged_in);
         mLayoutUserData = mNavHeader.findViewById(R.id.layout_user_data);
+
+        snapNShareMenu = menu.findItem(R.id.nav_snap);
+        foodJourneyMenu = menu.findItem(R.id.nav_food_journey);
+        checkInMenu = menu.findItem(R.id.nav_check_in);
+        menuLogoutItem = menu.findItem(R.id.nav_logout);
+
     }
 
     /**
@@ -359,8 +385,6 @@ public class AppUtility {
      */
     public void setUserInfo(NavigationView mNavigationView) {
         initNavHeaderViews(mNavigationView);
-        Menu menu = mNavigationView.getMenu();
-        MenuItem menuLogoutItem = menu.findItem(R.id.nav_logout);
         if (null != snapXData && isLoggedIn()) {
             txtNotLoggedIn.setVisibility(View.GONE);
             mLayoutUserData.setVisibility(View.VISIBLE);
@@ -381,5 +405,54 @@ public class AppUtility {
                 menuLogoutItem.setTitle(mContext.getString(R.string.log_in));
             }
         }
+    }
+
+    public boolean getCheckedInTimeDiff() {
+        Date date = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(mContext.getString(R.string.format_checkedIn));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        String currentTime = simpleDateFormat.format(calendar.getTime());
+        Date parsedCheckedIn = null;
+        Date parsedCurrentTime = null;
+        try {
+            parsedCheckedIn = simpleDateFormat.parse(checkInData.getCheckInTime());
+            parsedCurrentTime = simpleDateFormat.parse(currentTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        long timeDiff = parsedCheckedIn.getTime() - parsedCurrentTime.getTime();
+        long mills = Math.abs(timeDiff);
+
+        int checkoutTime = (int) (mills / MILLIS);
+
+        if (checkoutTime > CHECKOUT_DURATION) {
+            snapNShareMenu.setEnabled(true);
+            checkInMenu.setTitle(mContext.getString(R.string.checkout));
+        }
+        return true;
+    }
+
+    //Cancel notification for broadcast receiver
+    public void cancelReminder(Intent intent) {
+        ComponentName componentName = new ComponentName(mContext, SnapNotificationReceiver.class);
+        PackageManager pm = mContext.getPackageManager();
+        pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext,
+                ZERO, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager am = (AlarmManager) mContext.getSystemService(ALARM_SERVICE);
+        if (null != am)
+            am.cancel(pendingIntent);
+        pendingIntent.cancel();
+    }
+
+    public void enableReceiver(ComponentName receiver) {
+        PackageManager pm = mContext.getPackageManager();
+        pm.setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP);
     }
 }

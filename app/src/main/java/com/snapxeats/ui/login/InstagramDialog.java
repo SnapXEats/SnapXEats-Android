@@ -114,7 +114,7 @@ public class InstagramDialog extends Dialog {
                 String urls[] = url.split("=");
                 mListener.onComplete(urls[ONE]);
                 InstagramDialogListener activity = (InstagramDialogListener) mContext;
-                activity.onReturnValue(urls[1]);
+                activity.onReturnValue(urls[ONE]);
                 InstagramDialog.this.dismiss();
                 return true;
             }

@@ -3,6 +3,7 @@ package com.snapxeats.ui.directions;
 import com.snapxeats.BasePresenter;
 import com.snapxeats.BaseView;
 import com.snapxeats.common.Router;
+import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.dagger.AppContract;
 
 /**
@@ -14,6 +15,8 @@ public class DirectionsContract {
 
     interface DirectionsPresenter extends BasePresenter<DirectionsView> {
         void presentScreen(Router.Screen screen);
+
+        void checkIn(CheckInRequest checkInRequest);
     }
 
     public interface DirectionsRouter {

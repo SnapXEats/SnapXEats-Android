@@ -1,9 +1,9 @@
 package com.snapxeats.common;
 
 import android.content.Context;
+
 import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.model.SnapXDataDao;
-import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.common.model.foodGestures.FoodDislikesDao;
 import com.snapxeats.common.model.smartphotos.RestaurantAminitiesDao;
 import com.snapxeats.common.model.smartphotos.SmartPhotoDao;
@@ -13,8 +13,15 @@ import com.snapxeats.common.model.foodGestures.FoodWishlistsDao;
 import com.snapxeats.common.model.preference.UserCuisinePreferencesDao;
 import com.snapxeats.common.model.preference.UserFoodPreferencesDao;
 import com.snapxeats.common.model.preference.UserPreferenceDao;
+import com.snapxeats.common.model.smartphotos.RestaurantAminitiesDao;
+import com.snapxeats.common.model.smartphotos.SmartPhotoDao;
+import com.snapxeats.common.model.smartphotos.SnapXDraftPhotoDao;
+import com.snapxeats.ui.home.fragment.checkin.CheckInDataDao;
+import com.snapxeats.ui.home.fragment.checkin.DaoSession;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -98,5 +105,10 @@ public class DbHelper {
     public RestaurantAminitiesDao getRestaurantAminitiesDao() {
         daoSession = getDaoSesion();
         return daoSession.getRestaurantAminitiesDao();
+    }
+
+    public CheckInDataDao getCheckInDataDao() {
+        daoSession = getDaoSesion();
+        return daoSession.getCheckInDataDao();
     }
 }

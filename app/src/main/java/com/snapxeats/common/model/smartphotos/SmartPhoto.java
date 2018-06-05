@@ -7,7 +7,7 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.ToMany;
 
 import java.util.List;
-import com.snapxeats.common.model.foodGestures.DaoSession;
+import com.snapxeats.ui.home.fragment.checkin.DaoSession;
 
 /**
  * Created by Snehal Tembare on 27/5/18.

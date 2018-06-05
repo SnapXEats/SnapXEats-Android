@@ -57,20 +57,22 @@
                 android:textSize="@dimen/txt_size_18"
                 android:textStyle="bold" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/txt_nav_not_logged_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/common_dimens_20"
+            android:layout_marginRight="@dimen/common_dimens_20"
+            android:gravity="center_vertical"
+            android:text="@string/nav_login"
+            android:textColor="@color/colorCuisine"
+            android:textSize="@dimen/txt_size_14"
+            android:textStyle="bold"
+            android:visibility="gone" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/txt_nav_not_logged_in"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/common_dimens_20"
-        android:layout_marginRight="@dimen/common_dimens_20"
-        android:gravity="center"
-        android:text="@string/nav_login"
-        android:textColor="@color/colorCuisine"
-        android:textSize="@dimen/txt_size_14"
-        android:textStyle="bold"
-        android:visibility="gone" />
 
     <View
         android:layout_width="match_parent"

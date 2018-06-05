@@ -2,12 +2,10 @@ package com.snapxeats.ui.home;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -16,10 +14,8 @@ import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -77,8 +73,9 @@ import com.snapxeats.common.utilities.NoNetworkResults;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.directions.DirectionsActivity;
 import com.snapxeats.ui.foodstack.FoodStackDbHelper;
-import com.snapxeats.ui.home.fragment.checkin.CheckInFragment;
+import com.snapxeats.ui.home.fragment.checkin.CheckInDbHelper;
 import com.snapxeats.ui.home.fragment.foodjourney.FoodJourneyFragment;
 import com.snapxeats.ui.home.fragment.home.HomeFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
@@ -91,13 +88,6 @@ import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.snapxeats.ui.login.InstagramDialog;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -108,8 +98,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.snapxeats.common.Router.Screen.LOGIN;
-import static com.snapxeats.common.constants.UIConstants.BUFFER_SIZE;
-import static com.snapxeats.common.constants.UIConstants.BYTES;
 import static com.snapxeats.common.constants.UIConstants.DIALOG_Y_POSITION;
 import static com.snapxeats.common.constants.UIConstants.LAT;
 import static com.snapxeats.common.constants.UIConstants.LNG;
@@ -155,7 +143,7 @@ public class HomeActivity extends BaseActivity implements
     protected TextView mTxtRestName;
     protected TextView mTxtCancel;
     protected Button mBtnCheckIn;
-
+    private Menu menu;
     @Inject
     HomeFragment homeFragment;
 
@@ -164,9 +152,6 @@ public class HomeActivity extends BaseActivity implements
 
     @Inject
     WishlistFragment wishlistFragment;
-
-    @Inject
-    CheckInFragment checkInFragment;
 
     @Inject
     FoodJourneyFragment foodJourneyFragment;
@@ -229,9 +214,6 @@ public class HomeActivity extends BaseActivity implements
     private ImageView mImgPlayAudio;
     private ImageView mImgDownload;
     private ProgressDialog mProgressbar;
-    private int current = ZERO;
-    private String imagePath;
-    private String audioPath;
 
     private TextView mTxtSmartPhotoRestName;
     private TextView mTxtTimeOfAudio;
@@ -256,8 +238,15 @@ public class HomeActivity extends BaseActivity implements
     private String dishId;
     private MediaPlayer mMediaPlayer;
     private Handler mHandler = new Handler();
+    private Date date;
+    private SimpleDateFormat simpleDateFormat;
+    private boolean isSnapNShareEnabled = false;
 
+    @Inject
+    CheckInDbHelper checkInDbHelper;
 
+    private String checkdInTime;
+    private MenuItem snapNShareMenu, foodJourneyMenu, checkInMenu;
     private Runnable mUpdateTimeTask = new Runnable() {
         public void run() {
             if (null != mMediaPlayer) {
@@ -271,6 +260,7 @@ public class HomeActivity extends BaseActivity implements
             }
         }
     };
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -297,6 +287,9 @@ public class HomeActivity extends BaseActivity implements
         foodStackDbHelper.setContext(this);
         snapXDialog.setContext(this);
         mCallbackManager = CallbackManager.Factory.create();
+        checkInDbHelper.setContext(this);
+        date = new Date();
+        simpleDateFormat = new SimpleDateFormat(getString(R.string.format_checkedIn));
 
         userId = preferences.getString(getString(R.string.user_id), "");
         mRootUserPreference = mPresenter.getUserPreferenceFromDb();
@@ -317,10 +310,27 @@ public class HomeActivity extends BaseActivity implements
 
         //Notification for take photo
         setNotificationForPhoto();
+        //Notification for check in
+        setNotificationCheckIn();
 
         transaction.commit();
         changeItems();
-        enableReceiver();
+        utility.enableReceiver(new ComponentName(this, SnapNotificationReceiver.class));
+
+        if (dbHelper.getCheckInDataDao().loadAll().size() > ZERO &&
+                dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()) {
+            isSnapNShareEnabled = utility.getCheckedInTimeDiff();
+        }
+    }
+
+    private void setNotificationCheckIn() {
+        Intent intent = getIntent();
+        boolean isCheckInNotification = intent.getBooleanExtra(getString(R.string.checkin_notification), false);
+        if (isCheckInNotification) {
+            Intent intentDir = new Intent(this, DirectionsActivity.class);
+            intentDir.putExtra(getString(R.string.intent_dir_check_in), isCheckInNotification);
+            startActivity(intentDir);
+        }
     }
 
     /**
@@ -343,7 +353,7 @@ public class HomeActivity extends BaseActivity implements
             if (isFromNotification) {
                 NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
                 managerCompat.cancel(NOTIFICATION_ID);
-                cancelReminder();
+                utility.cancelReminder(new Intent(this, SnapNotificationReceiver.class));
                 bundle.putBoolean(getString(R.string.notification), true);
             }
             bundle.putString(getString(R.string.intent_restaurant_id), restaurantId);
@@ -365,15 +375,23 @@ public class HomeActivity extends BaseActivity implements
         }
     }
 
-    private void changeItems() {
-        Menu menu = mNavigationView.getMenu();
-        //Disable smart photos option
-        MenuItem snapNShareMenu = menu.findItem(R.id.nav_snap);
-        MenuItem foodJourneyMenu = menu.findItem(R.id.nav_food_journey);
+    public void initNavMenuItems() {
+        menu = mNavigationView.getMenu();
+        snapNShareMenu = menu.findItem(R.id.nav_snap);
+        foodJourneyMenu = menu.findItem(R.id.nav_food_journey);
+        checkInMenu = menu.findItem(R.id.nav_check_in);
+    }
 
+    private void changeItems() {
+        initNavMenuItems();
         snapNShareMenu.setEnabled(false);
         if (!utility.isLoggedIn()) {
             foodJourneyMenu.setEnabled(false);
+        }
+        if (dbHelper.getCheckInDataDao().loadAll().size() > ZERO &&
+                dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()) {
+            checkInMenu.setTitle(getString(R.string.checkout));
+            snapNShareMenu.setEnabled(true);
         }
     }
 
@@ -404,7 +422,12 @@ public class HomeActivity extends BaseActivity implements
         super.onResume();
         setWishlistCount();
         utility.setUserInfo(mNavigationView);
+        if (dbHelper.getCheckInDataDao().loadAll().size() > ZERO &&
+                dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()) {
+            isSnapNShareEnabled = utility.getCheckedInTimeDiff();
+        }
     }
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -429,14 +452,31 @@ public class HomeActivity extends BaseActivity implements
                 case R.id.nav_food_journey:
                     selectedFragment = foodJourneyFragment;
                     break;
-
+                case R.id.nav_snap:
+                    selectedFragment = snapShareFragment;
+                    Bundle bundle = new Bundle();
+                    if (isSnapNShareEnabled) {
+                        if (snapShareFragment.isVisible()) {
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
+                        } else {
+                            bundle.putString(getString(R.string.intent_restaurant_id),
+                                    dbHelper.getCheckInDataDao().loadAll().get(ZERO).getRestId());
+                            snapShareFragment.setArguments(bundle);
+                            transaction.replace(R.id.frame_layout, snapShareFragment);
+                        }
+                    }
+                    break;
                 case R.id.nav_smart_photos:
                     selectedFragment = smartPhotoFragment;
                     break;
 
                 case R.id.nav_check_in:
                     mDrawerLayout.closeDrawer(GravityCompat.START);
-                    showCheckInDialog();
+                    if (isSnapNShareEnabled) {
+                        updateCheckout();
+                    } else {
+                        showCheckInDialog();
+                    }
                     break;
 
                 case R.id.nav_logout:
@@ -461,6 +501,17 @@ public class HomeActivity extends BaseActivity implements
         return true;
     }
 
+    private void updateCheckout() {
+        checkInDbHelper.clearCheckInData();
+        isSnapNShareEnabled = false;
+        snapNShareMenu.setEnabled(false);
+        checkInMenu.setTitle(getString(R.string.check_in));
+        transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.frame_layout, homeFragment);
+        transaction.commit();
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
     private void dialogPreferences() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setMessage(getString(R.string.preference_save_message))
@@ -468,7 +519,6 @@ public class HomeActivity extends BaseActivity implements
                 .setPositiveButton(getString(R.string.apply), (dialog, which) -> {
 
                     if (null != userId && !userId.isEmpty()) {
-
                         mUserPreference = homeDbHelper.mapLocalObject(mRootUserPreference);
                         postOrPutUserPreferences();
                     } else {
@@ -498,7 +548,22 @@ public class HomeActivity extends BaseActivity implements
         mWishlistDialog.show();
     }
 
+    private void saveCheckInDataToDb() {
+        checkdInTime = simpleDateFormat.format(date);
+        String restId = mRestaurantList.get(ZERO).getRestaurant_info_id();
+        if (utility.isLoggedIn()) {
+            checkInDbHelper.saveCheckInDataInDb(restId, userId, checkdInTime, true);
+        } else {
+            checkInDbHelper.saveCheckInDataInDb(restId, null, checkdInTime, true);
+        }
+    }
+
     public void checkIn() {
+        isSnapNShareEnabled = true;
+        snapNShareMenu.setEnabled(true);
+        checkInMenu.setTitle(getString(R.string.checkout));
+        saveCheckInDataToDb();
+
         if (utility.isLoggedIn()) {
             showProgressDialog();
             for (RestaurantInfo restaurantInfo : mRestaurantList) {
@@ -1045,37 +1110,12 @@ public class HomeActivity extends BaseActivity implements
         mRootUserPreference.resetRootUserPreference();
     }
 
-    private void enableReceiver() {
-        ComponentName receiver = new ComponentName(this, SnapNotificationReceiver.class);
-        PackageManager pm = getPackageManager();
-
-        pm.setComponentEnabledSetting(receiver,
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP);
-    }
-
-    private void cancelReminder() {
-
-        ComponentName componentName = new ComponentName(this, SnapNotificationReceiver.class);
-        PackageManager pm = getPackageManager();
-        pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP);
-
-        Intent cancelIntent = new Intent(this, SnapNotificationReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
-                ZERO, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-        if (null != am)
-            am.cancel(pendingIntent);
-        pendingIntent.cancel();
-    }
-
     /**
      * Dialog to show smart photo information
      */
     private void showSmartPhotoDialog() {
         mSmartPhotoDialog = new Dialog(this);
+        mSmartPhotoDialog.setOnCancelListener(dialog -> utility.resetMediaPlayer(mMediaPlayer));
         mSmartPhotoDialog.setContentView(R.layout.draft_dialog_layout);
         Window window = mSmartPhotoDialog.getWindow();
         WindowManager.LayoutParams params = window.getAttributes();
@@ -1223,102 +1263,5 @@ public class HomeActivity extends BaseActivity implements
 
     public interface SelectedBundle {
         void onBundleSelect(String bundle);
-    }
-
-    private class DownloadImage extends AsyncTask<String, String, String> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mProgressbar.show();
-        }
-
-        @Override
-        protected String doInBackground(String... urls) {
-            int count;
-            while (current < urls.length) {
-
-                try {
-                    URL url = new URL(urls[current]);
-                    URLConnection conection = url.openConnection();
-                    conection.connect();
-                    // getting file length
-                    int lenghtOfFile = conection.getContentLength();
-
-                    // input stream to read file - with 8k buffer
-                    InputStream input = new BufferedInputStream(url.openStream(), BUFFER_SIZE);
-
-                    String timeStamp = new SimpleDateFormat(getString(R.string.file_name_pattern)).format(new Date());
-                    SimpleDateFormat df = new SimpleDateFormat(getString(R.string.file_name_pattern));
-                    Date date = df.parse(timeStamp);
-                    long fileName = date.getTime();
-
-                    File downloadDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                            + "/" + getString(R.string.app_name) + "/" + getString(R.string.downloads) + "/");
-                    if (!downloadDirectory.exists()) {
-                        if (!downloadDirectory.mkdirs()) {
-                            return null;
-                        }
-                    }
-                    // Output stream to write file
-                    OutputStream output;
-                    File outputFile;
-                    if (ZERO == current) {
-                        outputFile = new File(downloadDirectory, getString(R.string.download)
-                                + fileName + getString(R.string.image_extension));
-                        output = new FileOutputStream(outputFile);
-                        imagePath = outputFile.getPath();
-                    } else {
-                        outputFile = new File(downloadDirectory, getString(R.string.download)
-                                + fileName + getString(R.string.audio_extension));
-                        output = new FileOutputStream(outputFile);
-                        audioPath = outputFile.getPath();
-                    }
-
-                    byte data[] = new byte[BYTES];
-
-                    long total = ZERO;
-
-                    while (-ONE != (count = input.read(data))) {
-                        total += count;
-                        // publishing the progress....
-                        // After this onProgressUpdate will be called
-                        int percentage = (int) ((total * UIConstants.PERCENTAGE) / lenghtOfFile);
-                        publishProgress(String.valueOf(percentage));
-                        // writing data to file
-                        output.write(data, ZERO, count);
-                    }
-
-                    // flushing output
-                    output.flush();
-
-                    // closing streams
-                    output.close();
-                    input.close();
-                    current++;
-                } catch (Exception e) {
-                    SnapXToast.error(getString(R.string.error) + e.getMessage());
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-            mProgressbar.setProgress(Integer.parseInt(values[ZERO]));
-
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            mProgressbar.dismiss();
-            mImgDownload.setVisibility(View.GONE);
-            mLayoutDescription.setVisibility(View.VISIBLE);
-            mLayoutDownloadSuccess.setVisibility(View.VISIBLE);
-            mSmartPhoto.setDish_image_url(imagePath);
-            mSmartPhoto.setAudio_review_url(audioPath);
-            homeDbHelper.saveSmartPhotoDataInDb(mSmartPhoto);
-        }
     }
 }
