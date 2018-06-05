@@ -14,6 +14,7 @@ import com.snapxeats.ui.home.HomeActivity;
 import static com.snapxeats.common.constants.UIConstants.NOTIFICATION_ID;
 import static com.snapxeats.common.constants.UIConstants.REQUEST_CODE_REMIND_ACTION;
 import static com.snapxeats.common.constants.UIConstants.REQUEST_CODE_TAKE_PHOTO_ACTION;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Snehal Tembare on 24/4/18.
@@ -28,6 +29,7 @@ public class SnapNotificationService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         customNotification(intent);
+
     }
 
     public void customNotification(Intent intent) {
@@ -42,7 +44,7 @@ public class SnapNotificationService extends IntentService {
         PendingIntent pendingIntentTakePhoto = PendingIntent.getActivity(this, REQUEST_CODE_TAKE_PHOTO_ACTION, takePhotoNotifyIntent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        Notification.Action takePhoto = new Notification.Action(0, getString(R.string.take_photo),
+        Notification.Action takePhoto = new Notification.Action(ZERO, getString(R.string.take_photo),
                 pendingIntentTakePhoto);
 
         //Intent for notify me later
@@ -52,7 +54,7 @@ public class SnapNotificationService extends IntentService {
         PendingIntent pendingIntentRemind = PendingIntent.getService(this, REQUEST_CODE_REMIND_ACTION,
                 remindNotifyIntent, PendingIntent.FLAG_ONE_SHOT);
 
-        Notification.Action remindLaterAction = new Notification.Action(0, getString(R.string.remind_me_later),
+        Notification.Action remindLaterAction = new Notification.Action(ZERO, getString(R.string.remind_me_later),
                 pendingIntentRemind);
 
 

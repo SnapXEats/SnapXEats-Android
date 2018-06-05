@@ -22,17 +22,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:elevation="@dimen/common_dimens_2"
                 android:paddingEnd="@dimen/common_dimens_5"
-                app:theme="@style/ToolBarTheme">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right|end"
-                    android:layout_marginEnd="@dimen/common_dimens_10"
-                    android:layout_marginLeft="@dimen/common_dimens_20"
-                    android:padding="@dimen/common_dimens_10"
-                    android:src="@drawable/ic_dir_share" />
-            </android.support.v7.widget.Toolbar>
+                app:theme="@style/ToolBarTheme" />
 
             <FrameLayout
                 android:id="@+id/frame_layout"

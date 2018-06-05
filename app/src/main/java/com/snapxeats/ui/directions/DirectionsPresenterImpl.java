@@ -3,6 +3,7 @@ package com.snapxeats.ui.directions;
 import android.support.annotation.Nullable;
 
 import com.snapxeats.common.Router;
+import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.utilities.SnapXResult;
 
 import javax.inject.Singleton;
@@ -40,6 +41,11 @@ public class DirectionsPresenterImpl implements DirectionsContract.DirectionsPre
     @Override
     public void presentScreen(Router.Screen screen) {
         mDirectionsRouter.presentScreen(screen);
+    }
+
+    @Override
+    public void checkIn(CheckInRequest checkInRequest) {
+        mDirectionsInteractor.checkIn(checkInRequest);
     }
 
     @Override

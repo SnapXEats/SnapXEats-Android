@@ -4,10 +4,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
-import com.snapxeats.common.model.foodGestures.DaoMaster;
-import com.snapxeats.common.model.foodGestures.DaoSession;
 import com.snapxeats.dagger.AppComponent;
 import com.snapxeats.dagger.DaggerAppComponent;
+import com.snapxeats.ui.home.fragment.checkin.DaoMaster;
+import com.snapxeats.ui.home.fragment.checkin.DaoSession;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DaggerApplication;

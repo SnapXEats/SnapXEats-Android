@@ -2,21 +2,35 @@ package com.snapxeats.ui.directions;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.PendingIntent;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -29,13 +43,19 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
+import com.snapxeats.common.model.checkin.CheckInRequest;
+import com.snapxeats.common.model.checkin.CheckInResponse;
 import com.snapxeats.common.model.googleDirections.RootGoogleDir;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
+import com.snapxeats.ui.home.fragment.checkin.CheckInDbHelper;
+import com.snapxeats.ui.home.fragment.snapnshare.SnapNotificationReceiver;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -47,22 +67,29 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.snapxeats.common.constants.UIConstants.CHECKIN_NOTIFICATION_REQUEST_CODE;
+import static com.snapxeats.common.constants.UIConstants.CHECKIN_NOTIFICATION_TIME;
 import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_FOUR;
 import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_ONE;
 import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_THREE;
 import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_TWO;
+import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.STRING_SPACE;
+import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Prajakta Patil on 22/3/18.
  */
 public class DirectionsActivity extends BaseActivity
-        implements DirectionsContract.DirectionsView, OnMapReadyCallback {
+        implements DirectionsContract.DirectionsView, OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener {
 
     @Inject
     SnapXDialog snapXDialog;
@@ -106,6 +133,19 @@ public class DirectionsActivity extends BaseActivity
     @BindView(R.id.toolbar_directions)
     protected Toolbar mToolbar;
 
+    private Location mCurrentLocation;
+
+    private Dialog dialog;
+
+    @Inject
+    CheckInDbHelper checkInDbHelper;
+
+    private String restId;
+
+    private String userId, currentTime;
+
+    private boolean isCheckedIn = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,11 +171,73 @@ public class DirectionsActivity extends BaseActivity
         mPresenter.addView(this);
         snapXDialog.setContext(this);
         utility.setContext(this);
+        checkInDbHelper.setContext(this);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(getString(R.string.directions));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        utility.enableReceiver(new ComponentName(this, SnapNotificationReceiver.class));
         setMapView();
         setUpViews();
+        mCurrentLocation = utility.getLocation();
+
+        //shows check in dialog, on checkin notification action
+        boolean isCheckInNotification = getIntent().getBooleanExtra(getString(R.string.intent_dir_check_in), false);
+        if (isCheckInNotification) {
+            dialogCheckIn();
+        }
+    }
+
+    private void dialogCheckIn() {
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_auto_checkin, null);
+        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setView(alertLayout);
+        alert.setCancelable(false);
+        dialog = alert.create();
+        dialog.show();
+
+        Button mBtnCheckIn = alertLayout.findViewById(R.id.btn_check_in);
+        TextView mTxtCancel = alertLayout.findViewById(R.id.txt_cancel);
+        TextView mTxtRestName = alertLayout.findViewById(R.id.txt_rest_name);
+        CircularImageView mImgRest = alertLayout.findViewById(R.id.img_restaurant);
+
+        mTxtRestName.setText(mDetails.restaurantDetails.getRestaurant_name());
+        Glide.with(this)
+                .load(mDetails.getRestaurantDetails().getRestaurant_pics().get(ZERO).getDish_image_url())
+                .placeholder(R.drawable.ic_restaurant_placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                .thumbnail(THUMBNAIL)
+                .into(mImgRest);
+
+        mBtnCheckIn.setOnClickListener(v -> {
+            showProgressDialog();
+            CheckInRequest checkInRequest = new CheckInRequest();
+            checkInRequest.setRestaurant_info_id(mDetails.getRestaurantDetails().getRestaurant_info_id());
+            checkInRequest.setReward_type(getString(R.string.reward_type_check_in));
+            mPresenter.checkIn(checkInRequest);
+        });
+
+        mTxtCancel.setOnClickListener(v -> dialog.dismiss());
+
+    }
+
+    //tracks if current location and restaurant location are equal or not
+    @Override
+    public void onMyLocationChange(Location location) {
+        Location target = new Location("target");
+        if (null != mCurrentLocation && null != mDetails.getRestaurantDetails()) {
+            LatLng currentLoc = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+            LatLng destLoc = new LatLng(Double.valueOf(mDetails.getRestaurantDetails().getLocation_lat()),
+                    Double.valueOf(mDetails.getRestaurantDetails().getLocation_long()));
+            for (LatLng point : list) {
+                target.setLatitude(point.latitude);
+                target.setLongitude(point.longitude);
+                if (currentLoc == destLoc) {
+                    dialogCheckIn();
+                }
+            }
+        }
     }
 
     /**
@@ -143,6 +245,9 @@ public class DirectionsActivity extends BaseActivity
      **/
     private void setUpViews() {
         mDetails = getIntent().getExtras().getParcelable(getString(R.string.intent_rest_details));
+        if (null != mDetails && null != mDetails.getRestaurantDetails().getRestaurant_info_id()) {
+            restId = mDetails.getRestaurantDetails().getRestaurant_info_id();
+        }
         if (null != mDetails && null != mDetails.getRestaurantDetails()) {
             mTxtRestName.setText(String.valueOf(mDetails.getRestaurantDetails().getRestaurant_name()));
             mTxtRestAddr.setText(mDetails.getRestaurantDetails().getRestaurant_address());
@@ -179,8 +284,8 @@ public class DirectionsActivity extends BaseActivity
     private void setRestTimings() {
         List<String> listTimings = new ArrayList<>();
         String isOpenNow = mDetails.getRestaurantDetails().getIsOpenNow();
-        if (null != mDetails && 0 != mDetails.getRestaurantDetails().getRestaurant_timings().size()) {
-            for (int row = 0; row < mDetails.getRestaurantDetails().getRestaurant_timings().size(); row++) {
+        if (null != mDetails && ZERO != mDetails.getRestaurantDetails().getRestaurant_timings().size()) {
+            for (int row = ZERO; row < mDetails.getRestaurantDetails().getRestaurant_timings().size(); row++) {
                 listTimings.add(mDetails.getRestaurantDetails().getRestaurant_timings().get(row).getDay_of_week() +
                         "         " +
                         mDetails.getRestaurantDetails().getRestaurant_timings().get(row).getRestaurant_open_close_time());
@@ -192,7 +297,7 @@ public class DirectionsActivity extends BaseActivity
                     Date d1 = format.parse(s1);
                     Date d2 = format.parse(s2);
                     if (d1.equals(d2)) {
-                        return s1.substring(s1.indexOf(" ") + 1).compareTo(s2.substring(s2.indexOf(" ") + 1));
+                        return s1.substring(s1.indexOf(STRING_SPACE) + ONE).compareTo(s2.substring(s2.indexOf(STRING_SPACE) + ONE));
                     } else {
                         Calendar cal1 = Calendar.getInstance();
                         Calendar cal2 = Calendar.getInstance();
@@ -232,7 +337,7 @@ public class DirectionsActivity extends BaseActivity
         mMap.addMarker(new MarkerOptions().position(destination)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_dest)));
         if (null != mGoogleDir) {
-            String encodedString = mGoogleDir.getRoutes().get(0).getOverview_polyline().getPoints();
+            String encodedString = mGoogleDir.getRoutes().get(ZERO).getOverview_polyline().getPoints();
             list = decodePoly(encodedString);
 
             PolylineOptions polyOptions = new PolylineOptions();
@@ -251,27 +356,27 @@ public class DirectionsActivity extends BaseActivity
     /* Fetch latlng list of points for setting route */
     private List<LatLng> decodePoly(String encoded) {
         List<LatLng> poly = new ArrayList<>();
-        int index = 0, len = encoded.length();
-        int lat = 0, lng = 0;
+        int index = ZERO, len = encoded.length();
+        int lat = ZERO, lng = ZERO;
 
         while (index < len) {
-            int b, shift = 0, result = 0;
+            int b, shift = ZERO, result = ZERO;
             do {
                 b = encoded.charAt(index++) - 63;
                 result |= (b & 0x1f) << shift;
                 shift += 5;
             } while (b >= 0x20);
-            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            int dlat = ((result & ONE) != 0 ? ~(result >> ONE) : (result >> ONE));
             lat += dlat;
 
-            shift = 0;
-            result = 0;
+            shift = ZERO;
+            result = ZERO;
             do {
                 b = encoded.charAt(index++) - 63;
                 result |= (b & 0x1f) << shift;
                 shift += 5;
             } while (b >= 0x20);
-            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            int dlng = ((result & ONE) != 0 ? ~(result >> ONE) : (result >> ONE));
             lng += dlng;
 
             LatLng p = new LatLng((((double) lat / 1E5)),
@@ -285,7 +390,7 @@ public class DirectionsActivity extends BaseActivity
     public static void setAnimation(GoogleMap myMap, final List<LatLng> directionPoint, final BitmapDescriptor bitmap) {
         Marker marker = myMap.addMarker(new MarkerOptions()
                 .icon(bitmap)
-                .position(directionPoint.get(0))
+                .position(directionPoint.get(ZERO))
                 .flat(true));
         animateMarker(myMap, marker, directionPoint, false);
     }
@@ -300,7 +405,7 @@ public class DirectionsActivity extends BaseActivity
         final Interpolator interpolator = new LinearInterpolator();
 
         handler.post(new Runnable() {
-            int point = 0;
+            int point = ZERO;
 
             @Override
             public void run() {
@@ -334,6 +439,7 @@ public class DirectionsActivity extends BaseActivity
             return;
         }
         mMap.setMyLocationEnabled(true);
+        mMap.setOnMyLocationChangeListener(this);
     }
 
     /* Zoom over google direction route to fit screen */
@@ -359,7 +465,7 @@ public class DirectionsActivity extends BaseActivity
         dist = Math.acos(dist);
         dist = rad2deg(dist);
         NumberFormat distance = new DecimalFormat(UIConstants.DIST_FORMAT);
-        mTxtRestDist.setText(distance.format(dist) + " " + getString(R.string.mi));
+        mTxtRestDist.setText(distance.format(dist) + STRING_SPACE + getString(R.string.mi));
     }
 
     private double deg2rad(double deg) {
@@ -372,7 +478,29 @@ public class DirectionsActivity extends BaseActivity
 
     @Override
     public void success(Object value) {
+        isCheckedIn = true;
+        dismissProgressDialog();
+        dialog.dismiss();
+        getCheckedInData();
+        if (utility.isLoggedIn()) {
+            checkInDbHelper.saveCheckInDataInDb(restId, userId, currentTime, true);
+        } else {
+            checkInDbHelper.saveCheckInDataInDb(restId, userId, currentTime, true);
+        }
+        CheckInResponse checkInResponse = (CheckInResponse) value;
+        if (null != checkInResponse) {
+            SnapXToast.showToast(this, "Checked In successfully");
+        }
+    }
 
+    private void getCheckedInData() {
+        SharedPreferences preferences = utility.getSharedPreferences();
+        userId = preferences.getString(getString(R.string.user_id), "");
+        Date date = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getString(R.string.format_checkedIn));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        currentTime = simpleDateFormat.format(calendar.getTime());
     }
 
     @Override
@@ -397,7 +525,29 @@ public class DirectionsActivity extends BaseActivity
 
     @Override
     public boolean onSupportNavigateUp() {
+        if (!isCheckedIn) {
+            startTimerForCheckIn();
+        }
         onBackPressed();
         return true;
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (!isCheckedIn) {
+            startTimerForCheckIn();
+        }
+    }
+
+    private void startTimerForCheckIn() {
+        Intent intent = new Intent(getActivity(), CheckInNotificationReceiver.class);
+        intent.putExtra(getString(R.string.intent_restaurant_id), restId);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), CHECKIN_NOTIFICATION_REQUEST_CODE, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
+                TimeUnit.HOURS.toMillis(CHECKIN_NOTIFICATION_TIME), pendingIntent);
+    }
+
 }

@@ -92,6 +92,11 @@
             android:enabled="true"
             android:exported="false" />
 
+        <receiver
+            android:name=".ui.directions.CheckInNotificationReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
         <service
             android:name=".ui.home.fragment.snapnshare.SnapNotificationService"
             android:exported="false" />

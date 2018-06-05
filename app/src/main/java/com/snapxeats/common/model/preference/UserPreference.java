@@ -2,14 +2,16 @@ package com.snapxeats.common.model.preference;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.snapxeats.ui.home.fragment.checkin.DaoSession;
+
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.JoinProperty;
 import org.greenrobot.greendao.annotation.ToMany;
+
 import java.util.List;
-import com.snapxeats.common.model.foodGestures.DaoSession;
 
 /**
  * Created by Snehal Tembare on 8/2/18.
@@ -233,7 +235,9 @@ public class UserPreference {
         myDao.update(this);
     }
 
-    /** called by internal mechanisms, do not call yourself. */
+    /**
+     * called by internal mechanisms, do not call yourself.
+     */
     @Generated(hash = 1374549841)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;

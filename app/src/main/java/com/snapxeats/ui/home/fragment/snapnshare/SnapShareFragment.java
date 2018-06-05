@@ -3,6 +3,8 @@ package com.snapxeats.ui.home.fragment.snapnshare;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -40,6 +42,7 @@ import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.home.HomeActivity;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -94,6 +97,8 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
     @Inject
     DbHelper dbHelper;
 
+    private Toolbar mToolbar;
+
     @Inject
     public SnapShareFragment() {
         // Required empty public constructor
@@ -122,8 +127,12 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initView();
+        mToolbar = view.findViewById(R.id.toolbar);
+        initializeNavViews();
+        updateSmartPhotoMenu();
+    }
 
-        Toolbar mToolbar = view.findViewById(R.id.toolbar);
+    private void initializeNavViews() {
 
         mNavigationView = activity.findViewById(R.id.nav_view);
         mDrawerLayout = activity.findViewById(R.id.drawer_layout);
@@ -132,13 +141,19 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
         ((BaseActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mToolbar.setNavigationOnClickListener(v -> mDrawerLayout.openDrawer(Gravity.START));
-        MenuItem smartPhotoMenu = mNavigationView.getMenu().findItem(R.id.nav_smart_photos);
+    }
 
+    private void updateSmartPhotoMenu() {
+        MenuItem smartPhotoMenu = mNavigationView.getMenu().findItem(R.id.nav_smart_photos);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
+                if (dbHelper.getCheckInDataDao().loadAll().size() > ZERO &&
+                        dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()) {
+                    utility.getCheckedInTimeDiff();
+                }
                 if (dbHelper.isSmartPhotoAvailable() || dbHelper.isDraftPhotoAvailable()) {
                     smartPhotoMenu.setEnabled(true);
                 } else {
@@ -148,14 +163,12 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
         };
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
-        mDrawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
     }
 
     public void initView() {
         mPresenter.addView(this);
         dbHelper.setContext(getActivity());
+        utility.setContext(getActivity());
         if (null != getArguments()) {
             restaurantId = getArguments().getString(getString(R.string.intent_restaurant_id));
             isFromNotification = getArguments().getBoolean(getString(R.string.notification));
@@ -292,6 +305,5 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
                 TimeUnit.MINUTES.toMillis(PHOTO_NOTIFICATION_TIME), pendingIntent);
-
     }
 }

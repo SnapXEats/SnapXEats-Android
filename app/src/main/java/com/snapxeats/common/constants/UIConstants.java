@@ -117,9 +117,14 @@ public class UIConstants {
     public static final int CAMERA_REQUEST = 4;
     public static final String NOTIFICATION_MESSAGE = "Its Time to take some food snap " +
             "\nBy sharing photos you can earn rewards";
+    public static final String CHECKIN_NOTIFICATION_MESSAGE = "CheckIn and earn reward points";
+    public static final String CHECKIN_SERVICE = "CheckInNotificationService";
+    public static final String STRING_SPACE = " ";
+    public static final String PREF_DEFAULT_STRING = "";
     public static final int NOTIFICATION_ID = 101;
 
     public static final int REVIEW_LENGTH_LIMIT = 140;
+    public static final int CHECKOUT_DURATION = 2;
     public static final int TIME_HOUR = 3600000;
     public static final int TIME_MINUTE = 60000;
     public static final int TIME_SECONDS = 1000;
@@ -144,5 +149,8 @@ public class UIConstants {
     public static final int BYTES = 1024;
     public static final long TIME_DELAY = 250;
     public static final int DIALOG_Y_POSITION = 120;
-
+    public static final int CHECKIN_NOTIFICATION_REQUEST_CODE = 1;
+    public static final int CHECKIN_NOTIFICATION_TIME = 2;
+    public static final int REQUEST_CODE_CHECKIN_ACTION = 5;
+    public static final int CHECKIN_NOTIFICATION_ID = 201;
 }

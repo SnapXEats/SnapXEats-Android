@@ -244,5 +244,10 @@
     <string name="enable_storage_permissions">Please enable storage Permissions</string>
     <string name="downloads">Downloads</string>
     <string name="download">Download_</string>
+    <string name="checkout">Check Out</string>
+    <string name="format_checkedIn">hh:mm:ss aa</string>
+    <string name="checkin_notification">checkin_notification</string>
+    <string name="checkin_reminder_title">SnapXEats CheckIn Reminder</string>
+    <string name="intent_dir_check_in">intent_dir_check_in</string>
 
 </resources>

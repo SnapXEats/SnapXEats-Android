@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/single_restaurant_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <com.pkmmte.view.CircularImageView
+            android:id="@+id/img_restaurant"
+            android:layout_width="@dimen/dimens_95dp"
+            android:layout_height="@dimen/dimens_95dp"
+            android:layout_marginTop="@dimen/dimens_40dp"
+            android:src="@drawable/ic_restaurant_placeholder"
+            app:border="true"
+            app:border_width="@dimen/common_1"
+            app:shadow="true" />
+
+        <TextView
+            android:id="@+id/txt_rest_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/common_dimens_10"
+            android:textColor="@color/text_color_primary"
+            android:textSize="@dimen/text_size_15"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buttons_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/common_dimens_15"
+            android:text="@string/check_in_and_earn"
+            android:textColor="@color/text_color_secondary"
+            android:textSize="@dimen/text_size_12" />
+
+        <Button
+            android:id="@+id/btn_check_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_button"
+            android:enabled="true"
+            android:paddingLeft="@dimen/common_dimens_30"
+            android:paddingRight="@dimen/common_dimens_30"
+            android:text="@string/check_in"
+            android:textColor="@color/colorWhite" />
+
+        <TextView
+            android:id="@+id/txt_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/common_dimens_20"
+            android:paddingLeft="@dimen/common_dimens_30"
+            android:paddingRight="@dimen/common_dimens_30"
+            android:text="@string/cancel"
+            android:textColor="@color/text_color_primary" />
+    </LinearLayout>
+</LinearLayout>
