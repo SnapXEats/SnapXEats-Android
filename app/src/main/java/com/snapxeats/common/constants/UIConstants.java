@@ -119,7 +119,8 @@ public class UIConstants {
     public static final String NOTIFICATION_MESSAGE = "Its Time to take some food snap " +
             "\nBy sharing photos you can earn rewards";
     public static final String CHECKIN_NOTIFICATION_MESSAGE = "CheckIn and earn reward points";
-    public static final String CHECKIN_SERVICE = "CheckInNotificationService";
+    public static final String CHECKIN_SERVICE = "CheckInService";
+    public static final int GEOFENCE_RADIUS = 500;
     public static final String STRING_SPACE = " ";
     public static final String PREF_DEFAULT_STRING = "";
     public static final int NOTIFICATION_ID = 101;
@@ -150,10 +151,13 @@ public class UIConstants {
     public static final int BYTES = 1024;
     public static final long TIME_DELAY = 250;
     public static final int DIALOG_Y_POSITION = 120;
-    public static final int CHECKIN_NOTIFICATION_REQUEST_CODE = 1;
-    public static final int CHECKIN_NOTIFICATION_TIME = 2;
     public static final int REQUEST_CODE_CHECKIN_ACTION = 5;
     public static final int CHECKIN_NOTIFICATION_ID = 201;
+    public static final int GEOFENCING_DELAY = 10000;
+    public static final String UBER_URI = "https://play.google.com/store/apps/details?id=com.ubercab";
+    public static final String UBER_PACKAGE = "com.ubercab";
+    public static final String REST_CALL = "tel";
+
     public static final int DELETE_ICON_WIDTH = 80;
     public static final int SPAN_COUNT = 2;
 }

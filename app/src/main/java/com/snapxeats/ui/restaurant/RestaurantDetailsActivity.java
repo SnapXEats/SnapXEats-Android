@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
@@ -34,6 +35,7 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.directions.DirectionsActivity;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,15 +44,19 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import static com.snapxeats.common.constants.UIConstants.LATITUDE;
-import static com.snapxeats.common.constants.UIConstants.LONGITUDE;
+
 import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.REST_CALL;
 import static com.snapxeats.common.constants.UIConstants.SET_ALPHA_DISABLE;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
+import static com.snapxeats.common.constants.UIConstants.UBER_PACKAGE;
+import static com.snapxeats.common.constants.UIConstants.UBER_URI;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -60,9 +66,6 @@ import static com.snapxeats.common.constants.UIConstants.ZERO;
 public class RestaurantDetailsActivity extends BaseActivity implements RestaurantDetailsContract.RestaurantDetailsView,
         AppContract.SnapXResults {
 
-    private static final String UBER_URI = "https://play.google.com/store/apps/details?id=com.ubercab";
-    private static final String UBER_PACKAGE = "com.ubercab";
-    private static final String REST_CALL = "tel";
     private List<RestaurantPics> mRestaurantPicsList;
     private List<RestaurantSpeciality> mRestaurantSpecialties;
 
@@ -173,7 +176,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             return true;
         } catch (PackageManager.NameNotFoundException e) {
         }
-
         return false;
     }
 
@@ -193,15 +195,16 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     }
 
     private void setGoogleDir() {
-        //TODO latlng are hardcoded for now
         final String destLat = mRootRestaurantInfo.getRestaurantDetails().getLocation_lat();
         final String destLng = mRootRestaurantInfo.getRestaurantDetails().getLocation_long();
         LocationGoogleDir locationGoogleDir = new LocationGoogleDir();
         GoogleDirOrigin googleDirOrigin = new GoogleDirOrigin();
 
+        String lat = String.valueOf(utility.getLocationfromPref().getLat());
+        String lng = String.valueOf(utility.getLocationfromPref().getLng());
 
-        googleDirOrigin.setOriginLat(LATITUDE);
-        googleDirOrigin.setOriginLng(LONGITUDE);
+        googleDirOrigin.setOriginLat(lat);
+        googleDirOrigin.setOriginLng(lng);
         GoogleDirDest googleDirDest = new GoogleDirDest();
         googleDirDest.setDestinationLat(destLat);
         googleDirDest.setDestinationLng(destLng);
@@ -212,7 +215,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     @OnClick(R.id.img_rest_directions)
     public void imgRestDirections() {
-        if (null != mRootRestaurantInfo && mRootGoogleDir != null) {
+        if (null != mRootRestaurantInfo && null != mRootGoogleDir) {
             Intent intent = new Intent(RestaurantDetailsActivity.this, DirectionsActivity.class);
             intent.putExtra(getString(R.string.intent_rest_details), mRootRestaurantInfo);
             intent.putExtra(getString(R.string.intent_google_dir), mRootGoogleDir);
@@ -308,7 +311,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         }
         /*set adapter for restaurant images*/
         RestImagesAdapter mRestPicsAdapter = new RestImagesAdapter(RestaurantDetailsActivity.this,
-                null,mRestaurantPicsList,null);
+                null, mRestaurantPicsList, null);
         mRestviewPager.setAdapter(mRestPicsAdapter);
     }
 
