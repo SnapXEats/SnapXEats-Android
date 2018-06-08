@@ -251,5 +251,7 @@
     <string name="intent_dir_check_in">intent_dir_check_in</string>
     <string name="login_success">LogIn Success</string>
     <string name="login_success_msg">Congratulations, Your signin was successful !</string>
+    <string name="geofence_enter">location entered</string>
+    <string name="geofence_transition">location transition</string>
 
 </resources>

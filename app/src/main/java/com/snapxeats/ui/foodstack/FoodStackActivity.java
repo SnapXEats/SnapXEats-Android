@@ -240,6 +240,8 @@ public class FoodStackActivity extends BaseActivity
                 }
                 if (ZERO == foodGestureDislike.size()) {
                     disableUndo();
+                } else {
+                    cardStackView.reverse();
                 }
                 switch (direction) {
                     case Top: {
@@ -251,6 +253,7 @@ public class FoodStackActivity extends BaseActivity
                         break;
                     }
                     case Left: {
+                        enableUndo();
                         break;
                     }
                 }
@@ -351,17 +354,19 @@ public class FoodStackActivity extends BaseActivity
 
     /*swipe LEFT*/
     public void swipeLeft(int index) {
+        enableUndo();
         List<FoodStackData> data = extractRemainingCards();
         if (data.isEmpty()) {
             return;
         }
-        enableUndo();
         FoodDislikes foodDislikeItem;
+        foodDislikeItem = new FoodDislikes();
         if (isLoggedIn()) {
-            foodDislikeItem = new FoodDislikes();
             foodDislikeItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
             foodGestureDislike.add(foodDislikeItem);
             mFoodStackPresenter.saveDislikeToDb(foodGestureDislike);
+        } else {
+            foodGestureDislike.add(foodDislikeItem);
         }
         gestureLeft();
     }
@@ -456,6 +461,8 @@ public class FoodStackActivity extends BaseActivity
         translateX.setDuration(UIConstants.SET_DURATION);
         translateY.setDuration(UIConstants.SET_DURATION);
         mAnimatorSet.playTogether(rotation, translateX, translateY);
+        cardStackView.swipe(SwipeDirection.Top, mAnimatorSet);
+
     }
 
     @Override
@@ -490,6 +497,9 @@ public class FoodStackActivity extends BaseActivity
 
     @OnClick(R.id.img_cuisine_undo)
     public void imgCuisineUndo() {
+        if (ZERO == foodGestureDislike.size()) {
+            disableUndo();
+        }
         cardStackView.reverse();
     }
 
