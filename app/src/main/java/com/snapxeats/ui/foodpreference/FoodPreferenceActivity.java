@@ -24,7 +24,6 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.cuisinepreference.OnDoubleTapListenr;
-import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +31,11 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.snapxeats.common.constants.UIConstants.SPAN_COUNT;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
+import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isFoodDirty;
+
 
 /**
  * Created by Snehal Tembare on 13/2/17.
@@ -114,7 +118,7 @@ public class FoodPreferenceActivity extends BaseActivity implements
 
             selectedFoodPrefList = helper.getSelectedFoodList(mRootFoodPrefList);
 
-            if (selectedFoodPrefList.size() > 0) {
+            if (selectedFoodPrefList.size() > ZERO) {
                 mTxtReset.setClickable(true);
                 mTxtReset.setTextColor(ContextCompat.getColor(FoodPreferenceActivity.this,
                         R.color.text_color_primary));
@@ -145,11 +149,17 @@ public class FoodPreferenceActivity extends BaseActivity implements
     @OnClick(R.id.txt_reset)
     public void resetFoodPref() {
         AppContract.DialogListenerAction positiveClick = () -> {
-            for (int index = 0; index < mRootFoodPrefList.size(); index++) {
+            for (int index = ZERO; index < mRootFoodPrefList.size(); index++) {
                 mRootFoodPrefList.get(index).set_food_favourite(false);
                 mRootFoodPrefList.get(index).set_food_like(false);
+
+                if (mRootFoodPrefList.get(index).is_food_favourite()
+                        || mRootFoodPrefList.get(index).is_food_like()) {
+                    mRootFoodPrefList.get(index).setSelected(true);
+                }
                 selectedFoodPrefList.clear();
                 isDirty = true;
+                isFoodDirty = true;
                 mFoodPrefAdapter.notifyDataSetChanged();
             }
         };
@@ -176,7 +186,7 @@ public class FoodPreferenceActivity extends BaseActivity implements
         getFoodPrefDataDb();
 
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this,
-                2);
+                SPAN_COUNT);
         mRecyclerView.setLayoutManager(layoutManager);
 
         if (null != mRootFoodPrefList) {
@@ -185,6 +195,7 @@ public class FoodPreferenceActivity extends BaseActivity implements
                         @Override
                         public void onSingleTap(int position, boolean isLike) {
                             isDirty = true;
+                            isFoodDirty = true;
                             mRootFoodPrefList.get(position).set_food_like(isLike);
                             mRootFoodPrefList.get(position).setSelected(true);
                             mFoodPrefAdapter.notifyItemChanged(position);
@@ -193,6 +204,7 @@ public class FoodPreferenceActivity extends BaseActivity implements
                         @Override
                         public void onDoubleTap(int position, boolean isSuperLike) {
                             isDirty = true;
+                            isFoodDirty = true;
                             mRootFoodPrefList.get(position).set_food_favourite(isSuperLike);
                             mRootFoodPrefList.get(position).setSelected(true);
                             mFoodPrefAdapter.notifyItemChanged(position);
@@ -277,7 +289,7 @@ public class FoodPreferenceActivity extends BaseActivity implements
     }
 
     private void saveFoodPrefInDbAndFinish() {
-        NavPrefFragment.isFoodDirty = true;
+        isFoodDirty = true;
         isDirty = false;
         mUserFoodPrefList = helper.getSelectedUserFoodPreferencesList(mRootFoodPrefList);
         mRootUserPreference.setUserFoodPreferences(mUserFoodPrefList);

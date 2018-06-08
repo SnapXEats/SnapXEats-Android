@@ -27,6 +27,7 @@ import static com.snapxeats.common.constants.UIConstants.BUFFER_SIZE;
 import static com.snapxeats.common.constants.UIConstants.BYTES;
 import static com.snapxeats.common.constants.UIConstants.IMAGE;
 import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.PERCENTAGE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -193,8 +194,12 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+        if (mProgressbar.getProgress() == PERCENTAGE) {
+            onDownloadCompleted.isDownloadComplete(true, mSmartPhoto);
+        } else {
+            onDownloadCompleted.isDownloadComplete(false, mSmartPhoto);
+        }
         mProgressbar.dismiss();
-        onDownloadCompleted.isDownloadComplete(true, mSmartPhoto);
     }
 
     public interface OnDownloadCompleted {

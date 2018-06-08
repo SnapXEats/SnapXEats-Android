@@ -104,7 +104,7 @@ public class LoginUtility {
         }
     }
 
-    public void savePreferenceDataInDb(UserPreferences rootUserPreference) {
+    private void savePreferenceDataInDb(UserPreferences rootUserPreference) {
         loginDbHelper.saveUserPrefDataInDb(rootUserPreference);
     }
 
@@ -117,6 +117,8 @@ public class LoginUtility {
         snapXData.setSocialUserId(rootInstagram.getData().getId());
         snapXData.setUserName(rootInstagram.getData().getFull_name());
         snapXData.setImageUrl(rootInstagram.getData().getProfile_picture());
+        snapXData.setUserRewardPoint(snapXUser.getUserRewardPoint());
+
         if (ZERO == snapxDataDao.loadAll().size()) {
             snapxDataDao.insert(snapXData);
         } else {
@@ -124,7 +126,7 @@ public class LoginUtility {
         }
     }
 
-    public void saveServerDataInDb(SnapXUser snapXUser, RootInstagram rootInstagram) {
+    private void saveServerDataInDb(SnapXUser snapXUser, RootInstagram rootInstagram) {
         snapXData.setUserId(snapXUser.getUser_id());
         snapXData.setToken(snapXUser.getToken());
         snapXData.setSocialPlatform(snapXUser.getSocial_platform());
@@ -137,6 +139,7 @@ public class LoginUtility {
                         PROFILE_WIDTH_HEIGHT);
                 snapXData.setUserName(userName);
                 snapXData.setImageUrl(profileUri.toString());
+                snapXData.setUserRewardPoint(snapXUser.getUserRewardPoint());
             }
 
         } else if (snapXUser.getSocial_platform().equalsIgnoreCase(mContext.getString(R.string.platform_instagram))) {
@@ -157,7 +160,7 @@ public class LoginUtility {
         }
     }
 
-    public void saveWishlistDataInDb(SnapXUser snapXUser) {
+    private void saveWishlistDataInDb(SnapXUser snapXUser) {
         if (null != snapXUser.getUserWishList() &&
                 ZERO != snapXUser.getUserWishList().size()) {
             wishlistDbHelper.saveWishlistDataInDb(snapXUser.getUserWishList());

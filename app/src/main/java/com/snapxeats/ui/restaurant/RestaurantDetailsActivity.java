@@ -198,6 +198,8 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         final String destLng = mRootRestaurantInfo.getRestaurantDetails().getLocation_long();
         LocationGoogleDir locationGoogleDir = new LocationGoogleDir();
         GoogleDirOrigin googleDirOrigin = new GoogleDirOrigin();
+
+
         googleDirOrigin.setOriginLat(LATITUDE);
         googleDirOrigin.setOriginLng(LONGITUDE);
         GoogleDirDest googleDirDest = new GoogleDirDest();

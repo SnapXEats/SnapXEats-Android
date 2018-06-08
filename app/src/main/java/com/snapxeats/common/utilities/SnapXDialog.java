@@ -2,6 +2,7 @@ package com.snapxeats.common.utilities;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,8 +11,12 @@ import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.view.Window;
+import android.widget.LinearLayout;
 
 import com.snapxeats.R;
+import com.snapxeats.common.constants.UIConstants;
+import com.snapxeats.ui.home.fragment.home.HomeFragment;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -122,6 +127,28 @@ public class SnapXDialog {
     }
 
     /**
+     * Show dialog when user denies permissions permanently (For fragment)
+     */
+    public Dialog showChangePermissionDialogForFragment(Fragment fragment, int requestCode) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle(context.getString(R.string.change_permissions));
+        alertDialogBuilder
+                .setMessage(context.getString(R.string.permission_denied_permantantly))
+                .setCancelable(false)
+                .setPositiveButton(context.getString(R.string.go_to_settings),
+                        (dialog, id) -> {
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts(PACKAGE, context.getPackageName(), null);
+                            intent.setData(uri);
+                            context.startActivityFromFragment(fragment,intent, requestCode);
+                        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+        return alertDialog;
+    }
+
+    /**
      * Show Snackbar for network error
      */
     public Snackbar showSnackBar(View view, View.OnClickListener positiveClick) {
@@ -131,4 +158,13 @@ public class SnapXDialog {
         return mSnackbar;
     }
 
+    public Dialog showLogInSuccessDialog() {
+        Dialog loginSuccessDialog = new Dialog(context);
+        loginSuccessDialog.setContentView(R.layout.login_success_layout);
+        Window window = loginSuccessDialog.getWindow();
+        if (null != window) {
+            window.setLayout(UIConstants.CHECKIN_DIALOG_WIDTH, LinearLayout.LayoutParams.WRAP_CONTENT);
+        }
+        return loginSuccessDialog;
+    }
 }

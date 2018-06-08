@@ -35,6 +35,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.snapxeats.common.constants.UIConstants.SPAN_COUNT;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 import static com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment.isCuisineDirty;
 
 
@@ -120,7 +122,7 @@ public class CuisinePrefActivity extends BaseActivity implements
 
             selectedCuisineList = helper.getSelectedCuisineList(mRootCuisineList);
 
-            if (selectedCuisineList.size() > 0) {
+            if (selectedCuisineList.size() > ZERO) {
                 mTxtReset.setClickable(true);
                 mTxtReset.setTextColor(ContextCompat.getColor(CuisinePrefActivity.this,
                         R.color.text_color_primary));
@@ -153,10 +155,14 @@ public class CuisinePrefActivity extends BaseActivity implements
     public void resetCuisinePref() {
 
         AppContract.DialogListenerAction positiveClick = () -> {
-            for (int index = 0; index < mRootCuisineList.size(); index++) {
+            for (int index = ZERO; index < mRootCuisineList.size(); index++) {
                 mRootCuisineList.get(index).set_cuisine_favourite(false);
                 mRootCuisineList.get(index).set_cuisine_like(false);
-                mRootCuisineList.get(index).setSelected(true);
+
+                if (mRootCuisineList.get(index).is_cuisine_favourite()
+                        || mRootCuisineList.get(index).is_cuisine_like()) {
+                    mRootCuisineList.get(index).setSelected(true);
+                }
                 selectedCuisineList.clear();
                 isDirty = true;
                 isCuisineDirty = true;
@@ -185,7 +191,7 @@ public class CuisinePrefActivity extends BaseActivity implements
 
     private void setUpRecyclerView() {
         getCuisinePrefDataFromDb();
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, SPAN_COUNT);
         mRecyclerView.setLayoutManager(layoutManager);
 
         if (null != mRootCuisineList) {

@@ -39,6 +39,7 @@ import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.home.fragment.home.HomeFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -62,6 +63,7 @@ import static com.snapxeats.common.constants.UIConstants.PRICE_ONE;
 import static com.snapxeats.common.constants.UIConstants.PRICE_THREE;
 import static com.snapxeats.common.constants.UIConstants.PRICE_TWO;
 import static com.snapxeats.common.constants.UIConstants.THREE_STAR;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Snehal Tembare on 17/2/18.
@@ -576,18 +578,29 @@ public class NavPrefFragment extends BaseFragment implements
                     mRdSortByRatings.setChecked(true);
                     mRdSortByDistance.setChecked(false);
                 }
-                if (null != mRootUserPreference.getUserCuisinePreferences()) {
-                    cuisinedPrefList = mRootUserPreference.getUserCuisinePreferences();
+
+                cuisinedPrefList = new ArrayList<>();
+                if (null != mRootUserPreference.getUserCuisinePreferences()
+                        && mRootUserPreference.getUserCuisinePreferences().size() > ZERO) {
+                    for (UserCuisinePreferences userCuisinePreferences : mRootUserPreference.getUserCuisinePreferences()) {
+                        if (userCuisinePreferences.getIs_cuisine_like() || userCuisinePreferences.getIs_cuisine_favourite())
+                            cuisinedPrefList.add(userCuisinePreferences);
+                    }
                 }
 
-                if (null != mRootUserPreference.getUserFoodPreferences()) {
-                    foodPrefList = mRootUserPreference.getUserFoodPreferences();
+                foodPrefList = new ArrayList<>();
+                if (null != mRootUserPreference.getUserFoodPreferences()
+                        && mRootUserPreference.getUserFoodPreferences().size() > ZERO) {
+                    for (UserFoodPreferences userFoodPreferences : mRootUserPreference.getUserFoodPreferences()) {
+                        if (userFoodPreferences.getIs_food_like() || userFoodPreferences.getIs_food_favourite())
+                            foodPrefList.add(userFoodPreferences);
+                    }
                 }
             }
             mUserPreference = helper.mapLocalObject(mRootUserPreference);
         }
 
-        if (null != cuisinedPrefList && 0 < cuisinedPrefList.size()) {
+        if (null != cuisinedPrefList && ZERO < cuisinedPrefList.size()) {
             mCuisineCheckBox.setVisibility(View.VISIBLE);
             mCuisineCheckBox.setChecked(true);
         } else {
@@ -595,7 +608,7 @@ public class NavPrefFragment extends BaseFragment implements
             mCuisineCheckBox.setChecked(false);
         }
 
-        if (null != foodPrefList && 0 < foodPrefList.size()) {
+        if (null != foodPrefList && ZERO < foodPrefList.size()) {
             mFoodCheckBox.setVisibility(View.VISIBLE);
             mFoodCheckBox.setChecked(true);
         } else {
