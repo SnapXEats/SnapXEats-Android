@@ -240,7 +240,7 @@ public class FoodStackActivity extends BaseActivity
                 }
                 if (ZERO == foodGestureDislike.size()) {
                     disableUndo();
-                }else {
+                } else {
                     cardStackView.reverse();
                 }
                 switch (direction) {
@@ -365,7 +365,7 @@ public class FoodStackActivity extends BaseActivity
             foodDislikeItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
             foodGestureDislike.add(foodDislikeItem);
             mFoodStackPresenter.saveDislikeToDb(foodGestureDislike);
-        }else {
+        } else {
             foodGestureDislike.add(foodDislikeItem);
         }
         gestureLeft();
@@ -497,7 +497,7 @@ public class FoodStackActivity extends BaseActivity
 
     @OnClick(R.id.img_cuisine_undo)
     public void imgCuisineUndo() {
-        if(foodGestureDislike.size()==ZERO){
+        if (ZERO == foodGestureDislike.size()) {
             disableUndo();
         }
         cardStackView.reverse();

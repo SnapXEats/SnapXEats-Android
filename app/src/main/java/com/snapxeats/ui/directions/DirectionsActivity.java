@@ -82,6 +82,7 @@ import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_TWO;
 import static com.snapxeats.common.constants.UIConstants.GEOFENCE_RADIUS;
 import static com.snapxeats.common.constants.UIConstants.GEOFENCING_DELAY;
 import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.PREF_DEFAULT_STRING;
 import static com.snapxeats.common.constants.UIConstants.STRING_SPACE;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
@@ -149,8 +150,10 @@ public class DirectionsActivity extends BaseActivity
 
     private GeofencingClient geofencingClient;
 
-    private Double lat, lng;
-    String dirLat, dirLng;
+    private Double lat;
+    private Double lng;
+    private String dirLat;
+    private String dirLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -251,7 +254,7 @@ public class DirectionsActivity extends BaseActivity
 
     @SuppressLint("MissingPermission")
     private void startCheckInAlert(double lat, double lng) {
-        String key = "" + lat + "-" + lng;
+        String key = PREF_DEFAULT_STRING + lat + "-" + lng;
         Geofence geofence = getGeofence(lat, lng, key);
         geofencingClient.addGeofences(getGeofencingRequest(geofence),
                 getGeofencePendingIntent())
@@ -543,7 +546,7 @@ public class DirectionsActivity extends BaseActivity
 
     private void getCheckedInData() {
         SharedPreferences preferences = utility.getSharedPreferences();
-        userId = preferences.getString(getString(R.string.user_id), "");
+        userId = preferences.getString(getString(R.string.user_id), PREF_DEFAULT_STRING);
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getString(R.string.format_checkedIn));
         Calendar calendar = Calendar.getInstance();

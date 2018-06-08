@@ -57,6 +57,7 @@ public class SplashActivity extends BaseActivity {
         if (null != snapxDataDao) {
             snapXData = snapxDataDao.queryBuilder().where(UserId.eq(settings.getString(getString(R.string.user_id), ""))).limit(ONE).unique();
         }
+
     }
 
     public void checkLoginStatus() {
