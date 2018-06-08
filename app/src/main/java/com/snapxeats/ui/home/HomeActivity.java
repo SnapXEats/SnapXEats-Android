@@ -322,6 +322,44 @@ public class HomeActivity extends BaseActivity implements
                 dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()) {
             isSnapNShareEnabled = utility.getCheckedInTimeDiff();
         }
+        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+                //Update wishlist count
+                setWishlistCount();
+
+                //Update user info
+                utility.setUserInfo(mNavigationView);
+
+                //Update CheckIn and Snap-N-Share menus
+                if(dbHelper.getCheckInDataDao().loadAll().size() > ZERO &&
+                        dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()){
+                    utility.getCheckedInTimeDiff();
+                }
+
+                //Update Smart Photos menu
+                MenuItem smartPhotoMenu = mNavigationView.getMenu().findItem(R.id.nav_smart_photos);
+                if (dbHelper.isSmartPhotoAvailable() || dbHelper.isDraftPhotoAvailable()) {
+                    smartPhotoMenu.setEnabled(true);
+                } else {
+                    smartPhotoMenu.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
     }
 
     private void setNotificationCheckIn() {
@@ -629,6 +667,8 @@ public class HomeActivity extends BaseActivity implements
             rewards = ((CheckInResponse) value).getReward_point() + STRING_SPACE + getString(R.string.reward_points);
             showCheckInResponseDialog();
             saveCheckInDataToDb();
+            homeDbHelper.updateRewardPoint(((CheckInResponse) value).getReward_point());
+
         } else if (value instanceof SmartPhotoResponse) {
             mSmartPhoto = (SmartPhotoResponse) value;
             mAminitiesList = mSmartPhoto.getRestaurant_aminities();
@@ -1092,8 +1132,8 @@ public class HomeActivity extends BaseActivity implements
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
-        utility.resetMediaPlayer(mMediaPlayer);
+        if (null != mMediaPlayer)
+            utility.resetMediaPlayer(mMediaPlayer);
 
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -1260,6 +1300,9 @@ public class HomeActivity extends BaseActivity implements
             mSmartPhoto.setDish_image_url(smartPhotoResponse.getDish_image_url());
             mSmartPhoto.setAudio_review_url(smartPhotoResponse.getAudio_review_url());
             homeDbHelper.saveSmartPhotoDataInDb(mSmartPhoto);
+        }else {
+            showNetworkErrorDialog((dialog, which) -> {
+            });
         }
     }
 

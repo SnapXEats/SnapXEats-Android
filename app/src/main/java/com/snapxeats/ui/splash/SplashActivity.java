@@ -58,7 +58,6 @@ public class SplashActivity extends BaseActivity {
             snapXData = snapxDataDao.queryBuilder()
                     .where(UserId.eq(settings.getString(getString(R.string.user_id), ""))).limit(ONE).unique();
         }
-        checkLoginStatus();
     }
 
     public void checkLoginStatus() {
@@ -78,6 +77,7 @@ public class SplashActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
         checkForCrashes();
+        checkLoginStatus();
     }
 
     @Override

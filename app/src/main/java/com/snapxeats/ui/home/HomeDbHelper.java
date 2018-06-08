@@ -29,8 +29,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
-import static com.snapxeats.common.constants.UIConstants.ZERO;
-
 /**
  * Created by Snehal Tembare on 21/3/18.
  */
@@ -185,5 +183,17 @@ public class HomeDbHelper {
                 return true;
             }
         return false;
+    }
+
+    void updateRewardPoint(String rewards) {
+        SnapXDataDao snapxDataDao = dbHelper.getSnapxDataDao();
+        if (snapxDataDao.loadAll().size() > ZERO) {
+            List<SnapXData> snapXDataList = snapxDataDao.loadAll();
+            int rewardPoints = Integer.parseInt( rewards) +
+                    Integer.parseInt(snapXDataList.get(ZERO).getUserRewardPoint());
+            snapXDataList.get(ZERO).setUserRewardPoint(String.valueOf(rewardPoints));
+            snapxDataDao.update(snapXDataList.get(ZERO));
+        }
+
     }
 }

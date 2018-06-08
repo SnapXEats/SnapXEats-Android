@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
+import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.model.foodGestures.FoodDislikes;
@@ -66,12 +67,11 @@ public class FoodStackInteractor {
      */
     public void getCuisinePhotos(SelectedCuisineList selectedCuisineList) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
-            //TODO latlng are hardcoded for now
-             /*locationCuisine.setLatitude(lat);
-            locationCuisine.setLongitude(lng);
-            SelectedCuisineList selectedCuisineList=new SelectedCuisineList(locationCuisine,null);*/
-            double lat = Double.valueOf(UIConstants.LATITUDE);
-            double lng = Double.valueOf(UIConstants.LONGITUDE);
+
+            LocationCuisine locationCuisine = selectedCuisineList.getLocation();
+            double lat =   locationCuisine.getLatitude();
+            double lng =   locationCuisine.getLongitude();
+
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             SharedPreferences preferences = utility.getSharedPreferences();
             String userId = preferences.getString(mContext.getString(R.string.user_id), "");

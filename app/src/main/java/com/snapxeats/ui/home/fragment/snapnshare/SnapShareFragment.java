@@ -3,8 +3,6 @@ package com.snapxeats.ui.home.fragment.snapnshare;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Dialog;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,7 +17,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.InflateException;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -42,7 +39,6 @@ import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.dagger.AppContract;
-import com.snapxeats.ui.home.HomeActivity;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -129,7 +125,6 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
         initView();
         mToolbar = view.findViewById(R.id.toolbar);
         initializeNavViews();
-        updateSmartPhotoMenu();
     }
 
     private void initializeNavViews() {
@@ -141,26 +136,9 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
         ((BaseActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mToolbar.setNavigationOnClickListener(v -> mDrawerLayout.openDrawer(Gravity.START));
-    }
 
-    private void updateSmartPhotoMenu() {
-        MenuItem smartPhotoMenu = mNavigationView.getMenu().findItem(R.id.nav_smart_photos);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, slideOffset);
-                if (dbHelper.getCheckInDataDao().loadAll().size() > ZERO &&
-                        dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()) {
-                    utility.getCheckedInTimeDiff();
-                }
-                if (dbHelper.isSmartPhotoAvailable() || dbHelper.isDraftPhotoAvailable()) {
-                    smartPhotoMenu.setEnabled(true);
-                } else {
-                    smartPhotoMenu.setEnabled(false);
-                }
-            }
-        };
+                getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
     }

@@ -154,4 +154,6 @@ public class UIConstants {
     public static final int CHECKIN_NOTIFICATION_TIME = 2;
     public static final int REQUEST_CODE_CHECKIN_ACTION = 5;
     public static final int CHECKIN_NOTIFICATION_ID = 201;
+    public static final int DELETE_ICON_WIDTH = 80;
+    public static final int SPAN_COUNT = 2;
 }

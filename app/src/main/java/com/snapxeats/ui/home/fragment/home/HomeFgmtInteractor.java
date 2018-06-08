@@ -2,6 +2,7 @@ package com.snapxeats.ui.home.fragment.home;
 
 import android.app.Activity;
 import android.content.Context;
+
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.preference.RootCuisine;
 import com.snapxeats.common.utilities.AppUtility;
@@ -9,11 +10,14 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 /**
@@ -55,11 +59,8 @@ public class HomeFgmtInteractor {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
 
-        /*    TODO latlng are hardcoded for now
-        double lat = locationCuisine.getLatitude();
-        double lng =locationCuisine.getLongitude();*/
-            double lat = 40.4862157;
-            double lng = -74.4518188;
+            double lat = locationCuisine.getLatitude();
+            double lng = locationCuisine.getLongitude();
 
             Call<RootCuisine> listCuisineCall = apiHelper.getCuisineList(lat, lng);
             listCuisineCall.enqueue(new Callback<RootCuisine>() {

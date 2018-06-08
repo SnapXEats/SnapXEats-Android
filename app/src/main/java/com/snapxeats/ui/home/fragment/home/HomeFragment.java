@@ -24,7 +24,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -74,6 +73,7 @@ import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
 import static com.snapxeats.common.constants.UIConstants.ACTION_LOCATION_GET;
 import static com.snapxeats.common.constants.UIConstants.CHANGE_LOCATION_PERMISSIONS;
 import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
+import static com.snapxeats.common.constants.UIConstants.SPAN_COUNT;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -128,6 +128,7 @@ public class HomeFragment extends BaseFragment implements
     private LocationCuisine mLocationCuisine;
 
     private ProgressDialog mDialog;
+    private Dialog changePermissionDilog;
 
     @Inject
     public HomeFragment() {
@@ -202,21 +203,10 @@ public class HomeFragment extends BaseFragment implements
         mNavigationView = activity.findViewById(R.id.nav_view);
         mDrawerLayout = activity.findViewById(R.id.drawer_layout);
 
-        MenuItem smartPhotoMenu = mNavigationView.getMenu().findItem(R.id.nav_smart_photos);
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 getActivity(), mDrawerLayout, toolbar, R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close) {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, slideOffset);
-                if (dbHelper.isSmartPhotoAvailable() || dbHelper.isDraftPhotoAvailable()) {
-                    smartPhotoMenu.setEnabled(true);
-                } else {
-                    smartPhotoMenu.setEnabled(false);
-                }
-            }
-        };
+                R.string.navigation_drawer_close);
+
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -233,9 +223,7 @@ public class HomeFragment extends BaseFragment implements
 
         preferences = utility.getSharedPreferences();
 
-        Gson gson = new Gson();
-        String json = preferences.getString(getString(R.string.selected_location), "");
-        mSelectedLocation = gson.fromJson(json, com.snapxeats.common.model.location.Location.class);
+        mSelectedLocation = utility.getLocationfromPref();
         initView();
 
         //Modifying done button color
@@ -347,7 +335,7 @@ public class HomeFragment extends BaseFragment implements
 
     public void setRecyclerView() {
         getDataFromLocalDB();
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(activity, 2);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(activity, SPAN_COUNT);
 
         adapter = new HomeAdapter(activity, cuisinesList, new OnDoubleTapListenr() {
             Cuisines cuisines;
@@ -394,7 +382,10 @@ public class HomeFragment extends BaseFragment implements
     @Override
     public void onDetach() {
         super.onDetach();
+        if (null != mSnackBar)
+            mSnackBar.dismiss();
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -404,7 +395,11 @@ public class HomeFragment extends BaseFragment implements
                 mSelectedLocation = detectCurrentLocation();
                 break;
             case CHANGE_LOCATION_PERMISSIONS:
-                mSelectedLocation = detectCurrentLocation();
+                if (null != changePermissionDilog) {
+                    changePermissionDilog.dismiss();
+                } else {
+                    mSelectedLocation = detectCurrentLocation();
+                }
                 break;
         }
     }
@@ -430,7 +425,7 @@ public class HomeFragment extends BaseFragment implements
                     mSelectedLocation = detectCurrentLocation();
                 }
             } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
-                snapXDialog.showChangePermissionDialog(CHANGE_LOCATION_PERMISSIONS);
+                changePermissionDilog = snapXDialog.showChangePermissionDialogForFragment(this, CHANGE_LOCATION_PERMISSIONS);
             } else {
                 presenter.presentScreen(LOCATION);
             }

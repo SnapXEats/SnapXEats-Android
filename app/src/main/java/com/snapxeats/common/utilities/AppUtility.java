@@ -81,6 +81,7 @@ public class AppUtility {
     private ImageView[] dots;
     private CircularImageView imgUser;
     private TextView txtUserName;
+    private TextView mTxtRewardPoints;
     private TextView txtNotLoggedIn;
     private LinearLayout mLayoutUserData;
     private CheckInData checkInData;
@@ -260,7 +261,6 @@ public class AppUtility {
     }
 
     public boolean isLoggedIn() {
-        SharedPreferences preferences = getSharedPreferences();
         String serverUserId = preferences.getString(mContext.getString(R.string.user_id), "");
         return !serverUserId.isEmpty();
     }
@@ -378,6 +378,7 @@ public class AppUtility {
         Menu menu = mNavigationView.getMenu();
         imgUser = mNavHeader.findViewById(R.id.img_user);
         txtUserName = mNavHeader.findViewById(R.id.txt_user_name);
+        mTxtRewardPoints = mNavHeader.findViewById(R.id.txt_nav_rewards);
         txtNotLoggedIn = mNavHeader.findViewById(R.id.txt_nav_not_logged_in);
         mLayoutUserData = mNavHeader.findViewById(R.id.layout_user_data);
 
@@ -404,6 +405,7 @@ public class AppUtility {
                     .thumbnail(THUMBNAIL).into(imgUser);
 
             txtUserName.setText(snapXData.getUserName());
+            mTxtRewardPoints.setText(snapXData.getUserRewardPoint());
             menuLogoutItem.setTitle(mContext.getString(R.string.log_out));
         } else {
             mLayoutUserData.setVisibility(View.GONE);
@@ -466,5 +468,12 @@ public class AppUtility {
         pm.setComponentEnabledSetting(receiver,
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                 PackageManager.DONT_KILL_APP);
+    }
+
+    public com.snapxeats.common.model.location.Location getLocationfromPref(){
+        Gson gson = new Gson();
+        String json = preferences.getString(mContext.getString(R.string.selected_location), "");
+        com.snapxeats.common.model.location.Location  mSelectedLocation = gson.fromJson(json, com.snapxeats.common.model.location.Location.class);
+        return mSelectedLocation;
     }
 }

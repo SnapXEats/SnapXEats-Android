@@ -1,6 +1,7 @@
 package com.snapxeats.ui.login;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -26,6 +27,7 @@ import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.utilities.LoginUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
+import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
 
@@ -47,6 +49,9 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
 
     @Inject
     LoginContract.LoginPresenter mLoginPresenter;
+
+    @Inject
+    SnapXDialog mSnapXDialog;
 
     private CallbackManager mCallbackManager;
 
@@ -85,6 +90,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
     public void initView() {
         mLoginPresenter.addView(this);
         loginUtility.setContext(this);
+        mSnapXDialog.setContext(this);
         mCallbackManager = CallbackManager.Factory.create();
         loginUtility.getFbHashKey(this);
         loginWithFacebook();
@@ -216,7 +222,12 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
         dismissProgressDialog();
         //TODO value not used yet
         SnapXUserResponse snapXUserResponse = (SnapXUserResponse) value;
-        mLoginPresenter.presentScreen(Router.Screen.HOME);
+       Dialog dialog = mSnapXDialog.showLogInSuccessDialog();
+       dialog.show();
+       dialog.findViewById(R.id.btn_ok).setOnClickListener(v -> {
+           dialog.dismiss();
+           mLoginPresenter.presentScreen(Router.Screen.HOME);
+       });
     }
 
     @Override

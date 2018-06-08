@@ -115,16 +115,7 @@ public class FoodJourneyFragment extends BaseFragment implements
         mToolbar.setNavigationOnClickListener(v -> mDrawerLayout.openDrawer(Gravity.START));
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, slideOffset);
-                if(dbHelper.getCheckInDataDao().loadAll().size() > ZERO &&
-                        dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()){
-                    utility.getCheckedInTimeDiff();
-                }
-            }
-        };
+                getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         initView();

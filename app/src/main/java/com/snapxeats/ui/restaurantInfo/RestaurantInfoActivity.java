@@ -526,23 +526,28 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
 
     @Override
     public void isDownloadComplete(boolean isComplete, SmartPhotoResponse smartPhotoResponse) {
-        mDialog.setContentView(R.layout.rest_photo_download_success_layout);
-        mWindow = mDialog.getWindow();
-        if (null != mWindow) {
-            mWindow.setLayout(UIConstants.NO_DATA_DIALOG_WIDTH, LinearLayout.LayoutParams.WRAP_CONTENT);
-            mWindow.setGravity(Gravity.CENTER);
-        }
-        mDialog.show();
-        mDialog.findViewById(R.id.btn_okay).setOnClickListener(this);
-        mRestaurantPic.setAudio_review_url(smartPhotoResponse.getAudio_review_url());
+        if (isComplete) {
+            mDialog.setContentView(R.layout.rest_photo_download_success_layout);
+            mWindow = mDialog.getWindow();
+            if (null != mWindow) {
+                mWindow.setLayout(UIConstants.NO_DATA_DIALOG_WIDTH, LinearLayout.LayoutParams.WRAP_CONTENT);
+                mWindow.setGravity(Gravity.CENTER);
+            }
+            mDialog.show();
+            mDialog.findViewById(R.id.btn_okay).setOnClickListener(this);
+            mRestaurantPic.setAudio_review_url(smartPhotoResponse.getAudio_review_url());
 
-        mSmartPhoto.setDish_image_url(smartPhotoResponse.getDish_image_url());
-        mSmartPhoto.setAudio_review_url(smartPhotoResponse.getAudio_review_url());
-        homeDbHelper.saveSmartPhotoDataInDb(mSmartPhoto);
-        if (null != mLayoutControls) {
-            mLayoutControls.setVisibility(View.GONE);
+            mSmartPhoto.setDish_image_url(smartPhotoResponse.getDish_image_url());
+            mSmartPhoto.setAudio_review_url(smartPhotoResponse.getAudio_review_url());
+            homeDbHelper.saveSmartPhotoDataInDb(mSmartPhoto);
+            if (null != mLayoutControls) {
+                mLayoutControls.setVisibility(View.GONE);
+            }
+            mRestInfoAdapter.notifyDataSetChanged();
+        } else {
+            showNetworkErrorDialog((dialog, which) -> {
+            });
         }
-        mRestInfoAdapter.notifyDataSetChanged();
     }
 
     @Override

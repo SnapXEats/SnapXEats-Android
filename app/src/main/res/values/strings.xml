@@ -249,5 +249,7 @@
     <string name="checkin_notification">checkin_notification</string>
     <string name="checkin_reminder_title">SnapXEats CheckIn Reminder</string>
     <string name="intent_dir_check_in">intent_dir_check_in</string>
+    <string name="login_success">LogIn Success</string>
+    <string name="login_success_msg">Congratulations, Your signin was successful !</string>
 
 </resources>

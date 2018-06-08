@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
@@ -49,6 +50,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.baoyz.swipemenulistview.SwipeMenuListView.DIRECTION_LEFT;
+import static com.snapxeats.common.constants.UIConstants.DELETE_ICON_WIDTH;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -137,44 +139,11 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
         mToolbar.setNavigationOnClickListener(v -> mDrawerLayout.openDrawer(Gravity.START));
 
         toggle = new ActionBarDrawerToggle(
-                getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, slideOffset);
-                setWishlistCount();
-                if(dbHelper.getCheckInDataDao().loadAll().size() > ZERO &&
-                        dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()){
-                    utility.getCheckedInTimeDiff();
-                }
-            }
-        };
+                getActivity(), mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         initView();
-
-    }
-
-    private void setWishlistCount() {
-        if (null != getActivity() && isAdded()) {
-
-            LinearLayout linearLayout = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
-                    .getActionView().findViewById(R.id.layout_wishlist_count);
-
-            linearLayout.setVisibility(View.VISIBLE);
-
-            TextView view = mNavigationView.getMenu().findItem(R.id.nav_wishlist)
-                    .getActionView().findViewById(R.id.txt_count_wishlist);
-
-            view.setText(getString(R.string.zero));
-
-            dbHelper.setContext(getActivity());
-            if (0 != homeDbHelper.getWishlistCount()) {
-                view.setText(String.valueOf(homeDbHelper.getWishlistCount()));
-            } else {
-                view.setText(getString(R.string.zero));
-            }
-        }
     }
 
     @OnClick(R.id.txt_wishlist_edit)
@@ -259,7 +228,7 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
             if ((mTxtWishlistEdit.getText()).equals("Delete")) {
                 setInitWishlistView();
                 mSwipeMenuList.setSwipeDirection(DIRECTION_LEFT);
-                for (int index = 0; index < mWishlist.size(); index++) {
+                for (int index = ZERO; index < mWishlist.size(); index++) {
                     if (mWishlist.get(index).isDeleted()) {
                         mWishlist.get(index).setDeleted(false);
                         mAdapter.notifyDataSetChanged();
@@ -272,7 +241,7 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
 
         ViewTreeObserver viewTreeObserver = mSwipeMenuList.getViewTreeObserver();
         viewTreeObserver.addOnGlobalLayoutListener(() -> {
-            if (0 == mWishlist.size()) {
+            if (ZERO == mWishlist.size()) {
                 mTxtWishlistEdit.setVisibility(View.INVISIBLE);
             } else {
                 mTxtWishlistEdit.setVisibility(View.VISIBLE);
@@ -335,7 +304,7 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
 
             private void createMenu(SwipeMenu menu) {
                 SwipeMenuItem item = new SwipeMenuItem(getActivity());
-                item.setWidth(dp2px(80));
+                item.setWidth(dp2px(DELETE_ICON_WIDTH));
                 item.setIcon(R.drawable.ic_delete);
                 menu.addMenuItem(item);
             }
@@ -351,7 +320,7 @@ public class WishlistFragment extends BaseFragment implements WishlistContract.W
     private void handleSwipeMenuItemClick() {
         mSwipeMenuList.setOnMenuItemClickListener((position, menu, index) -> {
             switch (index) {
-                case 0:
+                case ZERO:
                     wishlistDbHelper.setWishlistItemStatus(mWishlist.get(position).getRestaurant_dish_id());
                     mAdapter.wishlist.remove(position);
                     mAdapter.notifyDataSetChanged();
