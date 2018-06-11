@@ -512,7 +512,9 @@ public class HomeFragment extends BaseFragment implements
             mLocationCuisine.setLongitude(mSelectedLocation.getLng());
 
             //Save data in shared preferences
-            utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
+            if (utility.isLoggedIn()) {
+                utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
+            }
 
             mTxtPlaceName.setText(mSelectedLocation.getName());
             mDialog.show();

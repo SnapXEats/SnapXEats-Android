@@ -20,6 +20,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
+
 /**
  * Created by Snehal Tembare on 4/4/18.
  */
@@ -51,10 +54,32 @@ public class LoginDbHelper {
     public void saveUserPrefDataInDb(UserPreferences userPreferences) {
         SharedPreferences preferences = utility.getSharedPreferences();
         String userId = preferences.getString(mContext.getString(R.string.user_id), "");
+
+        String rating;
+        String distance;
+        String price;
+
+        if (userPreferences.getRestaurant_rating() != null) {
+            rating = userPreferences.getRestaurant_rating();
+        } else {
+            rating = String.valueOf(ZERO);
+        }
+
+        if (userPreferences.getRestaurant_distance() != null) {
+            distance = userPreferences.getRestaurant_distance();
+        } else {
+            distance = String.valueOf(ONE);
+        }
+
+        if (userPreferences.getRestaurant_price() != null) {
+            price = userPreferences.getRestaurant_price();
+        } else {
+            price = String.valueOf(ZERO);
+        }
         UserPreference userPreference = new UserPreference(userId,
-                String.valueOf(userPreferences.getRestaurant_rating()),
-                String.valueOf(userPreferences.getRestaurant_price()),
-                String.valueOf(userPreferences.getRestaurant_distance()),
+                rating,
+                price,
+                distance,
                 userPreferences.isSort_by_distance(),
                 userPreferences.isSort_by_rating(),
                 userPreferences.getUserCuisinePreferences(),
@@ -79,7 +104,7 @@ public class LoginDbHelper {
                     !userPreference.getRestaurant_rating().isEmpty()) {
                 mRootUserPreference.setRestaurant_rating(userPreference.getRestaurant_rating());
             } else {
-                mRootUserPreference.setRestaurant_rating(String.valueOf(0));
+                mRootUserPreference.setRestaurant_rating(String.valueOf(ZERO));
             }
 
             if (null != userPreference.getRestaurant_distance() &&
@@ -93,7 +118,7 @@ public class LoginDbHelper {
                     !userPreference.getRestaurant_price().isEmpty()) {
                 mRootUserPreference.setRestaurant_price(userPreference.getRestaurant_price());
             } else {
-                mRootUserPreference.setRestaurant_price(String.valueOf(0));
+                mRootUserPreference.setRestaurant_price(String.valueOf(ZERO));
             }
 
             mRootUserPreference.setSort_by_distance(userPreference.isSort_by_distance());
