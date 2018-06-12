@@ -1003,6 +1003,7 @@ public class HomeActivity extends BaseActivity implements
         for (int index = ZERO; index < permissions.length; index++) {
             if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
                 startDownloadingTask();
+                break;
             } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
                 snapXDialog.showChangePermissionDialog(STORAGE_REQUEST_PERMISSION);
             } else {
@@ -1016,6 +1017,7 @@ public class HomeActivity extends BaseActivity implements
         for (int index = ZERO; index < permissions.length; index++) {
             if (grantResults[index] == PackageManager.PERMISSION_GRANTED && utility.checkPermissions()) {
                 getCurrentLocation();
+                break;
             } else if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
               snapXDialog.showChangePermissionDialog(CHANGE_LOCATION_PERMISSIONS);
             } else {

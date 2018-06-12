@@ -419,6 +419,7 @@ public class HomeFragment extends BaseFragment implements
             if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
                 if (utility.checkPermissions()) {
                     mSelectedLocation = detectCurrentLocation();
+                    break;
                 }
             } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
                 changePermissionDilog = snapXDialog.showChangePermissionDialogForFragment(this, CHANGE_LOCATION_PERMISSIONS);
