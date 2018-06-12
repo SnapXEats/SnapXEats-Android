@@ -8,6 +8,7 @@ import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.utilities.SnapXResult;
+
 import java.util.List;
 
 /**
@@ -74,7 +75,7 @@ public class HomePresenterImpl implements HomeContract.HomePresenter {
 
     @Override
     public void getNearByRestaurantToCheckIn(double lattitude, double longitude) {
-        interactor.getNearByRestaurantToCheckIn(lattitude,longitude);
+        interactor.getNearByRestaurantToCheckIn(lattitude, longitude);
     }
 
     @Override
@@ -94,7 +95,7 @@ public class HomePresenterImpl implements HomeContract.HomePresenter {
 
     @Override
     public void getUserdata(SnapXUserRequest snapXUserRequest) {
-interactor.getUserData(snapXUserRequest);
+        interactor.getUserData(snapXUserRequest);
     }
 
     @Override

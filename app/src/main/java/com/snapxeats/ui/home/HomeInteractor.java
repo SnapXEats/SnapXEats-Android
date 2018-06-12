@@ -309,17 +309,19 @@ public class HomeInteractor {
             smartPhotoResponseCall.enqueue(new Callback<SmartPhotoResponse>() {
                 @Override
                 public void onResponse(Call<SmartPhotoResponse> call, Response<SmartPhotoResponse> response) {
-                    homePresenter.response(SnapXResult.SUCCESS, response.body());
+                    if (response.isSuccessful() && null != response.body()) {
+                        homePresenter.response(SnapXResult.SUCCESS, response.body());
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<SmartPhotoResponse> call, Throwable t) {
-                    homePresenter.response(SnapXResult.SUCCESS, null);
+                    homePresenter.response(SnapXResult.FAILURE, null);
                 }
             });
 
         } else {
-            homePresenter.response(SnapXResult.SUCCESS, SMART_PHOTO);
+            homePresenter.response(SnapXResult.NONETWORK, SMART_PHOTO);
         }
     }
 

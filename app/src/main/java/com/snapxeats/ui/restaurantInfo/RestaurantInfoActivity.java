@@ -420,14 +420,12 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        for (int index = ZERO; index < permissions.length; index++) {
-            if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults[ZERO] == PackageManager.PERMISSION_GRANTED) {
                 startDownloadingTask();
-            } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
+            } else if (!shouldShowRequestPermissionRationale(permissions[ZERO])) {
                 snapXDialog.showChangePermissionDialog(STORAGE_REQUEST_PERMISSION);
             } else {
                 SnapXToast.showToast(this, getString(R.string.enable_storage_permissions));
-            }
         }
     }
 

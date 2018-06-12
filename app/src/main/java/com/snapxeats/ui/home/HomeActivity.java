@@ -1000,29 +1000,25 @@ public class HomeActivity extends BaseActivity implements
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleStoragePermissions(@NonNull String[] permissions, @NonNull int[] grantResults) {
-        for (int index = ZERO; index < permissions.length; index++) {
-            if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
-                startDownloadingTask();
-                break;
-            } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
-                snapXDialog.showChangePermissionDialog(STORAGE_REQUEST_PERMISSION);
-            } else {
-                SnapXToast.showToast(this, getString(R.string.enable_storage_permissions));
-            }
+        if (grantResults[ZERO] == PackageManager.PERMISSION_GRANTED) {
+            startDownloadingTask();
+        } else if (!shouldShowRequestPermissionRationale(permissions[ZERO])) {
+            snapXDialog.showChangePermissionDialog(STORAGE_REQUEST_PERMISSION);
+        } else {
+            SnapXToast.showToast(this, getString(R.string.enable_storage_permissions));
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
-        for (int index = ZERO; index < permissions.length; index++) {
-            if (grantResults[index] == PackageManager.PERMISSION_GRANTED && utility.checkPermissions()) {
-                getCurrentLocation();
-                break;
-            } else if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-              snapXDialog.showChangePermissionDialog(CHANGE_LOCATION_PERMISSIONS);
-            } else {
-               SnapXToast.showToast(this,getString(R.string.enable_location_permission));
-            }
+
+        if (grantResults[ZERO] == PackageManager.PERMISSION_GRANTED && utility.checkPermissions()) {
+            getCurrentLocation();
+
+        } else if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            snapXDialog.showChangePermissionDialog(CHANGE_LOCATION_PERMISSIONS);
+        } else {
+            SnapXToast.showToast(this, getString(R.string.enable_location_permission));
         }
     }
 
