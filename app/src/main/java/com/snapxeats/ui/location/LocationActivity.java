@@ -232,13 +232,11 @@ public class LocationActivity extends BaseActivity implements
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
-        for (int index = ZERO; index < permissions.length; index++) {
-            if (grantResults[index] == PackageManager.PERMISSION_GRANTED && utility.checkPermissions()) {
+            if (grantResults[ZERO] == PackageManager.PERMISSION_GRANTED && utility.checkPermissions()) {
                 getData();
-            } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
+            } else if (!shouldShowRequestPermissionRationale(permissions[ZERO])) {
                 snapXDialog.showChangePermissionDialog(CHANGE_LOCATION_PERMISSIONS);
             }
-        }
     }
 
     @Override

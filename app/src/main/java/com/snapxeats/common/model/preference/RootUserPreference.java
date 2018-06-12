@@ -1,5 +1,7 @@
 package com.snapxeats.common.model.preference;
 
+import com.snapxeats.common.model.location.Location;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -17,6 +19,7 @@ import lombok.Setter;
 @Singleton
 public class RootUserPreference{
     private String user_Id;
+    private Location location;
     private String restaurant_rating;
     private String restaurant_price;
     private String restaurant_distance;
@@ -31,6 +34,7 @@ public class RootUserPreference{
 
     public void resetRootUserPreference() {
         setUser_Id("");
+        setLocation(null);
         setRestaurant_rating("");
         setRestaurant_price("");
         setRestaurant_distance("");

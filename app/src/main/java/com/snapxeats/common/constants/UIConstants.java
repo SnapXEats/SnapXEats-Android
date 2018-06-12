@@ -36,9 +36,6 @@ public class UIConstants {
     public static final String LATITUDE = "40.4862157";
     public static final String LONGITUDE = "-74.4518188";
 
-    public static final double LAT = 40.7014;
-    public static final double LNG = -74.0151;
-
     public static final float DEFAULT = 0;
     public static final float MAP_SCOLL_BY = 320;
     public static final float MAP_ZOOM = 13.2f;

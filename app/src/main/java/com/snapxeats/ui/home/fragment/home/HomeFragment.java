@@ -38,7 +38,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
-import com.google.gson.Gson;
+
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
@@ -282,10 +282,10 @@ public class HomeFragment extends BaseFragment implements
             showNetworkErrorDialog((dialog, which) -> {
                 if (!NetworkUtility.isNetworkAvailable(activity)) {
                     AppContract.DialogListenerAction click = () ->
-                            mSelectedLocation = detectCurrentLocation();
+                            setLocation();
                     mSnackBar = showSnackBar(mParentLayout, setClickListener(click));
                 } else {
-                    mSelectedLocation = detectCurrentLocation();
+                    setLocation();
                 }
             });
         }
@@ -395,11 +395,7 @@ public class HomeFragment extends BaseFragment implements
                 mSelectedLocation = detectCurrentLocation();
                 break;
             case CHANGE_LOCATION_PERMISSIONS:
-                if (null != changePermissionDilog) {
-                    changePermissionDilog.dismiss();
-                } else {
-                    mSelectedLocation = detectCurrentLocation();
-                }
+                mSelectedLocation = detectCurrentLocation();
                 break;
         }
     }
@@ -419,24 +415,19 @@ public class HomeFragment extends BaseFragment implements
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
-        for (int index = ZERO; index < permissions.length; index++) {
-            if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
-                if (utility.checkPermissions()) {
-                    mSelectedLocation = detectCurrentLocation();
-                }
-            } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
-                changePermissionDilog = snapXDialog.showChangePermissionDialogForFragment(this, CHANGE_LOCATION_PERMISSIONS);
-            } else {
-                presenter.presentScreen(LOCATION);
-            }
+        if (grantResults[ZERO] == PackageManager.PERMISSION_GRANTED && utility.checkPermissions()) {
+                mSelectedLocation = detectCurrentLocation();
+        } else if (!shouldShowRequestPermissionRationale(permissions[ZERO])) {
+            changePermissionDilog = snapXDialog.showChangePermissionDialogForFragment(this, CHANGE_LOCATION_PERMISSIONS);
+        } else {
+            presenter.presentScreen(LOCATION);
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void requestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION}, ACCESS_FINE_LOCATION);
+            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION);
         }
     }
 
@@ -512,7 +503,11 @@ public class HomeFragment extends BaseFragment implements
             mLocationCuisine.setLongitude(mSelectedLocation.getLng());
 
             //Save data in shared preferences
-            utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
+            if (utility.isLoggedIn()) {
+                utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
+            } else {
+                mRootUserPreference.setLocation(mSelectedLocation);
+            }
 
             mTxtPlaceName.setText(mSelectedLocation.getName());
             mDialog.show();

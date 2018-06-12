@@ -66,6 +66,7 @@ import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.model.checkin.CheckInResponse;
 import com.snapxeats.common.model.checkin.CheckInRestaurants;
 import com.snapxeats.common.model.checkin.RestaurantInfo;
+import com.snapxeats.common.model.location.Location;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserPreference;
 import com.snapxeats.common.model.smartphotos.SmartPhotoResponse;
@@ -75,6 +76,8 @@ import com.snapxeats.common.utilities.NoNetworkResults;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.network.LocationHelper;
+import com.snapxeats.ui.directions.DirectionsActivity;
 import com.snapxeats.ui.foodstack.FoodStackDbHelper;
 import com.snapxeats.ui.home.fragment.checkin.CheckInDbHelper;
 import com.snapxeats.ui.home.fragment.foodjourney.FoodJourneyFragment;
@@ -99,9 +102,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.snapxeats.common.Router.Screen.LOGIN;
+import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
+import static com.snapxeats.common.constants.UIConstants.CHANGE_LOCATION_PERMISSIONS;
 import static com.snapxeats.common.constants.UIConstants.DIALOG_Y_POSITION;
-import static com.snapxeats.common.constants.UIConstants.LAT;
-import static com.snapxeats.common.constants.UIConstants.LNG;
 import static com.snapxeats.common.constants.UIConstants.LOGOUT_DIALOG_HEIGHT;
 import static com.snapxeats.common.constants.UIConstants.NOTIFICATION_ID;
 import static com.snapxeats.common.constants.UIConstants.ONE;
@@ -171,6 +174,8 @@ public class HomeActivity extends BaseActivity implements
     @Inject
     AppUtility utility;
 
+    LocationHelper locationHelper;
+
     @Inject
     HomeDbHelper homeDbHelper;
 
@@ -179,6 +184,10 @@ public class HomeActivity extends BaseActivity implements
 
     @Inject
     RootUserPreference mRootUserPreference;
+
+    com.snapxeats.common.model.location.Location mCurrentLocation;
+    private double lattitude;
+    private double longitude;
 
     @Inject
     SnapXDialog snapXDialog;
@@ -263,6 +272,7 @@ public class HomeActivity extends BaseActivity implements
             }
         }
     };
+    private Location currentLocation;
 
     private GeofencingClient mGeofencingClient;
 
@@ -289,6 +299,7 @@ public class HomeActivity extends BaseActivity implements
         fragmentManager = getFragmentManager();
         transaction = fragmentManager.beginTransaction();
         foodStackDbHelper.setContext(this);
+
         snapXDialog.setContext(this);
         mCallbackManager = CallbackManager.Factory.create();
         checkInDbHelper.setContext(this);
@@ -776,8 +787,10 @@ public class HomeActivity extends BaseActivity implements
     private void showCheckInDialog() {
         initCheckInViews();
         viewTreeObsCheckIn();
-        showProgressDialog();
-        mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
+
+        //Setting context to utility to use location functions
+        utility.setContext(this);
+        getCurrentLocation();
     }
 
     private void viewTreeObsCheckIn() {
@@ -989,14 +1002,38 @@ public class HomeActivity extends BaseActivity implements
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        for (int index = ZERO; index < permissions.length; index++) {
-            if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
-                startDownloadingTask();
-            } else if (!shouldShowRequestPermissionRationale(permissions[index])) {
-                snapXDialog.showChangePermissionDialog(STORAGE_REQUEST_PERMISSION);
-            } else {
-                SnapXToast.showToast(this, getString(R.string.enable_storage_permissions));
-            }
+        switch (requestCode) {
+            case ACCESS_FINE_LOCATION:
+                handleLocationRequest(permissions, grantResults);
+                break;
+
+            case STORAGE_REQUEST_PERMISSION:
+                handleStoragePermissions(permissions, grantResults);
+                break;
+        }
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void handleStoragePermissions(@NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (grantResults[ZERO] == PackageManager.PERMISSION_GRANTED) {
+            startDownloadingTask();
+        } else if (!shouldShowRequestPermissionRationale(permissions[ZERO])) {
+            snapXDialog.showChangePermissionDialog(STORAGE_REQUEST_PERMISSION);
+        } else {
+            SnapXToast.showToast(this, getString(R.string.enable_storage_permissions));
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (grantResults[ZERO] == PackageManager.PERMISSION_GRANTED && utility.checkPermissions()) {
+            getCurrentLocation();
+
+        } else if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            snapXDialog.showChangePermissionDialog(CHANGE_LOCATION_PERMISSIONS);
+        } else {
+            SnapXToast.showToast(this, getString(R.string.enable_location_permission));
         }
     }
 
@@ -1083,7 +1120,7 @@ public class HomeActivity extends BaseActivity implements
                     showProgressDialog();
                     switch (api) {
                         case CHECKIN_RESTAURANTS:
-                            mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
+                            mPresenter.getNearByRestaurantToCheckIn(lattitude, longitude);
                             break;
                         case CHECKIN:
                             mPresenter.checkIn(checkInRequest);
@@ -1105,7 +1142,7 @@ public class HomeActivity extends BaseActivity implements
 
                 switch (api) {
                     case CHECKIN_RESTAURANTS:
-                        mPresenter.getNearByRestaurantToCheckIn(LAT, LNG);
+                        mPresenter.getNearByRestaurantToCheckIn(lattitude, longitude);
                         break;
                     case CHECKIN:
                         mPresenter.checkIn(checkInRequest);
@@ -1265,6 +1302,10 @@ public class HomeActivity extends BaseActivity implements
             case STORAGE_REQUEST_PERMISSION:
                 startDownloadingTask();
                 break;
+
+            case CHANGE_LOCATION_PERMISSIONS:
+                getCurrentLocation();
+                break;
         }
         //login facebook callback
         if (resultCode == RESULT_OK) {
@@ -1318,6 +1359,27 @@ public class HomeActivity extends BaseActivity implements
         } else {
             showNetworkErrorDialog((dialog, which) -> {
             });
+        }
+    }
+
+    public void getCurrentLocation() {
+
+        android.location.Location location;
+
+        if (utility.checkPermissions()) {
+            showProgressDialog();
+            location = utility.getLocation();
+            if (null != location) {
+                dismissProgressDialog();
+                mCurrentLocation = new Location(location.getLatitude(),
+                        location.getLongitude(), utility.getPlaceName(location));
+
+                lattitude = mCurrentLocation.getLat();
+                longitude = mCurrentLocation.getLng();
+
+                showProgressDialog();
+                mPresenter.getNearByRestaurantToCheckIn(lattitude, longitude);
+            }
         }
     }
 

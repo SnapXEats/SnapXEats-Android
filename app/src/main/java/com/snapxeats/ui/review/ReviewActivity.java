@@ -401,7 +401,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.msg_share_review))
                 .setPositiveButton(getString(R.string.review_continue), (dialog, which) -> callApiReview())
-                .setNegativeButton(getString(R.string.review_discard), (dialog, which) -> finish())
+                .setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
