@@ -244,6 +244,9 @@ public class HomeInteractor {
         dbHelper.getDaoSesion().getUserFoodPreferencesDao().deleteAll();
         dbHelper.getDaoSesion().getUserCuisinePreferencesDao().deleteAll();
         dbHelper.getDaoSesion().getUserPreferenceDao().deleteAll();
+        dbHelper.getDaoSesion().getCheckInDataDao().deleteAll();
+        dbHelper.getDaoSesion().getSmartPhotoDao().deleteAll();
+        dbHelper.getDaoSesion().getSnapXDraftPhotoDao().deleteAll();
         //clear facebook session
         LoginManager.getInstance().logOut();
 
