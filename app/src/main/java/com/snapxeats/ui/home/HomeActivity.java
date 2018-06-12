@@ -50,6 +50,8 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.android.gms.location.GeofencingClient;
+import com.google.android.gms.location.LocationServices;
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.DownloadTask;
@@ -256,6 +258,7 @@ public class HomeActivity extends BaseActivity implements
     CheckInDbHelper checkInDbHelper;
 
     private MenuItem snapNShareMenu, foodJourneyMenu, checkInMenu;
+
     private Runnable mUpdateTimeTask = new Runnable() {
         public void run() {
             if (null != mMediaPlayer) {
@@ -271,6 +274,7 @@ public class HomeActivity extends BaseActivity implements
     };
     private Location currentLocation;
 
+    private GeofencingClient mGeofencingClient;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -301,6 +305,7 @@ public class HomeActivity extends BaseActivity implements
         checkInDbHelper.setContext(this);
         date = new Date();
         simpleDateFormat = new SimpleDateFormat(getString(R.string.format_checkedIn));
+        mGeofencingClient = LocationServices.getGeofencingClient(this);
 
         userId = preferences.getString(getString(R.string.user_id), PREF_DEFAULT_STRING);
         mRootUserPreference = mPresenter.getUserPreferenceFromDb();
@@ -375,12 +380,23 @@ public class HomeActivity extends BaseActivity implements
     private void setNotificationCheckIn() {
         Intent intent = getIntent();
         boolean isCheckInNotification = intent.getBooleanExtra(getString(R.string.checkin_notification), false);
-        if (isCheckInNotification) {
-            Intent intentDir = new Intent(this, DirectionsActivity.class);
-            intentDir.putExtra(getString(R.string.intent_dir_check_in), isCheckInNotification);
-            startActivity(intentDir);
+        String checkInrestId = intent.getStringExtra(getString(R.string.intent_restaurant_id));
+
+        if (isCheckInNotification && null != checkInrestId) {
+            if (utility.isLoggedIn()) {
+                showProgressDialog();
+                for (RestaurantInfo restaurantInfo : mRestaurantList) {
+                    if (restaurantInfo.isSelected()) {
+                        checkInRequest = new CheckInRequest();
+                        checkInRequest.setRestaurant_info_id(checkInrestId);
+                        checkInRequest.setReward_type(getString(R.string.reward_type_check_in));
+                    }
+                }
+                mPresenter.checkIn(checkInRequest);
+            }
         }
     }
+
 
     /**
      * Check id SnapXData is loaded or not
@@ -1011,7 +1027,6 @@ public class HomeActivity extends BaseActivity implements
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
-
         if (grantResults[ZERO] == PackageManager.PERMISSION_GRANTED && utility.checkPermissions()) {
             getCurrentLocation();
 

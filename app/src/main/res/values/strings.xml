@@ -252,5 +252,7 @@
     <string name="login_success">LogIn Success</string>
     <string name="login_success_msg">Congratulations, Your signin was successful !</string>
     <string name="enable_location_permission">Please enable location permission to check in</string>
+    <string name="geofence_enter">location entered</string>
+    <string name="geofence_transition">location transition</string>
 
 </resources>

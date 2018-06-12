@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/checkin_background">
@@ -31,28 +32,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/dish_mdpi"/>
+            android:src="@drawable/dish_mdpi" />
 
         <Button
             android:id="@+id/btn_take_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dimens_50dp"
             android:background="@drawable/custom_button_selected"
-            android:text="@string/take_photo"
-            android:textColor="@color/colorWhite"
             android:paddingLeft="@dimen/common_dimens_20"
             android:paddingRight="@dimen/common_dimens_20"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/dimens_50dp"/>
+            android:text="@string/take_photo"
+            android:textColor="@color/colorWhite" />
+
         <TextView
             android:id="@+id/txt_remind_me_later"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/remind_me_later"
-            android:gravity="center_horizontal"
             android:layout_marginTop="@dimen/common_dimens_20"
+            android:gravity="center_horizontal"
+            android:text="@string/remind_me_later"
             android:textColor="@color/text_color_primary"
-            android:textSize="@dimen/text_size_14"/>
+            android:textSize="@dimen/text_size_14" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

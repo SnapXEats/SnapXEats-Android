@@ -2,12 +2,10 @@ package com.snapxeats.ui.directions;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -31,6 +29,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingClient;
+import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -67,20 +69,20 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.snapxeats.common.constants.UIConstants.CHECKIN_NOTIFICATION_REQUEST_CODE;
-import static com.snapxeats.common.constants.UIConstants.CHECKIN_NOTIFICATION_TIME;
 import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_FOUR;
 import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_ONE;
 import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_THREE;
 import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_TWO;
+import static com.snapxeats.common.constants.UIConstants.GEOFENCE_RADIUS;
+import static com.snapxeats.common.constants.UIConstants.GEOFENCING_DELAY;
 import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.PREF_DEFAULT_STRING;
 import static com.snapxeats.common.constants.UIConstants.STRING_SPACE;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
@@ -146,6 +148,13 @@ public class DirectionsActivity extends BaseActivity
 
     private boolean isCheckedIn = false;
 
+    private GeofencingClient geofencingClient;
+
+    private Double lat;
+    private Double lng;
+    private String dirLat;
+    private String dirLng;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -179,12 +188,9 @@ public class DirectionsActivity extends BaseActivity
         setMapView();
         setUpViews();
         mCurrentLocation = utility.getLocation();
-
-        //shows check in dialog, on checkin notification action
-        boolean isCheckInNotification = getIntent().getBooleanExtra(getString(R.string.intent_dir_check_in), false);
-        if (isCheckInNotification) {
-            dialogCheckIn();
-        }
+        geofencingClient = LocationServices.getGeofencingClient(this);
+        dirLat = String.valueOf(utility.getLocationfromPref().getLat());
+        dirLng = String.valueOf(utility.getLocationfromPref().getLng());
     }
 
     private void dialogCheckIn() {
@@ -240,20 +246,67 @@ public class DirectionsActivity extends BaseActivity
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        startCheckInAlert(lat, lng);
+    }
+
+    @SuppressLint("MissingPermission")
+    private void startCheckInAlert(double lat, double lng) {
+        String key = PREF_DEFAULT_STRING + lat + "-" + lng;
+        Geofence geofence = getGeofence(lat, lng, key);
+        geofencingClient.addGeofences(getGeofencingRequest(geofence),
+                getGeofencePendingIntent())
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        SnapXToast.debug("Location alter has been added");
+                    } else {
+                        SnapXToast.debug("Location alter could not be added");
+                    }
+                });
+    }
+
+    private PendingIntent getGeofencePendingIntent() {
+        Intent intent = new Intent(this, CheckInNotificationService.class);
+        return PendingIntent.getService(this, ZERO, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private GeofencingRequest getGeofencingRequest(Geofence geofence) {
+        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_DWELL);
+        builder.addGeofence(geofence);
+        return builder.build();
+    }
+
+    private Geofence getGeofence(double lat, double lang, String key) {
+        return new Geofence.Builder()
+                .setRequestId(key)
+                .setCircularRegion(lat, lang, GEOFENCE_RADIUS)
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                        Geofence.GEOFENCE_TRANSITION_DWELL)
+                .setLoiteringDelay(GEOFENCING_DELAY)
+                .build();
+    }
+
     /**
      * Set values for components
      **/
     private void setUpViews() {
         mDetails = getIntent().getExtras().getParcelable(getString(R.string.intent_rest_details));
-        if (null != mDetails && null != mDetails.getRestaurantDetails().getRestaurant_info_id()) {
-            restId = mDetails.getRestaurantDetails().getRestaurant_info_id();
+        if (null != mDetails.getRestaurantDetails().getLocation_lat()
+                && null != mDetails.getRestaurantDetails().getLocation_long()) {
+            lat = Double.parseDouble(mDetails.getRestaurantDetails().getLocation_lat());
+            lng = Double.parseDouble(mDetails.getRestaurantDetails().getLocation_long());
         }
         if (null != mDetails && null != mDetails.getRestaurantDetails()) {
             mTxtRestName.setText(String.valueOf(mDetails.getRestaurantDetails().getRestaurant_name()));
             mTxtRestAddr.setText(mDetails.getRestaurantDetails().getRestaurant_address());
             mTxtRating.setText(mDetails.getRestaurantDetails().getRestaurant_rating());
-            distInMiles(Double.valueOf(UIConstants.LATITUDE),
-                    Double.valueOf(UIConstants.LONGITUDE),
+            distInMiles(Double.valueOf(lat),
+                    Double.valueOf(lng),
                     Double.valueOf(mDetails.getRestaurantDetails().getLocation_lat()),
                     Double.valueOf(mDetails.getRestaurantDetails().getLocation_long()));
             setRestTimings();
@@ -327,8 +380,7 @@ public class DirectionsActivity extends BaseActivity
      **/
     public void setGoogleRoute() {
         RootGoogleDir mGoogleDir = getIntent().getExtras().getParcelable(getString(R.string.intent_google_dir));
-        //TODO latlng are hardcoded
-        LatLng src = new LatLng(Double.parseDouble(UIConstants.LATITUDE), Double.parseDouble(UIConstants.LONGITUDE));
+        LatLng src = new LatLng(Double.parseDouble(dirLat), Double.parseDouble(dirLng));
 
         mMap.addMarker(new MarkerOptions().position(src)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_pin)));
@@ -432,7 +484,6 @@ public class DirectionsActivity extends BaseActivity
     public void onMapReady(GoogleMap googleMap) {
         this.mMap = googleMap;
         setGoogleRoute();
-
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -495,7 +546,7 @@ public class DirectionsActivity extends BaseActivity
 
     private void getCheckedInData() {
         SharedPreferences preferences = utility.getSharedPreferences();
-        userId = preferences.getString(getString(R.string.user_id), "");
+        userId = preferences.getString(getString(R.string.user_id), PREF_DEFAULT_STRING);
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getString(R.string.format_checkedIn));
         Calendar calendar = Calendar.getInstance();
@@ -526,7 +577,7 @@ public class DirectionsActivity extends BaseActivity
     @Override
     public boolean onSupportNavigateUp() {
         if (!isCheckedIn) {
-            startTimerForCheckIn();
+            startCheckInAlert(lat, lng);
         }
         onBackPressed();
         return true;
@@ -536,18 +587,7 @@ public class DirectionsActivity extends BaseActivity
     protected void onDestroy() {
         super.onDestroy();
         if (!isCheckedIn) {
-            startTimerForCheckIn();
+            startCheckInAlert(lat, lng);
         }
     }
-
-    private void startTimerForCheckIn() {
-        Intent intent = new Intent(getActivity(), CheckInNotificationReceiver.class);
-        intent.putExtra(getString(R.string.intent_restaurant_id), restId);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), CHECKIN_NOTIFICATION_REQUEST_CODE, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
-                TimeUnit.HOURS.toMillis(CHECKIN_NOTIFICATION_TIME), pendingIntent);
-    }
-
 }
