@@ -117,7 +117,6 @@ public class UIConstants {
             "\nBy sharing photos you can earn rewards";
     public static final String CHECKIN_NOTIFICATION_MESSAGE = "CheckIn and earn reward points";
     public static final String CHECKIN_SERVICE = "CheckInService";
-    public static final int GEOFENCE_RADIUS = 500;
     public static final String STRING_SPACE = " ";
     public static final String PREF_DEFAULT_STRING = "";
     public static final int NOTIFICATION_ID = 101;
@@ -150,11 +149,18 @@ public class UIConstants {
     public static final int DIALOG_Y_POSITION = 120;
     public static final int REQUEST_CODE_CHECKIN_ACTION = 5;
     public static final int CHECKIN_NOTIFICATION_ID = 201;
-    public static final int GEOFENCING_DELAY = 10000;
     public static final String UBER_URI = "https://play.google.com/store/apps/details?id=com.ubercab";
     public static final String UBER_PACKAGE = "com.ubercab";
     public static final String REST_CALL = "tel";
 
     public static final int DELETE_ICON_WIDTH = 80;
     public static final int SPAN_COUNT = 2;
+
+    public static final long GEO_DURATION = 60 * 60 * 1000;
+    public static final String GEOFENCE_REQ_ID = "SnapGeofence";
+    public static final float GEOFENCE_RADIUS = 500.0f;
+    public static final String GEOFENCE_NOT_AVAILABLE = "GeoFence not available";
+    public static final String GEOFENCE_TOO_MANY = "Too many GeoFences";
+    public static final String GEOFENCE_PENDING = "Too many pending intents";
+    public static final String GEOFENCE_ERROR = "Unknown error";
 }

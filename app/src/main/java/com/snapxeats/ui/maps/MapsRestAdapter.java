@@ -8,15 +8,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.maps.model.LatLng;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.ui.restaurantInfo.RestaurantInfoActivity;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -27,10 +31,12 @@ public class MapsRestAdapter extends RecyclerView.Adapter<MapsRestAdapter.ViewHo
 
     private RootCuisinePhotos stackData;
     private Context mContext;
+    private LatLng latLng;
 
-    MapsRestAdapter(Context context, RootCuisinePhotos stackData) {
+    MapsRestAdapter(Context context, RootCuisinePhotos stackData, LatLng latLng) {
         this.mContext = context;
         this.stackData = stackData;
+        this.latLng = latLng;
     }
 
     @Override
@@ -72,14 +78,11 @@ public class MapsRestAdapter extends RecyclerView.Adapter<MapsRestAdapter.ViewHo
                 holder.txtPrice.setText(mContext.getString(R.string.price_one));
         }
 
-        //TODO latlng are hardcoded for now
-        double distVal = distInMiles(Double.parseDouble(UIConstants.LATITUDE),
-                Double.parseDouble(UIConstants.LONGITUDE)
+        double distVal = distInMiles(latLng.latitude, latLng.longitude
                 , Double.parseDouble(stackData.getDishesInfo().get(position).getLocation_lat())
                 , Double.parseDouble(stackData.getDishesInfo().get(position).getLocation_long()));
         NumberFormat distance = new DecimalFormat(UIConstants.DIST_FORMAT);
         holder.txtDistance.setText(distance.format(distVal) + " " + mContext.getString(R.string.mi));
-
     }
 
     /*calculate distance in miles*/

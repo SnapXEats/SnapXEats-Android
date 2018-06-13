@@ -238,14 +238,9 @@ public class FoodStackActivity extends BaseActivity
                     mImgMap.setAlpha(SET_ALPHA_DISABLE);
                     mImgMap.setEnabled(false);
                 }
-                if (ZERO == foodGestureDislike.size()) {
-                    disableUndo();
-                } else {
-                    cardStackView.reverse();
-                }
                 switch (direction) {
                     case Top: {
-                        swipeTop(cardStackView.getTopIndex() - ONE);
+                        swipeTop(cardStackView.getTopIndex());
                         break;
                     }
                     case Right: {
@@ -253,6 +248,7 @@ public class FoodStackActivity extends BaseActivity
                         break;
                     }
                     case Left: {
+                        swipeLeft(cardStackView.getTopIndex() - ONE);
                         enableUndo();
                         break;
                     }
@@ -261,6 +257,9 @@ public class FoodStackActivity extends BaseActivity
 
             @Override
             public void onCardReversed() {
+                if (ZERO == foodGestureDislike.size()) {
+                    disableUndo();
+                }
             }
 
             @Override
@@ -361,12 +360,11 @@ public class FoodStackActivity extends BaseActivity
         }
         FoodDislikes foodDislikeItem;
         foodDislikeItem = new FoodDislikes();
+
+        foodDislikeItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
+        foodGestureDislike.add(foodDislikeItem);
         if (isLoggedIn()) {
-            foodDislikeItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
-            foodGestureDislike.add(foodDislikeItem);
             mFoodStackPresenter.saveDislikeToDb(foodGestureDislike);
-        } else {
-            foodGestureDislike.add(foodDislikeItem);
         }
         gestureLeft();
     }
@@ -442,7 +440,6 @@ public class FoodStackActivity extends BaseActivity
         translateX.setDuration(UIConstants.SET_DURATION);
         translateY.setDuration(UIConstants.SET_DURATION);
         mAnimatorSet.playTogether(rotation, translateX, translateY);
-        cardStackView.swipe(SwipeDirection.Left, mAnimatorSet);
     }
 
     private void gestureTop() {
@@ -461,8 +458,6 @@ public class FoodStackActivity extends BaseActivity
         translateX.setDuration(UIConstants.SET_DURATION);
         translateY.setDuration(UIConstants.SET_DURATION);
         mAnimatorSet.playTogether(rotation, translateX, translateY);
-        cardStackView.swipe(SwipeDirection.Top, mAnimatorSet);
-
     }
 
     @Override
@@ -488,19 +483,23 @@ public class FoodStackActivity extends BaseActivity
     @OnClick(R.id.img_cuisine_dislike)
     public void imgCuisineReject() {
         swipeLeft(cardStackView.getTopIndex());
+        cardStackView.swipe(SwipeDirection.Left, mAnimatorSet);
     }
 
     @OnClick(R.id.img_cuisine_wishlist)
     public void imgCuisineWishlist() {
         swipeTop(cardStackView.getTopIndex());
+        cardStackView.swipe(SwipeDirection.Top, mAnimatorSet);
     }
 
     @OnClick(R.id.img_cuisine_undo)
     public void imgCuisineUndo() {
-        if (ZERO == foodGestureDislike.size()) {
+        if (ZERO != foodGestureDislike.size()) {
+            enableGestureActions();
+            cardStackView.reverse();
+        } else {
             disableUndo();
         }
-        cardStackView.reverse();
     }
 
     @Override

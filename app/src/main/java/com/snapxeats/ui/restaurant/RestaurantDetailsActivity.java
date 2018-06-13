@@ -118,7 +118,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     protected LinearLayout mParentLayout;
 
     private RootGoogleDir mRootGoogleDir;
-    private String restaurantId;
+    private String restaurantId, lat, lng;
 
     @BindView(R.id.layout_dots)
     protected LinearLayout mSliderDotsPanel;
@@ -200,9 +200,12 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         LocationGoogleDir locationGoogleDir = new LocationGoogleDir();
         GoogleDirOrigin googleDirOrigin = new GoogleDirOrigin();
 
-        String lat = String.valueOf(utility.getLocationfromPref().getLat());
-        String lng = String.valueOf(utility.getLocationfromPref().getLng());
+        if (utility.isLoggedIn()) {
+            lat = String.valueOf(utility.getLocationfromPref().getLat());
+            lng = String.valueOf(utility.getLocationfromPref().getLng());
+        } else {
 
+        }
         googleDirOrigin.setOriginLat(lat);
         googleDirOrigin.setOriginLng(lng);
         GoogleDirDest googleDirDest = new GoogleDirDest();
