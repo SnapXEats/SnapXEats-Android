@@ -630,9 +630,6 @@ public class DirectionsActivity extends BaseActivity
                 googleApiClient,
                 createGeofencePendingIntent()
         ).setResultCallback(status -> {
-            if (status.isSuccess()) {
-                SnapXToast.debug("Geofence cleared");
-            }
         });
     }
 
