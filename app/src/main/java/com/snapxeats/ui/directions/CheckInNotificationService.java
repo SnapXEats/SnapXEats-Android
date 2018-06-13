@@ -11,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingEvent;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
@@ -19,10 +18,6 @@ import com.snapxeats.ui.home.HomeActivity;
 
 import static com.snapxeats.common.constants.UIConstants.CHECKIN_NOTIFICATION_ID;
 import static com.snapxeats.common.constants.UIConstants.CHECKIN_SERVICE;
-import static com.snapxeats.common.constants.UIConstants.GEOFENCE_ERROR;
-import static com.snapxeats.common.constants.UIConstants.GEOFENCE_NOT_AVAILABLE;
-import static com.snapxeats.common.constants.UIConstants.GEOFENCE_PENDING;
-import static com.snapxeats.common.constants.UIConstants.GEOFENCE_TOO_MANY;
 import static com.snapxeats.common.constants.UIConstants.REQUEST_CODE_CHECKIN_ACTION;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -42,12 +37,11 @@ public class CheckInNotificationService extends IntentService {
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
                 geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL) {
-            String transitionType = getErrorString(geofenceTransition);
-            checkInNotification(intent, transitionType);
+            checkInNotification(intent);
         }
     }
 
-    public void checkInNotification(Intent intent, String locTransitionType) {
+    public void checkInNotification(Intent intent) {
         String restaurantId = intent.getStringExtra(getString(R.string.intent_restaurant_id));
         Intent checkInNotifyIntent = new Intent(this, HomeActivity.class);
         checkInNotifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -68,24 +62,10 @@ public class CheckInNotificationService extends IntentService {
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setContentIntent(pendingIntentCheckIn)
-                .setContentTitle(locTransitionType)
                 .addAction(checkIn)
                 .setAutoCancel(true);
 
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
         managerCompat.notify(CHECKIN_NOTIFICATION_ID, builder.build());
-    }
-
-    private static String getErrorString(int errorCode) {
-        switch (errorCode) {
-            case GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE:
-                return GEOFENCE_NOT_AVAILABLE;
-            case GeofenceStatusCodes.GEOFENCE_TOO_MANY_GEOFENCES:
-                return GEOFENCE_TOO_MANY;
-            case GeofenceStatusCodes.GEOFENCE_TOO_MANY_PENDING_INTENTS:
-                return GEOFENCE_PENDING;
-            default:
-                return GEOFENCE_ERROR;
-        }
     }
 }
