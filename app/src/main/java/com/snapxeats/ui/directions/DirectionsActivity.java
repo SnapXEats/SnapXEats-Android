@@ -1,5 +1,6 @@
 package com.snapxeats.ui.directions;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,6 +15,8 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
@@ -29,9 +32,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -80,7 +87,8 @@ import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_ONE;
 import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_THREE;
 import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_TWO;
 import static com.snapxeats.common.constants.UIConstants.GEOFENCE_RADIUS;
-import static com.snapxeats.common.constants.UIConstants.GEOFENCING_DELAY;
+import static com.snapxeats.common.constants.UIConstants.GEOFENCE_REQ_ID;
+import static com.snapxeats.common.constants.UIConstants.GEO_DURATION;
 import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.PREF_DEFAULT_STRING;
 import static com.snapxeats.common.constants.UIConstants.STRING_SPACE;
@@ -91,7 +99,12 @@ import static com.snapxeats.common.constants.UIConstants.ZERO;
  * Created by Prajakta Patil on 22/3/18.
  */
 public class DirectionsActivity extends BaseActivity
-        implements DirectionsContract.DirectionsView, OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener {
+        implements DirectionsContract.DirectionsView, OnMapReadyCallback,
+        GoogleMap.OnMyLocationChangeListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener,
+        ResultCallback<Status> {
 
     @Inject
     SnapXDialog snapXDialog;
@@ -142,18 +155,14 @@ public class DirectionsActivity extends BaseActivity
     @Inject
     CheckInDbHelper checkInDbHelper;
 
-    private String restId;
-
-    private String userId, currentTime;
+    private String restId, userId, currentTime, dirLat, dirLng;
 
     private boolean isCheckedIn = false;
 
-    private GeofencingClient geofencingClient;
+    private Double lat, lng;
 
-    private Double lat;
-    private Double lng;
-    private String dirLat;
-    private String dirLng;
+    private GoogleApiClient googleApiClient;
+    private PendingIntent geoFencePendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,9 +197,9 @@ public class DirectionsActivity extends BaseActivity
         setMapView();
         setUpViews();
         mCurrentLocation = utility.getLocation();
-        geofencingClient = LocationServices.getGeofencingClient(this);
         dirLat = String.valueOf(utility.getLocationfromPref().getLat());
         dirLng = String.valueOf(utility.getLocationfromPref().getLng());
+        createGoogleApi();
     }
 
     private void dialogCheckIn() {
@@ -225,7 +234,6 @@ public class DirectionsActivity extends BaseActivity
         });
 
         mTxtCancel.setOnClickListener(v -> dialog.dismiss());
-
     }
 
     //tracks if current location and restaurant location are equal or not
@@ -249,46 +257,9 @@ public class DirectionsActivity extends BaseActivity
     @Override
     protected void onPause() {
         super.onPause();
-        startCheckInAlert(lat, lng);
-    }
-
-    @SuppressLint("MissingPermission")
-    private void startCheckInAlert(double lat, double lng) {
-        String key = PREF_DEFAULT_STRING + lat + "-" + lng;
-        Geofence geofence = getGeofence(lat, lng, key);
-        geofencingClient.addGeofences(getGeofencingRequest(geofence),
-                getGeofencePendingIntent())
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        SnapXToast.debug("Location alter has been added");
-                    } else {
-                        SnapXToast.debug("Location alter could not be added");
-                    }
-                });
-    }
-
-    private PendingIntent getGeofencePendingIntent() {
-        Intent intent = new Intent(this, CheckInNotificationService.class);
-        return PendingIntent.getService(this, ZERO, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    private GeofencingRequest getGeofencingRequest(Geofence geofence) {
-        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_DWELL);
-        builder.addGeofence(geofence);
-        return builder.build();
-    }
-
-    private Geofence getGeofence(double lat, double lang, String key) {
-        return new Geofence.Builder()
-                .setRequestId(key)
-                .setCircularRegion(lat, lang, GEOFENCE_RADIUS)
-                .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                        Geofence.GEOFENCE_TRANSITION_DWELL)
-                .setLoiteringDelay(GEOFENCING_DELAY)
-                .build();
+        if (googleApiClient.isConnected()) {
+            startGeofence();
+        }
     }
 
     /**
@@ -533,6 +504,9 @@ public class DirectionsActivity extends BaseActivity
         dismissProgressDialog();
         dialog.dismiss();
         getCheckedInData();
+        if (null != mDetails.getRestaurantDetails().getRestaurant_info_id() &&
+                !mDetails.getRestaurantDetails().getRestaurant_info_id().isEmpty())
+            restId = mDetails.getRestaurantDetails().getRestaurant_info_id();
         if (utility.isLoggedIn()) {
             checkInDbHelper.saveCheckInDataInDb(restId, userId, currentTime, true);
         } else {
@@ -576,8 +550,8 @@ public class DirectionsActivity extends BaseActivity
 
     @Override
     public boolean onSupportNavigateUp() {
-        if (!isCheckedIn) {
-            startCheckInAlert(lat, lng);
+        if (!isCheckedIn && googleApiClient.isConnected()) {
+            startGeofence();
         }
         onBackPressed();
         return true;
@@ -586,8 +560,112 @@ public class DirectionsActivity extends BaseActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (!isCheckedIn) {
-            startCheckInAlert(lat, lng);
+        if (!isCheckedIn && googleApiClient.isConnected()) {
+            startGeofence();
         }
+    }
+
+    // Start Geofence creation process
+    private void startGeofence() {
+        Geofence geofence = createGeofence(new LatLng(lat, lng), GEOFENCE_RADIUS);
+        GeofencingRequest geofenceRequest = createGeofenceRequest(geofence);
+        addGeofence(geofenceRequest);
+    }
+
+    // Create a Geofence Request
+    private GeofencingRequest createGeofenceRequest(Geofence geofence) {
+        return new GeofencingRequest.Builder()
+                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+                .addGeofence(geofence)
+                .build();
+    }
+
+    // Create a Geofence
+    private Geofence createGeofence(LatLng latLng, float radius) {
+        return new Geofence.Builder()
+                .setRequestId(GEOFENCE_REQ_ID)
+                .setCircularRegion(latLng.latitude, latLng.longitude, radius)
+                .setExpirationDuration(GEO_DURATION)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER
+                        | Geofence.GEOFENCE_TRANSITION_EXIT)
+                .build();
+    }
+
+    // Add the created GeofenceRequest to the device's monitoring list
+    private void addGeofence(GeofencingRequest request) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        LocationServices.GeofencingApi.addGeofences(
+                googleApiClient,
+                request,
+                createGeofencePendingIntent()
+        ).setResultCallback(this);
+    }
+
+    private PendingIntent createGeofencePendingIntent() {
+        if (null != geoFencePendingIntent)
+            return geoFencePendingIntent;
+
+        Intent intent = new Intent(this, CheckInNotificationService.class);
+        int GEOFENCE_REQ_CODE = ZERO;
+        return PendingIntent.getService(
+                this, GEOFENCE_REQ_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    //create googleApiClient for requesting geofencing
+    private void createGoogleApi() {
+        if (null == googleApiClient) {
+            googleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+    }
+
+    private void clearGeofence() {
+        LocationServices.GeofencingApi.removeGeofences(
+                googleApiClient,
+                createGeofencePendingIntent()
+        ).setResultCallback(status -> {
+        });
+    }
+
+    @Override
+    public void onResult(@NonNull Status status) {
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mCurrentLocation = location;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        googleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        googleApiClient.disconnect();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }

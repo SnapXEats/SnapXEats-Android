@@ -37,12 +37,11 @@ public class CheckInNotificationService extends IntentService {
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
                 geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL) {
-            String transitionType = getTransitionString(geofenceTransition);
-            checkInNotification(intent, transitionType);
+            checkInNotification(intent);
         }
     }
 
-    public void checkInNotification(Intent intent, String locTransitionType) {
+    public void checkInNotification(Intent intent) {
         String restaurantId = intent.getStringExtra(getString(R.string.intent_restaurant_id));
         Intent checkInNotifyIntent = new Intent(this, HomeActivity.class);
         checkInNotifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -63,20 +62,10 @@ public class CheckInNotificationService extends IntentService {
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setContentIntent(pendingIntentCheckIn)
-                .setContentTitle(locTransitionType)
                 .addAction(checkIn)
                 .setAutoCancel(true);
 
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
         managerCompat.notify(CHECKIN_NOTIFICATION_ID, builder.build());
-    }
-
-    private String getTransitionString(int transitionType) {
-        switch (transitionType) {
-            case Geofence.GEOFENCE_TRANSITION_ENTER:
-                return getString(R.string.geofence_enter);
-            default:
-                return getString(R.string.geofence_transition);
-        }
     }
 }

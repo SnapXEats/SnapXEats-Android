@@ -21,6 +21,7 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.RootCuisinePhotos;
+import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.SnapXPreference;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
@@ -33,6 +34,8 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Prajakta Patil on 27/3/18.
@@ -89,6 +92,7 @@ public class MapsActivity extends BaseActivity
         marker.showInfoWindow();
         return true;
     }
+
     /**
      * Set up map view
      **/
@@ -99,10 +103,17 @@ public class MapsActivity extends BaseActivity
     }
 
     private void setScrollview() {
-        mInfiniteAdapter = InfiniteScrollAdapter.wrap(new MapsRestAdapter(this, mRootCuisine));
+        LatLng latLng;
+        if (utility.isLoggedIn()) {
+            latLng = new LatLng(utility.getLocationfromPref().getLat(), utility.getLocationfromPref().getLng());
+        } else {
+            RootUserPreference userPreference = new RootUserPreference();
+            latLng = new LatLng(userPreference.getLocation().getLat(), userPreference.getLocation().getLng());
+        }
+        mInfiniteAdapter = InfiniteScrollAdapter.wrap(new MapsRestAdapter(this, mRootCuisine, latLng));
         mScrollView.addOnItemChangedListener(this);
-        if (0 != mRootCuisine.getDishesInfo().size()) {
-            mScrollView.setAdapter(new MapsRestAdapter(this, mRootCuisine));
+        if (ZERO != mRootCuisine.getDishesInfo().size()) {
+            mScrollView.setAdapter(new MapsRestAdapter(this, mRootCuisine, latLng));
         }
         mScrollView.setItemTransformer(new ScaleTransformer.Builder().setMinScale(UIConstants.SCROLL_MIN_SCALE).build());
     }
@@ -112,29 +123,29 @@ public class MapsActivity extends BaseActivity
             getSupportActionBar().setTitle(getString(R.string.within) + " " +
                     mPreferences.getUserPreferences().getRestaurant_distance() + " " + getString(R.string.miles));
 
-        //TODO latlng are hardcoded for now
-        LatLng currentLatLon = new LatLng(Double.parseDouble(UIConstants.LATITUDE),
-                Double.parseDouble(UIConstants.LONGITUDE));
+            //TODO latlng are hardcoded for now
+            LatLng currentLatLon = new LatLng(Double.parseDouble(UIConstants.LATITUDE),
+                    Double.parseDouble(UIConstants.LONGITUDE));
 
-        mMap.addCircle(new CircleOptions()
-                .center(currentLatLon)
-                .radius(Integer.parseInt(mPreferences.getUserPreferences().getRestaurant_distance()) * UIConstants.DIST_IN_MILES)
-                .strokeWidth(UIConstants.MAP_STROKE)
-                .strokeColor(UIConstants.MAP_FILL_COLOR)
-                .fillColor(UIConstants.MAP_FILL_COLOR));
+            mMap.addCircle(new CircleOptions()
+                    .center(currentLatLon)
+                    .radius(Integer.parseInt(mPreferences.getUserPreferences().getRestaurant_distance()) * UIConstants.DIST_IN_MILES)
+                    .strokeWidth(UIConstants.MAP_STROKE)
+                    .strokeColor(UIConstants.MAP_FILL_COLOR)
+                    .fillColor(UIConstants.MAP_FILL_COLOR));
 
-        CameraUpdateAnimator animator = new CameraUpdateAnimator(mMap, this);
-        animator.add(CameraUpdateFactory.newLatLngZoom(currentLatLon, UIConstants.MAP_ZOOM),
-                false, (long) UIConstants.DEFAULT);
-        animator.add(CameraUpdateFactory.scrollBy(UIConstants.DEFAULT, UIConstants.MAP_SCOLL_BY),
-                false, (long) UIConstants.DEFAULT);
-        animator.execute();
+            CameraUpdateAnimator animator = new CameraUpdateAnimator(mMap, this);
+            animator.add(CameraUpdateFactory.newLatLngZoom(currentLatLon, UIConstants.MAP_ZOOM),
+                    false, (long) UIConstants.DEFAULT);
+            animator.add(CameraUpdateFactory.scrollBy(UIConstants.DEFAULT, UIConstants.MAP_SCOLL_BY),
+                    false, (long) UIConstants.DEFAULT);
+            animator.execute();
         }
     }
 
     private void placeRestMarkers() {
-        if (0 != mRootCuisine.getDishesInfo().size()) {
-            for (int row = 0; row < mRootCuisine.getDishesInfo().size(); row++) {
+        if (ZERO != mRootCuisine.getDishesInfo().size()) {
+            for (int row = ZERO; row < mRootCuisine.getDishesInfo().size(); row++) {
                 Double lat = Double.parseDouble(mRootCuisine.getDishesInfo().get(row).getLocation_lat());
                 Double lng = Double.parseDouble(mRootCuisine.getDishesInfo().get(row).getLocation_long());
                 LatLng latLng = new LatLng(lat, lng);
@@ -151,8 +162,7 @@ public class MapsActivity extends BaseActivity
     public void onMapReady(GoogleMap googleMap) {
         this.mMap = googleMap;
         placeRestMarkers();
-
-        LatLng latLng = new LatLng(Double.parseDouble(UIConstants.LATITUDE), Double.parseDouble(UIConstants.LONGITUDE));
+        LatLng latLng = new LatLng(utility.getLocationfromPref().getLat(), utility.getLocationfromPref().getLng());
         mMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_current)));

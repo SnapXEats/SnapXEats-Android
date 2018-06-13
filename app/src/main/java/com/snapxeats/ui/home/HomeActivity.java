@@ -77,7 +77,6 @@ import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.network.LocationHelper;
-import com.snapxeats.ui.directions.DirectionsActivity;
 import com.snapxeats.ui.foodstack.FoodStackDbHelper;
 import com.snapxeats.ui.home.fragment.checkin.CheckInDbHelper;
 import com.snapxeats.ui.home.fragment.foodjourney.FoodJourneyFragment;
@@ -367,12 +366,10 @@ public class HomeActivity extends BaseActivity implements
 
             @Override
             public void onDrawerClosed(@NonNull View drawerView) {
-
             }
 
             @Override
             public void onDrawerStateChanged(int newState) {
-
             }
         });
     }
@@ -396,7 +393,6 @@ public class HomeActivity extends BaseActivity implements
             }
         }
     }
-
 
     /**
      * Check id SnapXData is loaded or not
@@ -492,7 +488,6 @@ public class HomeActivity extends BaseActivity implements
             isSnapNShareEnabled = utility.getCheckedInTimeDiff();
         }
     }
-
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -981,7 +976,6 @@ public class HomeActivity extends BaseActivity implements
 
                 checkStoragePermission();
                 break;
-
         }
     }
 

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.snapxeats.R;
-import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SelectedCuisineList;
@@ -14,7 +13,6 @@ import com.snapxeats.common.model.foodGestures.FoodWishlists;
 import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
-import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
@@ -69,8 +67,8 @@ public class FoodStackInteractor {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
 
             LocationCuisine locationCuisine = selectedCuisineList.getLocation();
-            double lat =   locationCuisine.getLatitude();
-            double lng =   locationCuisine.getLongitude();
+            double lat = locationCuisine.getLatitude();
+            double lng = locationCuisine.getLongitude();
 
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             SharedPreferences preferences = utility.getSharedPreferences();
@@ -156,6 +154,4 @@ public class FoodStackInteractor {
             mFoodStackPresenter.response(SnapXResult.NONETWORK, null);
         }
     }
-
-
 }
