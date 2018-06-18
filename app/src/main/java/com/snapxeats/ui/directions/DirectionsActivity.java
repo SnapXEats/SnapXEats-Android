@@ -60,6 +60,7 @@ import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.model.checkin.CheckInResponse;
 import com.snapxeats.common.model.googleDirections.RootGoogleDir;
+import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
@@ -155,7 +156,7 @@ public class DirectionsActivity extends BaseActivity
     @Inject
     CheckInDbHelper checkInDbHelper;
 
-    private String restId, userId, currentTime, dirLat, dirLng;
+    private String restId, userId, currentTime;
 
     private boolean isCheckedIn = false;
 
@@ -163,6 +164,9 @@ public class DirectionsActivity extends BaseActivity
 
     private GoogleApiClient googleApiClient;
     private PendingIntent geoFencePendingIntent;
+
+    @Inject
+    RootUserPreference rootUserPreference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,8 +201,6 @@ public class DirectionsActivity extends BaseActivity
         setMapView();
         setUpViews();
         mCurrentLocation = utility.getLocation();
-        dirLat = String.valueOf(utility.getLocationfromPref().getLat());
-        dirLng = String.valueOf(utility.getLocationfromPref().getLng());
         createGoogleApi();
     }
 
@@ -351,7 +353,7 @@ public class DirectionsActivity extends BaseActivity
      **/
     public void setGoogleRoute() {
         RootGoogleDir mGoogleDir = getIntent().getExtras().getParcelable(getString(R.string.intent_google_dir));
-        LatLng src = new LatLng(Double.parseDouble(dirLat), Double.parseDouble(dirLng));
+        LatLng src = new LatLng(utility.setLatLng().latitude, utility.setLatLng().longitude);
 
         mMap.addMarker(new MarkerOptions().position(src)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_pin)));
@@ -597,11 +599,13 @@ public class DirectionsActivity extends BaseActivity
                 != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        LocationServices.GeofencingApi.addGeofences(
-                googleApiClient,
-                request,
-                createGeofencePendingIntent()
-        ).setResultCallback(this);
+        if (googleApiClient.isConnected()) {
+            LocationServices.GeofencingApi.addGeofences(
+                    googleApiClient,
+                    request,
+                    createGeofencePendingIntent()
+            ).setResultCallback(this);
+        }
     }
 
     private PendingIntent createGeofencePendingIntent() {

@@ -102,7 +102,7 @@
     <string name="discard">Discard</string>
     <string name="rootFoodPrefList">rootFoodPrefList</string>
     <string name="instaInfoIntent">instaInfoIntent</string>
-    <string name="spinner_title">Open TOday</string>
+    <string name="spinner_title">Open Now</string>
     <string name="check_specialties">Check Specialties</string>
     <string name="get_uber_ride">Get A Ride</string>
     <string name="call">Call</string>
@@ -114,7 +114,7 @@
     <string name="not_now">Not now</string>
     <string name="install_uber">Install Uber app to book a ride.</string>
     <string name="okay">Okay</string>
-    <string name="more_info">More Info</string>
+    <string name="more_info">Aminities</string>
     <string name="intent_foodstackRestInfoId">foodstackRestInfoId</string>
     <string name="intent_foodstackRestDetailsId">foodstackRestDetailsId</string>
     <string name="away"> away</string>
@@ -125,13 +125,13 @@
     <string name="translationX">translationX</string>
     <string name="translationY">translationY</string>
     <string name="open_today">Open Today</string>
-    <string name="close_today">Closed Today</string>
+    <string name="close_today">Closed Now</string>
     <string name="social_platform">social_platform</string>
     <string name="isFirstTimeUser">isFirstTimeUser</string>
     <string name="error">Error</string>
     <string name="nav_login">Log-In to SnapXEats and Earn Reward Points</string>
     <string name="zero">0</string>
-    <string name="toolbar_rest_info">Restaurant Info</string>
+    <string name="toolbar_rest_info">Restaurant Information</string>
     <string name="restaurant_name">Restaurant Name</string>
     <string name="toolbar_rest_details">Restaurant Details</string>
     <string name="date_format_month">EEEE</string>
@@ -254,5 +254,6 @@
     <string name="enable_location_permission">Please enable location permission to check in</string>
     <string name="geofence_enter">location entered</string>
     <string name="geofence_transition">location transition</string>
+    <string name="toolbar_restaurants">Restaurants</string>
 
 </resources>

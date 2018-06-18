@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.pkmmte.view.CircularImageView;
 import com.snapxeats.R;
@@ -37,6 +38,7 @@ import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.SnapXDataDao;
 import com.snapxeats.common.model.location.Location;
+import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
 import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.home.fragment.checkin.CheckInData;
@@ -86,6 +88,9 @@ public class AppUtility {
     private LinearLayout mLayoutUserData;
     private CheckInData checkInData;
     private MenuItem snapNShareMenu, foodJourneyMenu, checkInMenu, menuLogoutItem;
+
+    @Inject
+    RootUserPreference rootUserPreference;
 
     @Inject
     DbHelper dbHelper;
@@ -466,5 +471,16 @@ public class AppUtility {
         String json = preferences.getString(mContext.getString(R.string.selected_location), "");
         com.snapxeats.common.model.location.Location mSelectedLocation = gson.fromJson(json, com.snapxeats.common.model.location.Location.class);
         return mSelectedLocation;
+    }
+
+    /* Set latitude and longitude as per login status */
+    public LatLng setLatLng() {
+        LatLng latLng = null;
+        if (isLoggedIn()) {
+            latLng = new LatLng(getLocationfromPref().getLat(), getLocationfromPref().getLng());
+        } else if (null != rootUserPreference.getLocation()) {
+            latLng = new LatLng(rootUserPreference.getLocation().getLat(), rootUserPreference.getLocation().getLng());
+        }
+        return latLng;
     }
 }

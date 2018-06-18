@@ -23,6 +23,7 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -39,6 +40,7 @@ import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.home.HomeDbHelper;
+import com.snapxeats.ui.home.fragment.smartphotos.AminityAdapter;
 import com.snapxeats.ui.restaurant.RestImagesAdapter;
 
 import java.text.DateFormat;
@@ -107,9 +109,6 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
 
     private String restaurantId;
 
-    @BindView(R.id.txt_rest_aminities)
-    protected TextView mTxtRestAminities;
-
     @BindView(R.id.txt_photo_taken)
     protected TextView mTxtPhotoTaken;
 
@@ -132,6 +131,9 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     private RestImagesAdapter mRestInfoAdapter;
     private SmartPhotoResponse mSmartPhoto;
 
+    @BindView(R.id.listview_rest_aminities)
+    protected ListView mListAminities;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,7 +154,6 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         utility.setContext(this);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(getString(R.string.toolbar_rest_info));
         initRestaurantInfo();
         mDialog = new Dialog(this);
     }
@@ -229,23 +230,17 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         setUpRestaurantData();
         setRestaurantTimingsList();
         setRestaurantAminities();
+        setRestPhotoDate();
     }
 
     /*set restaurant aminities values*/
     public void setRestaurantAminities() {
-        List<String> list = new ArrayList<>();
-        if (ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size()) {
-            for (int row = ZERO; row < mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().size(); row++) {
-                list.add(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities().get(row));
-            }
-
-            StringBuilder builder = new StringBuilder();
-            for (String details : mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities()) {
-                builder.append(details + "\n");
-            }
-            mTxtRestAminities.setText(builder.toString());
-            setRestPhotoDate();
+        List<String> aminitiesList = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_amenities();
+        List<String> mAminitiesList = new ArrayList<>();
+        for (String aminity : aminitiesList) {
+            mAminitiesList.add(aminity);
         }
+        mListAminities.setAdapter(new AminityAdapter(getActivity(), mAminitiesList));
     }
 
     private void setRestPhotoDate() {
@@ -421,12 +416,12 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-            if (grantResults[ZERO] == PackageManager.PERMISSION_GRANTED) {
-                startDownloadingTask();
-            } else if (!shouldShowRequestPermissionRationale(permissions[ZERO])) {
-                snapXDialog.showChangePermissionDialog(STORAGE_REQUEST_PERMISSION);
-            } else {
-                SnapXToast.showToast(this, getString(R.string.enable_storage_permissions));
+        if (grantResults[ZERO] == PackageManager.PERMISSION_GRANTED) {
+            startDownloadingTask();
+        } else if (!shouldShowRequestPermissionRationale(permissions[ZERO])) {
+            snapXDialog.showChangePermissionDialog(STORAGE_REQUEST_PERMISSION);
+        } else {
+            SnapXToast.showToast(this, getString(R.string.enable_storage_permissions));
         }
     }
 

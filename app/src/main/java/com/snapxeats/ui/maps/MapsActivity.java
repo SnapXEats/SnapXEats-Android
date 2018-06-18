@@ -21,7 +21,6 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.RootCuisinePhotos;
-import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.SnapXPreference;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
@@ -65,6 +64,7 @@ public class MapsActivity extends BaseActivity
     private InfiniteScrollAdapter mInfiniteAdapter;
     private MarkerOptions mMarkerOptions;
     private Marker mMarker;
+    private LatLng latLng = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,13 +103,7 @@ public class MapsActivity extends BaseActivity
     }
 
     private void setScrollview() {
-        LatLng latLng;
-        if (utility.isLoggedIn()) {
-            latLng = new LatLng(utility.getLocationfromPref().getLat(), utility.getLocationfromPref().getLng());
-        } else {
-            RootUserPreference userPreference = new RootUserPreference();
-            latLng = new LatLng(userPreference.getLocation().getLat(), userPreference.getLocation().getLng());
-        }
+        latLng = utility.setLatLng();
         mInfiniteAdapter = InfiniteScrollAdapter.wrap(new MapsRestAdapter(this, mRootCuisine, latLng));
         mScrollView.addOnItemChangedListener(this);
         if (ZERO != mRootCuisine.getDishesInfo().size()) {
@@ -158,11 +152,12 @@ public class MapsActivity extends BaseActivity
         }
     }
 
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.mMap = googleMap;
         placeRestMarkers();
-        LatLng latLng = new LatLng(utility.getLocationfromPref().getLat(), utility.getLocationfromPref().getLng());
+        latLng = utility.setLatLng();
         mMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_current)));

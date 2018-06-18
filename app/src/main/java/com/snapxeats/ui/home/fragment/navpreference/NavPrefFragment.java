@@ -74,6 +74,7 @@ public class NavPrefFragment extends BaseFragment implements
         NavPrefContract.NavPrefView,
         View.OnClickListener,
         AppContract.SnapXResults {
+
     private RootUserPreference userPreferenceObject;
 
     private DrawerLayout mDrawerLayout;

@@ -43,5 +43,4 @@ public class RootUserPreference{
         setUserCuisinePreferences(null);
         setUserFoodPreferences(null);
     }
-
 }
