@@ -195,7 +195,6 @@ public class DirectionsActivity extends BaseActivity
         utility.setContext(this);
         checkInDbHelper.setContext(this);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle(getString(R.string.directions));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         utility.enableReceiver(new ComponentName(this, SnapNotificationReceiver.class));
         setMapView();

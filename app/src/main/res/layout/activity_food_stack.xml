@@ -15,6 +15,16 @@
         android:paddingEnd="@dimen/common_dimens_5"
         app:theme="@style/ToolBarTheme">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="?attr/actionBarSize"
+            android:gravity="center"
+            android:text="@string/toolbar_restaurants"
+            android:textColor="@color/colorCuisine"
+            android:textSize="@dimen/text_size_16"
+            android:textStyle="bold" />
+
         <ImageView
             android:id="@+id/img_foodstack_map"
             android:layout_width="@dimen/dimen_25"

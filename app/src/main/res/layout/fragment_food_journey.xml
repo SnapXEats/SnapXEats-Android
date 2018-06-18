@@ -27,7 +27,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.4"
+                        android:layout_marginRight="?attr/actionBarSize"
                         android:gravity="center"
                         android:text="@string/food_journey"
                         android:textColor="@color/colorCuisine"
@@ -49,12 +49,12 @@
                 android:visibility="gone" />
 
             <LinearLayout
-                android:orientation="vertical"
                 android:id="@+id/list_current_food_journey"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/common_dimens_10"
-                android:divider="@null" />
+                android:divider="@null"
+                android:orientation="vertical" />
 
             <TextView
                 android:id="@+id/txt_older_journey"
@@ -68,12 +68,12 @@
                 android:visibility="gone" />
 
             <LinearLayout
-                android:orientation="vertical"
                 android:id="@+id/list_older_food_journey"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/common_dimens_10"
-                android:divider="@null" />
+                android:divider="@null"
+                android:orientation="vertical" />
         </LinearLayout>
     </FrameLayout>
 </ScrollView>

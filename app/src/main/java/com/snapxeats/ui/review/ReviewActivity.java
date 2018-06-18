@@ -219,7 +219,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private void setUpToolbar() {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(getString(R.string.toolbar_snap_share));
         mToolbar.setNavigationOnClickListener(v -> dialogExitReview());
     }
 

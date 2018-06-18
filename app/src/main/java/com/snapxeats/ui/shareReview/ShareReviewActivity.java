@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
@@ -29,10 +30,13 @@ import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.home.HomeActivity;
 import com.snapxeats.ui.review.ReviewDbHelper;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static com.snapxeats.common.constants.UIConstants.IMAGE_TYPE;
 import static com.snapxeats.common.constants.UIConstants.INSTA_PACKAGE_NAME;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
@@ -114,7 +118,6 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
     private void setUpToolbar() {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(getString(R.string.toolbar_snap_share));
     }
 
     @OnClick(R.id.img_share_fb)
@@ -168,7 +171,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         dialog.show();
 
         Intent shareAnotherIntent = new Intent(this, HomeActivity.class);
-        shareAnotherIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+        shareAnotherIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         mBtnShare.setOnClickListener(v -> {
 

@@ -16,6 +16,16 @@
         android:elevation="@dimen/common_dimens_2"
         app:theme="@style/ToolBarTheme">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="?attr/actionBarSize"
+            android:gravity="center"
+            android:text="@string/toolbar_snap_share"
+            android:textColor="@color/colorCuisine"
+            android:textSize="@dimen/text_size_16"
+            android:textStyle="bold" />
+
         <ImageView
             android:id="@+id/img_share_review"
             android:layout_width="wrap_content"
