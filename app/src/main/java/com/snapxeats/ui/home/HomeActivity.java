@@ -340,6 +340,7 @@ public class HomeActivity extends BaseActivity implements
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+                checkInMenu.setChecked(true);
             }
 
             @Override

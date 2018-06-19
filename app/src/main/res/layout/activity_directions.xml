@@ -51,6 +51,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/map_directions"
+                        android:layout_alignParentBottom="true"
                         android:layout_marginTop="@dimen/dimen_25"
                         android:orientation="vertical">
 
@@ -168,6 +169,7 @@
             android:layout_marginTop="@dimen/dimens_365dp">
 
             <ImageView
+                android:id="@+id/img_rating"
                 android:layout_width="@dimen/dimens_60"
                 android:layout_height="@dimen/dimens_60"
                 android:src="@drawable/ic_star_rating" />
