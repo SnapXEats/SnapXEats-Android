@@ -101,7 +101,7 @@
                                 android:layout_marginTop="@dimen/common_dimens_10"
                                 android:drawableEnd="@drawable/ic_rest_arrow"
                                 android:drawablePadding="@dimen/common_dimens_10"
-                                android:text="@string/open_today"
+                                android:text="@string/open_now"
                                 android:textColor="@color/text_color_secondary"
                                 android:textSize="@dimen/text_size_14"
                                 android:visibility="gone" />
@@ -114,7 +114,7 @@
                                 android:layout_marginTop="@dimen/common_dimens_10"
                                 android:drawableEnd="@drawable/ic_rest_arrow"
                                 android:drawablePadding="@dimen/common_dimens_10"
-                                android:text="@string/close_today"
+                                android:text="@string/close_now"
                                 android:textColor="@color/text_color_secondary"
                                 android:textSize="@dimen/text_size_14"
                                 android:visibility="gone" />

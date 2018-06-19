@@ -501,7 +501,8 @@ public class CardStackView extends FrameLayout {
         });
     }
 
-    public void reverseLast() {
+    /** Function can be used in future **/
+    /*public void reverseLast() {
         if (null != state.lastPoint) {
             ViewGroup parent = containers.getLast();
             View prevView = adapter.getView(state.topIndex - 1, null, parent);
@@ -512,7 +513,7 @@ public class CardStackView extends FrameLayout {
                 }
             });
         }
-    }
+    }*/
 
     public void reverse() {
         int reverseIndex = state.topIndex - 1;
@@ -527,6 +528,7 @@ public class CardStackView extends FrameLayout {
                         }
                     });
         }
+
     }
 
     public boolean isReversible() {

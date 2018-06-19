@@ -86,6 +86,7 @@ public class MapsActivity extends BaseActivity
         mPresenter.getUserPreferences();
         mRootCuisine = getIntent().getExtras().getParcelable(getString(R.string.intent_root_cuisine));
         setScrollview();
+
     }
 
     public boolean onMarkerClick(Marker marker) {
@@ -113,17 +114,16 @@ public class MapsActivity extends BaseActivity
     }
 
     private void drawMapCircle() {
-        if (null != mPreferences && null != mPreferences.getUserPreferences() && null != mPreferences.getUserPreferences().getRestaurant_distance()) {
+        if (null != mPreferences && null != mPreferences.getUserPreferences()
+                && null != mPreferences.getUserPreferences().getRestaurant_distance()) {
             getSupportActionBar().setTitle(getString(R.string.within) + " " +
                     mPreferences.getUserPreferences().getRestaurant_distance() + " " + getString(R.string.miles));
-
-            //TODO latlng are hardcoded for now
-            LatLng currentLatLon = new LatLng(Double.parseDouble(UIConstants.LATITUDE),
-                    Double.parseDouble(UIConstants.LONGITUDE));
+            float radius = Integer.parseInt(mPreferences.getUserPreferences().getRestaurant_distance()) * UIConstants.DIST_IN_MILES;
+            LatLng currentLatLon = utility.setLatLng();
 
             mMap.addCircle(new CircleOptions()
                     .center(currentLatLon)
-                    .radius(Integer.parseInt(mPreferences.getUserPreferences().getRestaurant_distance()) * UIConstants.DIST_IN_MILES)
+                    .radius(radius)
                     .strokeWidth(UIConstants.MAP_STROKE)
                     .strokeColor(UIConstants.MAP_FILL_COLOR)
                     .fillColor(UIConstants.MAP_FILL_COLOR));

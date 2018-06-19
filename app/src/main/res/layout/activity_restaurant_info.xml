@@ -83,7 +83,7 @@
                 android:drawableEnd="@drawable/ic_rest_arrow"
                 android:drawablePadding="@dimen/common_dimens_10"
                 android:drawableStart="@drawable/ic_rest_clock"
-                android:text="@string/open_today"
+                android:text="@string/open_now"
                 android:textColor="@color/colorTextGrey"
                 android:textSize="@dimen/text_size_14"
                 android:visibility="gone" />
@@ -96,7 +96,7 @@
                 android:drawableEnd="@drawable/ic_rest_arrow"
                 android:drawablePadding="@dimen/common_dimens_10"
                 android:drawableStart="@drawable/ic_rest_clock"
-                android:text="@string/close_today"
+                android:text="@string/close_now"
                 android:textColor="@color/colorTextGrey"
                 android:textSize="@dimen/text_size_14"
                 android:visibility="gone" />
@@ -112,7 +112,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/common_dimens_20"
-            android:text="@string/more_info"
+            android:text="@string/rest_info_aminities"
             android:textColor="@color/colorCuisine"
             android:textSize="@dimen/text_size_16"
             android:textStyle="bold" />

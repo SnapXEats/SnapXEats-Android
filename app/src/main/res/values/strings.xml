@@ -114,7 +114,7 @@
     <string name="not_now">Not Now</string>
     <string name="install_uber">Install Uber app to book a ride.</string>
     <string name="okay">Okay</string>
-    <string name="more_info">Aminities</string>
+    <string name="rest_info_aminities">Aminities</string>
     <string name="intent_foodstackRestInfoId">foodstackRestInfoId</string>
     <string name="intent_foodstackRestDetailsId">foodstackRestDetailsId</string>
     <string name="away"> away</string>
@@ -124,8 +124,8 @@
     <string name="rotation">rotation</string>
     <string name="translationX">translationX</string>
     <string name="translationY">translationY</string>
-    <string name="open_today">Open Today</string>
-    <string name="close_today">Closed Now</string>
+    <string name="open_now">Open Now</string>
+    <string name="close_now">Closed Now</string>
     <string name="social_platform">social_platform</string>
     <string name="isFirstTimeUser">isFirstTimeUser</string>
     <string name="error">Error</string>
