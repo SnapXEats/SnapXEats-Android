@@ -139,7 +139,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         utility.setContext(this);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(getString(R.string.toolbar_rest_details));
         initRestaurantData();
     }
 

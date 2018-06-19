@@ -14,16 +14,26 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:elevation="@dimen/common_dimens_2"
+        android:paddingEnd="@dimen/common_dimens_5"
         app:theme="@style/ToolBarTheme">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="?attr/actionBarSize"
+            android:gravity="center"
+            android:text="@string/toolbar_snap_share"
+            android:textColor="@color/colorCuisine"
+            android:textSize="@dimen/text_size_16"
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/img_share_review"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|end"
-            android:layout_marginEnd="@dimen/common_dimens_10"
-            android:layout_marginStart="@dimen/common_dimens_20"
-            android:padding="@dimen/common_dimens_10"
+            android:layout_width="@dimen/dimen_25"
+            android:layout_height="@dimen/dimen_25"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/common_dimens_20"
+            android:padding="@dimen/common_dimens_5"
             android:src="@drawable/ic_dir_share" />
     </android.support.v7.widget.Toolbar>
 

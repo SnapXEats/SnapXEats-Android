@@ -102,7 +102,7 @@
     <string name="discard">Discard</string>
     <string name="rootFoodPrefList">rootFoodPrefList</string>
     <string name="instaInfoIntent">instaInfoIntent</string>
-    <string name="spinner_title">Open TOday</string>
+    <string name="spinner_title">Open Now</string>
     <string name="check_specialties">Check Specialties</string>
     <string name="get_uber_ride">Get A Ride</string>
     <string name="call">Call</string>
@@ -111,10 +111,10 @@
     <string name="user_id">user_id</string>
     <string name="book_uber_ride">Are you sure you want to book a uber ride?</string>
     <string name="confirm_uber">Yes,confirm</string>
-    <string name="not_now">Not now</string>
+    <string name="not_now">Not Now</string>
     <string name="install_uber">Install Uber app to book a ride.</string>
     <string name="okay">Okay</string>
-    <string name="more_info">More Info</string>
+    <string name="more_info">Aminities</string>
     <string name="intent_foodstackRestInfoId">foodstackRestInfoId</string>
     <string name="intent_foodstackRestDetailsId">foodstackRestDetailsId</string>
     <string name="away"> away</string>
@@ -125,13 +125,13 @@
     <string name="translationX">translationX</string>
     <string name="translationY">translationY</string>
     <string name="open_today">Open Today</string>
-    <string name="close_today">Closed Today</string>
+    <string name="close_today">Closed Now</string>
     <string name="social_platform">social_platform</string>
     <string name="isFirstTimeUser">isFirstTimeUser</string>
     <string name="error">Error</string>
     <string name="nav_login">Log-In to SnapXEats and Earn Reward Points</string>
     <string name="zero">0</string>
-    <string name="toolbar_rest_info">Restaurant Info</string>
+    <string name="toolbar_rest_info">Restaurant Information</string>
     <string name="restaurant_name">Restaurant Name</string>
     <string name="toolbar_rest_details">Restaurant Details</string>
     <string name="date_format_month">EEEE</string>
@@ -178,7 +178,7 @@
     <string name="txt_review_audio">AUD_</string>
     <string name="image_extension">.jpg</string>
     <string name="take_photo">Take photo</string>
-    <string name="remind_me_later">Remind me later</string>
+    <string name="remind_me_later">Remind Me Later</string>
     <string name="toolbar_snap_share">Snap-N-Share</string>
     <string name="hint_txt_review">Write what you feel about dish</string>
     <string name="rate_ur_experience">Rate Your Experience</string>
@@ -190,9 +190,9 @@
     <string name="review_discard">Discard</string>
     <string name="msg_share_review">Do you want to add and share your review ?</string>
     <string name="share_another">Share another</string>
-    <string name="post_share_success">Post successfully shared on facebook</string>
+    <string name="post_share_success">Post successfully \n shared on facebook</string>
     <string name="post_success">successful</string>
-    <string name="txt_earn_points">and eard 50 reward points</string>
+    <string name="txt_earn_points">and earn 50 reward points</string>
     <string name="share_media">Share on social media</string>
     <string name="msg_delete_review">Are you sure you want to delete this audio review ?</string>
     <string name="msg_set_rating">You need to give at least rating for your review.</string>
@@ -254,5 +254,6 @@
     <string name="enable_location_permission">Please enable location permission to check in</string>
     <string name="geofence_enter">location entered</string>
     <string name="geofence_transition">location transition</string>
+    <string name="toolbar_restaurants">Restaurants</string>
 
 </resources>

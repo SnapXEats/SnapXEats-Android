@@ -8,7 +8,7 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/dimen_100"
         android:src="@drawable/ic_success_check" />
 
     <TextView
@@ -19,18 +19,16 @@
         android:text="@string/post_success"
         android:textAllCaps="true"
         android:textColor="@color/colorPrimary"
-        android:textSize="@dimen/text_size_20"
+        android:textSize="@dimen/text_size_22"
         android:textStyle="bold" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/common_dimens_20"
-        android:layout_marginStart="@dimen/common_dimens_20"
         android:gravity="center"
         android:padding="@dimen/common_dimens_20"
         android:text="@string/post_share_success"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/text_color_primary"
         android:textSize="@dimen/text_size_18" />
 
     <Button

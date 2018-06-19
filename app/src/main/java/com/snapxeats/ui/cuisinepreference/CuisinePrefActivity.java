@@ -106,7 +106,6 @@ public class CuisinePrefActivity extends BaseActivity implements
         utility.setContext(this);
         helper.setContext(this);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle(getString(R.string.cuisine_preference));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mUserCuisinesList = new ArrayList<>();
         selectedCuisineList = new ArrayList<>();

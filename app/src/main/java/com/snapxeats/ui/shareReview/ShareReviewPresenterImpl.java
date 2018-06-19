@@ -3,6 +3,7 @@ package com.snapxeats.ui.shareReview;
 import android.support.annotation.Nullable;
 
 import com.snapxeats.common.Router;
+import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.utilities.SnapXResult;
 
 /**
@@ -38,6 +39,10 @@ public class ShareReviewPresenterImpl implements ShareReviewContract.ShareReview
         mRouter.presentScreen(screen);
     }
 
+    @Override
+    public void getInstaInfo(String token) {
+        mReviewInteractor.getInstaInfo(token);
+    }
 
     @Override
     public void response(SnapXResult result, Object value) {

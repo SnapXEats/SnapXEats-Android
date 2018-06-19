@@ -13,8 +13,18 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar_rest_details"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:elevation="@dimen/dimens_4" />
+            android:layout_height="?attr/actionBarSize">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="?attr/actionBarSize"
+                android:gravity="center"
+                android:text="@string/toolbar_rest_details"
+                android:textColor="@color/colorCuisine"
+                android:textSize="@dimen/text_size_16"
+                android:textStyle="bold" />
+        </android.support.v7.widget.Toolbar>
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewPager"

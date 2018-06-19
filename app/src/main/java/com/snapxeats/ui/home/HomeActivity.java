@@ -280,6 +280,7 @@ public class HomeActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+
         initView();
     }
 
@@ -1370,7 +1371,6 @@ public class HomeActivity extends BaseActivity implements
 
                 lattitude = mCurrentLocation.getLat();
                 longitude = mCurrentLocation.getLng();
-
                 showProgressDialog();
                 mPresenter.getNearByRestaurantToCheckIn(lattitude, longitude);
             }
