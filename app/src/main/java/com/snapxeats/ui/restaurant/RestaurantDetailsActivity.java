@@ -199,12 +199,9 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         LocationGoogleDir locationGoogleDir = new LocationGoogleDir();
         GoogleDirOrigin googleDirOrigin = new GoogleDirOrigin();
 
-        if (utility.isLoggedIn()) {
-            lat = String.valueOf(utility.getLocationfromPref().getLat());
-            lng = String.valueOf(utility.getLocationfromPref().getLng());
-        } else {
+        lat = String.valueOf(utility.setLatLng().latitude);
+        lng = String.valueOf(utility.setLatLng().longitude);
 
-        }
         googleDirOrigin.setOriginLat(lat);
         googleDirOrigin.setOriginLng(lng);
         GoogleDirDest googleDirDest = new GoogleDirDest();
@@ -262,7 +259,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             mRootGoogleDir = (RootGoogleDir) value;
             setGoogleDirView();
         }
-
     }
 
     private void setGoogleDirView() {

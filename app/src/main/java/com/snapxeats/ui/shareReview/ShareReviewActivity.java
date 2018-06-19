@@ -47,6 +47,7 @@ import butterknife.OnClick;
 import static com.snapxeats.common.constants.UIConstants.IMAGE_TYPE;
 import static com.snapxeats.common.constants.UIConstants.INSTA_PACKAGE_NAME;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Prajakta Patil on 23/4/18.
@@ -94,7 +95,6 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
     @Inject
     DbHelper dbHelper;
 
-    private String mToken;
     private String instaToken;
 
     @Override
@@ -227,7 +227,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
     @OnClick(R.id.img_share_insta)
     public void imgInsta() {
         if (NetworkUtility.isNetworkAvailable(this)) {
-            if (!dbHelper.getSnapxDataDao().loadAll().get(0).socialPlatform.equalsIgnoreCase(getString(R.string.platform_instagram))) {
+            if (!dbHelper.getSnapxDataDao().loadAll().get(ZERO).socialPlatform.equalsIgnoreCase(getString(R.string.platform_instagram))) {
                 showInstaWebView();
             } else {
                 shareOnInsta();
@@ -297,7 +297,6 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         dismissProgressDialog();
         if (value instanceof SnapXUserResponse) {
             SnapXUserResponse snapXUserResponse = (SnapXUserResponse) value;
-            mToken = snapXUserResponse.getUserInfo().getToken();
             shareOnInsta();
         }
     }

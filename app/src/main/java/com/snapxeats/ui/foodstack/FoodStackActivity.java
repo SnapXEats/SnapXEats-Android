@@ -24,6 +24,7 @@ import com.mindorks.butterknifelite.annotations.BindView;
 import com.mindorks.butterknifelite.annotations.OnClick;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.DishesInfo;
 import com.snapxeats.common.model.RootCuisinePhotos;
@@ -158,7 +159,6 @@ public class FoodStackActivity extends BaseActivity
 
     private void setupToolbar() {
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle(getString(R.string.toolbar_restaurants));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -258,7 +258,7 @@ public class FoodStackActivity extends BaseActivity
 
             @Override
             public void onCardReversed() {
-                if (ZERO == foodGestureDislike.size()) {
+                if (!cardStackView.isReversible()) {
                     disableUndo();
                 }
             }
@@ -498,8 +498,6 @@ public class FoodStackActivity extends BaseActivity
         if (ZERO != foodGestureDislike.size()) {
             enableGestureActions();
             cardStackView.reverse();
-        } else {
-            disableUndo();
         }
     }
 
