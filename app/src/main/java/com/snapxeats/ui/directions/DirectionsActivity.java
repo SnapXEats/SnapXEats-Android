@@ -26,6 +26,7 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -149,6 +150,9 @@ public class DirectionsActivity extends BaseActivity
     @BindView(R.id.toolbar_directions)
     protected Toolbar mToolbar;
 
+    @BindView(R.id.img_rating)
+    protected ImageView mImgRating;
+
     private Location mCurrentLocation;
 
     private Dialog dialog;
@@ -190,6 +194,8 @@ public class DirectionsActivity extends BaseActivity
      **/
     @Override
     public void initView() {
+        mImgRating.setOnClickListener(null);
+        mImgRating.setOnTouchListener(null);
         mPresenter.addView(this);
         snapXDialog.setContext(this);
         utility.setContext(this);
