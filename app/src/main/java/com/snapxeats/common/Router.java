@@ -51,7 +51,7 @@ public class Router {
                 presentFoodStackScreen();
                 break;
             case HOME:
-                presentPreferenceScreen();
+                presentHomeScreen();
                 break;
             case RESTAURANT_DETAILS:
                 presentRestaurantDetailsScreen();
@@ -82,8 +82,9 @@ public class Router {
         }
     }
 
-    private void presentPreferenceScreen() {
+    private void presentHomeScreen() {
         mActivity.startActivity(new Intent(mActivity, HomeActivity.class));
+        mActivity.finish();
     }
 
     private void presentLocationScreen() {

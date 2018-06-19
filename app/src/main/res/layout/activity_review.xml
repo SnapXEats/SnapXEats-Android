@@ -149,7 +149,7 @@
             android:gravity="center"
             android:text="@string/rate_ur_experience"
             android:textColor="@color/text_color_secondary"
-            android:textSize="@dimen/txt_size_22" />
+            android:textSize="@dimen/text_size_22" />
 
         <RatingBar
             android:id="@+id/rating_review"

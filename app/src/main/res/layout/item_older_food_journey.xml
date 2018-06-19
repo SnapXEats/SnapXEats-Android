@@ -62,8 +62,8 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="@dimen/dimen_50"
-        android:layout_height="@dimen/dimen_50"
+        android:layout_width="@dimen/dimens_50dp"
+        android:layout_height="@dimen/dimens_50dp"
         android:layout_gravity="center_vertical|end"
         android:layout_marginEnd="@dimen/common_dimens_20"
         android:background="@drawable/circle_rewards"
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/txt_size_12" />
+            android:textSize="@dimen/text_size_12" />
 
         <TextView
             android:layout_width="wrap_content"

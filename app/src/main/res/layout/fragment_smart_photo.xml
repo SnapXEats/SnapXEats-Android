@@ -47,9 +47,9 @@
             android:layout_width="@dimen/dimen_250"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/dimens_20"
+            android:layout_marginTop="@dimen/common_dimens_20"
             android:orientation="horizontal"
-            app:sc_border_width="@dimen/common_1"
+            app:sc_border_width="@dimen/common_dimens_1"
             app:sc_tint_color="@color/colorPrimary">
 
             <RadioButton

@@ -40,7 +40,7 @@
         android:padding="@dimen/common_dimens_20"
         android:text="@string/share_another"
         android:textColor="@color/colorWhite"
-        android:textSize="@dimen/txt_size_16" />
+        android:textSize="@dimen/text_size_16" />
 
     <TextView
         android:id="@+id/txt_not_now"
@@ -50,5 +50,5 @@
         android:gravity="center"
         android:text="@string/not_now"
         android:textColor="@color/recent_searches_color"
-        android:textSize="@dimen/txt_size_16" />
+        android:textSize="@dimen/text_size_16" />
 </LinearLayout>

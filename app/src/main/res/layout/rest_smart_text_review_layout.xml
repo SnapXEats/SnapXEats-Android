@@ -30,14 +30,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|bottom"
             android:background="@drawable/custom_button_selected"
-            android:paddingLeft="@dimen/dimen_50"
-            android:paddingRight="@dimen/dimen_50"
+            android:paddingLeft="@dimen/dimens_50dp"
+            android:paddingRight="@dimen/dimens_50dp"
             android:text="@string/okay"
             android:textColor="@color/colorWhite"
-            android:layout_marginRight="@dimen/dimens_20"
-            android:layout_marginLeft="@dimen/dimens_20"
-            android:layout_marginTop="@dimen/dimens_20"
-            android:layout_marginBottom="@dimen/dimens_20"/>
+            android:layout_margin="@dimen/common_dimens_20"/>
 
     </LinearLayout>
 

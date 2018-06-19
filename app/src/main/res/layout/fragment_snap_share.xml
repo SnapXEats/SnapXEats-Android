@@ -63,7 +63,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="@dimen/common_dimens_20"
-                    android:text="Restaurant name"
+                    android:text="@string/restaurant_name"
                     android:textColor="@color/text_color_primary"
                     android:textSize="@dimen/text_size_18"
                     android:textStyle="bold" />
@@ -71,15 +71,10 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_tick"
+                    android:drawablePadding="@dimen/common_dimens_5"
                     android:paddingLeft="@dimen/common_dimens_20"
-                    android:text="Closes in 50 mins" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/checkin_background"
-                    android:paddingLeft="@dimen/common_dimens_20"
-                    android:text="Checked in 10 mins ago" />
+                    android:text="@string/checked_in" />
 
                 <TextView
                     android:layout_width="match_parent"

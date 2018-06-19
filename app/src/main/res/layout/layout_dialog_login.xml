@@ -15,7 +15,7 @@
 
         <ImageView
             android:layout_width="@dimen/common_dimens_200"
-            android:layout_height="@dimen/dimen_50"
+            android:layout_height="@dimen/dimens_50dp"
             android:layout_marginTop="@dimen/common_dimens_30"
             android:src="@drawable/ic_snapx_logo" />
 
@@ -24,10 +24,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/common_dimens_20"
             android:gravity="center"
-            android:padding="@dimen/dimens_20"
+            android:padding="@dimen/common_dimens_20"
             android:text="@string/msg_login_dialog"
             android:textColor="@color/text_color_primary"
-            android:textSize="@dimen/txt_size_14" />
+            android:textSize="@dimen/text_size_14" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -50,7 +50,7 @@
                 android:text="@string/facebook_login"
                 android:textAllCaps="false"
                 android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/txt_size_16" />
+                android:textSize="@dimen/text_size_16" />
         </FrameLayout>
 
         <Button
@@ -62,7 +62,7 @@
             android:text="@string/instagram_login"
             android:textAllCaps="false"
             android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/txt_size_16" />
+            android:textSize="@dimen/text_size_16" />
 
         <TextView
             android:id="@+id/txt_login_share_later"
@@ -73,7 +73,7 @@
             android:padding="@dimen/common_dimens_5"
             android:text="@string/txt_share_later"
             android:textColor="@color/text_color_primary"
-            android:textSize="@dimen/txt_size_14" />
+            android:textSize="@dimen/text_size_14" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

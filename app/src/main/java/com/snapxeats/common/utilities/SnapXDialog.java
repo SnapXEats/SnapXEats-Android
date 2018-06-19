@@ -161,6 +161,7 @@ public class SnapXDialog {
     public Dialog showLogInSuccessDialog() {
         Dialog loginSuccessDialog = new Dialog(context);
         loginSuccessDialog.setContentView(R.layout.login_success_layout);
+        loginSuccessDialog.setCancelable(false);
         Window window = loginSuccessDialog.getWindow();
         if (null != window) {
             window.setLayout(UIConstants.CHECKIN_DIALOG_WIDTH, LinearLayout.LayoutParams.WRAP_CONTENT);

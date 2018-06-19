@@ -17,7 +17,7 @@
             android:layout_width="@dimen/dimens_54dp"
             android:layout_height="@dimen/dimens_54dp"
             app:border="true"
-            app:border_width="@dimen/common_1"
+            app:border_width="@dimen/common_dimens_1"
             app:shadow="true" />
 
         <LinearLayout

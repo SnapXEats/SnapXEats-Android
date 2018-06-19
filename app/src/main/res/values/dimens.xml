@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="txt_size_14">14sp</dimen>
     <dimen name="dimen_151">151dp</dimen>
-    <dimen name="txt_size_16">16sp</dimen>
     <dimen name="dimen_118">118dp</dimen>
     <dimen name="dimen_44">44dp</dimen>
     <dimen name="dimen_67">67dp</dimen>
     <dimen name="dimen_25">25dp</dimen>
-    <dimen name="common_1">1dp</dimen>
     <dimen name="common_4">4dp</dimen>
     <dimen name="dimen_267">267dp</dimen>
     <dimen name="dimen_61">61dp</dimen>
@@ -32,14 +29,13 @@
     <dimen name="frame_width">320dp</dimen>
     <dimen name="frame_height">350dp</dimen>
     <dimen name="common_dimens_30">30dp</dimen>
-    <dimen name="dimens_40dp">40dp</dimen>
     <dimen name="dimens_7dp">7dp</dimen>
-    <dimen name="dimen_4dp">4dp</dimen>
     <dimen name="dimens_50dp">50dp</dimen>
     <dimen name="dimens_54dp">54dp</dimen>
     <dimen name="common_dimens_12">12dp</dimen>
     <dimen name="dimens_80dp">80dp</dimen>
     <dimen name="dimens_350dp">350dp</dimen>
+    <dimen name="dimens_365dp">365dp</dimen>
     <dimen name="dimens_425dp">425dp</dimen>
     <dimen name="text_size_32">32sp</dimen>
     <dimen name="common_dimens_25">25dp</dimen>
@@ -60,15 +56,11 @@
     <dimen name="dimen_162">162dp</dimen>
     <dimen name="dimens_4">4dp</dimen>
     <dimen name="dimens_40">40dp</dimen>
-    <dimen name="dimens_20">20dp</dimen>
     <dimen name="dimen_115">115dp</dimen>
     <dimen name="dimen_rest_details_img_height">257dp</dimen>
     <dimen name="dimen_16">16dp</dimen>
     <dimen name="dimen_32">32dp</dimen>
     <dimen name="common_dimens_3">3dp</dimen>
-    <dimen name="txt_size_12">12sp</dimen>
-    <dimen name="txt_size_18">18sp</dimen>
-    <dimen name="txt_size_22">22sp</dimen>
     <dimen name="dimen_120">120dp</dimen>
     <dimen name="map_cardview_width">220dp</dimen>
     <dimen name="text_size_13">13sp</dimen>
@@ -82,11 +74,9 @@
     <dimen name="text_size_11">11sp</dimen>
     <dimen name="dimens_95dp">95dp</dimen>
     <dimen name="common_dimens_210">210dp</dimen>
-    <dimen name="txt_size_20">20sp</dimen>
     <dimen name="dimen_6dp">6dp</dimen>
     <dimen name="txt_size_9">9sp</dimen>
     <dimen name="txt_size_8">8sp</dimen>
-    <dimen name="dimen_50">50dp</dimen>
     <dimen name="dimens_240dp">240dp</dimen>
     <dimen name="dimens_180dp">180dp</dimen>
     <dimen name="text_size_22">22sp</dimen>

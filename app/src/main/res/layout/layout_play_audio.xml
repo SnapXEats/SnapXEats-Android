@@ -46,7 +46,7 @@
         android:layout_marginBottom="@dimen/common_dimens_10"
         android:layout_marginTop="@dimen/common_dimens_10"
         android:textColor="@android:color/darker_gray"
-        android:textSize="@dimen/txt_size_16" />
+        android:textSize="@dimen/text_size_16" />
 
     <Button
         android:id="@+id/btn_play_done"

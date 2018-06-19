@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/audio_review"
-            android:layout_margin="@dimen/dimens_20"
+            android:layout_margin="@dimen/common_dimens_20"
             android:textSize="@dimen/text_size_18"
             android:textStyle="bold"
             android:textAllCaps="true"
@@ -44,22 +44,18 @@
                 android:layout_marginTop="@dimen/common_dimens_10"
                 android:text="@string/audio_init_time"
                 android:textColor="@android:color/darker_gray"
-                android:textSize="@dimen/txt_size_16" />
+                android:textSize="@dimen/text_size_16" />
             <Button
                 android:id="@+id/btn_okay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/custom_button_selected"
-                android:paddingLeft="@dimen/dimen_50"
-                android:paddingRight="@dimen/dimen_50"
+                android:paddingLeft="@dimen/dimens_50dp"
+                android:paddingRight="@dimen/dimens_50dp"
                 android:text="@string/okay"
                 android:textColor="@color/colorWhite"
-                android:layout_marginRight="@dimen/dimens_20"
-                android:layout_marginLeft="@dimen/dimens_20"
-                android:layout_marginTop="@dimen/dimens_20"
-                android:layout_marginBottom="@dimen/dimens_20"
-                />
+                android:layout_margin="@dimen/common_dimens_20" />
         </LinearLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

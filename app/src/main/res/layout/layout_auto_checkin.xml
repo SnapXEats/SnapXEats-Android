@@ -17,10 +17,10 @@
             android:id="@+id/img_restaurant"
             android:layout_width="@dimen/dimens_95dp"
             android:layout_height="@dimen/dimens_95dp"
-            android:layout_marginTop="@dimen/dimens_40dp"
+            android:layout_marginTop="@dimen/common_dimens_40"
             android:src="@drawable/ic_restaurant_placeholder"
             app:border="true"
-            app:border_width="@dimen/common_1"
+            app:border_width="@dimen/common_dimens_1"
             app:shadow="true" />
 
         <TextView

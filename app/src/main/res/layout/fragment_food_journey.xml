@@ -44,7 +44,7 @@
                 android:layout_marginTop="@dimen/common_dimens_10"
                 android:text="@string/this_week"
                 android:textColor="@color/colorDarkerGrey"
-                android:textSize="@dimen/txt_size_16"
+                android:textSize="@dimen/text_size_16"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
@@ -63,7 +63,7 @@
                 android:layout_marginStart="@dimen/common_dimens_20"
                 android:text="@string/Older"
                 android:textColor="@color/colorDarkerGrey"
-                android:textSize="@dimen/txt_size_16"
+                android:textSize="@dimen/text_size_16"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
