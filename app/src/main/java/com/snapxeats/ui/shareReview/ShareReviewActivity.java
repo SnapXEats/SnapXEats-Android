@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -23,12 +24,18 @@ import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
+import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.constants.WebConstants;
+import com.snapxeats.common.model.SnapXUserResponse;
 import com.snapxeats.common.model.review.SnapNShareResponse;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
+import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
 import com.snapxeats.ui.home.HomeActivity;
+import com.snapxeats.ui.login.InstagramApp;
+import com.snapxeats.ui.login.InstagramDialog;
 import com.snapxeats.ui.review.ReviewDbHelper;
 
 import javax.inject.Inject;
@@ -45,7 +52,7 @@ import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
  * Created by Prajakta Patil on 23/4/18.
  */
 public class ShareReviewActivity extends BaseActivity implements ShareReviewContract.ShareReviewView,
-        AppContract.SnapXResults {
+        AppContract.SnapXResults, InstagramDialog.InstagramDialogListener {
 
     @Inject
     SnapXDialog snapXDialog;
@@ -79,6 +86,16 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
 
     private String image_path;
     private String photoId;
+    private InstagramApp mApp;
+
+    @BindView(R.id.layout_share_review)
+    protected LinearLayout mParentLayout;
+
+    @Inject
+    DbHelper dbHelper;
+
+    private String mToken;
+    private String instaToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +110,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         mPresenter.addView(this);
         snapXDialog.setContext(this);
         utility.setContext(this);
+        dbHelper.setContext(this);
         reviewDbHelper.setContext(this);
 
         setUpToolbar();
@@ -113,6 +131,24 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
             mImgRestName.setText(mSnapResponse.getRestaurant_name());
             mTxtMessage.setText(mSnapResponse.getMessage());
         }
+        initInstagram();
+    }
+
+    private void initInstagram() {
+        mApp = new InstagramApp(this, WebConstants.INSTA_CLIENT_ID, WebConstants.INSTA_CALLBACK_URL);
+        mApp.setListener(new InstagramApp.OAuthAuthenticationListener() {
+
+            @Override
+            public void onSuccess() {
+                //TODO data passed null for now
+                mPresenter.response(SnapXResult.SUCCESS, null);
+            }
+
+            @Override
+            public void onFail(String error) {
+                mPresenter.response(SnapXResult.NETWORKERROR, null);
+            }
+        });
     }
 
     private void setUpToolbar() {
@@ -191,9 +227,30 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
     @OnClick(R.id.img_share_insta)
     public void imgInsta() {
         if (NetworkUtility.isNetworkAvailable(this)) {
-            shareOnInsta();
+            if (!dbHelper.getSnapxDataDao().loadAll().get(0).socialPlatform.equalsIgnoreCase(getString(R.string.platform_instagram))) {
+                showInstaWebView();
+            } else {
+                shareOnInsta();
+            }
         } else {
             showNetworkErrorDialog((dialog, which) -> {
+            });
+        }
+    }
+
+    private void showInstaWebView() {
+        if (NetworkUtility.isNetworkAvailable(this)) {
+            mApp.authorize();
+
+        } else {
+            showNetworkErrorDialog((dialog, which) -> {
+                if (!NetworkUtility.isNetworkAvailable(getActivity())) {
+                    AppContract.DialogListenerAction click = () -> {
+                        showProgressDialog();
+                        mApp.authorize();
+                    };
+                    showSnackBar(mParentLayout, setClickListener(click));
+                }
             });
         }
     }
@@ -209,6 +266,13 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
             reviewDbHelper.deleteDraftData(photoId);
             startActivity(shareIntent);
         }
+    }
+
+    @Override
+    public void onReturnValue(String token) {
+        showProgressDialog();
+        instaToken = token;
+        mPresenter.getInstaInfo(token);
     }
 
     @Override
@@ -230,6 +294,12 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
 
     @Override
     public void success(Object value) {
+        dismissProgressDialog();
+        if (value instanceof SnapXUserResponse) {
+            SnapXUserResponse snapXUserResponse = (SnapXUserResponse) value;
+            mToken = snapXUserResponse.getUserInfo().getToken();
+            shareOnInsta();
+        }
     }
 
     @Override
@@ -238,6 +308,19 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
 
     @Override
     public void noNetwork(Object value) {
+        dismissProgressDialog();
+        showNetworkErrorDialog((dialog, which) -> {
+            if (!NetworkUtility.isNetworkAvailable(getActivity())) {
+                AppContract.DialogListenerAction click = () -> {
+                    showProgressDialog();
+                    mPresenter.getInstaInfo(instaToken);
+                };
+                showSnackBar(mParentLayout, setClickListener(click));
+            } else {
+                showProgressDialog();
+                mPresenter.getInstaInfo(instaToken);
+            }
+        });
     }
 
     @Override

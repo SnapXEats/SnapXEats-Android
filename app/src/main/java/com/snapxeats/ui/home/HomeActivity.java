@@ -1371,7 +1371,6 @@ public class HomeActivity extends BaseActivity implements
 
                 lattitude = mCurrentLocation.getLat();
                 longitude = mCurrentLocation.getLng();
-
                 showProgressDialog();
                 mPresenter.getNearByRestaurantToCheckIn(lattitude, longitude);
             }

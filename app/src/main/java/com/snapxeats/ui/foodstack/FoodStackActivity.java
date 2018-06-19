@@ -158,6 +158,7 @@ public class FoodStackActivity extends BaseActivity
 
     private void setupToolbar() {
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle(getString(R.string.toolbar_restaurants));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);

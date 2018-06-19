@@ -681,8 +681,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             intent.putExtra(getString(R.string.review_rest_id), restId);
             intent.putExtra(getString(R.string.photo_id), photoId);
             startActivity(intent);
-        }
-        if (value instanceof SnapXUserResponse) {
+        } else if (value instanceof SnapXUserResponse) {
             SnapXUserResponse snapXUserResponse = (SnapXUserResponse) value;
             mToken = snapXUserResponse.getUserInfo().getToken();
             dialog.dismiss();

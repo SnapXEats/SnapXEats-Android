@@ -89,5 +89,6 @@
     <dimen name="dimen_50">50dp</dimen>
     <dimen name="dimens_240dp">240dp</dimen>
     <dimen name="dimens_180dp">180dp</dimen>
+    <dimen name="text_size_22">22sp</dimen>
 
 </resources>

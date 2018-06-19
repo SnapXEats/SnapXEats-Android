@@ -422,8 +422,11 @@ public class AppUtility {
         Date parsedCheckedIn = null;
         Date parsedCurrentTime = null;
         try {
-            parsedCheckedIn = simpleDateFormat.parse(checkInData.getCheckInTime());
+            if (!checkInData.getCheckInTime().isEmpty() && null != checkInData.getCheckInTime()) {
+                parsedCheckedIn = simpleDateFormat.parse(checkInData.getCheckInTime());
+            }
             parsedCurrentTime = simpleDateFormat.parse(currentTime);
+
         } catch (ParseException e) {
             e.printStackTrace();
         }

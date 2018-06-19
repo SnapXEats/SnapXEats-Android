@@ -20,13 +20,20 @@
             android:elevation="@dimen/common_dimens_2"
             android:paddingRight="@dimen/common_dimens_15"
             app:theme="@style/ToolBarTheme">
-
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="?attr/actionBarSize"
+                android:gravity="center"
+                android:text="@string/cuisine_preference"
+                android:textColor="@color/colorCuisine"
+                android:textSize="@dimen/text_size_16"
+                android:textStyle="bold" />
                 <TextView
                     android:id="@+id/btn_cuisine_pref_save"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right|end"
-                    android:layout_marginLeft="@dimen/common_dimens_20"
                     android:padding="@dimen/common_dimens_10"
                     android:text="@string/save"
                     android:textColor="@color/text_color_tertiary"

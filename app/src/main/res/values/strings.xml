@@ -111,7 +111,7 @@
     <string name="user_id">user_id</string>
     <string name="book_uber_ride">Are you sure you want to book a uber ride?</string>
     <string name="confirm_uber">Yes,confirm</string>
-    <string name="not_now">Not now</string>
+    <string name="not_now">Not Now</string>
     <string name="install_uber">Install Uber app to book a ride.</string>
     <string name="okay">Okay</string>
     <string name="more_info">Aminities</string>
@@ -178,7 +178,7 @@
     <string name="txt_review_audio">AUD_</string>
     <string name="image_extension">.jpg</string>
     <string name="take_photo">Take photo</string>
-    <string name="remind_me_later">Remind me later</string>
+    <string name="remind_me_later">Remind Me Later</string>
     <string name="toolbar_snap_share">Snap-N-Share</string>
     <string name="hint_txt_review">Write what you feel about dish</string>
     <string name="rate_ur_experience">Rate Your Experience</string>
@@ -190,7 +190,7 @@
     <string name="review_discard">Discard</string>
     <string name="msg_share_review">Do you want to add and share your review ?</string>
     <string name="share_another">Share another</string>
-    <string name="post_share_success">Post successfully shared on facebook</string>
+    <string name="post_share_success">Post successfully \n shared on facebook</string>
     <string name="post_success">successful</string>
     <string name="txt_earn_points">and earn 50 reward points</string>
     <string name="share_media">Share on social media</string>
