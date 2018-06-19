@@ -207,13 +207,25 @@ public class LocationActivity extends BaseActivity implements
     }
 
     public void getData() {
-        showProgressDialog();
-        android.location.Location location = utility.getLocation();
-        if (null != location) {
-            dismissProgressDialog();
-            selectedLocation = new Location(location.getLatitude(),
-                    location.getLongitude(), utility.getPlaceName(location));
-            putData(selectedLocation);
+        if (NetworkUtility.isNetworkAvailable(this)) {
+            showProgressDialog();
+            android.location.Location location = utility.getLocation();
+            if (null != location) {
+                dismissProgressDialog();
+                selectedLocation = new Location(location.getLatitude(),
+                        location.getLongitude(), utility.getPlaceName(location));
+                putData(selectedLocation);
+            }
+        } else {
+            showNetworkErrorDialog((dialog, which) -> {
+                if (!NetworkUtility.isNetworkAvailable(this)) {
+                    AppContract.DialogListenerAction click = () ->
+                            getData();
+                    showSnackBar(mParentLayout, setClickListener(click));
+                }else {
+                    getData();
+                }
+            });
         }
     }
 
@@ -232,11 +244,11 @@ public class LocationActivity extends BaseActivity implements
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
-            if (grantResults[ZERO] == PackageManager.PERMISSION_GRANTED && utility.checkPermissions()) {
-                getData();
-            } else if (!shouldShowRequestPermissionRationale(permissions[ZERO])) {
-                snapXDialog.showChangePermissionDialog(CHANGE_LOCATION_PERMISSIONS);
-            }
+        if (grantResults[ZERO] == PackageManager.PERMISSION_GRANTED) {
+            getData();
+        } else if (!shouldShowRequestPermissionRationale(permissions[ZERO])) {
+            snapXDialog.showChangePermissionDialog(CHANGE_LOCATION_PERMISSIONS);
+        }
     }
 
     @Override
@@ -267,10 +279,10 @@ public class LocationActivity extends BaseActivity implements
         Result location = (Result) value;
         String placeName;
 
-        if (null != location.getVicinity()) {
-            placeName = location.getVicinity();
-        } else {
+        if (null != location.getName()) {
             placeName = location.getName();
+        } else {
+            placeName = location.getVicinity();
         }
 
         selectedLocation = new Location(location.getGeometry().getLocation().getLat(),

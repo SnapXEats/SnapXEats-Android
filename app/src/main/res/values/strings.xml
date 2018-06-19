@@ -87,7 +87,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="cuisine_preference">Cuisines Preferences</string>
+    <string name="cuisine_preference">Cuisine Preferences</string>
     <string name="food_preference">Food Preferences</string>
     <string name="save">Save</string>
     <string name="preference">Preference</string>
@@ -106,7 +106,7 @@
     <string name="check_specialties">Check Specialties</string>
     <string name="get_uber_ride">Get A Ride</string>
     <string name="call">Call</string>
-    <string name="directions">Direction</string>
+    <string name="directions">Directions</string>
     <string name="user_token">user_token</string>
     <string name="user_id">user_id</string>
     <string name="book_uber_ride">Are you sure you want to book a uber ride?</string>
@@ -239,7 +239,7 @@
     <string name="fb_hashkey">HashKey</string>
     <string name="asset_statements" translatable="false">[{\n  \"relation\": [\"delegate_permission/common.handle_all_urls\"],\n  \"target\": {\n    \"namespace\": \"web\",\n    \"site\": \"https://18.216.193.78:3000\",\n  }\n}]</string>
     <string name="downloading">Downloading...</string>
-    <string name="download_success_msg">Photo has been saved \n successfully. You can change it \nunder <b>Smart Photo</b> menu</string>
+    <string name="download_success_msg">Photo has been saved \n successfully. You can check it \nunder <b>Smart Photo</b> section</string>
     <string name="successful">Successful</string>
     <string name="enable_storage_permissions">Please enable storage Permissions</string>
     <string name="downloads">Downloads</string>
@@ -250,10 +250,11 @@
     <string name="checkin_reminder_title">SnapXEats CheckIn Reminder</string>
     <string name="intent_dir_check_in">intent_dir_check_in</string>
     <string name="login_success">LogIn Success</string>
-    <string name="login_success_msg">Congratulations, Your signin was successful !</string>
+    <string name="login_success_msg">Congratulations, You have successfully logged in !</string>
     <string name="enable_location_permission">Please enable location permission to check in</string>
     <string name="geofence_enter">location entered</string>
     <string name="geofence_transition">location transition</string>
+    <string name="checked_in">Checked in</string>
     <string name="toolbar_restaurants">Restaurants</string>
 
 </resources>

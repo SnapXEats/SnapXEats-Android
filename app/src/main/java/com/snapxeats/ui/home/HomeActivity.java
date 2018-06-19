@@ -367,10 +367,12 @@ public class HomeActivity extends BaseActivity implements
 
             @Override
             public void onDrawerClosed(@NonNull View drawerView) {
+
             }
 
             @Override
             public void onDrawerStateChanged(int newState) {
+
             }
         });
     }
@@ -490,6 +492,7 @@ public class HomeActivity extends BaseActivity implements
         }
     }
 
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -522,6 +525,7 @@ public class HomeActivity extends BaseActivity implements
                         } else {
                             bundle.putString(getString(R.string.intent_restaurant_id),
                                     dbHelper.getCheckInDataDao().loadAll().get(ZERO).getRestId());
+                            bundle.putBoolean(getString(R.string.notification), true);
                             snapShareFragment.setArguments(bundle);
                             transaction.replace(R.id.frame_layout, snapShareFragment);
                         }
@@ -977,6 +981,7 @@ public class HomeActivity extends BaseActivity implements
 
                 checkStoragePermission();
                 break;
+
         }
     }
 

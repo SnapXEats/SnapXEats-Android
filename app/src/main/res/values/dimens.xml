@@ -40,6 +40,7 @@
     <dimen name="common_dimens_12">12dp</dimen>
     <dimen name="dimens_80dp">80dp</dimen>
     <dimen name="dimens_350dp">350dp</dimen>
+    <dimen name="dimens_365dp">365dp</dimen>
     <dimen name="dimens_425dp">425dp</dimen>
     <dimen name="text_size_32">32sp</dimen>
     <dimen name="common_dimens_25">25dp</dimen>
