@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/common_dimens_0"
                     android:layout_height="match_parent"
                     android:layout_weight="0.8"
                     android:gravity="center"
@@ -34,7 +34,7 @@
                     android:textStyle="bold" />
                 <TextView
                     android:id="@+id/btn_food_pref_save"
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/common_dimens_0"
                     android:layout_height="match_parent"
                     android:layout_weight="0.3"
                     android:gravity="end"
@@ -54,7 +54,7 @@
             android:layout_marginTop="@dimen/common_dimens_10">
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="@dimen/common_dimens_0"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/set_preferences"
@@ -63,7 +63,7 @@
                 android:padding="@dimen/common_dimens_5"/>
             <TextView
                 android:id="@+id/txt_reset"
-                android:layout_width="0dp"
+                android:layout_width="@dimen/common_dimens_0"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.3"
                 android:padding="@dimen/common_dimens_5"

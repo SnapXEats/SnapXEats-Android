@@ -36,15 +36,15 @@
             android:gravity="center_horizontal"
             android:text="@string/download_success_msg"
             android:textColor="@color/text_color_primary"
-            android:textSize="@dimen/txt_size_16" />
+            android:textSize="@dimen/text_size_16" />
         <Button
             android:id="@+id/btn_okay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/custom_button_selected"
-            android:paddingLeft="@dimen/dimen_50"
-            android:paddingRight="@dimen/dimen_50"
+            android:paddingLeft="@dimen/dimens_50dp"
+            android:paddingRight="@dimen/dimens_50dp"
             android:text="@string/okay"
             android:gravity="center"
             android:textColor="@color/colorWhite"

@@ -71,7 +71,7 @@
                             android:layout_marginBottom="@dimen/common_dimens_5"
                             android:gravity="center"
                             android:textColor="@color/text_color_secondary"
-                            android:textSize="@dimen/txt_size_12" />
+                            android:textSize="@dimen/text_size_12" />
 
                         <View
                             android:layout_width="@dimen/common_dimens_200"
@@ -153,7 +153,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/text_color_secondary"
-                                android:textSize="@dimen/txt_size_12" />
+                                android:textSize="@dimen/text_size_12" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -179,7 +179,7 @@
                 android:layout_gravity="center"
                 android:layout_marginBottom="@dimen/common_dimens_10"
                 android:textColor="@color/colorWhite"
-                android:textSize="@dimen/txt_size_16"
+                android:textSize="@dimen/text_size_16"
                 android:textStyle="bold" />
         </FrameLayout>
     </FrameLayout>
