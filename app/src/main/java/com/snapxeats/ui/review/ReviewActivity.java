@@ -486,9 +486,9 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
         /*Delete audio review*/
         mTxtDeleteAudio.setOnClickListener(v -> {
-            AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-            builder1.setMessage(getString(R.string.msg_delete_review))
-                    .setPositiveButton(getString(R.string.yes), (dialog1, which) -> {
+            AlertDialog.Builder builderDelReview = new AlertDialog.Builder(this);
+            builderDelReview.setMessage(getString(R.string.msg_delete_review))
+                    .setPositiveButton(getString(R.string.yes), (dialogDelReview, which) -> {
                         mPlayer = new MediaPlayer();
                         isPaused = false;
                         mPlayer.stop();
@@ -503,7 +503,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                         mImgPlayAudio.setVisibility(View.GONE);
                         mAudioTime.setVisibility(View.GONE);
                     })
-                    .setNegativeButton(getString(R.string.not_now), (dialog1, which) -> alertDialog.dismiss())
+                    .setNegativeButton(getString(R.string.not_now), (dialogDelReview, which) -> alertDialog.dismiss())
                     .show();
         });
     }
@@ -564,12 +564,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             });
 
             mBtnStopReview.setOnClickListener(v -> {
-                stopRecording();
-                alertDialog.dismiss();
-                mImgAddAudio.setVisibility(View.GONE);
-                mImgPlayAudio.setVisibility(View.VISIBLE);
-                mAudioTime.setVisibility(View.VISIBLE);
-                setAudioTime();
+                setRecordedData();
             });
             mTxtCancel.setOnClickListener(v -> alertDialog.dismiss());
         } else {
@@ -602,12 +597,8 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage(getString(R.string.audio_review_limit_msg))
                             .setNeutralButton(getString(R.string.ok), (dialogMaxLimit, which) -> {
-                                //setAudioTime();
-                                alertDialog.dismiss();
                                 dialogMaxLimit.dismiss();
-                                mChronometer.stop();
-                                mRecorder.stop();
-                                setAudioTime();
+                                setRecordedData();
                             })
                             .show();
                 }
@@ -615,6 +606,15 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void setRecordedData() {
+        stopRecording();
+        alertDialog.dismiss();
+        mImgAddAudio.setVisibility(View.GONE);
+        mImgPlayAudio.setVisibility(View.VISIBLE);
+        mAudioTime.setVisibility(View.VISIBLE);
+        setAudioTime();
     }
 
     public void setMediaRecorder() {

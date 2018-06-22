@@ -1,6 +1,5 @@
 package com.snapxeats.ui.home.fragment.home;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -301,7 +300,7 @@ public class HomeFragment extends BaseFragment implements
 
         if (ZERO != selectedList.size()) {
             if (null != mSelectedLocation) {
-                selectedCuisineList = homeFgmtHelper.getSelectedCusine(mLocationCuisine, selectedList);
+                selectedCuisineList = homeFgmtHelper.getSelectedCuisine(mLocationCuisine, selectedList);
                 //set selected cuisines data
                 Intent intent = new Intent(activity, FoodStackActivity.class);
                 intent.putExtra(getString(R.string.data_selectedCuisineList), selectedCuisineList);

@@ -30,7 +30,7 @@ public class HomeFgmtHelper {
     @Inject
     RootUserPreference rootUserPreference;
 
-    SelectedCuisineList getSelectedCusine(LocationCuisine mLocationCuisine, List<String> selectedList) {
+    SelectedCuisineList getSelectedCuisine(LocationCuisine mLocationCuisine, List<String> selectedList) {
         SelectedCuisineList selectedCuisineList = new SelectedCuisineList();
         selectedCuisineList.setLocation(mLocationCuisine);
         cuisineList = new ArrayList<>();
@@ -69,7 +69,6 @@ public class HomeFgmtHelper {
             } else {
                 selectedCuisineList.setRestaurant_rating(ZERO);
             }
-
 
             if (rootUserPreference.isSort_by_distance()) {
                 selectedCuisineList.setSort_by_distance(ONE);
