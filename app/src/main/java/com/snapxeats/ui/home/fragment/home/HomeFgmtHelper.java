@@ -10,6 +10,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
+
 /**
  * Created by Snehal Tembare on 14/3/18.
  */
@@ -57,21 +60,21 @@ public class HomeFgmtHelper {
                     !rootUserPreference.getRestaurant_price().isEmpty()) {
                 selectedCuisineList.setRestaurant_price(Integer.parseInt(rootUserPreference.getRestaurant_price()));
             } else {
-                selectedCuisineList.setRestaurant_price(0);
+                selectedCuisineList.setRestaurant_price(ZERO);
             }
 
             if (null != rootUserPreference.getRestaurant_rating() &&
                     !rootUserPreference.getRestaurant_rating().isEmpty()) {
                 selectedCuisineList.setRestaurant_rating(Integer.parseInt(rootUserPreference.getRestaurant_rating()));
             } else {
-                selectedCuisineList.setRestaurant_rating(0);
+                selectedCuisineList.setRestaurant_rating(ZERO);
             }
 
 
             if (rootUserPreference.isSort_by_distance()) {
                 selectedCuisineList.setSort_by_distance(1);
             } else if (rootUserPreference.isSort_by_rating()) {
-                selectedCuisineList.setSort_by_rating(1);
+                selectedCuisineList.setSort_by_rating(ONE);
             } else {
                 selectedCuisineList.setSort_by_distance(1);
             }

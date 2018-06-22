@@ -3,10 +3,8 @@
 
     <item>
         <shape>
-            <stroke android:width="@dimen/common_dimens_2"
-                android:color="@color/colorPrimary" />
+            <stroke android:width="@dimen/common_dimens_2" android:color="@color/colorPrimary" />
             <solid android:color="@android:color/transparent" />
-
             <corners android:radius="200dp" />
         </shape>
     </item>

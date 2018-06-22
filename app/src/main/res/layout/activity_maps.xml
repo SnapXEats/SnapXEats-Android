@@ -19,6 +19,15 @@
             android:paddingEnd="@dimen/common_dimens_5"
             app:theme="@style/ToolBarTheme">
 
+            <TextView
+                android:id="@+id/txt_toolbar_dist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="?attr/actionBarSize"
+                android:gravity="center"
+                android:textColor="@color/colorCuisine"
+                android:textSize="@dimen/text_size_16"
+                android:textStyle="bold" />
         </android.support.v7.widget.Toolbar>
     </LinearLayout>
 

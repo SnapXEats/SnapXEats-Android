@@ -51,9 +51,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.snapxeats.common.constants.UIConstants.GOOGLE_DIR_NOT_FOUND;
+import static com.snapxeats.common.constants.UIConstants.GOOGLE_DIR_NO_RESULTS;
 import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.REST_CALL;
 import static com.snapxeats.common.constants.UIConstants.SET_ALPHA_DISABLE;
+import static com.snapxeats.common.constants.UIConstants.STRING_SPACE;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.UBER_PACKAGE;
 import static com.snapxeats.common.constants.UIConstants.UBER_URI;
@@ -159,7 +162,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
                     .show();
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(getString(R.string.install_uber))
+            builder.setMessage(getString(R.string.install_uber))
                     .setPositiveButton(getString(R.string.ok), (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW,
                             Uri.parse(UBER_URI))))
                     .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
@@ -204,9 +207,11 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
         googleDirOrigin.setOriginLat(lat);
         googleDirOrigin.setOriginLng(lng);
+
         GoogleDirDest googleDirDest = new GoogleDirDest();
         googleDirDest.setDestinationLat(destLat);
         googleDirDest.setDestinationLng(destLng);
+
         locationGoogleDir.setGoogleDirOrigin(googleDirOrigin);
         locationGoogleDir.setGoogleDirDest(googleDirDest);
         mRestaurantPresenter.getGoogleDirections(locationGoogleDir);
@@ -262,8 +267,18 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     }
 
     private void setGoogleDirView() {
-        mTxtRestDuration.setText(mRootGoogleDir.getRoutes().get(ZERO).getLegs().get(ZERO)
-                .getDuration().getText() + " " + getString(R.string.away));
+        if (mRootGoogleDir.getStatus().equalsIgnoreCase(GOOGLE_DIR_NO_RESULTS) ||
+                mRootGoogleDir.getStatus().equalsIgnoreCase(GOOGLE_DIR_NOT_FOUND)) {
+            dialogNoRoutesFound();
+        } else if (null != mRootGoogleDir && ZERO != mRootGoogleDir.getRoutes().get(ZERO).getLegs().size() &&
+                !mRootGoogleDir.getRoutes().get(ZERO).getLegs().get(ZERO).getDuration().getText().isEmpty()) {
+            mTxtRestDuration.setText(mRootGoogleDir.getRoutes().get(ZERO).getLegs().get(ZERO)
+                    .getDuration().getText() + STRING_SPACE + getString(R.string.away));
+        }
+    }
+
+    private void dialogNoRoutesFound() {
+
     }
 
     public void setUpRecyclerView() {

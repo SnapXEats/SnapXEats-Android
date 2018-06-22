@@ -81,6 +81,8 @@ public class ReviewInteractor {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             MultipartBody.Part audioUpload = null;
+            RequestBody review = null;
+
             if (null != audio) {
                 String fileAudioPath = appUtility.getRealPathFromURIPath(audio, mContext);
                 File fileAud = new File(fileAudioPath);
@@ -91,8 +93,9 @@ public class ReviewInteractor {
             String fileImagePath = appUtility.getRealPathFromURIPath(image, mContext);
             File fileImg = new File(fileImagePath);
             RequestBody mFileImage = RequestBody.create(MediaType.parse(FILE_MEDIATYPE), fileImg);
-
-            RequestBody review = RequestBody.create(MediaType.parse(TEXT_TYPE), txtReview);
+            if (null != txtReview) {
+                review = RequestBody.create(MediaType.parse(TEXT_TYPE), txtReview);
+            }
             RequestBody id = RequestBody.create(MediaType.parse(TEXT_TYPE), restId);
 
             MultipartBody.Part imageUpload = MultipartBody.Part.createFormData

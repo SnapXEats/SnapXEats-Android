@@ -91,6 +91,8 @@ import static com.snapxeats.common.constants.UIConstants.DIR_PRICE_TWO;
 import static com.snapxeats.common.constants.UIConstants.GEOFENCE_RADIUS;
 import static com.snapxeats.common.constants.UIConstants.GEOFENCE_REQ_ID;
 import static com.snapxeats.common.constants.UIConstants.GEO_DURATION;
+import static com.snapxeats.common.constants.UIConstants.GOOGLE_DIR_NOT_FOUND;
+import static com.snapxeats.common.constants.UIConstants.GOOGLE_DIR_NO_RESULTS;
 import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.PREF_DEFAULT_STRING;
 import static com.snapxeats.common.constants.UIConstants.STRING_SPACE;
@@ -366,10 +368,13 @@ public class DirectionsActivity extends BaseActivity
                 Double.parseDouble(mDetails.getRestaurantDetails().getLocation_long()));
         mMap.addMarker(new MarkerOptions().position(destination)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_dest)));
-        if (null != mGoogleDir) {
+        if (mGoogleDir.getStatus().equalsIgnoreCase(GOOGLE_DIR_NO_RESULTS) ||
+                mGoogleDir.getStatus().equalsIgnoreCase(GOOGLE_DIR_NOT_FOUND)) {
+            SnapXToast.showToast(this, getString(R.string.google_dir_no_routes));
+            clearGeofence();
+        } else if (null!=mGoogleDir) {
             String encodedString = mGoogleDir.getRoutes().get(ZERO).getOverview_polyline().getPoints();
             list = decodePoly(encodedString);
-
             PolylineOptions polyOptions = new PolylineOptions();
             polyOptions.color(ContextCompat.getColor(DirectionsActivity.this, R.color.colorBlack));
             polyOptions.addAll(list);
@@ -467,6 +472,7 @@ public class DirectionsActivity extends BaseActivity
                 android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationChangeListener(this);
     }
@@ -635,11 +641,13 @@ public class DirectionsActivity extends BaseActivity
     }
 
     private void clearGeofence() {
-        LocationServices.GeofencingApi.removeGeofences(
-                googleApiClient,
-                createGeofencePendingIntent()
-        ).setResultCallback(status -> {
-        });
+        if(googleApiClient.isConnected()) {
+            LocationServices.GeofencingApi.removeGeofences(
+                    googleApiClient,
+                    createGeofencePendingIntent()
+            ).setResultCallback(status -> {
+            });
+        }
     }
 
     @Override

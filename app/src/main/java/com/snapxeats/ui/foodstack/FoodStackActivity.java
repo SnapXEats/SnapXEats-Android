@@ -24,7 +24,6 @@ import com.mindorks.butterknifelite.annotations.BindView;
 import com.mindorks.butterknifelite.annotations.OnClick;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.DishesInfo;
 import com.snapxeats.common.model.RootCuisinePhotos;
@@ -236,8 +235,7 @@ public class FoodStackActivity extends BaseActivity
                 /*disable gestures buttons if stack is empty*/
                 if (cardStackView.getTopIndex() == foodStackDataList.size()) {
                     disableGestureActions();
-                    mImgMap.setAlpha(SET_ALPHA_DISABLE);
-                    mImgMap.setEnabled(false);
+                    disableMap();
                 }
                 switch (direction) {
                     case Top: {
@@ -250,7 +248,6 @@ public class FoodStackActivity extends BaseActivity
                     }
                     case Left: {
                         swipeLeft(cardStackView.getTopIndex() - ONE);
-                        enableUndo();
                         break;
                     }
                 }
@@ -316,10 +313,9 @@ public class FoodStackActivity extends BaseActivity
             mStackAdapter = new FoodStackAdapter(FoodStackActivity.this, foodStackDataList);
             cardStackView.setAdapter(mStackAdapter);
             if (cardStackView.isShown()) {
-                mImgMap.setAlpha(SET_ALPHA);
+                enableMap();
             } else {
-                mImgMap.setAlpha(SET_ALPHA_DISABLE);
-                mImgMap.setEnabled(false);
+                disableMap();
             }
         } else {
             showNoDataFoundDialog();
@@ -396,8 +392,7 @@ public class FoodStackActivity extends BaseActivity
         FoodLikes foodGestureLikesItem;
         if (isLoggedIn()) {
             foodGestureLikesItem = new FoodLikes();
-            foodGestureLikesItem.
-                    setRestaurant_dish_id(foodStackDataList.get(cardStackView.getTopIndex()).getDishId());
+            foodGestureLikesItem.setRestaurant_dish_id(foodStackDataList.get(cardStackView.getTopIndex()).getDishId());
             foodLikes.add(foodGestureLikesItem);
             mFoodStackPresenter.saveLikesToDb(foodLikes);
         }
@@ -493,10 +488,21 @@ public class FoodStackActivity extends BaseActivity
         cardStackView.swipe(SwipeDirection.Top, mAnimatorSet);
     }
 
+    public void enableMap() {
+        mImgMap.setEnabled(true);
+        mImgMap.setAlpha(SET_ALPHA);
+    }
+
+    public void disableMap() {
+        mImgMap.setEnabled(false);
+        mImgMap.setAlpha(SET_ALPHA_DISABLE);
+    }
+
     @OnClick(R.id.img_cuisine_undo)
     public void imgCuisineUndo() {
         if (ZERO != foodGestureDislike.size()) {
             enableGestureActions();
+            enableMap();
             cardStackView.reverse();
         }
     }
