@@ -1,16 +1,15 @@
 package com.snapxeats.ui.maps;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.snapxeats.common.constants.SnapXToast;
-import com.snapxeats.common.model.preference.RootUserPreferences;
 import com.snapxeats.common.model.preference.SnapXPreference;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
+
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -31,7 +30,7 @@ public class MapsInteractor {
     private MapsContract.MapsView mView;
 
     @Inject
-    public MapsInteractor() {
+    MapsInteractor() {
     }
 
     @Inject
@@ -52,7 +51,8 @@ public class MapsInteractor {
      */
     public void getUserPreferences() {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
-            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            //Check for object reference nulity
+            ApiHelper apiHelper = Objects.requireNonNull(ApiClient.getClient(mContext, BASE_URL)).create(ApiHelper.class);
             Call<SnapXPreference> userPreferenceCall = apiHelper.getUserPreferences(utility.getAuthToken(mContext));
 
             userPreferenceCall.enqueue(new Callback<SnapXPreference>() {

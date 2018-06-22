@@ -260,7 +260,7 @@ public class HomeInteractor {
     void getNearByRestaurantToCheckIn(double lat, double lng) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
-            Call<CheckInRestaurants> checkInRestaurantsCall = apiHelper.getRestaurantsForCheckIn(lat, lng);
+            Call<CheckInRestaurants> checkInRestaurantsCall = apiHelper.getRestaurantsForCheckIn(40.7014, -74.0151);
             checkInRestaurantsCall.enqueue(new Callback<CheckInRestaurants>() {
                 @Override
                 public void onResponse(Call<CheckInRestaurants> call, Response<CheckInRestaurants> response) {

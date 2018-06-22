@@ -109,10 +109,10 @@
     <string name="directions">Directions</string>
     <string name="user_token">user_token</string>
     <string name="user_id">user_id</string>
-    <string name="book_uber_ride">Are you sure you want to book a uber ride?</string>
+    <string name="book_uber_ride">Are you sure you want to book an Uber ride?</string>
     <string name="confirm_uber">Yes,confirm</string>
     <string name="not_now">Not Now</string>
-    <string name="install_uber">Install Uber app to book a ride.</string>
+    <string name="install_uber">You need to install the uber app from app store to book a ride. Do you want to install it now?</string>
     <string name="okay">Okay</string>
     <string name="rest_info_aminities">Aminities</string>
     <string name="intent_foodstackRestInfoId">foodstackRestInfoId</string>
@@ -256,5 +256,7 @@
     <string name="geofence_transition">location transition</string>
     <string name="checked_in">Checked in</string>
     <string name="toolbar_restaurants">Restaurants</string>
+    <string name="google_dir_no_routes">No routes found</string>
+    <string name="mile">mile</string>
 
 </resources>

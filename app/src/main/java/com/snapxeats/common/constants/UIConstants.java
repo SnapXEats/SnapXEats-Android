@@ -32,13 +32,9 @@ public class UIConstants {
     public static final int DISTANCE_FOUR = 4;
     public static final int DISTANCE_FIVE = 5;
 
-    /*Maps Screen*/
-    public static final String LATITUDE = "40.4862157";
-    public static final String LONGITUDE = "-74.4518188";
-
-    public static final float DEFAULT = 0;
     public static final float MAP_SCOLL_BY = 320;
     public static final float MAP_ZOOM = 13.2f;
+    public static final float GOOGLE_MAP_ZOOM = 12.2f;
     public static final int MAP_FILL_COLOR = 0x55AAAAAA;
     public static final float MAP_STROKE = 5;
     public static final float MAP_MARKER_ZOOM = 13;
@@ -159,8 +155,6 @@ public class UIConstants {
     public static final long GEO_DURATION = 60 * 60 * 1000;
     public static final String GEOFENCE_REQ_ID = "SnapGeofence";
     public static final float GEOFENCE_RADIUS = 500.0f;
-    public static final String GEOFENCE_NOT_AVAILABLE = "GeoFence not available";
-    public static final String GEOFENCE_TOO_MANY = "Too many GeoFences";
-    public static final String GEOFENCE_PENDING = "Too many pending intents";
-    public static final String GEOFENCE_ERROR = "Unknown error";
+    public static final String GOOGLE_DIR_NO_RESULTS = "ZERO_RESULTS";
+    public static final String GOOGLE_DIR_NOT_FOUND = "NOT_FOUND";
 }

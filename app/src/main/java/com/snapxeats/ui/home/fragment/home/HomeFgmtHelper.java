@@ -10,6 +10,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
+
 /**
  * Created by Snehal Tembare on 14/3/18.
  */
@@ -27,7 +30,7 @@ public class HomeFgmtHelper {
     @Inject
     RootUserPreference rootUserPreference;
 
-    SelectedCuisineList getSelectedCusine(LocationCuisine mLocationCuisine, List<String> selectedList) {
+    SelectedCuisineList getSelectedCuisine(LocationCuisine mLocationCuisine, List<String> selectedList) {
         SelectedCuisineList selectedCuisineList = new SelectedCuisineList();
         selectedCuisineList.setLocation(mLocationCuisine);
         cuisineList = new ArrayList<>();
@@ -50,30 +53,29 @@ public class HomeFgmtHelper {
                 selectedCuisineList.setRestaurant_distance
                         (Integer.parseInt(rootUserPreference.getRestaurant_distance()));
             } else {
-                selectedCuisineList.setRestaurant_distance(1);
+                selectedCuisineList.setRestaurant_distance(ONE);
             }
 
             if (null != rootUserPreference.getRestaurant_price() &&
                     !rootUserPreference.getRestaurant_price().isEmpty()) {
                 selectedCuisineList.setRestaurant_price(Integer.parseInt(rootUserPreference.getRestaurant_price()));
             } else {
-                selectedCuisineList.setRestaurant_price(0);
+                selectedCuisineList.setRestaurant_price(ZERO);
             }
 
             if (null != rootUserPreference.getRestaurant_rating() &&
                     !rootUserPreference.getRestaurant_rating().isEmpty()) {
                 selectedCuisineList.setRestaurant_rating(Integer.parseInt(rootUserPreference.getRestaurant_rating()));
             } else {
-                selectedCuisineList.setRestaurant_rating(0);
+                selectedCuisineList.setRestaurant_rating(ZERO);
             }
 
-
             if (rootUserPreference.isSort_by_distance()) {
-                selectedCuisineList.setSort_by_distance(1);
+                selectedCuisineList.setSort_by_distance(ONE);
             } else if (rootUserPreference.isSort_by_rating()) {
-                selectedCuisineList.setSort_by_rating(1);
+                selectedCuisineList.setSort_by_rating(ONE);
             } else {
-                selectedCuisineList.setSort_by_distance(1);
+                selectedCuisineList.setSort_by_distance(ONE);
             }
         }
         return selectedCuisineList;

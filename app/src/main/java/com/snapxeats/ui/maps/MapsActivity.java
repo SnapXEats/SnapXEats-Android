@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,6 +22,7 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.RootCuisinePhotos;
+import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.SnapXPreference;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
@@ -34,6 +36,8 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.STRING_SPACE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -66,6 +70,12 @@ public class MapsActivity extends BaseActivity
     private Marker mMarker;
     private LatLng latLng = null;
 
+    @BindView(R.id.txt_toolbar_dist)
+    protected TextView mToolbarTitle;
+
+    @Inject
+    RootUserPreference rootUserPreference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +96,6 @@ public class MapsActivity extends BaseActivity
         mPresenter.getUserPreferences();
         mRootCuisine = getIntent().getExtras().getParcelable(getString(R.string.intent_root_cuisine));
         setScrollview();
-
     }
 
     public boolean onMarkerClick(Marker marker) {
@@ -114,27 +123,30 @@ public class MapsActivity extends BaseActivity
     }
 
     private void drawMapCircle() {
+        float radius;
+        LatLng currentLatLon = utility.setLatLng();
         if (null != mPreferences && null != mPreferences.getUserPreferences()
-                && null != mPreferences.getUserPreferences().getRestaurant_distance()) {
-            getSupportActionBar().setTitle(getString(R.string.within) + " " +
-                    mPreferences.getUserPreferences().getRestaurant_distance() + " " + getString(R.string.miles));
-            float radius = Integer.parseInt(mPreferences.getUserPreferences().getRestaurant_distance()) * UIConstants.DIST_IN_MILES;
-            LatLng currentLatLon = utility.setLatLng();
-
-            mMap.addCircle(new CircleOptions()
-                    .center(currentLatLon)
-                    .radius(radius)
-                    .strokeWidth(UIConstants.MAP_STROKE)
-                    .strokeColor(UIConstants.MAP_FILL_COLOR)
-                    .fillColor(UIConstants.MAP_FILL_COLOR));
-
-            CameraUpdateAnimator animator = new CameraUpdateAnimator(mMap, this);
-            animator.add(CameraUpdateFactory.newLatLngZoom(currentLatLon, UIConstants.MAP_ZOOM),
-                    false, (long) UIConstants.DEFAULT);
-            animator.add(CameraUpdateFactory.scrollBy(UIConstants.DEFAULT, UIConstants.MAP_SCOLL_BY),
-                    false, (long) UIConstants.DEFAULT);
-            animator.execute();
+                && !mPreferences.getUserPreferences().getRestaurant_distance().equalsIgnoreCase("")) {
+            mToolbarTitle.setText(getString(R.string.within) + STRING_SPACE +
+                    mPreferences.getUserPreferences().getRestaurant_distance() + STRING_SPACE + getString(R.string.miles));
+            radius = Integer.parseInt(mPreferences.getUserPreferences().getRestaurant_distance()) * UIConstants.DIST_IN_MILES;
+        } else {
+            mToolbarTitle.setText(getString(R.string.within) + STRING_SPACE + ONE + STRING_SPACE + getString(R.string.mile));
+            radius = ONE;
         }
+        mMap.addCircle(new CircleOptions()
+                .center(currentLatLon)
+                .radius(radius)
+                .strokeWidth(UIConstants.MAP_STROKE)
+                .strokeColor(UIConstants.MAP_FILL_COLOR)
+                .fillColor(UIConstants.MAP_FILL_COLOR));
+
+        CameraUpdateAnimator animator = new CameraUpdateAnimator(mMap, this);
+        animator.add(CameraUpdateFactory.newLatLngZoom(currentLatLon, UIConstants.MAP_ZOOM), false, ZERO);
+        animator.add(CameraUpdateFactory.scrollBy(ZERO, UIConstants.MAP_SCOLL_BY), false, ZERO);
+        animator.execute();
+        mMap.setOnMarkerClickListener(marker -> true);
+
     }
 
     private void placeRestMarkers() {
@@ -161,21 +173,22 @@ public class MapsActivity extends BaseActivity
         mMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_current)));
-
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         mMap.setMyLocationEnabled(true);
+        drawMapCircle();
     }
 
     @Override
     public void success(Object value) {
         if (value instanceof SnapXPreference) {
             mPreferences = (SnapXPreference) value;
-            drawMapCircle();
         }
+        drawMapCircle();
     }
 
     @Override

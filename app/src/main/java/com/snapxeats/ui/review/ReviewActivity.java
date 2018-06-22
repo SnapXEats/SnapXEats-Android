@@ -147,7 +147,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private boolean isCanceled = false;
     private int seconds;
     private String audioTime;
-    private AlertDialog dialog;
+    private AlertDialog alertDialog;
     private long timeRemaining = ZERO;
     private TextView mTimer;
     private ImageView mImgPlayRecAudio, mImgPauseRecAudio;
@@ -223,7 +223,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     }
 
     /**
-     * show login dialog if user is not logged in
+     * show login alertDialog if user is not logged in
      **/
     private void showLoginDialog() {
         LayoutInflater inflater = getLayoutInflater();
@@ -330,7 +330,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         }
     }
 
-    /*save to draft dialog on 'share later' action*/
+    /*save to draft alertDialog on 'share later' action*/
     private void dialogSaveToDraft() {
         saveReviewDataInDb();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -422,13 +422,13 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         }
     }
 
-    /*initialize components for alert dialog*/
+    /*initialize components for alert alertDialog*/
     public void initAlertDialog(View view) {
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setView(view);
         alert.setCancelable(false);
-        dialog = alert.create();
-        dialog.show();
+        alertDialog = alert.create();
+        alertDialog.show();
     }
 
     /*Play recorded audio review*/
@@ -481,14 +481,14 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                 resumePosition = ZERO;
                 mPlayer.stop();
             }
-            dialog.dismiss();
+            alertDialog.dismiss();
         });
 
         /*Delete audio review*/
         mTxtDeleteAudio.setOnClickListener(v -> {
-            AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-            builder1.setMessage(getString(R.string.msg_delete_review))
-                    .setPositiveButton(getString(R.string.yes), (dialog1, which) -> {
+            AlertDialog.Builder builderDelReview = new AlertDialog.Builder(this);
+            builderDelReview.setMessage(getString(R.string.msg_delete_review))
+                    .setPositiveButton(getString(R.string.yes), (dialogDelReview, which) -> {
                         mPlayer = new MediaPlayer();
                         isPaused = false;
                         mPlayer.stop();
@@ -498,12 +498,12 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                         if (deleted) {
                             SnapXToast.showToast(this, getString(R.string.review_del));
                         }
-                        dialog.dismiss();
+                        alertDialog.dismiss();
                         mImgAddAudio.setVisibility(View.VISIBLE);
                         mImgPlayAudio.setVisibility(View.GONE);
                         mAudioTime.setVisibility(View.GONE);
                     })
-                    .setNegativeButton(getString(R.string.not_now), (dialog1, which) -> dialog.dismiss())
+                    .setNegativeButton(getString(R.string.not_now), (dialogDelReview, which) -> alertDialog.dismiss())
                     .show();
         });
     }
@@ -564,14 +564,9 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             });
 
             mBtnStopReview.setOnClickListener(v -> {
-                stopRecording();
-                dialog.dismiss();
-                mImgAddAudio.setVisibility(View.GONE);
-                mImgPlayAudio.setVisibility(View.VISIBLE);
-                mAudioTime.setVisibility(View.VISIBLE);
-                setAudioTime();
+                setRecordedData();
             });
-            mTxtCancel.setOnClickListener(v -> dialog.dismiss());
+            mTxtCancel.setOnClickListener(v -> alertDialog.dismiss());
         } else {
             requestPermission();
         }
@@ -601,10 +596,9 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                     mChronometer.stop();
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage(getString(R.string.audio_review_limit_msg))
-                            .setNeutralButton(getString(R.string.ok), (dialog, which) -> {
-                                stopRecording();
-                                setAudioTime();
-                                dialog.dismiss();
+                            .setNeutralButton(getString(R.string.ok), (dialogMaxLimit, which) -> {
+                                dialogMaxLimit.dismiss();
+                                setRecordedData();
                             })
                             .show();
                 }
@@ -612,6 +606,15 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void setRecordedData() {
+        stopRecording();
+        alertDialog.dismiss();
+        mImgAddAudio.setVisibility(View.GONE);
+        mImgPlayAudio.setVisibility(View.VISIBLE);
+        mAudioTime.setVisibility(View.VISIBLE);
+        setAudioTime();
     }
 
     public void setMediaRecorder() {
@@ -684,7 +687,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         } else if (value instanceof SnapXUserResponse) {
             SnapXUserResponse snapXUserResponse = (SnapXUserResponse) value;
             mToken = snapXUserResponse.getUserInfo().getToken();
-            dialog.dismiss();
+            alertDialog.dismiss();
             callApiReview();
         }
     }

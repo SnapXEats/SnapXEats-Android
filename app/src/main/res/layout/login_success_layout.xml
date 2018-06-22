@@ -1,37 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_margin="@dimen/common_dimens_10">
+        android:layout_margin="@dimen/common_dimens_10"
+        android:orientation="vertical">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/common_dimens_5"
+            android:gravity="center_horizontal"
             android:padding="@dimen/common_dimens_5"
             android:text="@string/login_success"
-            android:textStyle="bold"
             android:textColor="@color/text_color_primary"
             android:textSize="@dimen/text_size_16"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="@dimen/common_dimens_5"/>
+            android:textStyle="bold" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/common_dimens_5"
-            android:text="@string/login_success_msg"
+            android:layout_margin="@dimen/common_dimens_10"
             android:gravity="center_horizontal"
-            android:layout_margin="@dimen/common_dimens_10"/>
+            android:padding="@dimen/common_dimens_5"
+            android:text="@string/login_success_msg" />
+
         <Button
             android:id="@+id/btn_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:background="@android:drawable/screen_background_light_transparent"
             android:text="@string/ok"
-            android:textColor="@color/colorPrimary"
-            android:layout_gravity="center_horizontal"/>
+            android:textColor="@color/colorPrimary" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
