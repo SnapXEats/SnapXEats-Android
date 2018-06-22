@@ -11,6 +11,7 @@ import com.snapxeats.common.model.Logout;
 import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
+import com.snapxeats.common.model.UserReward;
 import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.model.checkin.CheckInResponse;
 import com.snapxeats.common.model.checkin.CheckInRestaurants;
@@ -258,6 +259,8 @@ public class HomeInteractor {
     }
 
     void getNearByRestaurantToCheckIn(double lat, double lng) {
+        lat = 40.7014;
+        lng = -74.0151;
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             Call<CheckInRestaurants> checkInRestaurantsCall = apiHelper.getRestaurantsForCheckIn(40.7014, -74.0151);
@@ -288,11 +291,35 @@ public class HomeInteractor {
             checkInPostCall.enqueue(new Callback<CheckInResponse>() {
                 @Override
                 public void onResponse(Call<CheckInResponse> call, Response<CheckInResponse> response) {
+                    updateUserRewardPoint();
                     homePresenter.response(SnapXResult.SUCCESS, response.body());
                 }
 
                 @Override
                 public void onFailure(Call<CheckInResponse> call, Throwable t) {
+                    homePresenter.response(SnapXResult.ERROR, null);
+                }
+            });
+        } else {
+            homePresenter.response(SnapXResult.NONETWORK, CHECKIN);
+        }
+    }
+
+    private void updateUserRewardPoint() {
+        if (NetworkUtility.isNetworkAvailable(mContext)) {
+            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            Call<UserReward> rewardCall = apiHelper.getUsersRewardPoints(utility.getAuthToken(mContext));
+
+            rewardCall.enqueue(new Callback<UserReward>() {
+                @Override
+                public void onResponse(Call<UserReward> call, Response<UserReward> response) {
+                    if (response.isSuccessful() && null != response.body()) {
+                        homePresenter.response(SnapXResult.SUCCESS, response.body());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserReward> call, Throwable t) {
                     homePresenter.response(SnapXResult.ERROR, null);
                 }
             });

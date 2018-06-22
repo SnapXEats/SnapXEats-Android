@@ -34,7 +34,7 @@ public class UIConstants {
 
     public static final float MAP_SCOLL_BY = 320;
     public static final float MAP_ZOOM = 13.2f;
-    public static final float GOOGLE_MAP_ZOOM = 12.2f;
+    public static final float GOOGLE_MAP_ZOOM = 12.8f;
     public static final int MAP_FILL_COLOR = 0x55AAAAAA;
     public static final float MAP_STROKE = 5;
     public static final float MAP_MARKER_ZOOM = 13;
@@ -155,6 +155,10 @@ public class UIConstants {
     public static final long GEO_DURATION = 60 * 60 * 1000;
     public static final String GEOFENCE_REQ_ID = "SnapGeofence";
     public static final float GEOFENCE_RADIUS = 500.0f;
+    public static final java.lang.String POLICY_FILE_NAME = "PrivacyPolicySnapXEats.html";
+    public static final String HTML_MIME_TYPE = "text/html";
+    public static final String ENCODING_FORMAT = "utf-8";
+    public static final int POLICY_WEBVIEW_SCALE = 190;
     public static final String GOOGLE_DIR_NO_RESULTS = "ZERO_RESULTS";
     public static final String GOOGLE_DIR_NOT_FOUND = "NOT_FOUND";
 }

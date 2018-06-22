@@ -82,7 +82,6 @@ public class ReviewInteractor {
             ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
             MultipartBody.Part audioUpload = null;
             RequestBody review = null;
-
             if (null != audio) {
                 String fileAudioPath = appUtility.getRealPathFromURIPath(audio, mContext);
                 File fileAud = new File(fileAudioPath);

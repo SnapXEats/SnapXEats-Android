@@ -21,12 +21,15 @@ import com.snapxeats.common.model.smartphotos.SmartPhoto;
 import com.snapxeats.common.model.smartphotos.SmartPhotoResponse;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.ui.home.fragment.smartphotos.smart.SmartAdapter;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -183,17 +186,5 @@ public class HomeDbHelper {
                 return true;
             }
         return false;
-    }
-
-    void updateRewardPoint(String rewards) {
-        SnapXDataDao snapxDataDao = dbHelper.getSnapxDataDao();
-        if (snapxDataDao.loadAll().size() > ZERO) {
-            List<SnapXData> snapXDataList = snapxDataDao.loadAll();
-            int rewardPoints = Integer.parseInt( rewards) +
-                    Integer.parseInt(snapXDataList.get(ZERO).getUserRewardPoint());
-            snapXDataList.get(ZERO).setUserRewardPoint(String.valueOf(rewardPoints));
-            snapxDataDao.update(snapXDataList.get(ZERO));
-        }
-
     }
 }

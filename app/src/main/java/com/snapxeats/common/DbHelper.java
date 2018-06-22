@@ -3,6 +3,7 @@ package com.snapxeats.common;
 import android.content.Context;
 
 import com.snapxeats.SnapXApplication;
+import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.SnapXDataDao;
 import com.snapxeats.common.model.foodGestures.FoodDislikesDao;
 import com.snapxeats.common.model.smartphotos.RestaurantAminitiesDao;
@@ -13,11 +14,10 @@ import com.snapxeats.common.model.foodGestures.FoodWishlistsDao;
 import com.snapxeats.common.model.preference.UserCuisinePreferencesDao;
 import com.snapxeats.common.model.preference.UserFoodPreferencesDao;
 import com.snapxeats.common.model.preference.UserPreferenceDao;
-import com.snapxeats.common.model.smartphotos.RestaurantAminitiesDao;
-import com.snapxeats.common.model.smartphotos.SmartPhotoDao;
-import com.snapxeats.common.model.smartphotos.SnapXDraftPhotoDao;
 import com.snapxeats.ui.home.fragment.checkin.CheckInDataDao;
 import com.snapxeats.ui.home.fragment.checkin.DaoSession;
+
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -110,5 +110,16 @@ public class DbHelper {
     public CheckInDataDao getCheckInDataDao() {
         daoSession = getDaoSesion();
         return daoSession.getCheckInDataDao();
+    }
+
+    public void updateRewardPoint(int rewards) {
+        SnapXDataDao snapxDataDao = getSnapxDataDao();
+        if (snapxDataDao.loadAll().size() > ZERO) {
+            List<SnapXData> snapXDataList = snapxDataDao.loadAll();
+            if (null != snapXDataList && ZERO != snapXDataList.size()) {
+                snapXDataList.get(ZERO).setUserRewardPoint(String.valueOf(rewards));
+                snapxDataDao.update(snapXDataList.get(ZERO));
+            }
+        }
     }
 }

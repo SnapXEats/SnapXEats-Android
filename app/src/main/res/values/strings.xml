@@ -90,7 +90,7 @@
     <string name="cuisine_preference">Cuisine Preferences</string>
     <string name="food_preference">Food Preferences</string>
     <string name="save">Save</string>
-    <string name="preference">Preference</string>
+    <string name="preference">Preferences</string>
     <string name="preference_save_message">You have made some changes to your preferences, You need to save them</string>
     <string name="preference_reset_message">Do you want to reset your preferences?</string>
     <string name="preference_apply_message">You have made some changes to your preferences, you need to apply to continue</string>
@@ -143,7 +143,7 @@
     <string name="date_rest_info">dd MMM yyyy</string>
     <string name="log_out">Logout</string>
     <string name="chek_in">Check In</string>
-    <string name="food_journey">Food Journey</string>
+    <string name="food_journey">Food Journeys</string>
     <string name="rewards">Rewards</string>
     <string name="smart_photos">Smart Photos</string>
     <string name="snap_share">Snap-N-Share</string>
@@ -256,7 +256,7 @@
     <string name="geofence_transition">location transition</string>
     <string name="checked_in">Checked in</string>
     <string name="toolbar_restaurants">Restaurants</string>
+    <string name="privacy_policy">Privacy Policy</string>
     <string name="google_dir_no_routes">No routes found</string>
-    <string name="mile">mile</string>
 
 </resources>
