@@ -564,6 +564,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             });
 
             mBtnStopReview.setOnClickListener(v -> {
+                stopRecording();
                 setRecordedData();
             });
             mTxtCancel.setOnClickListener(v -> alertDialog.dismiss());
@@ -593,13 +594,11 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             mChronometer.setOnChronometerTickListener(chronometer -> {
                 String currentTime = mChronometer.getText().toString();
                 if (currentTime.equals(getString(R.string.timer_audio_review))) {
-                    mChronometer.stop();
+                    stopRecording();
+                    setRecordedData();
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage(getString(R.string.audio_review_limit_msg))
-                            .setNeutralButton(getString(R.string.ok), (dialogMaxLimit, which) -> {
-                                dialogMaxLimit.dismiss();
-                                setRecordedData();
-                            })
+                            .setNeutralButton(getString(R.string.ok), (dialogMaxLimit, which) -> dialogMaxLimit.dismiss())
                             .show();
                 }
             });
@@ -799,6 +798,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         super.onPause();
         if (null != mPlayer && mPlayer.isPlaying()) {
             mPlayer.pause();
+            mPlayer.stop();
         }
     }
 

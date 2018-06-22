@@ -5,6 +5,7 @@ import com.snapxeats.common.model.Logout;
 import com.snapxeats.common.model.RootCuisinePhotos;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
+import com.snapxeats.common.model.UserReward;
 import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.model.checkin.CheckInResponse;
 import com.snapxeats.common.model.checkin.CheckInRestaurants;
@@ -272,4 +273,13 @@ public interface ApiHelper {
      */
     @GET(WebConstants.SMART_PHOTO)
     Call<SmartPhotoResponse> getSmartPhotoDetails(@Path("restaurant_dish_id") String dishId);
+
+    /**
+     * Get user reward points
+     *
+     * @param token
+     * @return
+     */
+    @GET(WebConstants.REWARDS)
+    Call<UserReward> getUsersRewardPoints(@Header("Authorization") String token);
 }

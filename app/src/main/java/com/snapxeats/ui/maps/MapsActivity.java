@@ -93,7 +93,9 @@ public class MapsActivity extends BaseActivity
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setMapView();
-        mPresenter.getUserPreferences();
+        if (utility.isLoggedIn()) {
+            mPresenter.getUserPreferences();
+        }
         mRootCuisine = getIntent().getExtras().getParcelable(getString(R.string.intent_root_cuisine));
         setScrollview();
     }
@@ -131,8 +133,8 @@ public class MapsActivity extends BaseActivity
                     mPreferences.getUserPreferences().getRestaurant_distance() + STRING_SPACE + getString(R.string.miles));
             radius = Integer.parseInt(mPreferences.getUserPreferences().getRestaurant_distance()) * UIConstants.DIST_IN_MILES;
         } else {
-            mToolbarTitle.setText(getString(R.string.within) + STRING_SPACE + ONE + STRING_SPACE + getString(R.string.mile));
-            radius = ONE;
+            mToolbarTitle.setText(getString(R.string.within) + STRING_SPACE + rootUserPreference.getRestaurant_distance() + STRING_SPACE + getString(R.string.miles));
+            radius = Integer.parseInt(rootUserPreference.getRestaurant_distance()) * UIConstants.DIST_IN_MILES;
         }
         mMap.addCircle(new CircleOptions()
                 .center(currentLatLon)

@@ -37,6 +37,7 @@ import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.SnapXDataDao;
+import com.snapxeats.common.model.UserReward;
 import com.snapxeats.common.model.location.Location;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.restaurantInfo.RestaurantPics;
@@ -485,5 +486,14 @@ public class AppUtility {
             latLng = new LatLng(rootUserPreference.getLocation().getLat(), rootUserPreference.getLocation().getLng());
         }
         return latLng;
+    }
+
+    public void updateRewardUI(NavigationView navigationView,UserReward userReward) {
+        View mNavHeader = navigationView.getHeaderView(ZERO);
+        TextView mTxtRewardPoints = mNavHeader.findViewById(R.id.txt_nav_rewards);
+        if (null != userReward && null != userReward.getUserRewardPoint()) {
+            mTxtRewardPoints.setText(String.valueOf(userReward.getUserRewardPoint()));
+            dbHelper.updateRewardPoint(userReward.getUserRewardPoint());
+        }
     }
 }

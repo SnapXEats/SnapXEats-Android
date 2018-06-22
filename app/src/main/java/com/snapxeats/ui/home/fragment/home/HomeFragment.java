@@ -45,6 +45,7 @@ import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.model.SnapXUser;
+import com.snapxeats.common.model.UserReward;
 import com.snapxeats.common.model.preference.Cuisines;
 import com.snapxeats.common.model.preference.RootCuisine;
 import com.snapxeats.common.model.preference.RootUserPreference;
@@ -329,6 +330,9 @@ public class HomeFragment extends BaseFragment implements
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(getString(R.string.user_id), snapXUser.getUser_id());
             editor.apply();
+        }else if (value instanceof UserReward) {
+            UserReward userReward = (UserReward) value;
+            utility.updateRewardUI(mNavigationView,userReward);
         }
     }
 
@@ -509,7 +513,9 @@ public class HomeFragment extends BaseFragment implements
             }
 
             mTxtPlaceName.setText(mSelectedLocation.getName());
-            mDialog.show();
+            if (null != getActivity() && isAdded()) {
+                mDialog.show();
+            }
             presenter.getCuisineList(mLocationCuisine);
         }
     }

@@ -22,6 +22,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
+import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.googleDirections.GoogleDirDest;
 import com.snapxeats.common.model.googleDirections.GoogleDirOrigin;
 import com.snapxeats.common.model.googleDirections.LocationGoogleDir;
@@ -269,16 +270,18 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     private void setGoogleDirView() {
         if (mRootGoogleDir.getStatus().equalsIgnoreCase(GOOGLE_DIR_NO_RESULTS) ||
                 mRootGoogleDir.getStatus().equalsIgnoreCase(GOOGLE_DIR_NOT_FOUND)) {
-            dialogNoRoutesFound();
-        } else if (null != mRootGoogleDir && ZERO != mRootGoogleDir.getRoutes().get(ZERO).getLegs().size() &&
-                !mRootGoogleDir.getRoutes().get(ZERO).getLegs().get(ZERO).getDuration().getText().isEmpty()) {
+
+        } else if (null != mRootGoogleDir
+                && null != mRootGoogleDir.getRoutes()
+                && ZERO != mRootGoogleDir.getRoutes().size()
+                && null != mRootGoogleDir.getRoutes().get(ZERO).getLegs()
+                && ZERO != mRootGoogleDir.getRoutes().get(ZERO).getLegs().size()
+                && null != mRootGoogleDir.getRoutes().get(ZERO).getLegs().get(ZERO).getDuration()
+                && null != mRootGoogleDir.getRoutes().get(ZERO).getLegs().get(ZERO).getDuration().getText()
+                && !mRootGoogleDir.getRoutes().get(ZERO).getLegs().get(ZERO).getDuration().getText().isEmpty()) {
             mTxtRestDuration.setText(mRootGoogleDir.getRoutes().get(ZERO).getLegs().get(ZERO)
-                    .getDuration().getText() + STRING_SPACE + getString(R.string.away));
+                    .getDuration().getText() + UIConstants.STRING_SPACE + getString(R.string.away));
         }
-    }
-
-    private void dialogNoRoutesFound() {
-
     }
 
     public void setUpRecyclerView() {
@@ -312,11 +315,12 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
                     mLayoutRestSpecialties, false);
             ImageView imageView = view.findViewById(R.id.img_restaurant_specialties);
 
-            Glide.with(getActivity())
+            Glide.with(getApplicationContext())
                     .load(mRestaurantSpecialties.get(INDEX_REST_SPECIALTIES)
                             .getDish_image_url())
                     .placeholder(R.drawable.ic_rest_info_placeholder)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .skipMemoryCache(true)
                     .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                     .thumbnail(THUMBNAIL)
                     .into(imageView);

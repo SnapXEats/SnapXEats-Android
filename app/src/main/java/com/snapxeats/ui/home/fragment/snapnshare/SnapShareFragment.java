@@ -239,7 +239,7 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
                     mLayoutRestSpecialties, false);
             ImageView imageView = view.findViewById(R.id.img_restaurant_specialties);
 
-            Glide.with(getActivity())
+            Glide.with(getActivity().getApplicationContext())
                     .load(restaurant_speciality.get(index).getDish_image_url())
                     .placeholder(R.drawable.ic_rest_info_placeholder)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)

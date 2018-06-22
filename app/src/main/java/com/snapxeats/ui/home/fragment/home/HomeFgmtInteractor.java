@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.snapxeats.common.model.LocationCuisine;
+import com.snapxeats.common.model.UserReward;
 import com.snapxeats.common.model.preference.RootCuisine;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
@@ -19,6 +20,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
+import static com.snapxeats.common.utilities.NoNetworkResults.CHECKIN;
 
 /**
  * Created by Snehal Tembare on 3/1/18.
@@ -68,6 +70,9 @@ public class HomeFgmtInteractor {
                 public void onResponse(Call<RootCuisine> call, Response<RootCuisine> response) {
                     if (response.isSuccessful() && null != response.body()) {
                         RootCuisine rootCuisine = response.body();
+                        if (utility.isLoggedIn()) {
+                            updateUserRewardPoint();
+                        }
                         homeFgmtPresenter.response(SnapXResult.SUCCESS, rootCuisine);
                     }
                 }
@@ -79,6 +84,29 @@ public class HomeFgmtInteractor {
             });
         } else {
             homeFgmtPresenter.response(SnapXResult.NONETWORK, null);
+        }
+    }
+
+    private void updateUserRewardPoint() {
+        if (NetworkUtility.isNetworkAvailable(mContext)) {
+            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            Call<UserReward> rewardCall = apiHelper.getUsersRewardPoints(utility.getAuthToken(mContext));
+
+            rewardCall.enqueue(new Callback<UserReward>() {
+                @Override
+                public void onResponse(Call<UserReward> call, Response<UserReward> response) {
+                    if (response.isSuccessful() && null != response.body()) {
+                        homeFgmtPresenter.response(SnapXResult.SUCCESS, response.body());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserReward> call, Throwable t) {
+                    homeFgmtPresenter.response(SnapXResult.ERROR, null);
+                }
+            });
+        } else {
+            homeFgmtPresenter.response(SnapXResult.NONETWORK, CHECKIN);
         }
     }
 }

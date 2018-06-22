@@ -54,6 +54,7 @@ public class HomeFgmtHelper {
                         (Integer.parseInt(rootUserPreference.getRestaurant_distance()));
             } else {
                 selectedCuisineList.setRestaurant_distance(ONE);
+                rootUserPreference.setRestaurant_distance(String.valueOf(ONE));
             }
 
             if (null != rootUserPreference.getRestaurant_price() &&
@@ -61,6 +62,7 @@ public class HomeFgmtHelper {
                 selectedCuisineList.setRestaurant_price(Integer.parseInt(rootUserPreference.getRestaurant_price()));
             } else {
                 selectedCuisineList.setRestaurant_price(ZERO);
+                rootUserPreference.setRestaurant_price(String.valueOf(ZERO));
             }
 
             if (null != rootUserPreference.getRestaurant_rating() &&
@@ -68,14 +70,17 @@ public class HomeFgmtHelper {
                 selectedCuisineList.setRestaurant_rating(Integer.parseInt(rootUserPreference.getRestaurant_rating()));
             } else {
                 selectedCuisineList.setRestaurant_rating(ZERO);
+                rootUserPreference.setRestaurant_rating(String.valueOf(ZERO));
             }
 
             if (rootUserPreference.isSort_by_distance()) {
                 selectedCuisineList.setSort_by_distance(ONE);
             } else if (rootUserPreference.isSort_by_rating()) {
                 selectedCuisineList.setSort_by_rating(ONE);
+                rootUserPreference.setSort_by_rating(true);
             } else {
                 selectedCuisineList.setSort_by_distance(ONE);
+                rootUserPreference.setSort_by_distance(true);
             }
         }
         return selectedCuisineList;

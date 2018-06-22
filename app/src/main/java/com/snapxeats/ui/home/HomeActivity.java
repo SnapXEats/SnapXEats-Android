@@ -62,6 +62,7 @@ import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.SnapXUserRequest;
 import com.snapxeats.common.model.SnapXUserResponse;
+import com.snapxeats.common.model.UserReward;
 import com.snapxeats.common.model.checkin.CheckInRequest;
 import com.snapxeats.common.model.checkin.CheckInResponse;
 import com.snapxeats.common.model.checkin.CheckInRestaurants;
@@ -82,6 +83,7 @@ import com.snapxeats.ui.home.fragment.checkin.CheckInDbHelper;
 import com.snapxeats.ui.home.fragment.foodjourney.FoodJourneyFragment;
 import com.snapxeats.ui.home.fragment.home.HomeFragment;
 import com.snapxeats.ui.home.fragment.navpreference.NavPrefFragment;
+import com.snapxeats.ui.home.fragment.privacypolicy.PrivacyPolicyFragment;
 import com.snapxeats.ui.home.fragment.smartphotos.AminityAdapter;
 import com.snapxeats.ui.home.fragment.smartphotos.SmartPhotoFragment;
 import com.snapxeats.ui.home.fragment.snapnshare.CheckInAdapter;
@@ -166,6 +168,9 @@ public class HomeActivity extends BaseActivity implements
 
     @Inject
     SnapShareFragment snapShareFragment;
+
+    @Inject
+    PrivacyPolicyFragment policyFragment;
 
     @Inject
     HomeContract.HomePresenter mPresenter;
@@ -545,6 +550,10 @@ public class HomeActivity extends BaseActivity implements
                     }
                     break;
 
+                case R.id.nav_privacy:
+                    selectedFragment = policyFragment;
+                    break;
+
                 case R.id.nav_logout:
                     if (utility.isLoggedIn()) {
                         showLogoutDialog();
@@ -694,8 +703,6 @@ public class HomeActivity extends BaseActivity implements
             rewards = ((CheckInResponse) value).getReward_point() + STRING_SPACE + getString(R.string.reward_points);
             showCheckInResponseDialog();
             saveCheckInDataToDb();
-            homeDbHelper.updateRewardPoint(((CheckInResponse) value).getReward_point());
-
         } else if (value instanceof SmartPhotoResponse) {
             mSmartPhoto = (SmartPhotoResponse) value;
             mAminitiesList = mSmartPhoto.getRestaurant_aminities();
@@ -704,6 +711,9 @@ public class HomeActivity extends BaseActivity implements
             SnapXUserResponse snapXUserResponse = (SnapXUserResponse) value;
             String mToken = snapXUserResponse.getUserInfo().getToken();
             selectedBundle.onBundleSelect(mToken);
+        } else if (value instanceof UserReward) {
+            UserReward userReward = (UserReward) value;
+            utility.updateRewardUI(mNavigationView,userReward);
         }
     }
 
@@ -1239,9 +1249,9 @@ public class HomeActivity extends BaseActivity implements
 
         Glide.with(this)
                 .load(mSmartPhoto.getDish_image_url())
-                .asBitmap()
                 .placeholder(R.drawable.ic_rest_info_placeholder)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .skipMemoryCache(true)
                 .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .thumbnail(THUMBNAIL)
                 .into(mImg);
