@@ -180,6 +180,7 @@ public class MapsActivity extends BaseActivity
             return;
         }
         mMap.setMyLocationEnabled(true);
+        drawMapCircle();
     }
 
     @Override
@@ -187,6 +188,7 @@ public class MapsActivity extends BaseActivity
         if (value instanceof SnapXPreference) {
             mPreferences = (SnapXPreference) value;
         }
+        drawMapCircle();
     }
 
     @Override
@@ -213,7 +215,6 @@ public class MapsActivity extends BaseActivity
             mMarker.remove();
         }
         mMarker = mMap.addMarker(mMarkerOptions);
-        drawMapCircle();
     }
 
     @Override

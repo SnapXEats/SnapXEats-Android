@@ -53,7 +53,7 @@ public class HomeFgmtHelper {
                 selectedCuisineList.setRestaurant_distance
                         (Integer.parseInt(rootUserPreference.getRestaurant_distance()));
             } else {
-                selectedCuisineList.setRestaurant_distance(1);
+                selectedCuisineList.setRestaurant_distance(ONE);
             }
 
             if (null != rootUserPreference.getRestaurant_price() &&
@@ -72,11 +72,11 @@ public class HomeFgmtHelper {
 
 
             if (rootUserPreference.isSort_by_distance()) {
-                selectedCuisineList.setSort_by_distance(1);
+                selectedCuisineList.setSort_by_distance(ONE);
             } else if (rootUserPreference.isSort_by_rating()) {
                 selectedCuisineList.setSort_by_rating(ONE);
             } else {
-                selectedCuisineList.setSort_by_distance(1);
+                selectedCuisineList.setSort_by_distance(ONE);
             }
         }
         return selectedCuisineList;
