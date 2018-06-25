@@ -19,21 +19,14 @@ import android.webkit.WebView;
 
 import com.snapxeats.BaseActivity;
 import com.snapxeats.R;
-import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.ui.home.fragment.home.HomeFragment;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 
-import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.POLICY_FILE_NAME_PATH;
 import static com.snapxeats.common.constants.UIConstants.POLICY_WEBVIEW_SCALE;
-import static com.snapxeats.common.constants.UIConstants.WEBVIEW_SCALE;
-import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Snehal Tembare on 21/6/18.
@@ -95,30 +88,7 @@ public class PrivacyPolicyFragment extends Fragment {
 
         WebView webView = view.findViewById(R.id.webview);
         webView.setInitialScale(POLICY_WEBVIEW_SCALE);
-        webView.loadData(readTextFromResource(), UIConstants.HTML_MIME_TYPE, UIConstants.ENCODING_FORMAT);
-    }
-
-    private String readTextFromResource() {
-        InputStream inputStream = null;
-        try {
-            inputStream = getResources().getAssets().open(UIConstants.POLICY_FILE_NAME);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        int index = ZERO;
-        try {
-            inputStream.read();
-            while (-ONE != index) {
-                outputStream.write(index);
-                index = inputStream.read();
-            }
-            inputStream.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return outputStream.toString();
+        webView.loadUrl(POLICY_FILE_NAME_PATH);
     }
 
     @Override

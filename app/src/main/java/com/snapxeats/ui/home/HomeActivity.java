@@ -1094,7 +1094,6 @@ public class HomeActivity extends BaseActivity implements
 
                 Glide.with(this)
                         .load(restaurantInfo.getRestaurant_logo())
-                        .asBitmap()
                         .placeholder(R.drawable.ic_pref_placeholder)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
@@ -1250,8 +1249,7 @@ public class HomeActivity extends BaseActivity implements
         Glide.with(this)
                 .load(mSmartPhoto.getDish_image_url())
                 .placeholder(R.drawable.ic_rest_info_placeholder)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .thumbnail(THUMBNAIL)
                 .into(mImg);

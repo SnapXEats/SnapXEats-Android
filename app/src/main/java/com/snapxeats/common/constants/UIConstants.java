@@ -123,7 +123,7 @@ public class UIConstants {
     public static final int TIME_MINUTE = 60000;
     public static final int TIME_SECONDS = 1000;
     public static final int INT_TEN = 10;
-    public static final long PHOTO_NOTIFICATION_TIME = 10;
+    public static final long PHOTO_NOTIFICATION_TIME = 10000 * 60;
     public static final int PHOTO_NOTIFICATION_REQUEST_CODE = 0;
     public static final int REQUEST_CODE_TAKE_PHOTO_ACTION = 2;
     public static final int REQUEST_CODE_REMIND_ACTION = 4;
@@ -155,7 +155,7 @@ public class UIConstants {
     public static final long GEO_DURATION = 60 * 60 * 1000;
     public static final String GEOFENCE_REQ_ID = "SnapGeofence";
     public static final float GEOFENCE_RADIUS = 500.0f;
-    public static final java.lang.String POLICY_FILE_NAME = "PrivacyPolicySnapXEats.html";
+    public static final java.lang.String POLICY_FILE_NAME_PATH = "file:///android_asset/PrivacyPolicySnapXEats.html";
     public static final String HTML_MIME_TYPE = "text/html";
     public static final String ENCODING_FORMAT = "utf-8";
     public static final int POLICY_WEBVIEW_SCALE = 190;
