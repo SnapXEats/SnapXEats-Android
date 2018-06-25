@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.ViewPager;
@@ -281,7 +282,8 @@ public class SnapShareFragment extends BaseFragment implements SnapShareContract
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), PHOTO_NOTIFICATION_REQUEST_CODE, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
-                TimeUnit.MINUTES.toMillis(PHOTO_NOTIFICATION_TIME), pendingIntent);
+        if (null != alarmManager) {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ PHOTO_NOTIFICATION_TIME,  pendingIntent);
+        }
     }
 }

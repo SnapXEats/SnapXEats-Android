@@ -253,11 +253,13 @@ public class DirectionsActivity extends BaseActivity
             LatLng currentLoc = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
             LatLng destLoc = new LatLng(Double.valueOf(mDetails.getRestaurantDetails().getLocation_lat()),
                     Double.valueOf(mDetails.getRestaurantDetails().getLocation_long()));
-            for (LatLng point : list) {
-                target.setLatitude(point.latitude);
-                target.setLongitude(point.longitude);
-                if (currentLoc == destLoc) {
-                    dialogCheckIn();
+            if (null != list && ZERO != list.size()) {
+                for (LatLng point : list) {
+                    target.setLatitude(point.latitude);
+                    target.setLongitude(point.longitude);
+                    if (currentLoc == destLoc) {
+                        dialogCheckIn();
+                    }
                 }
             }
         }
@@ -372,7 +374,7 @@ public class DirectionsActivity extends BaseActivity
                 mGoogleDir.getStatus().equalsIgnoreCase(GOOGLE_DIR_NOT_FOUND)) {
             SnapXToast.showToast(this, getString(R.string.google_dir_no_routes));
             clearGeofence();
-        } else if (null!=mGoogleDir) {
+        } else if (null != mGoogleDir) {
             String encodedString = mGoogleDir.getRoutes().get(ZERO).getOverview_polyline().getPoints();
             list = decodePoly(encodedString);
             PolylineOptions polyOptions = new PolylineOptions();
@@ -641,7 +643,7 @@ public class DirectionsActivity extends BaseActivity
     }
 
     private void clearGeofence() {
-        if(googleApiClient.isConnected()) {
+        if (googleApiClient.isConnected()) {
             LocationServices.GeofencingApi.removeGeofences(
                     googleApiClient,
                     createGeofencePendingIntent()

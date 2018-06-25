@@ -52,8 +52,7 @@ public class MapsRestAdapter extends RecyclerView.Adapter<MapsRestAdapter.ViewHo
             Glide.with(mContext)
                     .load(stackData.getDishesInfo().get(position).getRestaurantDishes().get(ZERO).getDish_image_url())
                     .placeholder(R.drawable.ic_pref_placeholder)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                     .thumbnail(THUMBNAIL)
                     .into(holder.imgRestaurant);

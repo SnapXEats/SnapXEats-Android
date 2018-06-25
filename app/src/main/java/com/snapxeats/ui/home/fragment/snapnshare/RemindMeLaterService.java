@@ -6,6 +6,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
+import android.os.SystemClock;
+
 import com.snapxeats.R;
 import java.util.concurrent.TimeUnit;
 import static com.snapxeats.common.constants.UIConstants.NOTIFICATION_ID;
@@ -41,8 +43,7 @@ public class RemindMeLaterService extends IntentService {
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (null != alarmManager) {
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
-                    TimeUnit.MINUTES.toMillis(PHOTO_NOTIFICATION_TIME), pendingIntent);
+            alarmManager.set(AlarmManager.RTC_WAKEUP,  System.currentTimeMillis()+ PHOTO_NOTIFICATION_TIME,  pendingIntent);
         }
     }
 }

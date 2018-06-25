@@ -69,8 +69,7 @@ public class RestImagesAdapter extends PagerAdapter {
         Glide.with(mContext)
                 .load(restaurantPicsList.get(position).getDish_image_url())
                 .placeholder(R.drawable.ic_rest_info_placeholder)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).thumbnail(THUMBNAIL)
                 .into(imageView);
 
