@@ -32,6 +32,11 @@ public class UIConstants {
     public static final int DISTANCE_FOUR = 4;
     public static final int DISTANCE_FIVE = 5;
 
+    /*Maps Screen*/
+
+    public static final double LAT = 40.7014;
+    public static final double LNG = -74.0151;
+
     public static final float MAP_SCOLL_BY = 320;
     public static final float MAP_ZOOM = 13.2f;
     public static final float GOOGLE_MAP_ZOOM = 12.8f;

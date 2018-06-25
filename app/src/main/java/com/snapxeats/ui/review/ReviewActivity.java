@@ -1,8 +1,10 @@
 package com.snapxeats.ui.review;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
@@ -66,6 +68,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -195,10 +198,11 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private void getReviewData() {
         Intent intent = getIntent();
         if (null != intent) {
-            image_path = intent.getExtras().getString(getString(R.string.file_path));
+            image_path = Objects.requireNonNull(intent.getExtras()).getString(getString(R.string.file_path));
             fileImageUri = Uri.parse(image_path);
 
             mRootRestaurantInfo = intent.getExtras().getParcelable(getString(R.string.restaurant_info_object));
+            assert mRootRestaurantInfo != null;
             if (null != mRootRestaurantInfo.getRestaurantDetails()) {
                 restId = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_info_id();
             }
@@ -218,7 +222,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     private void setUpToolbar() {
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         mToolbar.setNavigationOnClickListener(v -> dialogExitReview());
     }
 
@@ -227,6 +231,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
      **/
     private void showLoginDialog() {
         LayoutInflater inflater = getLayoutInflater();
+        @SuppressLint("InflateParams")
         View alertLayout = inflater.inflate(R.layout.layout_dialog_login, null);
         initAlertDialog(alertLayout);
         TextView txtShareLater = alertLayout.findViewById(R.id.txt_login_share_later);
@@ -435,6 +440,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     @OnClick(R.id.img_play_review)
     public void imgPlayAudio() {
         LayoutInflater inflater = getLayoutInflater();
+        @SuppressLint("InflateParams")
         View alertLayout = inflater.inflate(R.layout.layout_play_audio, null);
         Button mBtnDoneAudio = alertLayout.findViewById(R.id.btn_play_done);
         mImgPlayRecAudio = alertLayout.findViewById(R.id.img_play_audio);
@@ -443,8 +449,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         mTimer = alertLayout.findViewById(R.id.timer_play);
 
         initAlertDialog(alertLayout);
-
-        mPlayer = new MediaPlayer();
         mTimer.setText(audioTime);
 
         /*Pause audio review*/
@@ -489,11 +493,9 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             AlertDialog.Builder builderDelReview = new AlertDialog.Builder(this);
             builderDelReview.setMessage(getString(R.string.msg_delete_review))
                     .setPositiveButton(getString(R.string.yes), (dialogDelReview, which) -> {
-                        mPlayer = new MediaPlayer();
                         isPaused = false;
-                        mPlayer.stop();
-                        mPlayer.reset();
-                        mPlayer.release();
+                        resetMediaPlayer();
+
                         boolean deleted = savedAudioPath.delete();
                         if (deleted) {
                             SnapXToast.showToast(this, getString(R.string.review_del));
@@ -503,9 +505,23 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                         mImgPlayAudio.setVisibility(View.GONE);
                         mAudioTime.setVisibility(View.GONE);
                     })
-                    .setNegativeButton(getString(R.string.not_now), (dialogDelReview, which) -> alertDialog.dismiss())
+                    .setNegativeButton(getString(R.string.not_now), (dialog, which) -> {
+                        dialog.dismiss();
+                        resetMediaPlayer();
+                    })
                     .show();
         });
+    }
+
+    private void resetMediaPlayer() {
+        if (null != mPlayer) {
+            if(mPlayer.isPlaying()) {
+                mPlayer.pause();
+                mPlayer.stop();
+            }
+            mPlayer.release();
+            mPlayer = null;
+        }
     }
 
     private void initMediaPlayer() {
@@ -514,7 +530,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mPlayer.setDataSource(savedAudioPath.toString());
             mPlayer.prepare();
-            mPlayer.start();
+            mPlayer.setOnPreparedListener(playerM -> mPlayer.start());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -548,6 +564,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     public void imgAddReview() {
         if (checkPermission()) {
             LayoutInflater inflater = getLayoutInflater();
+            @SuppressLint("InflateParams")
             View alertLayout = inflater.inflate(R.layout.layout_record_review, null);
             initAlertDialog(alertLayout);
 
@@ -608,7 +625,6 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     }
 
     private void setRecordedData() {
-        stopRecording();
         alertDialog.dismiss();
         mImgAddAudio.setVisibility(View.GONE);
         mImgPlayAudio.setVisibility(View.VISIBLE);
@@ -637,6 +653,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                 return null;
             }
         }
+        @SuppressLint("SimpleDateFormat")
         String timeStamp = new SimpleDateFormat(getString(R.string.date_time_pattern)).format(new Date());
         return new File(saveFilePath.getPath() + File.separator +
                 getString(R.string.aud) + timeStamp + getString(R.string.audio_extension));
@@ -753,10 +770,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (null != mPlayer && mPlayer.isPlaying()) {
-            mPlayer.stop();
-            mPlayer.reset();
-        }
+        finish();
     }
 
     /**
@@ -796,10 +810,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     @Override
     public void onPause() {
         super.onPause();
-        if (null != mPlayer && mPlayer.isPlaying()) {
-            mPlayer.pause();
-            mPlayer.stop();
-        }
+        resetMediaPlayer();
     }
 
     @Override

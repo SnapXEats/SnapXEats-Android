@@ -4,18 +4,22 @@ import android.content.Context;
 
 import com.snapxeats.common.model.preference.FoodPref;
 import com.snapxeats.common.model.preference.RootFoodPref;
-import com.snapxeats.common.model.preference.UserFoodPreferences;
 import com.snapxeats.common.model.preference.UserFoodPreferencesDao;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
+
 import java.util.List;
+import java.util.Objects;
+
 import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 
 /**
@@ -52,7 +56,7 @@ public class FoodPrefInteractor {
 
     void getFoodPrefList() {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
-            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            ApiHelper apiHelper = Objects.requireNonNull(ApiClient.getClient(mContext, BASE_URL)).create(ApiHelper.class);
             Call<RootFoodPref> foodPrefCall = apiHelper.getFoodPreferences();
             foodPrefCall.enqueue(new Callback<RootFoodPref>() {
                 @Override

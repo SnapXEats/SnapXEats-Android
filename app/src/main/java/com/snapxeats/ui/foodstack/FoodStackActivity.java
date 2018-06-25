@@ -357,15 +357,13 @@ public class FoodStackActivity extends BaseActivity
         }
         FoodDislikes foodDislikeItem;
         foodDislikeItem = new FoodDislikes();
-
         foodDislikeItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
-        foodGestureDislike.add(foodDislikeItem);
+            foodGestureDislike.add(foodDislikeItem);
         if (isLoggedIn()) {
             mFoodStackPresenter.saveDislikeToDb(foodGestureDislike);
         }
         gestureLeft();
     }
-
     /*swipe TOP*/
     public void swipeTop(int index) {
         disableUndo();
@@ -480,6 +478,7 @@ public class FoodStackActivity extends BaseActivity
     public void imgCuisineReject() {
         swipeLeft(cardStackView.getTopIndex());
         cardStackView.swipe(SwipeDirection.Left, mAnimatorSet);
+        swipeLeft(cardStackView.getTopIndex());
     }
 
     @OnClick(R.id.img_cuisine_wishlist)
