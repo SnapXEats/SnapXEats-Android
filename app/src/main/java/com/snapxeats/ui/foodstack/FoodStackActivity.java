@@ -478,7 +478,6 @@ public class FoodStackActivity extends BaseActivity
     public void imgCuisineReject() {
         swipeLeft(cardStackView.getTopIndex());
         cardStackView.swipe(SwipeDirection.Left, mAnimatorSet);
-        swipeLeft(cardStackView.getTopIndex());
     }
 
     @OnClick(R.id.img_cuisine_wishlist)
