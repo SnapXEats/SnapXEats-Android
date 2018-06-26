@@ -31,11 +31,14 @@ import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.InfiniteScrollAdapter;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.snapxeats.common.constants.UIConstants.GOOGLE_MAP_ZOOM;
 import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.STRING_SPACE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
@@ -91,12 +94,12 @@ public class MapsActivity extends BaseActivity
         utility.setContext(this);
         mMarkerOptions = new MarkerOptions();
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setMapView();
         if (utility.isLoggedIn()) {
             mPresenter.getUserPreferences();
         }
-        mRootCuisine = getIntent().getExtras().getParcelable(getString(R.string.intent_root_cuisine));
+        mRootCuisine = Objects.requireNonNull(getIntent().getExtras()).getParcelable(getString(R.string.intent_root_cuisine));
         setScrollview();
     }
 
@@ -144,7 +147,11 @@ public class MapsActivity extends BaseActivity
                 .fillColor(UIConstants.MAP_FILL_COLOR));
 
         CameraUpdateAnimator animator = new CameraUpdateAnimator(mMap, this);
-        animator.add(CameraUpdateFactory.newLatLngZoom(currentLatLon, UIConstants.MAP_ZOOM), false, ZERO);
+        if (ONE < Integer.parseInt(rootUserPreference.getRestaurant_distance())) {
+            animator.add(CameraUpdateFactory.newLatLngZoom(currentLatLon, GOOGLE_MAP_ZOOM), false, ZERO);
+        } else {
+            animator.add(CameraUpdateFactory.newLatLngZoom(currentLatLon, UIConstants.MAP_ZOOM), false, ZERO);
+        }
         animator.add(CameraUpdateFactory.scrollBy(ZERO, UIConstants.MAP_SCOLL_BY), false, ZERO);
         animator.execute();
         mMap.setOnMarkerClickListener(marker -> true);

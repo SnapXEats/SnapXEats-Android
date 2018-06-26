@@ -11,6 +11,7 @@ public class CardStackState {
     public boolean isPaginationReserved = false;
     public boolean isInitialized = false;
     public SparseArray<Point> swipedItems = new SparseArray<>();
+    public boolean isReversing = false;
 
     public void reset() {
         topIndex = 0;

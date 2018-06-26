@@ -30,6 +30,7 @@ import com.snapxeats.network.ApiHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -37,6 +38,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.snapxeats.common.constants.UIConstants.LAT;
+import static com.snapxeats.common.constants.UIConstants.LNG;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 import static com.snapxeats.common.utilities.NoNetworkResults.CHECKIN;
@@ -96,7 +99,7 @@ public class HomeInteractor {
      */
     void updatePreferences(UserPreference userPreference) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
-            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            ApiHelper apiHelper = Objects.requireNonNull(ApiClient.getClient(mContext, BASE_URL)).create(ApiHelper.class);
             Call<UserPreference> userPreferenceCall = apiHelper.updateUserPreferences(utility.getAuthToken(mContext), userPreference);
             userPreferenceCall.enqueue(new Callback<UserPreference>() {
                 @Override
@@ -126,7 +129,7 @@ public class HomeInteractor {
 
     void applyPreferences(UserPreference userPreference) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
-            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            ApiHelper apiHelper = Objects.requireNonNull(ApiClient.getClient(mContext, BASE_URL)).create(ApiHelper.class);
             Call<UserPreference> userPreferenceCall = apiHelper.setUserPreferences(utility.getAuthToken(mContext), userPreference);
             userPreferenceCall.enqueue(new Callback<UserPreference>() {
                 @Override
@@ -152,7 +155,7 @@ public class HomeInteractor {
 
     void sendUserGestures(RootFoodGestures rootFoodGestures) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
-            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            ApiHelper apiHelper = Objects.requireNonNull(ApiClient.getClient(mContext, BASE_URL)).create(ApiHelper.class);
             Call<RootFoodGestures> call = apiHelper.foodstackGestures(utility.getAuthToken(mContext), rootFoodGestures);
             call.enqueue(new Callback<RootFoodGestures>() {
                 @Override
@@ -184,7 +187,7 @@ public class HomeInteractor {
     private void sendDeletedWishlist(RootDeleteWishlist deletedWishlist) {
 
         if (NetworkUtility.isNetworkAvailable(mContext)) {
-            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            ApiHelper apiHelper = Objects.requireNonNull(ApiClient.getClient(mContext, BASE_URL)).create(ApiHelper.class);
             Call<RootDeleteWishlist> call = apiHelper.deleteUserWishlist(utility.getAuthToken(mContext),
                     deletedWishlist);
             call.enqueue(new Callback<RootDeleteWishlist>() {
@@ -211,7 +214,7 @@ public class HomeInteractor {
 
     private void logout() {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
-            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            ApiHelper apiHelper = Objects.requireNonNull(ApiClient.getClient(mContext, BASE_URL)).create(ApiHelper.class);
             Call<Logout> logoutCall = apiHelper.logout(utility.getAuthToken(mContext));
 
             logoutCall.enqueue(new Callback<Logout>() {
@@ -262,8 +265,8 @@ public class HomeInteractor {
         lat = 40.7014;
         lng = -74.0151;
         if (NetworkUtility.isNetworkAvailable(mContext)) {
-            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
-            Call<CheckInRestaurants> checkInRestaurantsCall = apiHelper.getRestaurantsForCheckIn(40.7014, -74.0151);
+            ApiHelper apiHelper = Objects.requireNonNull(ApiClient.getClient(mContext, BASE_URL)).create(ApiHelper.class);
+            Call<CheckInRestaurants> checkInRestaurantsCall = apiHelper.getRestaurantsForCheckIn(LAT, LNG);
             checkInRestaurantsCall.enqueue(new Callback<CheckInRestaurants>() {
                 @Override
                 public void onResponse(Call<CheckInRestaurants> call, Response<CheckInRestaurants> response) {
@@ -285,7 +288,7 @@ public class HomeInteractor {
 
     void checkIn(CheckInRequest checkInRequest) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
-            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            ApiHelper apiHelper = Objects.requireNonNull(ApiClient.getClient(mContext, BASE_URL)).create(ApiHelper.class);
             Call<CheckInResponse> checkInPostCall = apiHelper.checkIn(utility.getAuthToken(mContext), checkInRequest);
 
             checkInPostCall.enqueue(new Callback<CheckInResponse>() {
@@ -330,7 +333,7 @@ public class HomeInteractor {
 
     public void getSmartPhotoInfo(String dishId) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
-            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            ApiHelper apiHelper = Objects.requireNonNull(ApiClient.getClient(mContext, BASE_URL)).create(ApiHelper.class);
             Call<SmartPhotoResponse> smartPhotoResponseCall = apiHelper.getSmartPhotoDetails(dishId);
 
             smartPhotoResponseCall.enqueue(new Callback<SmartPhotoResponse>() {
@@ -360,7 +363,7 @@ public class HomeInteractor {
     public void getInstaInfo(String token) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             this.instaToken = token;
-            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            ApiHelper apiHelper = Objects.requireNonNull(ApiClient.getClient(mContext, BASE_URL)).create(ApiHelper.class);
             Call<RootInstagram> snapXUserCall = apiHelper.getInstagramInfo(token);
             snapXUserCall.enqueue(new Callback<RootInstagram>() {
                 @Override
@@ -390,7 +393,7 @@ public class HomeInteractor {
      */
     public void getUserData(SnapXUserRequest snapXUserRequest) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
-            ApiHelper apiHelper = ApiClient.getClient(mContext, BASE_URL).create(ApiHelper.class);
+            ApiHelper apiHelper = Objects.requireNonNull(ApiClient.getClient(mContext, BASE_URL)).create(ApiHelper.class);
             Call<SnapXUserResponse> snapXUserCall = apiHelper.getServerToken(snapXUserRequest);
 
             snapXUserCall.enqueue(new Callback<SnapXUserResponse>() {
