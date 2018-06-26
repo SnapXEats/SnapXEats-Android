@@ -2,7 +2,6 @@ package com.snapxeats.ui.home.fragment.checkin;
 
 import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -42,7 +41,7 @@ public class CheckInFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity=getActivity();
+        activity = getActivity();
     }
 
     @Override

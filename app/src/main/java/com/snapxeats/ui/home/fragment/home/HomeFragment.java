@@ -147,6 +147,7 @@ public class HomeFragment extends BaseFragment implements
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity = getActivity();
         receiver = new MyReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_LOCATION_GET);
@@ -379,7 +380,6 @@ public class HomeFragment extends BaseFragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (Activity) context;
     }
 
     @Override
@@ -418,8 +418,8 @@ public class HomeFragment extends BaseFragment implements
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleLocationRequest(@NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (grantResults[ZERO] == PackageManager.PERMISSION_GRANTED && utility.checkPermissions()) {
-                mSelectedLocation = detectCurrentLocation();
+        if (grantResults[ZERO] == PackageManager.PERMISSION_GRANTED) {
+            mSelectedLocation = detectCurrentLocation();
         } else if (!shouldShowRequestPermissionRationale(permissions[ZERO])) {
             changePermissionDilog = snapXDialog.showChangePermissionDialogForFragment(this, CHANGE_LOCATION_PERMISSIONS);
         } else {
