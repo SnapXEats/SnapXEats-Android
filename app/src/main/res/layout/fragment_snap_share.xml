@@ -46,8 +46,8 @@
 
                 <android.support.v4.view.ViewPager
                     android:id="@+id/view_pager"
-                    android:layout_width="400dp"
-                    android:layout_height="180dp" />
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimens_180dp" />
 
                 <LinearLayout
                     android:id="@+id/layout_dots"
@@ -62,7 +62,7 @@
                     android:id="@+id/txt_rest_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/common_dimens_20"
+                    android:paddingStart="@dimen/common_dimens_20"
                     android:text="@string/restaurant_name"
                     android:textColor="@color/text_color_primary"
                     android:textSize="@dimen/text_size_18"
@@ -71,9 +71,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_tick"
+                    android:drawableStart="@drawable/ic_tick"
                     android:drawablePadding="@dimen/common_dimens_5"
-                    android:paddingLeft="@dimen/common_dimens_20"
+                    android:paddingStart="@dimen/common_dimens_20"
                     android:text="@string/checked_in" />
 
                 <TextView
