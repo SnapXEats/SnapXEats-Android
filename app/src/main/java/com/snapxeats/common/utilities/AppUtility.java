@@ -35,6 +35,7 @@ import com.pkmmte.view.CircularImageView;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.SnapXDataDao;
 import com.snapxeats.common.model.UserReward;
@@ -48,6 +49,7 @@ import com.snapxeats.ui.home.fragment.checkin.DaoSession;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapNotificationReceiver;
 import com.snapxeats.ui.home.fragment.snapnshare.ViewPagerAdapter;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -67,6 +69,7 @@ import static com.snapxeats.common.constants.UIConstants.MILLIES_TWO;
 import static com.snapxeats.common.constants.UIConstants.MILLIS;
 import static com.snapxeats.common.constants.UIConstants.MILLI_TO_SEC_CONVERSION;
 import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.SECONDS;
 import static com.snapxeats.common.constants.UIConstants.TEN;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
@@ -415,37 +418,24 @@ public class AppUtility {
     }
 
     public boolean getCheckedInTimeDiff() {
-        Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(mContext.getString(R.string.format_checkedIn));
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        String currentTime = simpleDateFormat.format(calendar.getTime());
-        Date parsedCheckedIn = null;
-        Date parsedCurrentTime = null;
+        Date currentTime = Calendar.getInstance().getTime();
+        int hours = ZERO;
         try {
-            if (!checkInData.getCheckInTime().isEmpty() && null != checkInData.getCheckInTime()) {
-                parsedCheckedIn = simpleDateFormat.parse(checkInData.getCheckInTime());
-            }
-            parsedCurrentTime = simpleDateFormat.parse(currentTime);
+            Date checkedInTime = new SimpleDateFormat(mContext.getString(R.string.checkin_time_format)).parse(checkInData.getCheckInTime());
+            long mills = currentTime.getTime() - checkedInTime.getTime();
+            hours = (int) (mills / (MILLIS));
+            int mins = (int) ((mills / (MILLIES_TWO)) % SECONDS);
 
+            String diff = hours + ":" + mins;
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
-        long timeDiff = parsedCheckedIn.getTime() - parsedCurrentTime.getTime();
-        long mills = Math.abs(timeDiff);
-
-        int checkoutTime = (int) (mills / (CHECKOUT_DURATION * MILLIS));
-
-        if (checkoutTime > CHECKOUT_DURATION) {
-            snapNShareMenu.setEnabled(false);
-            if (checkInMenu.getTitle().toString().equals(mContext.getString(R.string.check_in))) {
-                checkInMenu.setTitle(mContext.getString(R.string.checkout));
-            } else {
-                checkInMenu.setTitle(mContext.getString(R.string.check_in));
-            }
+        if (hours >= CHECKOUT_DURATION) {
+            checkInMenu.setTitle(mContext.getString(R.string.check_in));
+            return false;
+        } else {
+            return true;
         }
-        return true;
     }
 
     //Cancel notification for broadcast receiver
@@ -488,12 +478,34 @@ public class AppUtility {
         return latLng;
     }
 
-    public void updateRewardUI(NavigationView navigationView,UserReward userReward) {
+    public void updateRewardUI(NavigationView navigationView, UserReward userReward) {
         View mNavHeader = navigationView.getHeaderView(ZERO);
         TextView mTxtRewardPoints = mNavHeader.findViewById(R.id.txt_nav_rewards);
         if (null != userReward && null != userReward.getUserRewardPoint()) {
             mTxtRewardPoints.setText(String.valueOf(userReward.getUserRewardPoint()));
             dbHelper.updateRewardPoint(userReward.getUserRewardPoint());
+        }
+    }
+
+    /**
+     * Delete local image and audio file
+     */
+    public void deleteLocalData(String image_path, String audio_path) {
+
+        File imageFile = new File(Uri.parse(image_path).getPath());
+        File audioFile = new File(audio_path);
+        if (imageFile.exists()) {
+            imageFile.delete();
+            System.out.println(imageFile + " File deleted");
+        } else {
+            System.out.println("File not Deleted :" + imageFile);
+        }
+
+        if (audioFile.exists()) {
+            audioFile.delete();
+            System.out.println(audioFile + " File deleted");
+        } else {
+            System.out.println("File not Deleted :" + audioFile);
         }
     }
 }

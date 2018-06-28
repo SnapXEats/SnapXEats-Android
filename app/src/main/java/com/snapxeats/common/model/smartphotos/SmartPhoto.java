@@ -28,15 +28,11 @@ public class SmartPhoto {
     @ToMany(referencedJoinProperty = "photoIdFk")
     private List<RestaurantAminities> restaurant_aminities;
 
-    /**
-     * Used to resolve relations
-     */
+    /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
 
-    /**
-     * Used for active entity operations.
-     */
+    /** Used for active entity operations. */
     @Generated(hash = 669921415)
     private transient SmartPhotoDao myDao;
 
@@ -53,7 +49,6 @@ public class SmartPhoto {
         this.picTakenDate = picTakenDate;
         this.textReview = textReview;
     }
-
     @Generated(hash = 1795797096)
     public SmartPhoto() {
     }
@@ -65,67 +60,51 @@ public class SmartPhoto {
     public String getSmartPhoto_Draft_Stored_id() {
         return this.smartPhoto_Draft_Stored_id;
     }
-
     public void setSmartPhoto_Draft_Stored_id(String smartPhoto_Draft_Stored_id) {
         this.smartPhoto_Draft_Stored_id = smartPhoto_Draft_Stored_id;
     }
-
     public String getRestaurantDishId() {
         return this.restaurantDishId;
     }
-
     public void setRestaurantDishId(String restaurantDishId) {
         this.restaurantDishId = restaurantDishId;
     }
-
     public String getRestaurantName() {
         return this.restaurantName;
     }
-
     public void setRestaurantName(String restaurantName) {
         this.restaurantName = restaurantName;
     }
-
     public String getRestaurantAddress() {
         return this.restaurantAddress;
     }
-
     public void setRestaurantAddress(String restaurantAddress) {
         this.restaurantAddress = restaurantAddress;
     }
-
     public String getDishImageURL() {
         return this.dishImageURL;
     }
-
     public void setDishImageURL(String dishImageURL) {
         this.dishImageURL = dishImageURL;
     }
-
     public String getAudioURL() {
         return this.audioURL;
     }
-
     public void setAudioURL(String audioURL) {
         this.audioURL = audioURL;
     }
-
     public String getPicTakenDate() {
         return this.picTakenDate;
     }
-
     public void setPicTakenDate(String picTakenDate) {
         this.picTakenDate = picTakenDate;
     }
-
     public String getTextReview() {
         return this.textReview;
     }
-
     public void setTextReview(String textReview) {
         this.textReview = textReview;
     }
-
     /**
      * To-many relationship, resolved on first access (and after reset).
      * Changes to to-many relations are not persisted, make changes to the target entity.
@@ -149,15 +128,11 @@ public class SmartPhoto {
         }
         return restaurant_aminities;
     }
-
-    /**
-     * Resets a to-many relationship, making the next get call to query for a fresh result.
-     */
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     @Generated(hash = 1372917299)
     public synchronized void resetRestaurant_aminities() {
         restaurant_aminities = null;
     }
-
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#delete(Object)}.
      * Entity must attached to an entity context.
@@ -169,7 +144,6 @@ public class SmartPhoto {
         }
         myDao.delete(this);
     }
-
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
      * Entity must attached to an entity context.
@@ -181,7 +155,6 @@ public class SmartPhoto {
         }
         myDao.refresh(this);
     }
-
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#update(Object)}.
      * Entity must attached to an entity context.
@@ -193,7 +166,6 @@ public class SmartPhoto {
         }
         myDao.update(this);
     }
-
     /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 262597808)
     public void __setDaoSession(DaoSession daoSession) {

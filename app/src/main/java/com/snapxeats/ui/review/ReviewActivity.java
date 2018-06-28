@@ -145,6 +145,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private Uri fileImageUri;
     private String restId;
     private String image_path;
+    private String audio_path;
     private int resumePosition;
     private boolean isPaused = false;
     private boolean isCanceled = false;
@@ -163,6 +164,8 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private InstagramApp mApp;
     private String mToken;
     private String photoId;
+
+    private String storedPhotoId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,6 +201,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
     private void getReviewData() {
         Intent intent = getIntent();
         if (null != intent) {
+            storedPhotoId = Objects.requireNonNull(intent.getExtras()).getString(getString(R.string.smartphoto_draft_stored_id));
             image_path = Objects.requireNonNull(intent.getExtras()).getString(getString(R.string.file_path));
             fileImageUri = Uri.parse(image_path);
 
@@ -379,15 +383,15 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
                 !mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address().isEmpty())
             restAddress = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_address();
 
-        String audioFile = null;
-        if (null != savedAudioPath) audioFile = Uri.fromFile(savedAudioPath).getPath();
+        if (null != savedAudioPath) audio_path = Uri.fromFile(savedAudioPath).getPath();
         textReview = mEditTxtReview.getText().toString();
 
-        photoId = reviewDbHelper.saveSnapDataInDb(restId,
+        photoId = reviewDbHelper.saveSnapDataInDb(storedPhotoId,
+                restId,
                 restName
                 , restAddress
                 , Uri.parse(image_path).getPath()
-                , audioFile,
+                , audio_path,
                 textReview,
                 rating,
                 restaurantAminities);
@@ -515,7 +519,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
 
     private void resetMediaPlayer() {
         if (null != mPlayer) {
-            if(mPlayer.isPlaying()) {
+            if (mPlayer.isPlaying()) {
                 mPlayer.pause();
                 mPlayer.stop();
             }
@@ -697,6 +701,7 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
             Intent intent = new Intent(ReviewActivity.this, ShareReviewActivity.class);
             intent.putExtra(getString(R.string.intent_review), mSnapResponse);
             intent.putExtra(getString(R.string.image_path), image_path);
+            intent.putExtra(getString(R.string.audio_path), audio_path);
             intent.putExtra(getString(R.string.review_rest_id), restId);
             intent.putExtra(getString(R.string.photo_id), photoId);
             startActivity(intent);
@@ -761,11 +766,35 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
         builder.setMessage(getString(R.string.msg_review_back_pressed));
-        builder.setPositiveButton(getString(R.string.ok), (dialog, which) -> finish());
+        builder.setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+            utility.deleteLocalData(Uri.parse(image_path).getPath(), audio_path);
+            reviewDbHelper.deleteDraftData(storedPhotoId);
+            finish();
+        });
         builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel());
         AlertDialog alert = builder.create();
         alert.show();
     }
+
+    /*private void deleteLocalData() {
+
+        File imageFile = new File(Uri.parse(image_path).getPath());
+        File audioFile = new File(audio_path);
+        if (imageFile.exists()){
+            imageFile.delete();
+            SnapXToast.debug(imageFile+" File deleted");
+        }else {
+            System.out.println("File not Deleted :" + imageFile);
+        }
+
+        if (audioFile.exists()){
+            audioFile.delete();
+            SnapXToast.debug(audioFile+" File deleted");
+        }else {
+            System.out.println("File not Deleted :" + audioFile);
+        }
+        reviewDbHelper.deleteDraftData(storedPhotoId);
+    }*/
 
     @Override
     protected void onDestroy() {

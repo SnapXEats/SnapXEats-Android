@@ -534,6 +534,7 @@ public class DraftFragment extends BaseFragment implements View.OnClickListener,
             intent.putExtra(getString(R.string.photo_id), mSnapXDraftPhoto.getSmartPhoto_Draft_Stored_id());
             intent.putExtra(getString(R.string.intent_review), mSnapResponse);
             intent.putExtra(getString(R.string.image_path), mSnapXDraftPhoto.getImageURL());
+            intent.putExtra(getString(R.string.audio_path), mSnapXDraftPhoto.getAudioURL());
             intent.putExtra(getString(R.string.review_rest_id), mSnapXDraftPhoto.getRestId());
             startActivity(intent);
         }

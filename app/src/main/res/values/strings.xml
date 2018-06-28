@@ -246,6 +246,7 @@
     <string name="download">Download_</string>
     <string name="checkout">Check Out</string>
     <string name="format_checkedIn">hh:mm:ss aa</string>
+    <string name="checkin_time_format">EEE MMM dd HH:mm:ss zzz yyyy</string>
     <string name="checkin_notification">checkin_notification</string>
     <string name="checkin_reminder_title">SnapXEats CheckIn Reminder</string>
     <string name="intent_dir_check_in">intent_dir_check_in</string>
@@ -258,5 +259,7 @@
     <string name="toolbar_restaurants">Restaurants</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="google_dir_no_routes">No routes found</string>
+    <string name="smartphoto_draft_stored_id">smartphoto_draft_stored_id</string>
+    <string name="audio_path">audio_path</string>
 
 </resources>

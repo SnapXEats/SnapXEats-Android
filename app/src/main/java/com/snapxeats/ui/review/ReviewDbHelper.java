@@ -2,7 +2,6 @@ package com.snapxeats.ui.review;
 
 import android.content.Context;
 
-import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
 import com.snapxeats.common.model.smartphotos.RestaurantAminities;
 import com.snapxeats.common.model.smartphotos.RestaurantAminitiesDao;
@@ -13,9 +12,7 @@ import com.snapxeats.ui.home.fragment.smartphotos.draft.DraftAdapter;
 
 import org.greenrobot.greendao.query.DeleteQuery;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -46,7 +43,8 @@ public class ReviewDbHelper {
         dbHelper.setContext(mContext);
     }
 
-    String saveSnapDataInDb(String restId,
+    String saveSnapDataInDb(String storedPhotoId,
+                            String restId,
                           String restaurant_name,
                           String restAddress,
                           String image_path,
@@ -55,12 +53,12 @@ public class ReviewDbHelper {
                           int rating,
                           List<String> restaurantAminities) {
 
-        String smartPhoto_Draft_Stored_id =
-                new SimpleDateFormat(mContext.getString(R.string.date_time_pattern)).format(new Date());
+//        String smartPhoto_Draft_Stored_id =
+//                new SimpleDateFormat(mContext.getString(R.string.date_time_pattern)).format(new Date());
 
         SnapXDraftPhoto snapXDraftPhoto = new SnapXDraftPhoto();
         snapXDraftPhoto.setRestId(restId);
-        snapXDraftPhoto.setSmartPhoto_Draft_Stored_id(smartPhoto_Draft_Stored_id);
+        snapXDraftPhoto.setSmartPhoto_Draft_Stored_id(storedPhotoId);
         snapXDraftPhoto.setRestaurantName(restaurant_name);
         snapXDraftPhoto.setRestaurantAddress(restAddress);
         snapXDraftPhoto.setImageURL(image_path);
@@ -83,9 +81,8 @@ public class ReviewDbHelper {
             }
             snapXDraftPhoto.setRestaurant_aminities(restaurant_aminities_list);
         }
-        dbHelper.getDraftPhotoDao().insert(snapXDraftPhoto);
-        new DraftAdapter().notifyDataSetChanged();
-        return smartPhoto_Draft_Stored_id;
+        dbHelper.getDraftPhotoDao().insertOrReplace(snapXDraftPhoto);
+        return storedPhotoId;
     }
 
     public List<SnapXDraftPhoto> getDraftData() {

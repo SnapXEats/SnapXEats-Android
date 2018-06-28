@@ -21,11 +21,7 @@ import com.snapxeats.ui.review.ReviewActivity;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
-import butterknife.ButterKnife;
 
 import static com.snapxeats.common.constants.UIConstants.CAMERA_REQUEST;
 import static com.snapxeats.common.constants.UIConstants.CAMERA_REQUEST_PERMISSION;
@@ -113,9 +109,11 @@ public class CameraActivity extends AppCompatActivity {
             Intent reviewIntent = new Intent(this, ReviewActivity.class);
             reviewIntent.putExtra(getString(R.string.file_path), file.toString());
 
+            String smartPhoto_Draft_Stored_id = new SimpleDateFormat(getString(R.string.date_time_pattern)).format(new Date());
             //Put rest info object
             RootRestaurantInfo restaurantInfo = getIntent().getParcelableExtra(getString(R.string.restaurant_info_object));
             reviewIntent.putExtra(getString(R.string.restaurant_info_object), restaurantInfo);
+            reviewIntent.putExtra(getString(R.string.smartphoto_draft_stored_id), smartPhoto_Draft_Stored_id);
             startActivity(reviewIntent);
             finish();
         } else {
