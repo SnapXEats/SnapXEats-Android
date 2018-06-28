@@ -417,49 +417,6 @@ public class AppUtility {
         }
     }
 
-    /*  public boolean getCheckedInTimeDiff() {
-          Date date = new Date();
-          @SuppressLint("SimpleDateFormat")
-          SimpleDateFormat simpleDateFormat = new SimpleDateFormat(mContext.getString(R.string.format_checkedIn));
-          Calendar calendar = Calendar.getInstance();
-          calendar.setTime(date);
-          String currentTime = simpleDateFormat.format(calendar.getTime());
-          Date parsedCheckedIn = null;
-          Date parsedCurrentTime = null;
-          Date currentTime = Calendar.getInstance().getTime();
-          int hours = ZERO;
-          try {
-              Date checkedInTime = new SimpleDateFormat(mContext.getString(R.string.checkin_time_format)).parse(checkInData.getCheckInTime());
-              long mills = currentTime.getTime() - checkedInTime.getTime();
-              hours = (int) (mills / (MILLIS));
-              int mins = (int) ((mills / (MILLIES_TWO)) % SECONDS);
-
-              String diff = hours + ":" + mins;
-          } catch (ParseException e) {
-              e.printStackTrace();
-          }
-
-          long timeDiff = parsedCheckedIn.getTime() - parsedCurrentTime.getTime();
-          long mills = Math.abs(timeDiff);
-
-          int checkoutTime = (int) (mills / (CHECKOUT_DURATION * MILLIS));
-
-          if (checkoutTime > CHECKOUT_DURATION) {
-              snapNShareMenu.setEnabled(false);
-              if (checkInMenu.getTitle().toString().equals(mContext.getString(R.string.check_in))) {
-                  checkInMenu.setTitle(mContext.getString(R.string.checkout));
-              } else {
-                  checkInMenu.setTitle(mContext.getString(R.string.check_in));
-              }
-          }
-          return true;
-          if (hours >= CHECKOUT_DURATION) {
-              checkInMenu.setTitle(mContext.getString(R.string.check_in));
-              return false;
-          } else {
-              return true;
-          }
-      }*/
     public boolean getCheckedInTimeDiff() {
         Date currentTime = Calendar.getInstance().getTime();
         int hours = ZERO;
@@ -508,8 +465,7 @@ public class AppUtility {
     public com.snapxeats.common.model.location.Location getLocationfromPref() {
         Gson gson = new Gson();
         String json = preferences.getString(mContext.getString(R.string.selected_location), "");
-        com.snapxeats.common.model.location.Location mSelectedLocation = gson.fromJson(json, com.snapxeats.common.model.location.Location.class);
-        return mSelectedLocation;
+        return gson.fromJson(json, Location.class);
     }
 
     /* Set latitude and longitude as per login status */

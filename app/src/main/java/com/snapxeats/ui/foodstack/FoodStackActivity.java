@@ -397,7 +397,7 @@ public class FoodStackActivity extends BaseActivity
         }
         Intent intent = new Intent(FoodStackActivity.this, RestaurantDetailsActivity.class);
         intent.putExtra(getString(R.string.intent_restaurant_id), foodStackDataList.get(index).getId());
-        startActivityForResult(intent, RESULT_OK);
+        startActivity(intent);
         gestureRight();
     }
 
