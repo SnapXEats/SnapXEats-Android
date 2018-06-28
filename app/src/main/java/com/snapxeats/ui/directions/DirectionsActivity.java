@@ -10,6 +10,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -78,6 +79,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -95,6 +97,7 @@ import static com.snapxeats.common.constants.UIConstants.GOOGLE_DIR_NOT_FOUND;
 import static com.snapxeats.common.constants.UIConstants.GOOGLE_DIR_NO_RESULTS;
 import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.PREF_DEFAULT_STRING;
+import static com.snapxeats.common.constants.UIConstants.SCREEN_HEIGHT_DP;
 import static com.snapxeats.common.constants.UIConstants.STRING_SPACE;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
@@ -177,7 +180,13 @@ public class DirectionsActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_directions);
+        //Layout for different screen sizes
+        Configuration config = getResources().getConfiguration();
+        if (config.screenHeightDp >= SCREEN_HEIGHT_DP) {
+            setContentView(R.layout.layout_directions_small);
+        } else {
+            setContentView(R.layout.activity_directions);
+        }
         ButterKnife.bind(this);
         initView();
     }
@@ -194,6 +203,7 @@ public class DirectionsActivity extends BaseActivity
     /**
      * Initialize components
      **/
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void initView() {
         mImgRating.setOnClickListener(null);
@@ -203,7 +213,7 @@ public class DirectionsActivity extends BaseActivity
         utility.setContext(this);
         checkInDbHelper.setContext(this);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         utility.enableReceiver(new ComponentName(this, SnapNotificationReceiver.class));
         setMapView();
         setUpViews();
@@ -213,6 +223,7 @@ public class DirectionsActivity extends BaseActivity
 
     private void dialogCheckIn() {
         LayoutInflater inflater = getLayoutInflater();
+        @SuppressLint("InflateParams")
         View alertLayout = inflater.inflate(R.layout.layout_auto_checkin, null);
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setView(alertLayout);
@@ -277,7 +288,8 @@ public class DirectionsActivity extends BaseActivity
      * Set values for components
      **/
     private void setUpViews() {
-        mDetails = getIntent().getExtras().getParcelable(getString(R.string.intent_rest_details));
+        mDetails = Objects.requireNonNull(getIntent().getExtras()).getParcelable(getString(R.string.intent_rest_details));
+        assert mDetails != null;
         if (null != mDetails.getRestaurantDetails().getLocation_lat()
                 && null != mDetails.getRestaurantDetails().getLocation_long()) {
             lat = Double.parseDouble(mDetails.getRestaurantDetails().getLocation_lat());
@@ -287,8 +299,7 @@ public class DirectionsActivity extends BaseActivity
             mTxtRestName.setText(String.valueOf(mDetails.getRestaurantDetails().getRestaurant_name()));
             mTxtRestAddr.setText(mDetails.getRestaurantDetails().getRestaurant_address());
             mTxtRating.setText(mDetails.getRestaurantDetails().getRestaurant_rating());
-            distInMiles(Double.valueOf(lat),
-                    Double.valueOf(lng),
+            distInMiles(lat, lng,
                     Double.valueOf(mDetails.getRestaurantDetails().getLocation_lat()),
                     Double.valueOf(mDetails.getRestaurantDetails().getLocation_long()));
             setRestTimings();
@@ -361,7 +372,7 @@ public class DirectionsActivity extends BaseActivity
      * Set route on google map
      **/
     public void setGoogleRoute() {
-        RootGoogleDir mGoogleDir = getIntent().getExtras().getParcelable(getString(R.string.intent_google_dir));
+        RootGoogleDir mGoogleDir = Objects.requireNonNull(getIntent().getExtras()).getParcelable(getString(R.string.intent_google_dir));
         LatLng src = new LatLng(utility.setLatLng().latitude, utility.setLatLng().longitude);
 
         mMap.addMarker(new MarkerOptions().position(src)
@@ -370,11 +381,12 @@ public class DirectionsActivity extends BaseActivity
                 Double.parseDouble(mDetails.getRestaurantDetails().getLocation_long()));
         mMap.addMarker(new MarkerOptions().position(destination)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_dest)));
+        assert mGoogleDir != null;
         if (mGoogleDir.getStatus().equalsIgnoreCase(GOOGLE_DIR_NO_RESULTS) ||
                 mGoogleDir.getStatus().equalsIgnoreCase(GOOGLE_DIR_NOT_FOUND)) {
             SnapXToast.showToast(this, getString(R.string.google_dir_no_routes));
             clearGeofence();
-        } else if (null != mGoogleDir) {
+        } else {
             String encodedString = mGoogleDir.getRoutes().get(ZERO).getOverview_polyline().getPoints();
             list = decodePoly(encodedString);
             PolylineOptions polyOptions = new PolylineOptions();
@@ -429,12 +441,11 @@ public class DirectionsActivity extends BaseActivity
                 .icon(bitmap)
                 .position(directionPoint.get(ZERO))
                 .flat(true));
-        animateMarker(myMap, marker, directionPoint, false);
+        animateMarker(myMap, marker, directionPoint);
     }
 
     /* Set up google moving marker */
-    private static void animateMarker(GoogleMap myMap, final Marker marker, final List<LatLng> directionPoint,
-                                      final boolean hideMarker) {
+    private static void animateMarker(GoogleMap myMap, final Marker marker, final List<LatLng> directionPoint) {
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
         Projection proj = myMap.getProjection();
@@ -455,7 +466,7 @@ public class DirectionsActivity extends BaseActivity
                 if (t < 1.0) {
                     handler.postDelayed(this, 16);
                 } else {
-                    if (hideMarker) {
+                    if (false) {
                         marker.setVisible(false);
                     } else {
                         marker.setVisible(true);
@@ -481,17 +492,20 @@ public class DirectionsActivity extends BaseActivity
 
     /* Zoom over google direction route to fit screen */
     public void zoomRoute(GoogleMap googleMap, List<LatLng> lstLatLngRoute) {
-        if (null != googleMap || null != lstLatLngRoute || !lstLatLngRoute.isEmpty()) {
-            LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-            for (LatLng latLngPoint : lstLatLngRoute)
-                boundsBuilder.include(latLngPoint);
-            int routePadding = 100;
-            LatLngBounds latLngBounds = boundsBuilder.build();
-            mMap.setOnMapLoadedCallback(() -> googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, routePadding)));
-        }
+        assert lstLatLngRoute != null;
+        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+        for (LatLng latLngPoint : lstLatLngRoute)
+            boundsBuilder.include(latLngPoint);
+        int routePadding = 100;
+        LatLngBounds latLngBounds = boundsBuilder.build();
+        mMap.setOnMapLoadedCallback(() -> {
+            assert googleMap != null;
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, routePadding));
+        });
     }
 
     //calculate distance in miles
+    @SuppressLint("SetTextI18n")
     private void distInMiles(double srcLlat, double srcLng, double destLat, double destLng) {
         double theta = srcLng - destLng;
         double dist = Math.sin(deg2rad(srcLlat))
@@ -537,6 +551,7 @@ public class DirectionsActivity extends BaseActivity
         SharedPreferences preferences = utility.getSharedPreferences();
         userId = preferences.getString(getString(R.string.user_id), PREF_DEFAULT_STRING);
         Date date = new Date();
+        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getString(R.string.format_checkedIn));
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -626,9 +641,8 @@ public class DirectionsActivity extends BaseActivity
             return geoFencePendingIntent;
 
         Intent intent = new Intent(this, CheckInNotificationService.class);
-        int GEOFENCE_REQ_CODE = ZERO;
         return PendingIntent.getService(
-                this, GEOFENCE_REQ_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                this, ZERO, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     //create googleApiClient for requesting geofencing

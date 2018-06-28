@@ -1,5 +1,6 @@
 package com.snapxeats.ui.shareReview;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -37,6 +38,8 @@ import com.snapxeats.ui.home.HomeActivity;
 import com.snapxeats.ui.login.InstagramApp;
 import com.snapxeats.ui.login.InstagramDialog;
 import com.snapxeats.ui.review.ReviewDbHelper;
+
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -117,7 +120,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         setUpToolbar();
         mShareDialog = new ShareDialog(this);
         mCallbackManager = CallbackManager.Factory.create();
-        mSnapResponse = getIntent().getExtras().getParcelable(getString(R.string.intent_review));
+        mSnapResponse = Objects.requireNonNull(getIntent().getExtras()).getParcelable(getString(R.string.intent_review));
         image_path = getIntent().getExtras().getString(getString(R.string.image_path));
         audio_path = getIntent().getExtras().getString(getString(R.string.audio_path));
         photoId = getIntent().getExtras().getString(getString(R.string.photo_id));
@@ -155,7 +158,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
 
     private void setUpToolbar() {
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
 
     @OnClick(R.id.img_share_fb)
@@ -200,6 +203,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
 
     private void dialogShareCallback() {
         LayoutInflater inflater = getLayoutInflater();
+        @SuppressLint("InflateParams")
         View alertLayout = inflater.inflate(R.layout.layout_success_review, null);
         Button mBtnShare = alertLayout.findViewById(R.id.btn_share_another);
         TextView mTxtDismiss = alertLayout.findViewById(R.id.txt_not_now);
@@ -214,7 +218,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
 
         mBtnShare.setOnClickListener(v -> {
 
-            String restId = getIntent().getExtras().getString(getString(R.string.review_rest_id));
+            String restId = Objects.requireNonNull(getIntent().getExtras()).getString(getString(R.string.review_rest_id));
             shareAnotherIntent.putExtra(getString(R.string.intent_restaurant_id), restId);
             shareAnotherIntent.putExtra(getString(R.string.share_another), true);
             dialog.dismiss();

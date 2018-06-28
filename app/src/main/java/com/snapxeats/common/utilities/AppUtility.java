@@ -1,5 +1,6 @@
 package com.snapxeats.common.utilities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -35,7 +36,6 @@ import com.pkmmte.view.CircularImageView;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.SnapXDataDao;
 import com.snapxeats.common.model.UserReward;
@@ -417,15 +417,60 @@ public class AppUtility {
         }
     }
 
+    /*  public boolean getCheckedInTimeDiff() {
+          Date date = new Date();
+          @SuppressLint("SimpleDateFormat")
+          SimpleDateFormat simpleDateFormat = new SimpleDateFormat(mContext.getString(R.string.format_checkedIn));
+          Calendar calendar = Calendar.getInstance();
+          calendar.setTime(date);
+          String currentTime = simpleDateFormat.format(calendar.getTime());
+          Date parsedCheckedIn = null;
+          Date parsedCurrentTime = null;
+          Date currentTime = Calendar.getInstance().getTime();
+          int hours = ZERO;
+          try {
+              Date checkedInTime = new SimpleDateFormat(mContext.getString(R.string.checkin_time_format)).parse(checkInData.getCheckInTime());
+              long mills = currentTime.getTime() - checkedInTime.getTime();
+              hours = (int) (mills / (MILLIS));
+              int mins = (int) ((mills / (MILLIES_TWO)) % SECONDS);
+
+              String diff = hours + ":" + mins;
+          } catch (ParseException e) {
+              e.printStackTrace();
+          }
+
+          long timeDiff = parsedCheckedIn.getTime() - parsedCurrentTime.getTime();
+          long mills = Math.abs(timeDiff);
+
+          int checkoutTime = (int) (mills / (CHECKOUT_DURATION * MILLIS));
+
+          if (checkoutTime > CHECKOUT_DURATION) {
+              snapNShareMenu.setEnabled(false);
+              if (checkInMenu.getTitle().toString().equals(mContext.getString(R.string.check_in))) {
+                  checkInMenu.setTitle(mContext.getString(R.string.checkout));
+              } else {
+                  checkInMenu.setTitle(mContext.getString(R.string.check_in));
+              }
+          }
+          return true;
+          if (hours >= CHECKOUT_DURATION) {
+              checkInMenu.setTitle(mContext.getString(R.string.check_in));
+              return false;
+          } else {
+              return true;
+          }
+      }*/
     public boolean getCheckedInTimeDiff() {
         Date currentTime = Calendar.getInstance().getTime();
         int hours = ZERO;
         try {
+            @SuppressLint("SimpleDateFormat")
             Date checkedInTime = new SimpleDateFormat(mContext.getString(R.string.checkin_time_format)).parse(checkInData.getCheckInTime());
             long mills = currentTime.getTime() - checkedInTime.getTime();
             hours = (int) (mills / (MILLIS));
             int mins = (int) ((mills / (MILLIES_TWO)) % SECONDS);
 
+            //For debug purpose
             String diff = hours + ":" + mins;
         } catch (ParseException e) {
             e.printStackTrace();

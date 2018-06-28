@@ -11,6 +11,7 @@ import com.snapxeats.ui.home.fragment.checkin.DaoSession;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DaggerApplication;
+
 import static com.snapxeats.common.constants.UIConstants.SNAPX_DB_NAME;
 
 /**

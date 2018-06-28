@@ -34,8 +34,6 @@
     <dimen name="dimens_54dp">54dp</dimen>
     <dimen name="common_dimens_12">12dp</dimen>
     <dimen name="dimens_80dp">80dp</dimen>
-    <dimen name="dimens_350dp">350dp</dimen>
-    <dimen name="dimens_365dp">365dp</dimen>
     <dimen name="dimens_425dp">425dp</dimen>
     <dimen name="text_size_32">32sp</dimen>
     <dimen name="common_dimens_25">25dp</dimen>
@@ -80,5 +78,9 @@
     <dimen name="dimens_240dp">240dp</dimen>
     <dimen name="dimens_180dp">180dp</dimen>
     <dimen name="text_size_22">22sp</dimen>
+    <dimen name="dimen_460">460dp</dimen>
+    <dimen name="dimen_440">440dp</dimen>
+    <dimen name="dimens_320dp">320dp</dimen>
+    <dimen name="dimens_345dp">345dp</dimen>
 
 </resources>

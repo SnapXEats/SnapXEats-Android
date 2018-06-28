@@ -11,6 +11,7 @@ public class UIConstants {
     public static final int PROFILE_WIDTH_HEIGHT = 50;
     public static final int PADDING = 20;
     public static final int WEBVIEW_SCALE = 210;
+    public static final int SCREEN_HEIGHT_DP = 600;
     public static final String SX_VERSION = "V ";
     public static final String SNAPX_DB_NAME = "SnapXDb";
     public static final String PACKAGE = "package";
@@ -34,8 +35,8 @@ public class UIConstants {
 
     /*Maps Screen*/
 
-    public static final double LAT = 40.7014;
-    public static final double LNG = -74.0151;
+//    public static final double LAT = 40.7014;
+//    public static final double LNG = -74.0151;
 
     public static final float MAP_SCOLL_BY = 320;
     public static final float MAP_ZOOM = 13.2f;

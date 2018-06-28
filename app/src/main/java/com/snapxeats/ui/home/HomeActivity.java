@@ -251,6 +251,7 @@ public class HomeActivity extends BaseActivity implements
     private MediaPlayer mMediaPlayer;
     private Handler mHandler = new Handler();
     private boolean isSnapNShareEnabled = false;
+    private GeofencingClient mGeofencingClient;
 
     @Inject
     CheckInDbHelper checkInDbHelper;
@@ -270,16 +271,12 @@ public class HomeActivity extends BaseActivity implements
             }
         }
     };
-    private Location currentLocation;
-
-    private GeofencingClient mGeofencingClient;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
-
         initView();
     }
 
