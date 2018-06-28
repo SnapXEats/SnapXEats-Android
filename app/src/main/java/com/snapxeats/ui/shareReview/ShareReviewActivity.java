@@ -86,6 +86,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
     protected TextView mTxtMessage;
 
     private String image_path;
+    private String audio_path;
     private String photoId;
     private InstagramApp mApp;
 
@@ -118,6 +119,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         mCallbackManager = CallbackManager.Factory.create();
         mSnapResponse = getIntent().getExtras().getParcelable(getString(R.string.intent_review));
         image_path = getIntent().getExtras().getString(getString(R.string.image_path));
+        audio_path = getIntent().getExtras().getString(getString(R.string.audio_path));
         photoId = getIntent().getExtras().getString(getString(R.string.photo_id));
 
         if (null != mSnapResponse) {
@@ -182,6 +184,7 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
             @Override
             public void onSuccess(Sharer.Result result) {
                 reviewDbHelper.deleteDraftData(photoId);
+                utility.deleteLocalData(Uri.parse(image_path).getPath(),audio_path);
                 dialogShareCallback();
             }
 
@@ -263,7 +266,6 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
             shareIntent.setPackage(INSTA_PACKAGE_NAME);
             shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(image_path));
             shareIntent.setType(IMAGE_TYPE);
-            reviewDbHelper.deleteDraftData(photoId);
             startActivity(shareIntent);
         }
     }

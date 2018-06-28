@@ -77,7 +77,6 @@ import com.snapxeats.common.utilities.NoNetworkResults;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.dagger.AppContract;
-import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.foodstack.FoodStackDbHelper;
 import com.snapxeats.ui.home.fragment.checkin.CheckInDbHelper;
 import com.snapxeats.ui.home.fragment.foodjourney.FoodJourneyFragment;
@@ -93,8 +92,7 @@ import com.snapxeats.ui.home.fragment.wishlist.WishlistDbHelper;
 import com.snapxeats.ui.home.fragment.wishlist.WishlistFragment;
 import com.snapxeats.ui.login.InstagramDialog;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -178,8 +176,6 @@ public class HomeActivity extends BaseActivity implements
     @Inject
     AppUtility utility;
 
-    LocationHelper locationHelper;
-
     @Inject
     HomeDbHelper homeDbHelper;
 
@@ -254,8 +250,6 @@ public class HomeActivity extends BaseActivity implements
     private String dishId;
     private MediaPlayer mMediaPlayer;
     private Handler mHandler = new Handler();
-    private Date date;
-    private SimpleDateFormat simpleDateFormat;
     private boolean isSnapNShareEnabled = false;
 
     @Inject
@@ -308,8 +302,6 @@ public class HomeActivity extends BaseActivity implements
         snapXDialog.setContext(this);
         mCallbackManager = CallbackManager.Factory.create();
         checkInDbHelper.setContext(this);
-        date = new Date();
-        simpleDateFormat = new SimpleDateFormat(getString(R.string.format_checkedIn));
         mGeofencingClient = LocationServices.getGeofencingClient(this);
 
         userId = preferences.getString(getString(R.string.user_id), PREF_DEFAULT_STRING);
@@ -335,13 +327,15 @@ public class HomeActivity extends BaseActivity implements
         setNotificationCheckIn();
 
         transaction.commit();
-        changeItems();
         utility.enableReceiver(new ComponentName(this, SnapNotificationReceiver.class));
 
         if (dbHelper.getCheckInDataDao().loadAll().size() > ZERO &&
                 dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()) {
             isSnapNShareEnabled = utility.getCheckedInTimeDiff();
         }
+
+        changeItems();
+
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
@@ -350,6 +344,17 @@ public class HomeActivity extends BaseActivity implements
 
             @Override
             public void onDrawerOpened(@NonNull View drawerView) {
+                if (dbHelper.getCheckInDataDao().loadAll().size() > ZERO &&
+                        dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()) {
+                    isSnapNShareEnabled = utility.getCheckedInTimeDiff();
+                }
+                if (isSnapNShareEnabled){
+                    snapNShareMenu.setEnabled(true);
+                }else {
+                    checkInDbHelper.clearCheckInData();
+                    snapNShareMenu.setEnabled(false);
+                }
+
                 //Update wishlist count
                 setWishlistCount();
 
@@ -454,14 +459,18 @@ public class HomeActivity extends BaseActivity implements
 
     private void changeItems() {
         initNavMenuItems();
-        snapNShareMenu.setEnabled(false);
         if (!utility.isLoggedIn()) {
             foodJourneyMenu.setEnabled(false);
         }
         if (dbHelper.getCheckInDataDao().loadAll().size() > ZERO &&
                 dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()) {
             checkInMenu.setTitle(getString(R.string.checkout));
+        }
+
+        if (isSnapNShareEnabled){
             snapNShareMenu.setEnabled(true);
+        }else {
+            snapNShareMenu.setEnabled(false);
         }
     }
 
@@ -496,6 +505,18 @@ public class HomeActivity extends BaseActivity implements
                 dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()) {
             isSnapNShareEnabled = utility.getCheckedInTimeDiff();
         }
+      /* Date date1 = Calendar.getInstance().getTime();
+        try {
+            Date date2 = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(preferences.getString("time",""));
+            long mills = date1.getTime() - date2.getTime();
+            int hours = (int) (mills/(1000 * 60 * 60));
+            int mins = (int) ((mills/(1000*60)) % 60);
+
+            String diff = hours + ":" + mins;
+            SnapXToast.debug("Difference: "+ diff);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }*/
     }
 
 
@@ -578,8 +599,6 @@ public class HomeActivity extends BaseActivity implements
 
     private void updateCheckout() {
         checkInDbHelper.clearCheckInData();
-        isSnapNShareEnabled = false;
-        snapNShareMenu.setEnabled(false);
         checkInMenu.setTitle(getString(R.string.check_in));
         transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.frame_layout, homeFragment);
@@ -624,7 +643,7 @@ public class HomeActivity extends BaseActivity implements
     }
 
     private void saveCheckInDataToDb() {
-        String checkdInTime = simpleDateFormat.format(date);
+        String checkdInTime = String.valueOf(Calendar.getInstance().getTime());
         String restId = mRestaurantList.get(ZERO).getRestaurant_info_id();
         if (utility.isLoggedIn()) {
             checkInDbHelper.saveCheckInDataInDb(restId, userId, checkdInTime, true);
@@ -634,8 +653,6 @@ public class HomeActivity extends BaseActivity implements
     }
 
     public void checkIn() {
-        isSnapNShareEnabled = true;
-        snapNShareMenu.setEnabled(true);
         checkInMenu.setTitle(getString(R.string.checkout));
         saveCheckInDataToDb();
 
