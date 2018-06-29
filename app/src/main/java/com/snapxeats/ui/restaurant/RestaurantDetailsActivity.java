@@ -45,6 +45,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -57,7 +58,6 @@ import static com.snapxeats.common.constants.UIConstants.GOOGLE_DIR_NO_RESULTS;
 import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.REST_CALL;
 import static com.snapxeats.common.constants.UIConstants.SET_ALPHA_DISABLE;
-import static com.snapxeats.common.constants.UIConstants.STRING_SPACE;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.UBER_PACKAGE;
 import static com.snapxeats.common.constants.UIConstants.UBER_URI;
@@ -122,7 +122,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
     protected LinearLayout mParentLayout;
 
     private RootGoogleDir mRootGoogleDir;
-    private String restaurantId, lat, lng;
+    private String restaurantId;
 
     @BindView(R.id.layout_dots)
     protected LinearLayout mSliderDotsPanel;
@@ -142,7 +142,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         ButterKnife.bind(this);
         utility.setContext(this);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         initRestaurantData();
     }
 
@@ -203,11 +203,13 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         LocationGoogleDir locationGoogleDir = new LocationGoogleDir();
         GoogleDirOrigin googleDirOrigin = new GoogleDirOrigin();
 
-        lat = String.valueOf(utility.setLatLng().latitude);
-        lng = String.valueOf(utility.setLatLng().longitude);
+        String lat = String.valueOf(utility.setLatLng().latitude);
+        String lng = String.valueOf(utility.setLatLng().longitude);
 
-        googleDirOrigin.setOriginLat(lat);
-        googleDirOrigin.setOriginLng(lng);
+        if (lat != null) {
+            googleDirOrigin.setOriginLat(lat);
+            googleDirOrigin.setOriginLng(lng);
+        }
 
         GoogleDirDest googleDirDest = new GoogleDirDest();
         googleDirDest.setDestinationLat(destLat);

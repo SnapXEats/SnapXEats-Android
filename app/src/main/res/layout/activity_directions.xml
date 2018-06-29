@@ -23,7 +23,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="?attr/actionBarSize"
+                    android:layout_marginEnd="?attr/actionBarSize"
                     android:gravity="center"
                     android:text="@string/directions"
                     android:textColor="@color/colorCuisine"
@@ -44,14 +44,14 @@
                         android:id="@+id/map_directions"
                         android:name="com.google.android.gms.maps.SupportMapFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/dimens_350dp" />
+                        android:layout_height="@dimen/dimens_320dp" />
 
                     <LinearLayout
                         android:id="@+id/layout_details"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/map_directions"
                         android:layout_alignParentBottom="true"
+                        android:layout_below="@+id/map_directions"
                         android:layout_marginTop="@dimen/dimen_25"
                         android:orientation="vertical">
 
@@ -166,7 +166,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/dimens_365dp">
+            android:layout_marginTop="@dimen/dimens_345dp">
 
             <ImageView
                 android:id="@+id/img_rating"

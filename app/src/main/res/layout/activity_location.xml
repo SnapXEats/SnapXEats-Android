@@ -107,23 +107,24 @@
                     android:padding="@dimen/common_dimens_10"
                     android:textColor="#FFCECCCC"
                     android:textSize="@dimen/text_size_14" />
+
                 <ImageView
                     android:id="@+id/img_loader"
                     android:layout_width="@dimen/common_dimens_30"
                     android:layout_height="@dimen/common_dimens_30"
-                    android:visibility="gone"
                     android:layout_marginTop="@dimen/common_dimens_5"
                     android:padding="@dimen/common_dimens_5"
-                    android:src="@drawable/ic_loader" />
+                    android:src="@drawable/ic_loader"
+                    android:visibility="gone" />
 
                 <ImageView
                     android:id="@+id/img_delete_input"
                     android:layout_width="@dimen/common_dimens_30"
                     android:layout_height="@dimen/common_dimens_30"
-                    android:visibility="gone"
                     android:layout_marginTop="@dimen/common_dimens_5"
                     android:padding="@dimen/common_dimens_10"
-                    android:src="@drawable/close" />
+                    android:src="@drawable/close"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <ListView
@@ -131,8 +132,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/common_dimens_30"
-                android:layout_marginRight="@dimen/common_dimens_20"
-                />
+                android:layout_marginRight="@dimen/common_dimens_20" />
         </LinearLayout>
 
     </LinearLayout>

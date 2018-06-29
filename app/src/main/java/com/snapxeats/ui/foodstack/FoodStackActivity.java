@@ -7,7 +7,6 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -53,6 +52,7 @@ import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.SET_ALPHA;
 import static com.snapxeats.common.constants.UIConstants.SET_ALPHA_DISABLE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
+import static com.yuyakaido.android.cardstackview.SwipeDirection.Left;
 
 /**
  * Created by Prajakta Patil on 30/1/18.
@@ -116,6 +116,8 @@ public class FoodStackActivity extends BaseActivity
 
     @BindView(R.id.layout_food_stack)
     protected LinearLayout mParentLayout;
+
+    private boolean isLeftSwiped = false;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -184,12 +186,6 @@ public class FoodStackActivity extends BaseActivity
         setupFoodStack();
     }
 
-    public boolean isLoggedIn() {
-        SharedPreferences preferences = mAppUtility.getSharedPreferences();
-        String serverUserId = preferences.getString(getString(R.string.user_id), "");
-        return !serverUserId.isEmpty();
-    }
-
     public void enableGestureActions() {
         mImgLike.setClickable(true);
         mImgLike.setAlpha(SET_ALPHA);
@@ -247,7 +243,9 @@ public class FoodStackActivity extends BaseActivity
                         break;
                     }
                     case Left: {
-                        swipeLeft(cardStackView.getTopIndex() - ONE);
+                        isLeftSwiped = true;
+                        enableUndo();
+                        saveFoodDislikeData();
                         break;
                     }
                 }
@@ -255,9 +253,7 @@ public class FoodStackActivity extends BaseActivity
 
             @Override
             public void onCardReversed() {
-                if (!cardStackView.isReversible()) {
-                    disableUndo();
-                }
+                disableUndo();
             }
 
             @Override
@@ -349,21 +345,26 @@ public class FoodStackActivity extends BaseActivity
     }
 
     /*swipe LEFT*/
-    public void swipeLeft(int index) {
+    public void swipeLeft() {
         enableUndo();
         List<FoodStackData> data = extractRemainingCards();
         if (data.isEmpty()) {
             return;
         }
-        FoodDislikes foodDislikeItem;
-        foodDislikeItem = new FoodDislikes();
-        foodDislikeItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
-            foodGestureDislike.add(foodDislikeItem);
-        if (isLoggedIn()) {
-            mFoodStackPresenter.saveDislikeToDb(foodGestureDislike);
-        }
+        saveFoodDislikeData();
         gestureLeft();
     }
+
+    private void saveFoodDislikeData() {
+        FoodDislikes foodDislikeItem;
+        foodDislikeItem = new FoodDislikes();
+        foodDislikeItem.setRestaurant_dish_id(foodStackDataList.get(cardStackView.getTopIndex()).getDishId());
+        foodGestureDislike.add(foodDislikeItem);
+        if (mAppUtility.isLoggedIn()) {
+            mFoodStackPresenter.saveDislikeToDb(foodGestureDislike);
+        }
+    }
+
     /*swipe TOP*/
     public void swipeTop(int index) {
         disableUndo();
@@ -372,9 +373,9 @@ public class FoodStackActivity extends BaseActivity
             return;
         }
         FoodWishlists foodGestureWishItem;
-        if (isLoggedIn()) {
+        if (mAppUtility.isLoggedIn()) {
             foodGestureWishItem = new FoodWishlists();
-            foodGestureWishItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
+            foodGestureWishItem.setRestaurant_dish_id(data.get(index).getDishId());
             foodGestureWishlist.add(foodGestureWishItem);
             mFoodStackPresenter.saveWishlistToDb(foodGestureWishlist);
         }
@@ -388,9 +389,9 @@ public class FoodStackActivity extends BaseActivity
             return;
         }
         FoodLikes foodGestureLikesItem;
-        if (isLoggedIn()) {
+        if (mAppUtility.isLoggedIn()) {
             foodGestureLikesItem = new FoodLikes();
-            foodGestureLikesItem.setRestaurant_dish_id(foodStackDataList.get(cardStackView.getTopIndex()).getDishId());
+            foodGestureLikesItem.setRestaurant_dish_id(data.get(cardStackView.getTopIndex()).getDishId());
             foodLikes.add(foodGestureLikesItem);
             mFoodStackPresenter.saveLikesToDb(foodLikes);
         }
@@ -434,6 +435,7 @@ public class FoodStackActivity extends BaseActivity
         translateX.setDuration(UIConstants.SET_DURATION);
         translateY.setDuration(UIConstants.SET_DURATION);
         mAnimatorSet.playTogether(rotation, translateX, translateY);
+        cardStackView.swipe(Left, mAnimatorSet);
     }
 
     private void gestureTop() {
@@ -476,8 +478,8 @@ public class FoodStackActivity extends BaseActivity
 
     @OnClick(R.id.img_cuisine_dislike)
     public void imgCuisineReject() {
-        swipeLeft(cardStackView.getTopIndex());
-        cardStackView.swipe(SwipeDirection.Left, mAnimatorSet);
+        isLeftSwiped = true;
+        swipeLeft();
     }
 
     @OnClick(R.id.img_cuisine_wishlist)
@@ -498,10 +500,12 @@ public class FoodStackActivity extends BaseActivity
 
     @OnClick(R.id.img_cuisine_undo)
     public void imgCuisineUndo() {
-        if (ZERO != foodGestureDislike.size()) {
-            enableGestureActions();
-            enableMap();
-            cardStackView.reverse();
+        if (isLeftSwiped) {
+            if (ZERO < foodGestureDislike.size()) {
+                enableMap();
+                cardStackView.reverse();
+                enableGestureActions();
+            }
         }
     }
 

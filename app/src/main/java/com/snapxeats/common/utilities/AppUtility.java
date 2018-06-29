@@ -1,5 +1,6 @@
 package com.snapxeats.common.utilities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -35,7 +36,6 @@ import com.pkmmte.view.CircularImageView;
 import com.snapxeats.R;
 import com.snapxeats.SnapXApplication;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.model.SnapXData;
 import com.snapxeats.common.model.SnapXDataDao;
 import com.snapxeats.common.model.UserReward;
@@ -421,11 +421,13 @@ public class AppUtility {
         Date currentTime = Calendar.getInstance().getTime();
         int hours = ZERO;
         try {
+            @SuppressLint("SimpleDateFormat")
             Date checkedInTime = new SimpleDateFormat(mContext.getString(R.string.checkin_time_format)).parse(checkInData.getCheckInTime());
             long mills = currentTime.getTime() - checkedInTime.getTime();
             hours = (int) (mills / (MILLIS));
             int mins = (int) ((mills / (MILLIES_TWO)) % SECONDS);
 
+            //For debug purpose
             String diff = hours + ":" + mins;
         } catch (ParseException e) {
             e.printStackTrace();
@@ -463,8 +465,7 @@ public class AppUtility {
     public com.snapxeats.common.model.location.Location getLocationfromPref() {
         Gson gson = new Gson();
         String json = preferences.getString(mContext.getString(R.string.selected_location), "");
-        com.snapxeats.common.model.location.Location mSelectedLocation = gson.fromJson(json, com.snapxeats.common.model.location.Location.class);
-        return mSelectedLocation;
+        return gson.fromJson(json, Location.class);
     }
 
     /* Set latitude and longitude as per login status */
