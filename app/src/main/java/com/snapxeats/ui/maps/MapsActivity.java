@@ -39,6 +39,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.snapxeats.common.constants.UIConstants.GOOGLE_MAP_ZOOM;
+import static com.snapxeats.common.constants.UIConstants.MAP_ZOOM;
 import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.STRING_SPACE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
@@ -147,10 +148,10 @@ public class MapsActivity extends BaseActivity
                 .fillColor(UIConstants.MAP_FILL_COLOR));
 
         CameraUpdateAnimator animator = new CameraUpdateAnimator(mMap, this);
-        if (ONE < Integer.parseInt(rootUserPreference.getRestaurant_distance())) {
+        if (5 == Integer.parseInt(rootUserPreference.getRestaurant_distance())) {
             animator.add(CameraUpdateFactory.newLatLngZoom(currentLatLon, GOOGLE_MAP_ZOOM), false, ZERO);
         } else {
-            animator.add(CameraUpdateFactory.newLatLngZoom(currentLatLon, UIConstants.MAP_ZOOM), false, ZERO);
+            animator.add(CameraUpdateFactory.newLatLngZoom(currentLatLon, MAP_ZOOM), false, ZERO);
         }
         animator.add(CameraUpdateFactory.scrollBy(ZERO, UIConstants.MAP_SCOLL_BY), false, ZERO);
         animator.execute();
