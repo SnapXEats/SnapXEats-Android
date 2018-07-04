@@ -39,8 +39,8 @@ public class UIConstants {
 //    public static final double LNG = -74.0151;
 
     public static final float MAP_SCOLL_BY = 320;
-    public static final float MAP_ZOOM = 13.2f;
-    public static final float GOOGLE_MAP_ZOOM = 12.8f;
+    public static final float MAP_ZOOM = 11.8f;
+    public static final float GOOGLE_MAP_ZOOM = 11.2f;
     public static final int MAP_FILL_COLOR = 0x55AAAAAA;
     public static final float MAP_STROKE = 5;
     public static final float MAP_MARKER_ZOOM = 13;
@@ -56,6 +56,7 @@ public class UIConstants {
     public static final String DIR_PRICE_TWO = "2";
     public static final String DIR_PRICE_THREE = "3";
     public static final String DIR_PRICE_FOUR = "4";
+    public static final int FIVE = 5;
 
     /*Foodstack screen*/
     public static final long SET_START_DELAY = 100;

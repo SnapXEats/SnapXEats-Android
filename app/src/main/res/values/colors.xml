@@ -9,6 +9,7 @@
     <color name="text_color_primary">#4A4A4A</color>
     <color name="text_color_secondary">#5D5D5D</color>
     <color name="text_color_tertiary">#AAAAAA</color>
+    <color name="colorOffWhite">#f2eeee</color>
     <color name="colorCuisine">#4A4A4A</color>
     <color name="pref_slider_background">#FFEDDC</color>
     <color name="pref_slider_foreground">#E67607</color>

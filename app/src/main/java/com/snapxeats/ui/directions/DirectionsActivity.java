@@ -359,6 +359,7 @@ public class DirectionsActivity extends BaseActivity
             ArrayAdapter<String> adapter =
                     new ArrayAdapter<>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, listTimings);
             mDirSpinner.setAdapter(adapter);
+            mTxtDirRestOpen.setVisibility(View.VISIBLE);
         } else if (isOpenNow.equalsIgnoreCase("true")) {
             mDirSpinner.setVisibility(View.GONE);
             mTxtDirRestOpen.setVisibility(View.VISIBLE);

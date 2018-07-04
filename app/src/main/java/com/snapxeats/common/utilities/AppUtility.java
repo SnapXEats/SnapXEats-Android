@@ -91,7 +91,8 @@ public class AppUtility {
     private TextView txtNotLoggedIn;
     private LinearLayout mLayoutUserData;
     private CheckInData checkInData;
-    private MenuItem snapNShareMenu, foodJourneyMenu, checkInMenu, menuLogoutItem;
+    private MenuItem checkInMenu;
+    private MenuItem menuLogoutItem;
 
     @Inject
     RootUserPreference rootUserPreference;
@@ -150,7 +151,7 @@ public class AppUtility {
                 return String.format("Bearer %s", token);
             }
         }
-        return token;
+        return null;
     }
 
     public void setAuthToken(final Context context) {
@@ -198,7 +199,7 @@ public class AppUtility {
     /**
      * Show Enable Gps Permission dialog
      */
-    public void checkGpsPermission() {
+    private void checkGpsPermission() {
         if (!LocationHelper.isGpsEnabled(mContext)) {
             snapXDialog.showGpsPermissionDialog();
         }
@@ -211,6 +212,7 @@ public class AppUtility {
         LocationHelper.checkPermission(mContext);
 
         // Getting network status
+        assert locationManager != null;
         boolean isNetworkEnabled = locationManager
                 .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
@@ -242,9 +244,7 @@ public class AppUtility {
     public String getPlaceName(android.location.Location location) {
         String placeName = "";
         Address locationAddress = getAddress(location.getLatitude(), location.getLongitude());
-
         if (null != locationAddress) {
-
             if (null != locationAddress.getSubLocality()) {
                 placeName = locationAddress.getSubLocality();
             } else if (null != locationAddress.getThoroughfare()) {
@@ -327,6 +327,7 @@ public class AppUtility {
      * Get file real path from URI
      */
     public String getRealPathFromURIPath(Uri contentURI, Context mContext) {
+        @SuppressLint("Recycle")
         Cursor cursor = mContext.getContentResolver().query(contentURI, null, null, null, null);
         if (null == cursor) {
             return contentURI.getPath();
@@ -374,7 +375,7 @@ public class AppUtility {
     /**
      * initialize navigation drawer views
      */
-    public void initNavHeaderViews(NavigationView mNavigationView) {
+    private void initNavHeaderViews(NavigationView mNavigationView) {
         View mNavHeader = mNavigationView.getHeaderView(ZERO);
         Menu menu = mNavigationView.getMenu();
         imgUser = mNavHeader.findViewById(R.id.img_user);
@@ -382,9 +383,6 @@ public class AppUtility {
         mTxtRewardPoints = mNavHeader.findViewById(R.id.txt_nav_rewards);
         txtNotLoggedIn = mNavHeader.findViewById(R.id.txt_nav_not_logged_in);
         mLayoutUserData = mNavHeader.findViewById(R.id.layout_user_data);
-
-        snapNShareMenu = menu.findItem(R.id.nav_snap);
-        foodJourneyMenu = menu.findItem(R.id.nav_food_journey);
         checkInMenu = menu.findItem(R.id.nav_check_in);
         menuLogoutItem = menu.findItem(R.id.nav_logout);
     }

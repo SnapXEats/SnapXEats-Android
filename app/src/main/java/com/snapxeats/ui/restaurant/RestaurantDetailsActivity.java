@@ -206,10 +206,8 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         String lat = String.valueOf(utility.setLatLng().latitude);
         String lng = String.valueOf(utility.setLatLng().longitude);
 
-        if (lat != null) {
-            googleDirOrigin.setOriginLat(lat);
-            googleDirOrigin.setOriginLng(lng);
-        }
+        googleDirOrigin.setOriginLat(lat);
+        googleDirOrigin.setOriginLng(lng);
 
         GoogleDirDest googleDirDest = new GoogleDirDest();
         googleDirDest.setDestinationLat(destLat);
@@ -297,7 +295,8 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             mTxtRestAddr.setText(restAddress);
         }
 
-        if (!mRootRestaurantInfo.getRestaurantDetails().getRestaurant_contact_no().isEmpty()) {
+        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_contact_no()
+                && !mRootRestaurantInfo.getRestaurantDetails().getRestaurant_contact_no().isEmpty()) {
             restContactNo = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_contact_no();
         } else {
             mImgCall.setClickable(false);
@@ -364,6 +363,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             ArrayAdapter<String> adapter =
                     new ArrayAdapter<>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, listTimings);
             mSpinner.setAdapter(adapter);
+            mTxtRestOpen.setVisibility(View.VISIBLE);
         } else if (isOpenNow.equalsIgnoreCase("true")) {
             mSpinner.setVisibility(View.GONE);
             mTxtRestOpen.setVisibility(View.VISIBLE);

@@ -115,7 +115,7 @@
             app:swipeEnabled="true"
             app:swipeThreshold="0.75"
             app:topOverlay="@layout/food_overlay_wishlist"
-            app:translationDiff="12"
-            app:visibleCount="3" />
+            app:translationDiff="10"
+            app:visibleCount="5" />
     </FrameLayout>
 </LinearLayout>

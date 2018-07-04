@@ -52,13 +52,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.snapxeats.common.constants.UIConstants.PREF_DEFAULT_STRING;
 import static com.snapxeats.common.constants.UIConstants.STORAGE_REQUEST_PERMISSION;
+import static com.snapxeats.common.constants.UIConstants.STRING_SPACE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -153,7 +156,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         ButterKnife.bind(this);
         utility.setContext(this);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         initRestaurantInfo();
         mDialog = new Dialog(this);
     }
@@ -205,7 +208,6 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         } else if (isOpenNow.equalsIgnoreCase("true")) {
             mSpinner.setVisibility(View.GONE);
             mTxtRestOpen.setVisibility(View.VISIBLE);
-
         } else {
             mSpinner.setVisibility(View.GONE);
             mTxtRestClose.setVisibility(View.VISIBLE);
@@ -244,18 +246,20 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     }
 
     private void setRestPhotoDate() {
+        @SuppressLint("SimpleDateFormat")
         DateFormat simpleDateFormat = new SimpleDateFormat(getString(R.string.yyyy_MM_dd));
         Date date = null;
         String stringDate = null;
         try {
             date = simpleDateFormat.parse(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_pics().get(ZERO).getCreated_date());
+            @SuppressLint("SimpleDateFormat")
             SimpleDateFormat dateFormat = new SimpleDateFormat(getString(R.string.dd_MMM_yyyy));
             stringDate = dateFormat.format(date);
 
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        mTxtPhotoTaken.setText(getString(R.string.photo_taken) + " " + stringDate);
+        mTxtPhotoTaken.setText(getString(R.string.photo_taken) + STRING_SPACE + stringDate);
     }
 
     /*set restaurant data*/
@@ -471,7 +475,8 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
                 long currentDuration = mMediaPlayer.getCurrentPosition();
 
                 // Displaying time completed playing
-                mTxtTimeOfAudio.setText("" + utility.milliSecondsToTimer(currentDuration));
+                mTxtTimeOfAudio.setText(PREF_DEFAULT_STRING + utility.milliSecondsToTimer(currentDuration));
+
 
                 // Running this thread after 100 milliseconds
                 mHandler.postDelayed(this, UIConstants.PERCENTAGE);
