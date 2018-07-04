@@ -33,6 +33,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -42,6 +43,7 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.model.SnapXUser;
@@ -73,6 +75,7 @@ import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
 import static com.snapxeats.common.constants.UIConstants.ACTION_LOCATION_GET;
 import static com.snapxeats.common.constants.UIConstants.CHANGE_LOCATION_PERMISSIONS;
 import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
+import static com.snapxeats.common.constants.UIConstants.LOGOUT_DIALOG_HEIGHT;
 import static com.snapxeats.common.constants.UIConstants.SPAN_COUNT;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -129,6 +132,8 @@ public class HomeFragment extends BaseFragment implements
 
     private ProgressDialog mDialog;
     private Dialog changePermissionDilog;
+    private Dialog locationErrorDialog;
+    private Dialog cuisineErrorDialog;
 
     @Inject
     public HomeFragment() {
@@ -274,6 +279,9 @@ public class HomeFragment extends BaseFragment implements
         super.onResume();
         selectedList.clear();
 
+        if (null != locationErrorDialog && locationErrorDialog.isShowing())
+            locationErrorDialog.dismiss();
+
         if (NetworkUtility.isNetworkAvailable(activity)) {
             setLocation();
             if (mSnackBar != null) {
@@ -324,17 +332,29 @@ public class HomeFragment extends BaseFragment implements
             mRootCuisine = (RootCuisine) value;
             cuisinesList = mRootCuisine.getCuisineList();
             Collections.sort(cuisinesList);
-            setRecyclerView();
+            if (null != cuisinesList && ZERO != cuisinesList.size()) {
+                setRecyclerView();
+            } else if (null != getActivity()){
+                showCuisineEmptyDialog();
+            }
         } else if (value instanceof SnapXUser) {
             SnapXUser snapXUser = (SnapXUser) value;
             SharedPreferences preferences = utility.getSharedPreferences();
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(getString(R.string.user_id), snapXUser.getUser_id());
             editor.apply();
-        }else if (value instanceof UserReward) {
+        } else if (value instanceof UserReward) {
             UserReward userReward = (UserReward) value;
-            utility.updateRewardUI(mNavigationView,userReward);
+            utility.updateRewardUI(mNavigationView, userReward);
         }
+    }
+
+    private void showCuisineEmptyDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(getString(R.string.cuisine_error));
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> dialog.dismiss());
+        cuisineErrorDialog = builder.create();
+        cuisineErrorDialog.show();
     }
 
     public void setRecyclerView() {
@@ -499,7 +519,13 @@ public class HomeFragment extends BaseFragment implements
     }
 
     private void setLocation() {
-        if (null != mSelectedLocation) {
+        if (null != mSelectedLocation && !mSelectedLocation.getName().isEmpty()) {
+            if (null != locationErrorDialog && locationErrorDialog.isShowing())
+                locationErrorDialog.dismiss();
+
+            if (null != cuisineErrorDialog && cuisineErrorDialog.isShowing())
+                cuisineErrorDialog.dismiss();
+
             //set latitude and longitude for selected cuisines
             mLocationCuisine = new LocationCuisine();
             mLocationCuisine.setLatitude(mSelectedLocation.getLat());
@@ -517,7 +543,24 @@ public class HomeFragment extends BaseFragment implements
                 mDialog.show();
             }
             presenter.getCuisineList(mLocationCuisine);
+        } else if (LocationHelper.isGpsEnabled(activity)) {
+            showLocationErrorDialog();
         }
+    }
+
+    private void showLocationErrorDialog() {
+        locationErrorDialog = new Dialog(getActivity());
+        locationErrorDialog.setCancelable(false);
+        locationErrorDialog.setContentView(R.layout.location_error_dialog_layout);
+        locationErrorDialog.findViewById(R.id.btn_ok).setOnClickListener(v -> {
+            locationErrorDialog.dismiss();
+        });
+
+        Window window = locationErrorDialog.getWindow();
+        if (null != window) {
+            window.setLayout(UIConstants.CHECKIN_DIALOG_WIDTH, UIConstants.LOCATION_DIALOG_HEIGHT);
+        }
+        locationErrorDialog.show();
     }
 
     /**
@@ -536,15 +579,12 @@ public class HomeFragment extends BaseFragment implements
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getActivity().getString(R.string.location_service_not_active));
         builder.setMessage(getActivity().getString(R.string.enable_gps));
-        builder.setPositiveButton(getActivity().getString(R.string.action_settings), (dialogInterface, i) -> {
-            getActivity().startActivityFromFragment(this,
-                    new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),
-                    DEVICE_LOCATION);
-        });
+        builder.setPositiveButton(getActivity().getString(R.string.action_settings), (dialogInterface, i) ->
+                getActivity().startActivityFromFragment(this,
+                        new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+                        DEVICE_LOCATION));
 
-        builder.setNegativeButton(getActivity().getString(R.string.cancel), (dialog, which) -> {
-            dialog.cancel();
-        });
+        builder.setNegativeButton(getActivity().getString(R.string.cancel), (dialog, which) -> dialog.cancel());
 
         Dialog alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(false);

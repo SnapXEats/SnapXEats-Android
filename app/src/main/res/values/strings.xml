@@ -111,7 +111,7 @@
     <string name="not_now">Not Now</string>
     <string name="install_uber">You need to install the uber app from app store to book a ride. Do you want to install it now?</string>
     <string name="okay">Okay</string>
-    <string name="rest_info_aminities">Aminities</string>
+    <string name="rest_info_aminities">Amenities</string>
     <string name="intent_foodstackRestInfoId">foodstackRestInfoId</string>
     <string name="intent_foodstackRestDetailsId">foodstackRestDetailsId</string>
     <string name="away"> away</string>
@@ -258,5 +258,8 @@
     <string name="google_dir_no_routes">No routes found</string>
     <string name="smartphoto_draft_stored_id">smartphoto_draft_stored_id</string>
     <string name="audio_path">audio_path</string>
+    <string name="location_error">Unable to detect current location, please enter custom location</string>
+    <string name="please_enable_gps">Please enable GPS</string>
+    <string name="cuisine_error">Cuisines are not available for this location.</string>
 
 </resources>

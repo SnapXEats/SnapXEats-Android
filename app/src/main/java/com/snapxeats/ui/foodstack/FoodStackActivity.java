@@ -253,7 +253,7 @@ public class FoodStackActivity extends BaseActivity
                     case Left: {
                         isLeftSwiped = true;
                         enableUndo();
-                        saveFoodDislikeData(cardStackView.getTopIndex() - ONE);
+                        saveFoodDislikeData(cardStackView.getTopIndex());
                         break;
                     }
                 }
@@ -343,6 +343,7 @@ public class FoodStackActivity extends BaseActivity
 
         btnSetPref.setOnClickListener(v -> {
             homeIntent.putExtra(getString(R.string.set_preferences), true);
+            noDataFoundDialog.dismiss();
             startActivity(homeIntent);
         });
 
@@ -490,7 +491,7 @@ public class FoodStackActivity extends BaseActivity
     public void imgCuisineReject() {
         isLeftSwiped = true;
         swipeLeft();
-        saveFoodDislikeData(cardStackView.getTopIndex() - ONE);
+        saveFoodDislikeData(cardStackView.getTopIndex());
     }
 
     @OnClick(R.id.img_cuisine_wishlist)

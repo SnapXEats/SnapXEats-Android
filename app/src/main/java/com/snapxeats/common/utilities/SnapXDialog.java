@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 
 import com.snapxeats.R;
 import com.snapxeats.common.constants.UIConstants;
-import com.snapxeats.ui.home.fragment.home.HomeFragment;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -164,7 +163,7 @@ public class SnapXDialog {
         loginSuccessDialog.setCancelable(false);
         Window window = loginSuccessDialog.getWindow();
         if (null != window) {
-            window.setLayout(UIConstants.CHECKIN_DIALOG_WIDTH, LinearLayout.LayoutParams.WRAP_CONTENT);
+            window.setLayout(UIConstants.NO_DATA_DIALOG_WIDTH, LinearLayout.LayoutParams.WRAP_CONTENT);
         }
         return loginSuccessDialog;
     }

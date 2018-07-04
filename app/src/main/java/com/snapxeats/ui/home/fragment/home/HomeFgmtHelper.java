@@ -5,11 +5,14 @@ import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.preference.UserCuisinePreferences;
 import com.snapxeats.common.model.preference.UserFoodPreferences;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import static com.snapxeats.common.constants.UIConstants.FIVE;
 import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -24,7 +27,7 @@ public class HomeFgmtHelper {
     private List<String> foodList;
 
     @Inject
-    public HomeFgmtHelper() {
+    HomeFgmtHelper() {
     }
 
     @Inject
@@ -53,8 +56,8 @@ public class HomeFgmtHelper {
                 selectedCuisineList.setRestaurant_distance
                         (Integer.parseInt(rootUserPreference.getRestaurant_distance()));
             } else {
-                selectedCuisineList.setRestaurant_distance(ONE);
-                rootUserPreference.setRestaurant_distance(String.valueOf(ONE));
+                selectedCuisineList.setRestaurant_distance(FIVE);
+                rootUserPreference.setRestaurant_distance(String.valueOf(FIVE));
             }
 
             if (null != rootUserPreference.getRestaurant_price() &&
@@ -86,9 +89,10 @@ public class HomeFgmtHelper {
         return selectedCuisineList;
     }
 
-    public List<String> getCuisineList(List<String> selectedList) {
+    private List<String> getCuisineList(List<String> selectedList) {
 
-        if (null != rootUserPreference.getUserCuisinePreferences()) {
+        if (null != rootUserPreference.getUserCuisinePreferences() &&
+                ZERO != rootUserPreference.getUserCuisinePreferences().size()) {
             for (UserCuisinePreferences cuisinePreferences : rootUserPreference.getUserCuisinePreferences()) {
                 cuisineList.add(cuisinePreferences.getCuisine_info_id());
             }
@@ -98,7 +102,7 @@ public class HomeFgmtHelper {
         return cuisineList;
     }
 
-    public List<String> getFoodList() {
+    private List<String> getFoodList() {
         if (null != rootUserPreference.getUserFoodPreferences()) {
 
             for (UserFoodPreferences foodPreferences : rootUserPreference.getUserFoodPreferences()) {
