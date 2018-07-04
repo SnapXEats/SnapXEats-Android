@@ -59,6 +59,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.PREF_DEFAULT_STRING;
 import static com.snapxeats.common.constants.UIConstants.STORAGE_REQUEST_PERMISSION;
 import static com.snapxeats.common.constants.UIConstants.STRING_SPACE;
@@ -188,7 +189,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
                     Date d1 = format.parse(s1);
                     Date d2 = format.parse(s2);
                     if (d1.equals(d2)) {
-                        return s1.substring(s1.indexOf(" ") + 1).compareTo(s2.substring(s2.indexOf(" ") + 1));
+                        return s1.substring(s1.indexOf(" ") + ONE).compareTo(s2.substring(s2.indexOf(" ") + ONE));
                     } else {
                         Calendar cal1 = Calendar.getInstance();
                         Calendar cal2 = Calendar.getInstance();
