@@ -208,7 +208,6 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
         } else if (isOpenNow.equalsIgnoreCase("true")) {
             mSpinner.setVisibility(View.GONE);
             mTxtRestOpen.setVisibility(View.VISIBLE);
-
         } else {
             mSpinner.setVisibility(View.GONE);
             mTxtRestClose.setVisibility(View.VISIBLE);

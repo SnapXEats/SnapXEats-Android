@@ -56,6 +56,7 @@ public class UIConstants {
     public static final String DIR_PRICE_TWO = "2";
     public static final String DIR_PRICE_THREE = "3";
     public static final String DIR_PRICE_FOUR = "4";
+    public static final int FIVE = 5;
 
     /*Foodstack screen*/
     public static final long SET_START_DELAY = 100;

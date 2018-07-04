@@ -363,6 +363,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             ArrayAdapter<String> adapter =
                     new ArrayAdapter<>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, listTimings);
             mSpinner.setAdapter(adapter);
+            mTxtRestOpen.setVisibility(View.VISIBLE);
         } else if (isOpenNow.equalsIgnoreCase("true")) {
             mSpinner.setVisibility(View.GONE);
             mTxtRestOpen.setVisibility(View.VISIBLE);
