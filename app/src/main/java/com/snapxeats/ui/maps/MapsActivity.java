@@ -137,7 +137,7 @@ public class MapsActivity extends BaseActivity
             mToolbarTitle.setText(getString(R.string.within) + STRING_SPACE +
                     mPreferences.getUserPreferences().getRestaurant_distance() + STRING_SPACE + getString(R.string.miles));
             radius = Integer.parseInt(mPreferences.getUserPreferences().getRestaurant_distance()) * UIConstants.DIST_IN_MILES;
-        } else if (null == mPreferences) {
+        } else if (utility.isLoggedIn() && null == mPreferences) {
             mToolbarTitle.setText(getString(R.string.within) + STRING_SPACE + FIVE + STRING_SPACE + getString(R.string.miles));
             radius = FIVE * UIConstants.DIST_IN_MILES;
         } else {
@@ -194,7 +194,7 @@ public class MapsActivity extends BaseActivity
             return;
         }
         mMap.setMyLocationEnabled(true);
-//        drawMapCircle();
+        drawMapCircle();
     }
 
     @Override

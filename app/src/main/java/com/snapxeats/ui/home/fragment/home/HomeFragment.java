@@ -550,10 +550,10 @@ public class HomeFragment extends BaseFragment implements
 
     private void showLocationErrorDialog() {
         locationErrorDialog = new Dialog(getActivity());
-        locationErrorDialog.setCancelable(false);
+        locationErrorDialog.setOnCancelListener(dialog -> locationErrorDialog.dismiss());
         locationErrorDialog.setContentView(R.layout.location_error_dialog_layout);
         locationErrorDialog.findViewById(R.id.btn_ok).setOnClickListener(v -> {
-            locationErrorDialog.dismiss();
+            locationErrorDialog.cancel();
         });
 
         Window window = locationErrorDialog.getWindow();
