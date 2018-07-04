@@ -270,6 +270,7 @@ public class AppUtility {
     }
 
     public boolean isLoggedIn() {
+        getSharedPreferences();
         String serverUserId = preferences.getString(mContext.getString(R.string.user_id), "");
         return !serverUserId.isEmpty();
     }
@@ -488,23 +489,27 @@ public class AppUtility {
 
     /**
      * Delete local image and audio file
+     * Print statements for debug purpose
      */
     public void deleteLocalData(String image_path, String audio_path) {
-
-        File imageFile = new File(Uri.parse(image_path).getPath());
-        File audioFile = new File(audio_path);
-        if (imageFile.exists()) {
-            imageFile.delete();
-            System.out.println(imageFile + " File deleted");
-        } else {
-            System.out.println("File not Deleted :" + imageFile);
+        if (null != image_path && !image_path.isEmpty()) {
+            File imageFile = new File(Uri.parse(image_path).getPath());
+            if (imageFile.exists()) {
+                imageFile.delete();
+                System.out.println(imageFile + " File deleted");
+            } else {
+                System.out.println("File not Deleted :" + imageFile);
+            }
         }
 
-        if (audioFile.exists()) {
-            audioFile.delete();
-            System.out.println(audioFile + " File deleted");
-        } else {
-            System.out.println("File not Deleted :" + audioFile);
+        if (null != audio_path && !audio_path.isEmpty()) {
+            File audioFile = new File(audio_path);
+            if (audioFile.exists()) {
+                audioFile.delete();
+                System.out.println(audioFile + " File deleted");
+            } else {
+                System.out.println("File not Deleted :" + audioFile);
+            }
         }
     }
 }

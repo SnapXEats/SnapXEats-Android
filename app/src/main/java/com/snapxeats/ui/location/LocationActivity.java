@@ -153,6 +153,7 @@ public class LocationActivity extends BaseActivity implements
             utility.hideKeyboard();
             if (null != predictionList && predictionList.size() != ZERO) {
                 placeId = predictionList.get(position).getPlace_id();
+                showProgressDialog();
                 locationPresenter.getPlaceDetails(placeId);
             }
         });
@@ -222,7 +223,7 @@ public class LocationActivity extends BaseActivity implements
                     AppContract.DialogListenerAction click = () ->
                             getData();
                     showSnackBar(mParentLayout, setClickListener(click));
-                }else {
+                } else {
                     getData();
                 }
             });
@@ -276,21 +277,24 @@ public class LocationActivity extends BaseActivity implements
 
     @Override
     public void success(Object value) {
-        Result location = (Result) value;
-        String placeName;
+        dismissProgressDialog();
+        if (value instanceof Result) {
+            Result location = (Result) value;
+            String placeName;
 
-        if (null != location.getName()) {
-            placeName = location.getName();
-        } else {
-            placeName = location.getVicinity();
+            if (null != location.getName()) {
+                placeName = location.getName();
+            } else {
+                placeName = location.getVicinity();
+            }
+
+            selectedLocation = new Location(location.getGeometry().getLocation().getLat(),
+                    location.getGeometry().getLocation().getLng(),
+                    placeName);
+
+            //Send selected location to home fragment
+            putData(selectedLocation);
         }
-
-        selectedLocation = new Location(location.getGeometry().getLocation().getLat(),
-                location.getGeometry().getLocation().getLng(),
-                placeName);
-
-        //Send selected location to home fragment
-        putData(selectedLocation);
     }
 
     public void putData(Location location) {
@@ -330,7 +334,7 @@ public class LocationActivity extends BaseActivity implements
 
     @Override
     public void networkError(Object value) {
-
+        SnapXToast.showToast(this, getString(R.string.something_went_wrong));
     }
 
     @Override

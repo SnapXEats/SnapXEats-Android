@@ -766,8 +766,10 @@ public class ReviewActivity extends BaseActivity implements ReviewContract.Revie
         builder.setCancelable(false);
         builder.setMessage(getString(R.string.msg_review_back_pressed));
         builder.setPositiveButton(getString(R.string.ok), (dialog, which) -> {
-            utility.deleteLocalData(Uri.parse(image_path).getPath(), audio_path);
+            utility.deleteLocalData(image_path, audio_path);
             reviewDbHelper.deleteDraftData(storedPhotoId);
+            if (null != alertDialog && alertDialog.isShowing())
+                alertDialog.dismiss();
             finish();
         });
         builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel());

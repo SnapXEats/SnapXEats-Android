@@ -53,9 +53,6 @@ public class ReviewDbHelper {
                           int rating,
                           List<String> restaurantAminities) {
 
-//        String smartPhoto_Draft_Stored_id =
-//                new SimpleDateFormat(mContext.getString(R.string.date_time_pattern)).format(new Date());
-
         SnapXDraftPhoto snapXDraftPhoto = new SnapXDraftPhoto();
         snapXDraftPhoto.setRestId(restId);
         snapXDraftPhoto.setSmartPhoto_Draft_Stored_id(storedPhotoId);

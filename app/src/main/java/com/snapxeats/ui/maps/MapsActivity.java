@@ -132,10 +132,14 @@ public class MapsActivity extends BaseActivity
         float radius;
         LatLng currentLatLon = utility.setLatLng();
         if (null != mPreferences && null != mPreferences.getUserPreferences()
+                && null != mPreferences.getUserPreferences().getRestaurant_distance()
                 && !mPreferences.getUserPreferences().getRestaurant_distance().equalsIgnoreCase("")) {
             mToolbarTitle.setText(getString(R.string.within) + STRING_SPACE +
                     mPreferences.getUserPreferences().getRestaurant_distance() + STRING_SPACE + getString(R.string.miles));
             radius = Integer.parseInt(mPreferences.getUserPreferences().getRestaurant_distance()) * UIConstants.DIST_IN_MILES;
+        } else if (null == mPreferences) {
+            mToolbarTitle.setText(getString(R.string.within) + STRING_SPACE + FIVE + STRING_SPACE + getString(R.string.miles));
+            radius = FIVE * UIConstants.DIST_IN_MILES;
         } else {
             mToolbarTitle.setText(getString(R.string.within) + STRING_SPACE + rootUserPreference.getRestaurant_distance() + STRING_SPACE + getString(R.string.miles));
             radius = Integer.parseInt(rootUserPreference.getRestaurant_distance()) * UIConstants.DIST_IN_MILES;
@@ -190,15 +194,15 @@ public class MapsActivity extends BaseActivity
             return;
         }
         mMap.setMyLocationEnabled(true);
-        drawMapCircle();
+//        drawMapCircle();
     }
 
     @Override
     public void success(Object value) {
         if (value instanceof SnapXPreference) {
             mPreferences = (SnapXPreference) value;
+            drawMapCircle();
         }
-        drawMapCircle();
     }
 
     @Override

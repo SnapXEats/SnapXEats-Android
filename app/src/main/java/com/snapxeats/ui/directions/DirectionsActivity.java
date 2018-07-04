@@ -66,6 +66,7 @@ import com.snapxeats.common.model.preference.RootUserPreference;
 import com.snapxeats.common.model.restaurantInfo.RootRestaurantInfo;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
+import com.snapxeats.network.LocationHelper;
 import com.snapxeats.ui.home.fragment.checkin.CheckInDbHelper;
 import com.snapxeats.ui.home.fragment.snapnshare.SnapNotificationReceiver;
 
@@ -217,8 +218,13 @@ public class DirectionsActivity extends BaseActivity
         utility.enableReceiver(new ComponentName(this, SnapNotificationReceiver.class));
         setMapView();
         setUpViews();
-        mCurrentLocation = utility.getLocation();
         createGoogleApi();
+
+        if (LocationHelper.isGpsEnabled(this)) {
+            mCurrentLocation = utility.getLocation();
+        } else {
+            SnapXToast.showToast(this, getString(R.string.please_enable_gps));
+        }
     }
 
     private void dialogCheckIn() {

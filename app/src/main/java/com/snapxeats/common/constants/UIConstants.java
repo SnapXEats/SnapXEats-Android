@@ -7,6 +7,7 @@ public class UIConstants {
 
     public static final int ZERO = 0;
     public static final int ONE = 1;
+    public static final int FIVE = 5;
 
     public static final int PROFILE_WIDTH_HEIGHT = 50;
     public static final int PADDING = 20;
@@ -56,7 +57,6 @@ public class UIConstants {
     public static final String DIR_PRICE_TWO = "2";
     public static final String DIR_PRICE_THREE = "3";
     public static final String DIR_PRICE_FOUR = "4";
-    public static final int FIVE = 5;
 
     /*Foodstack screen*/
     public static final long SET_START_DELAY = 100;
@@ -169,4 +169,5 @@ public class UIConstants {
     public static final int POLICY_WEBVIEW_SCALE = 190;
     public static final String GOOGLE_DIR_NO_RESULTS = "ZERO_RESULTS";
     public static final String GOOGLE_DIR_NOT_FOUND = "NOT_FOUND";
+    public static final int LOCATION_DIALOG_HEIGHT = 450 ;
 }

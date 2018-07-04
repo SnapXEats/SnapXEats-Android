@@ -502,18 +502,6 @@ public class HomeActivity extends BaseActivity implements
                 dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()) {
             isSnapNShareEnabled = utility.getCheckedInTimeDiff();
         }
-      /* Date date1 = Calendar.getInstance().getTime();
-        try {
-            Date date2 = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(preferences.getString("time",""));
-            long mills = date1.getTime() - date2.getTime();
-            int hours = (int) (mills/(1000 * 60 * 60));
-            int mins = (int) ((mills/(1000*60)) % 60);
-
-            String diff = hours + ":" + mins;
-            SnapXToast.debug("Difference: "+ diff);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }*/
     }
 
 

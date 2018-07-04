@@ -295,7 +295,8 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             mTxtRestAddr.setText(restAddress);
         }
 
-        if (null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_contact_no()
+        if (null != mRootRestaurantInfo.getRestaurantDetails()
+                && null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_contact_no()
                 && !mRootRestaurantInfo.getRestaurantDetails().getRestaurant_contact_no().isEmpty()) {
             restContactNo = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_contact_no();
         } else {
