@@ -113,7 +113,6 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
                                 android:layout_marginTop="@dimen/common_dimens_10"
-                                android:drawableEnd="@drawable/ic_rest_arrow"
                                 android:drawablePadding="@dimen/common_dimens_10"
                                 android:text="@string/close_now"
                                 android:textColor="@color/text_color_secondary"

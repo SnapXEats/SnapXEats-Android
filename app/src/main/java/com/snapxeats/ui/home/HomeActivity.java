@@ -345,9 +345,9 @@ public class HomeActivity extends BaseActivity implements
                         dbHelper.getCheckInDataDao().loadAll().get(ZERO).getIsCheckedIn()) {
                     isSnapNShareEnabled = utility.getCheckedInTimeDiff();
                 }
-                if (isSnapNShareEnabled){
+                if (isSnapNShareEnabled) {
                     snapNShareMenu.setEnabled(true);
-                }else {
+                } else {
                     checkInDbHelper.clearCheckInData();
                     snapNShareMenu.setEnabled(false);
                 }
@@ -464,9 +464,9 @@ public class HomeActivity extends BaseActivity implements
             checkInMenu.setTitle(getString(R.string.checkout));
         }
 
-        if (isSnapNShareEnabled){
+        if (isSnapNShareEnabled) {
             snapNShareMenu.setEnabled(true);
-        }else {
+        } else {
             snapNShareMenu.setEnabled(false);
         }
     }
@@ -534,7 +534,9 @@ public class HomeActivity extends BaseActivity implements
                     if (isSnapNShareEnabled) {
                         if (snapShareFragment.isVisible()) {
                             mDrawerLayout.closeDrawer(GravityCompat.START);
-                        } else {
+                        } else if (ZERO != dbHelper.getCheckInDataDao().loadAll().size()
+                                && null != dbHelper.getCheckInDataDao().loadAll().get(ZERO).getRestId()
+                                && !dbHelper.getCheckInDataDao().loadAll().get(ZERO).getRestId().isEmpty()) {
                             bundle.putString(getString(R.string.intent_restaurant_id),
                                     dbHelper.getCheckInDataDao().loadAll().get(ZERO).getRestId());
                             bundle.putBoolean(getString(R.string.notification), true);
@@ -576,7 +578,9 @@ public class HomeActivity extends BaseActivity implements
                 mDrawerLayout.closeDrawer(GravityCompat.START);
             }
 
-        } else {
+        } else
+
+        {
             dialogPreferences();
         }
         return true;
@@ -715,7 +719,7 @@ public class HomeActivity extends BaseActivity implements
             selectedBundle.onBundleSelect(mToken);
         } else if (value instanceof UserReward) {
             UserReward userReward = (UserReward) value;
-            utility.updateRewardUI(mNavigationView,userReward);
+            utility.updateRewardUI(mNavigationView, userReward);
         }
     }
 

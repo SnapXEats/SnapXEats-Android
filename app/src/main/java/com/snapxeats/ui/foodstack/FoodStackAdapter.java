@@ -15,6 +15,7 @@ import com.snapxeats.R;
 import java.util.List;
 
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Prajakta Patil on 27/2/18.
@@ -23,7 +24,7 @@ public class FoodStackAdapter extends ArrayAdapter<FoodStackData> {
     private List<FoodStackData> dataList;
 
     FoodStackAdapter(Context context, List<FoodStackData> dataList) {
-        super(context, 0);
+        super(context, ZERO);
         this.dataList = dataList;
     }
 

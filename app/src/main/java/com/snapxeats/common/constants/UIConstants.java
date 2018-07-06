@@ -36,8 +36,8 @@ public class UIConstants {
 
     /*Maps Screen*/
 
-//    public static final double LAT = 40.7014;
-//    public static final double LNG = -74.0151;
+    public static final double LAT = 40.7014;
+    public static final double LNG = -74.0151;
 
     public static final float MAP_SCOLL_BY = 320;
     public static final float MAP_ZOOM = 11.8f;
