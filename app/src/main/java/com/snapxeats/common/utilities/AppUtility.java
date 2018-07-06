@@ -122,8 +122,8 @@ public class AppUtility {
     }
 
     public SharedPreferences getSharedPreferences() {
-        preferences = mContext.getSharedPreferences(mContext.getString(R.string.preference_name),
-                Context.MODE_PRIVATE);
+        if (null != mContext)
+        preferences = mContext.getSharedPreferences(mContext.getString(R.string.preference_name), Context.MODE_PRIVATE);
         return preferences;
     }
 

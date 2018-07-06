@@ -38,6 +38,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.snapxeats.common.constants.UIConstants.LAT;
+import static com.snapxeats.common.constants.UIConstants.LNG;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 import static com.snapxeats.common.utilities.NoNetworkResults.CHECKIN;
@@ -260,12 +262,9 @@ public class HomeInteractor {
     }
 
     void getNearByRestaurantToCheckIn(double lat, double lng) {
-//        lat = 40.7014;
-//        lng = -74.0151;
-
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = Objects.requireNonNull(ApiClient.getClient(mContext, BASE_URL)).create(ApiHelper.class);
-            Call<CheckInRestaurants> checkInRestaurantsCall = apiHelper.getRestaurantsForCheckIn(lat, lng);
+            Call<CheckInRestaurants> checkInRestaurantsCall = apiHelper.getRestaurantsForCheckIn(lat,lng);
             checkInRestaurantsCall.enqueue(new Callback<CheckInRestaurants>() {
                 @Override
                 public void onResponse(Call<CheckInRestaurants> call, Response<CheckInRestaurants> response) {
