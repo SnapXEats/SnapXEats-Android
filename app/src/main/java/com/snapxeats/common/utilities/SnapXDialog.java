@@ -167,4 +167,16 @@ public class SnapXDialog {
         }
         return loginSuccessDialog;
     }
+
+    /**
+     * Dialog to show unable to detect current location
+     */
+    public Dialog showLocationErrorDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(context.getString(R.string.location_error));
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> dialog.dismiss());
+        Dialog locationErrorDialog = builder.create();
+        locationErrorDialog.show();
+        return locationErrorDialog;
+    }
 }

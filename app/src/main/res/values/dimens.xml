@@ -29,6 +29,7 @@
     <dimen name="frame_width">320dp</dimen>
     <dimen name="frame_height">350dp</dimen>
     <dimen name="common_dimens_30">30dp</dimen>
+    <dimen name="common_dimens_35">35dp</dimen>
     <dimen name="dimens_7dp">7dp</dimen>
     <dimen name="dimens_50dp">50dp</dimen>
     <dimen name="dimens_54dp">54dp</dimen>
@@ -82,5 +83,6 @@
     <dimen name="dimen_440">440dp</dimen>
     <dimen name="dimens_320dp">320dp</dimen>
     <dimen name="dimens_345dp">345dp</dimen>
+    <dimen name="dimens_64dp">64dp</dimen>
 
 </resources>

@@ -25,6 +25,7 @@
     <color name="colorTxtRestName">#424242</color>
     <color name="colorShareUrl">#1B202D</color>
     <color name="colorDarkerGrey">#636262</color>
+    <color name="nonactive_text_color">#FFCECCCC</color>
 
 </resources>
 

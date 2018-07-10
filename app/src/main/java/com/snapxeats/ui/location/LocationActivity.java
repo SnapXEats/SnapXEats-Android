@@ -1,6 +1,7 @@
 package com.snapxeats.ui.location;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -216,6 +217,9 @@ public class LocationActivity extends BaseActivity implements
                 selectedLocation = new Location(location.getLatitude(),
                         location.getLongitude(), utility.getPlaceName(location));
                 putData(selectedLocation);
+            } else {
+                dismissProgressDialog();
+                snapXDialog.showLocationErrorDialog();
             }
         } else {
             showNetworkErrorDialog((dialog, which) -> {
@@ -272,6 +276,7 @@ public class LocationActivity extends BaseActivity implements
 
     @OnClick(R.id.img_close)
     public void close() {
+        utility.hideKeyboard();
         finish();
     }
 

@@ -32,6 +32,7 @@ public class HomeFgmtInteractor {
     private HomeFgmtContract.HomeFgmtPresenter homeFgmtPresenter;
 
     private Context mContext;
+    private HomeFgmtContract.HomeFgmtView mHomeFgmtView;
 
     @Inject
     AppUtility utility;
@@ -50,7 +51,7 @@ public class HomeFgmtInteractor {
     public void setContext(HomeFgmtContract.HomeFgmtView view) {
         this.mContext = view.getActivity();
         utility.setContext(mContext);
-
+        mHomeFgmtView = view;
     }
 
     /**
@@ -72,6 +73,15 @@ public class HomeFgmtInteractor {
                         RootCuisine rootCuisine = response.body();
                         if (utility.isLoggedIn()) {
                             updateUserRewardPoint();
+                        }
+
+                        /**
+                         * This if condition is a hack required because view reference in
+                         * homeFgmtPresenter getting null on some devices Android 5.0.2 need to figure out
+                         * This is temporary fix and reveret all the changes setView() and getView() methods need to be removed from HomeFgmtPresenterImpl
+                         */
+                        if (null == ((HomeFgmtPresenterImpl) homeFgmtPresenter).getView()) {
+                            ((HomeFgmtPresenterImpl) homeFgmtPresenter).setView(mHomeFgmtView);
                         }
                         homeFgmtPresenter.response(SnapXResult.SUCCESS, rootCuisine);
                     }

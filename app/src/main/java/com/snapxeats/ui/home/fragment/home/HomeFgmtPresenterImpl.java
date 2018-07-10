@@ -1,10 +1,7 @@
 package com.snapxeats.ui.home.fragment.home;
 
-import android.support.annotation.Nullable;
-
 import com.snapxeats.common.Router;
 import com.snapxeats.common.model.LocationCuisine;
-import com.snapxeats.common.model.foodGestures.RootFoodGestures;
 import com.snapxeats.common.utilities.SnapXResult;
 import javax.inject.Singleton;
 
@@ -18,7 +15,6 @@ public class HomeFgmtPresenterImpl implements HomeFgmtContract.HomeFgmtPresenter
 
     private HomeFgmtInteractor mHomeFgmtInteractor;
 
-    @Nullable
     private HomeFgmtContract.HomeFgmtView mHomeFgmtView;
 
     private HomeFgmtContract.HomeFgmtRouter mHomeFgmtRouter;
@@ -69,6 +65,14 @@ public class HomeFgmtPresenterImpl implements HomeFgmtContract.HomeFgmtPresenter
         mHomeFgmtView = view;
         mHomeFgmtRouter.setView(view);
         mHomeFgmtInteractor.setContext(view);
+    }
+
+    public HomeFgmtContract.HomeFgmtView getView(){
+        return  mHomeFgmtView;
+    }
+
+    public void setView(HomeFgmtContract.HomeFgmtView homeFgmtView){
+        mHomeFgmtView = homeFgmtView;
     }
 
     @Override
