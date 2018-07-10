@@ -175,13 +175,6 @@ public class SnapXDialog {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(context.getString(R.string.location_error));
         builder.setPositiveButton(R.string.ok, click);
-
-               /* new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });*/
         Dialog locationErrorDialog = builder.create();
         locationErrorDialog.show();
         return locationErrorDialog;
