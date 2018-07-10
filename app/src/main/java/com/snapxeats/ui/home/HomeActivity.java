@@ -578,9 +578,7 @@ public class HomeActivity extends BaseActivity implements
                 mDrawerLayout.closeDrawer(GravityCompat.START);
             }
 
-        } else
-
-        {
+        } else {
             dialogPreferences();
         }
         return true;

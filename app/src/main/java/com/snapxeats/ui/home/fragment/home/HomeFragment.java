@@ -43,6 +43,7 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.constants.SnapXToast;
 import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.SelectedCuisineList;
@@ -189,11 +190,9 @@ public class HomeFragment extends BaseFragment implements
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = null;
-
         try {
             view = inflater.inflate(R.layout.fragment_home, container, false);
             ButterKnife.bind(this, view);
-
         } catch (InflateException e) {
             e.printStackTrace();
         }
@@ -327,14 +326,16 @@ public class HomeFragment extends BaseFragment implements
     @Override
     public void success(Object value) {
         dismissProgressDialog();
-        if (value instanceof RootCuisine) {
+        if (mDialog != null) {
             mDialog.dismiss();
+        }
+        if (value instanceof RootCuisine) {
             mRootCuisine = (RootCuisine) value;
             cuisinesList = mRootCuisine.getCuisineList();
             Collections.sort(cuisinesList);
             if (null != cuisinesList && ZERO != cuisinesList.size()) {
                 setRecyclerView();
-            } else if (null != getActivity()){
+            } else if (null != getActivity()) {
                 showCuisineEmptyDialog();
             }
         } else if (value instanceof SnapXUser) {
@@ -543,24 +544,12 @@ public class HomeFragment extends BaseFragment implements
                 mDialog.show();
             }
             presenter.getCuisineList(mLocationCuisine);
+
         } else if (LocationHelper.isGpsEnabled(activity)) {
-            showLocationErrorDialog();
+            dismissProgressDialog();
+            DialogInterface.OnClickListener click = (dialog, which) -> presenter.presentScreen(LOCATION);
+            locationErrorDialog = snapXDialog.showLocationErrorDialog(click);
         }
-    }
-
-    private void showLocationErrorDialog() {
-        locationErrorDialog = new Dialog(getActivity());
-        locationErrorDialog.setOnCancelListener(dialog -> locationErrorDialog.dismiss());
-        locationErrorDialog.setContentView(R.layout.location_error_dialog_layout);
-        locationErrorDialog.findViewById(R.id.btn_ok).setOnClickListener(v -> {
-            locationErrorDialog.cancel();
-        });
-
-        Window window = locationErrorDialog.getWindow();
-        if (null != window) {
-            window.setLayout(UIConstants.CHECKIN_DIALOG_WIDTH, UIConstants.LOCATION_DIALOG_HEIGHT);
-        }
-        locationErrorDialog.show();
     }
 
     /**
