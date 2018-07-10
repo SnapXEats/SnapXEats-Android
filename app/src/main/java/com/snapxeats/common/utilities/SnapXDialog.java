@@ -171,10 +171,17 @@ public class SnapXDialog {
     /**
      * Dialog to show unable to detect current location
      */
-    public Dialog showLocationErrorDialog() {
+    public Dialog showLocationErrorDialog(DialogInterface.OnClickListener click) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(context.getString(R.string.location_error));
-        builder.setPositiveButton(R.string.ok, (dialog, which) -> dialog.dismiss());
+        builder.setPositiveButton(R.string.ok, click);
+
+               /* new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });*/
         Dialog locationErrorDialog = builder.create();
         locationErrorDialog.show();
         return locationErrorDialog;

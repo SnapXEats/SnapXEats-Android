@@ -547,7 +547,8 @@ public class HomeFragment extends BaseFragment implements
 
         } else if (LocationHelper.isGpsEnabled(activity)) {
             dismissProgressDialog();
-            locationErrorDialog = snapXDialog.showLocationErrorDialog();
+            DialogInterface.OnClickListener click = (dialog, which) -> presenter.presentScreen(LOCATION);
+            locationErrorDialog = snapXDialog.showLocationErrorDialog(click);
         }
     }
 

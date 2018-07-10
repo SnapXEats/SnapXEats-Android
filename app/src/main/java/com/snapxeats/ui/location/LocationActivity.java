@@ -2,6 +2,7 @@ package com.snapxeats.ui.location;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -38,6 +39,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.snapxeats.common.Router.Screen.LOCATION;
 import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
 import static com.snapxeats.common.constants.UIConstants.ACTION_LOCATION_GET;
 import static com.snapxeats.common.constants.UIConstants.CHANGE_LOCATION_PERMISSIONS;
@@ -203,6 +205,7 @@ public class LocationActivity extends BaseActivity implements
      */
     @OnClick(R.id.layout_current_location)
     public void detectLocation() {
+        utility.hideKeyboard();
         if (utility.checkPermissions()) {
             getData();
         }
@@ -219,7 +222,8 @@ public class LocationActivity extends BaseActivity implements
                 putData(selectedLocation);
             } else {
                 dismissProgressDialog();
-                snapXDialog.showLocationErrorDialog();
+                DialogInterface.OnClickListener click = (dialog, which) -> dialog.dismiss();
+                snapXDialog.showLocationErrorDialog(click);
             }
         } else {
             showNetworkErrorDialog((dialog, which) -> {
