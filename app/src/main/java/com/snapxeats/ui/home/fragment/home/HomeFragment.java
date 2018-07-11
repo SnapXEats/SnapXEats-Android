@@ -33,7 +33,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -43,8 +42,6 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
-import com.snapxeats.common.constants.SnapXToast;
-import com.snapxeats.common.constants.UIConstants;
 import com.snapxeats.common.model.LocationCuisine;
 import com.snapxeats.common.model.SelectedCuisineList;
 import com.snapxeats.common.model.SnapXUser;
@@ -76,7 +73,7 @@ import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
 import static com.snapxeats.common.constants.UIConstants.ACTION_LOCATION_GET;
 import static com.snapxeats.common.constants.UIConstants.CHANGE_LOCATION_PERMISSIONS;
 import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
-import static com.snapxeats.common.constants.UIConstants.LOGOUT_DIALOG_HEIGHT;
+import static com.snapxeats.common.constants.UIConstants.FIVE;
 import static com.snapxeats.common.constants.UIConstants.SPAN_COUNT;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -333,11 +330,7 @@ public class HomeFragment extends BaseFragment implements
             mRootCuisine = (RootCuisine) value;
             cuisinesList = mRootCuisine.getCuisineList();
             Collections.sort(cuisinesList);
-            if (null != cuisinesList && ZERO != cuisinesList.size()) {
-                setRecyclerView();
-            } else if (null != getActivity()) {
-                showCuisineEmptyDialog();
-            }
+            setRecyclerView();
         } else if (value instanceof SnapXUser) {
             SnapXUser snapXUser = (SnapXUser) value;
             SharedPreferences preferences = utility.getSharedPreferences();
@@ -359,31 +352,37 @@ public class HomeFragment extends BaseFragment implements
     }
 
     public void setRecyclerView() {
-        getDataFromLocalDB();
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(activity, SPAN_COUNT);
+        if (null != cuisinesList && ZERO != cuisinesList.size()) {
+            getDataFromLocalDB();
+            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(activity, SPAN_COUNT);
 
-        adapter = new HomeAdapter(activity, cuisinesList, new OnDoubleTapListenr() {
-            Cuisines cuisines;
+            adapter = new HomeAdapter(activity, cuisinesList, new OnDoubleTapListenr() {
+                Cuisines cuisines;
 
-            @Override
-            public void onSingleTap(int position, boolean isLike) {
-                cuisines = mRootCuisine.getCuisineList().get(position);
-                if (cuisines.is_cuisine_like()) {
-                    cuisines.set_cuisine_like(isLike);
-                } else {
-                    cuisines.set_cuisine_favourite(isLike);
+                @Override
+                public void onSingleTap(int position, boolean isLike) {
+                    cuisines = mRootCuisine.getCuisineList().get(position);
+                    if (cuisines.is_cuisine_like()) {
+                        cuisines.set_cuisine_like(isLike);
+                    } else {
+                        cuisines.set_cuisine_favourite(isLike);
+                    }
+                    adapter.notifyDataSetChanged();
                 }
-                adapter.notifyDataSetChanged();
-            }
 
-            @Override
-            public void onDoubleTap(int position, boolean isSuperLike) {
+                @Override
+                public void onDoubleTap(int position, boolean isSuperLike) {
 
-            }
-        });
+                }
+            });
 
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setAdapter(adapter);
+            mRecyclerView.setLayoutManager(layoutManager);
+            mRecyclerView.setAdapter(adapter);
+        } else if (null != getActivity()) {
+            if (null != cuisineErrorDialog && cuisineErrorDialog.isShowing())
+                cuisineErrorDialog.dismiss();
+            showCuisineEmptyDialog();
+        }
     }
 
     private List<Cuisines> getSelectedCuisineList() {
@@ -524,9 +523,6 @@ public class HomeFragment extends BaseFragment implements
             if (null != locationErrorDialog && locationErrorDialog.isShowing())
                 locationErrorDialog.dismiss();
 
-            if (null != cuisineErrorDialog && cuisineErrorDialog.isShowing())
-                cuisineErrorDialog.dismiss();
-
             //set latitude and longitude for selected cuisines
             mLocationCuisine = new LocationCuisine();
             mLocationCuisine.setLatitude(mSelectedLocation.getLat());
@@ -537,6 +533,7 @@ public class HomeFragment extends BaseFragment implements
                 utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
             } else {
                 mRootUserPreference.setLocation(mSelectedLocation);
+                mRootUserPreference.setRestaurant_distance(String.valueOf(FIVE));
             }
 
             mTxtPlaceName.setText(mSelectedLocation.getName());
