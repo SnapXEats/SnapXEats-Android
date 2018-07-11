@@ -59,8 +59,8 @@ public class UIConstants {
     public static final String DIR_PRICE_FOUR = "4";
 
     /*Foodstack screen*/
-    public static final long SET_START_DELAY = 100;
-    public static final long SET_DURATION = 500;
+    public static final long SET_START_DELAY = 150;
+    public static final long SET_DURATION = 550;
     public static final long SET_ROTATION_DURATION = 200;
     public static final float SET_ALPHA = (float) 1.0;
     public static final float LEFT_ROTATION = -10f;
