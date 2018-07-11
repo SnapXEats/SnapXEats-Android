@@ -215,7 +215,7 @@ public class LocationActivity extends BaseActivity implements
         if (NetworkUtility.isNetworkAvailable(this)) {
             showProgressDialog();
             android.location.Location location = utility.getLocation();
-            if (null != location) {
+            if (null != location && !utility.getPlaceName(location).isEmpty()) {
                 dismissProgressDialog();
                 selectedLocation = new Location(location.getLatitude(),
                         location.getLongitude(), utility.getPlaceName(location));

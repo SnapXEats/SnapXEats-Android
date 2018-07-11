@@ -258,7 +258,7 @@
     <string name="google_dir_no_routes">No routes found</string>
     <string name="smartphoto_draft_stored_id">smartphoto_draft_stored_id</string>
     <string name="audio_path">audio_path</string>
-    <string name="location_error">Unable to detect your current location, please enter custom location</string>
+    <string name="location_error">Could not identify your location, please enter custom location</string>
     <string name="please_enable_gps">Please enable GPS</string>
     <string name="cuisine_error">Cuisines are not available for this location.</string>
 
