@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardview_cuisine"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/common_dimens_5">
+    android:layout_margin="@dimen/common_dimens_5"
+    app:cardElevation="@dimen/common_dimens_20"
+    app:cardCornerRadius="@dimen/common_dimens_2"
+    app:cardBackgroundColor="@color/colorOffWhite"
+    app:contentPaddingBottom="@dimen/common_dimens_2">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite">
 
         <LinearLayout
             android:id="@+id/layout_cuisine_cardview"

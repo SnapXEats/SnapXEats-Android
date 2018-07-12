@@ -1,5 +1,4 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,7 +19,8 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize">
+                android:layout_height="?attr/actionBarSize"
+                android:elevation="@dimen/common_dimens_5">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -266,7 +266,7 @@
                             android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:background="@drawable/segmented_fg"
+                            android:background="@drawable/segmented_bg"
                             android:buttonTint="@color/pref_slider_background" />
 
                         <RadioButton
@@ -302,7 +302,7 @@
                             android:layout_width="@dimen/common_dimens_0"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:background="@drawable/segmented_bg"
+                            android:background="@drawable/segmented_fg"
                             android:buttonTint="@color/pref_slider_background" />
                     </LinearLayout>
 

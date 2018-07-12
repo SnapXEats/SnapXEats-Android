@@ -7,8 +7,6 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -55,7 +53,6 @@ import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.SET_ALPHA;
 import static com.snapxeats.common.constants.UIConstants.SET_ALPHA_DISABLE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
-import static com.yuyakaido.android.cardstackview.SwipeDirection.Left;
 
 /**
  * Created by Prajakta Patil on 30/1/18.
@@ -150,10 +147,6 @@ public class FoodStackActivity extends BaseActivity
 
         selectedCuisineList = Objects.requireNonNull(getIntent().getExtras()).getParcelable(getString(R.string.data_selectedCuisineList));
 
-        assert null != selectedCuisineList;
-        if (ZERO != selectedCuisineList.getSelectedCuisineList().size()) {
-            enableGestureActions();
-        }
         showProgressDialog();
         mFoodStackPresenter.getCuisinePhotos(selectedCuisineList);
         setupFoodStack();
@@ -179,17 +172,6 @@ public class FoodStackActivity extends BaseActivity
                 || ZERO != mRootFoodGestures.getLike_dish_array().size()) {
             mFoodStackPresenter.foodstackGestures(mRootFoodGestures);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    public boolean isLoggedIn() {
-        SharedPreferences preferences = mAppUtility.getSharedPreferences();
-        String serverUserId = preferences.getString(getString(R.string.user_id), "");
-        return !serverUserId.isEmpty();
     }
 
     public void enableGestureActions() {
@@ -225,6 +207,10 @@ public class FoodStackActivity extends BaseActivity
         mImgUndo.setClickable(false);
         mImgUndo.setAlpha(UIConstants.SET_ALPHA_DISABLE);
     }
+
+    /**
+     * Set event listener for CardStackView
+     */
 
     private void setupFoodStack() {
         cardStackView.setCardEventListener(new CardStackView.CardEventListener() {
@@ -308,6 +294,7 @@ public class FoodStackActivity extends BaseActivity
         int rowIndex, colIndex;
         List<DishesInfo> dishInfo = rootCuisinePhotos.getDishesInfo();
         if (ZERO != dishInfo.size()) {
+            enableGestureActions();
             for (rowIndex = ZERO; rowIndex < dishInfo.size(); rowIndex++) {
                 DishesInfo dish = dishInfo.get(rowIndex);
                 for (colIndex = ZERO; colIndex < dish.getRestaurantDishes().size(); colIndex++) {
@@ -373,7 +360,7 @@ public class FoodStackActivity extends BaseActivity
         if (index < foodStackDataList.size() && foodStackDataList.get(index) != null)
             foodDislikeItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
         foodGestureDislike.add(foodDislikeItem);
-        if (isLoggedIn()) {
+        if (mAppUtility.isLoggedIn()) {
             mFoodStackPresenter.saveDislikeToDb(foodGestureDislike);
         }
     }
@@ -388,7 +375,7 @@ public class FoodStackActivity extends BaseActivity
     }
 
     private void saveFoodWishlistData(int index) {
-        if (isLoggedIn()) {
+        if (mAppUtility.isLoggedIn()) {
             FoodWishlists foodGestureWishItem = new FoodWishlists();
             foodGestureWishItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
             foodGestureWishlist.add(foodGestureWishItem);
@@ -414,7 +401,7 @@ public class FoodStackActivity extends BaseActivity
 
     private void saveFoodLikesData(int index) {
         FoodLikes foodGestureLikesItem;
-        if (isLoggedIn()) {
+        if (mAppUtility.isLoggedIn()) {
             foodGestureLikesItem = new FoodLikes();
             foodGestureLikesItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
             foodLikes.add(foodGestureLikesItem);
