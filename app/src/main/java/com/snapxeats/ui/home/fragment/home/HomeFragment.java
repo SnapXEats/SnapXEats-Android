@@ -533,7 +533,6 @@ public class HomeFragment extends BaseFragment implements
                 utility.saveObjectInPref(mSelectedLocation, getString(R.string.selected_location));
             } else {
                 mRootUserPreference.setLocation(mSelectedLocation);
-                mRootUserPreference.setRestaurant_distance(String.valueOf(FIVE));
             }
 
             mTxtPlaceName.setText(mSelectedLocation.getName());

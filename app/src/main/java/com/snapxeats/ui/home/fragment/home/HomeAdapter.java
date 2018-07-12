@@ -82,7 +82,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            if (cuisineArrayList.get(position).is_cuisine_like() ||
+            if (position >= cuisineArrayList.size() && cuisineArrayList.get(position).is_cuisine_like() ||
                     cuisineArrayList.get(position).is_cuisine_favourite()) {
                 onDoubleTapListenr.onSingleTap(position, false);
             } else {

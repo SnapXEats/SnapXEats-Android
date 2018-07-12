@@ -103,8 +103,6 @@
             android:layout_marginBottom="@dimen/dimen_120"
             android:elevation="@dimen/common_dimens_40"
             android:paddingBottom="@dimen/dimen_32"
-            android:paddingLeft="@dimen/dimen_16"
-            android:paddingRight="@dimen/dimen_16"
             android:paddingTop="@dimen/dimen_32"
             app:elevationEnabled="true"
             app:leftOverlay="@layout/food_overlay_dislike"
