@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -108,8 +109,6 @@ public class FoodStackActivity extends BaseActivity
 
     private LinkedList<FoodStackData> foodDataList;
 
-    private AnimatorSet mAnimatorSet;
-
     @Inject
     FoodStackDbHelper foodStackDbHelper;
 
@@ -144,7 +143,6 @@ public class FoodStackActivity extends BaseActivity
         foodGestureDislike = new ArrayList<>();
         foodLikes = new ArrayList<>();
         foodDataList = new LinkedList<>();
-        mAnimatorSet = new AnimatorSet();
         foodGestureDislike = foodStackDbHelper.getFoodDislikes();
 
         //Api call for saved food preferences
@@ -158,6 +156,7 @@ public class FoodStackActivity extends BaseActivity
         }
         showProgressDialog();
         mFoodStackPresenter.getCuisinePhotos(selectedCuisineList);
+        setupFoodStack();
     }
 
     private void setupToolbar() {
@@ -185,7 +184,6 @@ public class FoodStackActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
-        setupFoodStack();
     }
 
     public boolean isLoggedIn() {
@@ -243,7 +241,7 @@ public class FoodStackActivity extends BaseActivity
                 }
                 switch (direction) {
                     case Top: {
-                        swipeTop(cardStackView.getTopIndex());
+                        saveFoodWishlistData(cardStackView.getTopIndex());
                         break;
                     }
                     case Right: {
@@ -364,10 +362,8 @@ public class FoodStackActivity extends BaseActivity
     }
 
     private void saveFoodDislikeData(int index) {
-        FoodDislikes foodDislikeItem;
-        foodDislikeItem = new FoodDislikes();
-        if (index < foodStackDataList.size()
-                && foodStackDataList.get(index) != null)
+        FoodDislikes foodDislikeItem = new FoodDislikes();
+        if (index < foodStackDataList.size() && foodStackDataList.get(index) != null)
             foodDislikeItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
         foodGestureDislike.add(foodDislikeItem);
         if (isLoggedIn()) {
@@ -382,36 +378,45 @@ public class FoodStackActivity extends BaseActivity
         if (data.isEmpty()) {
             return;
         }
-        FoodWishlists foodGestureWishItem;
+        gestureTop();
+    }
+
+    private void saveFoodWishlistData(int index) {
         if (isLoggedIn()) {
-            foodGestureWishItem = new FoodWishlists();
+            FoodWishlists foodGestureWishItem = new FoodWishlists();
             foodGestureWishItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
             foodGestureWishlist.add(foodGestureWishItem);
             mFoodStackPresenter.saveWishlistToDb(foodGestureWishlist);
         }
-        gestureTop();
     }
 
     //swipe RIGHT
     public void swipeRight(int index) {
+        disableUndo();
         List<FoodStackData> data = extractRemainingCards();
         if (data.isEmpty()) {
             return;
         }
-        FoodLikes foodGestureLikesItem;
-        if (isLoggedIn()) {
-            foodGestureLikesItem = new FoodLikes();
-            foodGestureLikesItem.setRestaurant_dish_id(foodStackDataList.get(cardStackView.getTopIndex()).getDishId());
-            foodLikes.add(foodGestureLikesItem);
-            mFoodStackPresenter.saveLikesToDb(foodLikes);
-        }
+        saveFoodLikesData(cardStackView.getTopIndex());
         Intent intent = new Intent(FoodStackActivity.this, RestaurantDetailsActivity.class);
         intent.putExtra(getString(R.string.intent_restaurant_id), foodStackDataList.get(index).getId());
         startActivity(intent);
-        gestureRight();
+        cardStackView.reverse();
+    }
+
+    private void saveFoodLikesData(int index) {
+        FoodLikes foodGestureLikesItem;
+        if (isLoggedIn()) {
+            foodGestureLikesItem = new FoodLikes();
+            foodGestureLikesItem.setRestaurant_dish_id(foodStackDataList.get(index).getDishId());
+            foodLikes.add(foodGestureLikesItem);
+            mFoodStackPresenter.saveLikesToDb(foodLikes);
+        }
     }
 
     private void gestureRight() {
+        AnimatorSet animatorSet = new AnimatorSet();
+
         View target = cardStackView.getTopView();
         ValueAnimator rotation = ObjectAnimator.ofPropertyValuesHolder(
                 target, PropertyValuesHolder.ofFloat(getString(R.string.rotation), UIConstants.RIGHT_ROTATION));
@@ -426,10 +431,11 @@ public class FoodStackActivity extends BaseActivity
         translateY.setStartDelay(UIConstants.SET_START_DELAY);
         translateX.setDuration(UIConstants.SET_DURATION);
         translateY.setDuration(UIConstants.SET_DURATION);
-        mAnimatorSet.playTogether(rotation, translateX, translateY);
+        animatorSet.playTogether(rotation, translateX, translateY);
     }
 
     private void gestureLeft() {
+        AnimatorSet animatorSet = new AnimatorSet();
         View target = cardStackView.getTopView();
         ValueAnimator rotation = ObjectAnimator.ofPropertyValuesHolder(
                 target, PropertyValuesHolder.ofFloat(getString(R.string.rotation), UIConstants.LEFT_ROTATION));
@@ -444,12 +450,12 @@ public class FoodStackActivity extends BaseActivity
         translateY.setStartDelay(UIConstants.SET_START_DELAY);
         translateX.setDuration(UIConstants.SET_DURATION);
         translateY.setDuration(UIConstants.SET_DURATION);
-        mAnimatorSet.playTogether(rotation, translateX, translateY);
-        cardStackView.swipe(Left, mAnimatorSet);
-        cardStackView.swipe(SwipeDirection.Left, mAnimatorSet);
+        animatorSet.playTogether(rotation, translateX, translateY);
+        cardStackView.swipe(SwipeDirection.Left, animatorSet);
     }
 
     private void gestureTop() {
+        AnimatorSet animatorSet = new AnimatorSet();
         View target = cardStackView.getTopView();
         ValueAnimator rotation = ObjectAnimator.ofPropertyValuesHolder(
                 target, PropertyValuesHolder.ofFloat(getString(R.string.rotation), UIConstants.DEFAULT_TRANSLATION));
@@ -464,7 +470,8 @@ public class FoodStackActivity extends BaseActivity
         translateY.setStartDelay(UIConstants.SET_START_DELAY);
         translateX.setDuration(UIConstants.SET_DURATION);
         translateY.setDuration(UIConstants.SET_DURATION);
-        mAnimatorSet.playTogether(rotation, translateX, translateY);
+        animatorSet.playTogether(rotation, translateX, translateY);
+        cardStackView.swipe(SwipeDirection.Top, animatorSet);
     }
 
     @Override
@@ -489,15 +496,12 @@ public class FoodStackActivity extends BaseActivity
 
     @OnClick(R.id.img_cuisine_dislike)
     public void imgCuisineReject() {
-        isLeftSwiped = true;
         swipeLeft();
-        saveFoodDislikeData(cardStackView.getTopIndex());
     }
 
     @OnClick(R.id.img_cuisine_wishlist)
     public void imgCuisineWishlist() {
-        swipeTop(cardStackView.getTopIndex() - ONE);
-        cardStackView.swipe(SwipeDirection.Top, mAnimatorSet);
+        swipeTop(cardStackView.getTopIndex());
     }
 
     public void enableMap() {

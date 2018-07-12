@@ -30,6 +30,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import static com.snapxeats.common.constants.UIConstants.FIVE;
+import static com.snapxeats.common.constants.UIConstants.ONE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -84,29 +86,29 @@ public class HomeDbHelper {
         String userId = preferences.getString(mContext.getString(R.string.user_id), "");
         rootUserPreference.setUser_Id(userId);
 
-        if (null != userPreferenceDao && userPreferenceDao.loadAll().size() != 0) {
+        if (null != userPreferenceDao && ZERO != userPreferenceDao.loadAll().size()) {
 
-            UserPreference userPreference = userPreferenceDao.loadAll().get(0);
+            UserPreference userPreference = userPreferenceDao.loadAll().get(ZERO);
 
             if (null != userPreference.getRestaurant_rating() &&
                     !userPreference.getRestaurant_rating().isEmpty()) {
                 rootUserPreference.setRestaurant_rating(userPreference.getRestaurant_rating());
             } else {
-                rootUserPreference.setRestaurant_rating(String.valueOf(0));
+                rootUserPreference.setRestaurant_rating(String.valueOf(ZERO));
             }
 
             if (null != userPreference.getRestaurant_distance() &&
                     !userPreference.getRestaurant_distance().isEmpty()) {
                 rootUserPreference.setRestaurant_distance(userPreference.getRestaurant_distance());
             } else {
-                rootUserPreference.setRestaurant_distance(String.valueOf(1));
+                rootUserPreference.setRestaurant_distance(String.valueOf(FIVE));
             }
 
             if (null != userPreference.getRestaurant_price() &&
                     !userPreference.getRestaurant_price().isEmpty()) {
                 rootUserPreference.setRestaurant_price(userPreference.getRestaurant_price());
             } else {
-                rootUserPreference.setRestaurant_price(String.valueOf(0));
+                rootUserPreference.setRestaurant_price(String.valueOf(ZERO));
             }
 
             if (userPreference.getSort_by_distance()) {
@@ -118,14 +120,14 @@ public class HomeDbHelper {
             }
 
             List<UserCuisinePreferences> selectedCuisineList = cuisineDao.queryBuilder().
-                    whereOr(UserCuisinePreferencesDao.Properties.Is_cuisine_favourite.eq(1),
-                            (UserCuisinePreferencesDao.Properties.Is_cuisine_like.eq(1))).list();
+                    whereOr(UserCuisinePreferencesDao.Properties.Is_cuisine_favourite.eq(ONE),
+                            (UserCuisinePreferencesDao.Properties.Is_cuisine_like.eq(ONE))).list();
 
             rootUserPreference.setUserCuisinePreferences(selectedCuisineList);
 
             List<UserFoodPreferences> selectedFoodList = foodDao.queryBuilder().
-                    whereOr(UserFoodPreferencesDao.Properties.Is_food_favourite.eq(1),
-                            (UserFoodPreferencesDao.Properties.Is_food_like.eq(1))).list();
+                    whereOr(UserFoodPreferencesDao.Properties.Is_food_favourite.eq(ONE),
+                            (UserFoodPreferencesDao.Properties.Is_food_like.eq(ONE))).list();
 
             rootUserPreference.setUserFoodPreferences(selectedFoodList);
 

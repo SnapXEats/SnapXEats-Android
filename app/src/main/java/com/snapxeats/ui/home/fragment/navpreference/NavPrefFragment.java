@@ -55,6 +55,7 @@ import static com.snapxeats.common.constants.UIConstants.DISTANCE_FOUR;
 import static com.snapxeats.common.constants.UIConstants.DISTANCE_ONE;
 import static com.snapxeats.common.constants.UIConstants.DISTANCE_THREE;
 import static com.snapxeats.common.constants.UIConstants.DISTANCE_TWO;
+import static com.snapxeats.common.constants.UIConstants.FIVE;
 import static com.snapxeats.common.constants.UIConstants.FIVE_STAR;
 import static com.snapxeats.common.constants.UIConstants.FOUR_STAR;
 import static com.snapxeats.common.constants.UIConstants.PRICE_AUTO;
@@ -84,7 +85,7 @@ public class NavPrefFragment extends BaseFragment implements
     private int pricing;
 
     //Default distance
-    private int distance = DISTANCE_ONE;
+    private int distance = DISTANCE_FIVE;
     private boolean isSortByDistance;
     private boolean isSortByRating;
     @Inject

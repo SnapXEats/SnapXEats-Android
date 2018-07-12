@@ -20,7 +20,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static com.snapxeats.common.constants.UIConstants.ONE;
+import static com.snapxeats.common.constants.UIConstants.FIVE;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
@@ -68,7 +68,7 @@ public class LoginDbHelper {
         if (userPreferences.getRestaurant_distance() != null) {
             distance = userPreferences.getRestaurant_distance();
         } else {
-            distance = String.valueOf(ONE);
+            distance = String.valueOf(FIVE);
         }
 
         if (userPreferences.getRestaurant_price() != null) {
@@ -89,8 +89,6 @@ public class LoginDbHelper {
         userPreferenceDao.insertOrReplace(userPreference);
 
         mRootUserPreference = getUserPreferenceFromDb(userPreferences);
-
-
     }
 
     RootUserPreference getUserPreferenceFromDb(UserPreferences userPreference) {
@@ -111,7 +109,7 @@ public class LoginDbHelper {
                     !userPreference.getRestaurant_distance().isEmpty()) {
                 mRootUserPreference.setRestaurant_distance(userPreference.getRestaurant_distance());
             } else {
-                mRootUserPreference.setRestaurant_distance(String.valueOf(1));
+                mRootUserPreference.setRestaurant_distance(String.valueOf(FIVE));
             }
 
             if (null != userPreference.getRestaurant_price() &&
