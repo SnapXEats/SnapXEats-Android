@@ -323,6 +323,8 @@ public class HomeFragment extends BaseFragment implements
     @Override
     public void success(Object value) {
         dismissProgressDialog();
+        //Reloading list
+        cuisinesList.clear();
         if (mDialog != null && null != getActivity()) {
             mDialog.dismiss();
         }
