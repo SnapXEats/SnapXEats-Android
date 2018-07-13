@@ -20,6 +20,7 @@ import butterknife.ButterKnife;
 import static com.snapxeats.common.constants.UIConstants.SELECT_OPACITY;
 import static com.snapxeats.common.constants.UIConstants.THUMBNAIL;
 import static com.snapxeats.common.constants.UIConstants.UNSELECT_OPACITY;
+import static com.snapxeats.common.constants.UIConstants.ZERO;
 
 /**
  * Created by Snehal Tembare on 7/3/18.
@@ -82,7 +83,10 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            if (position >= cuisineArrayList.size() && cuisineArrayList.get(position).is_cuisine_like() ||
+            if (null != cuisineArrayList
+                    && cuisineArrayList.size() > ZERO
+                    && position < cuisineArrayList.size()
+                    && cuisineArrayList.get(position).is_cuisine_like() ||
                     cuisineArrayList.get(position).is_cuisine_favourite()) {
                 onDoubleTapListenr.onSingleTap(position, false);
             } else {
