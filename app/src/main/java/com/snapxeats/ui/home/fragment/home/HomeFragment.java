@@ -323,13 +323,17 @@ public class HomeFragment extends BaseFragment implements
     @Override
     public void success(Object value) {
         dismissProgressDialog();
-        //Reloading list
-        cuisinesList.clear();
+
         if (mDialog != null && null != getActivity()) {
             mDialog.dismiss();
         }
         if (value instanceof RootCuisine) {
             mRootCuisine = (RootCuisine) value;
+            //Reloading list
+            cuisinesList.clear();
+            if (null != adapter){
+                adapter.notifyDataSetChanged();
+            }
             cuisinesList = mRootCuisine.getCuisineList();
             Collections.sort(cuisinesList);
             setRecyclerView();
@@ -380,6 +384,8 @@ public class HomeFragment extends BaseFragment implements
 
             mRecyclerView.setLayoutManager(layoutManager);
             mRecyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+
         } else if (null != getActivity()) {
             if (null != cuisineErrorDialog && cuisineErrorDialog.isShowing())
                 cuisineErrorDialog.dismiss();
