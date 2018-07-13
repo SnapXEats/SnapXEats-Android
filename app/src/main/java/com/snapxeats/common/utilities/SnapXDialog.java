@@ -157,17 +157,6 @@ public class SnapXDialog {
         return mSnackbar;
     }
 
-    public Dialog showLogInSuccessDialog() {
-        Dialog loginSuccessDialog = new Dialog(context);
-        loginSuccessDialog.setContentView(R.layout.login_success_layout);
-        loginSuccessDialog.setCancelable(false);
-        Window window = loginSuccessDialog.getWindow();
-        if (null != window) {
-            window.setLayout(UIConstants.NO_DATA_DIALOG_WIDTH, LinearLayout.LayoutParams.WRAP_CONTENT);
-        }
-        return loginSuccessDialog;
-    }
-
     /**
      * Dialog to show unable to detect current location
      */

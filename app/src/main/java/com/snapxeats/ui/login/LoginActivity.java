@@ -2,9 +2,11 @@ package com.snapxeats.ui.login;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -222,12 +224,15 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
         dismissProgressDialog();
         //TODO value not used yet
         SnapXUserResponse snapXUserResponse = (SnapXUserResponse) value;
-       Dialog dialog = mSnapXDialog.showLogInSuccessDialog();
-       dialog.show();
-       dialog.findViewById(R.id.btn_ok).setOnClickListener(v -> {
-           dialog.dismiss();
-           mLoginPresenter.presentScreen(Router.Screen.HOME);
-       });
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setTitle(R.string.login_success);
+        builder.setMessage(getString(R.string.login_success_msg));
+        builder.setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+            dialog.dismiss();
+            mLoginPresenter.presentScreen(Router.Screen.HOME);
+        });
+        builder.create().show();
     }
 
     @Override
