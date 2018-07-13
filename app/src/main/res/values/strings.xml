@@ -262,5 +262,6 @@
     <string name="please_enable_gps">Please enable GPS</string>
     <string name="cuisine_error">Cuisines are not available for this location.</string>
     <string name="dish_name">Dish Name</string>
+    <string name="True">true</string>
 
 </resources>
