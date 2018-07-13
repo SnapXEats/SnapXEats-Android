@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -102,12 +103,6 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
     @BindView(R.id.spinner_rest_info_timings)
     protected Spinner mSpinner;
 
-    @BindView(R.id.txt_rest_info_open)
-    protected TextView mTxtRestOpen;
-
-    @BindView(R.id.txt_rest_info_close)
-    protected TextView mTxtRestClose;
-
     @BindView(R.id.restaurant_info_parent_layout)
     protected LinearLayout mParentLayout;
 
@@ -172,47 +167,69 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
 
     /*set restaurant timings*/
     private void setRestaurantTimingsList() {
-        ArrayAdapter<String> adapter;
         List<String> listTimings = new ArrayList<>();
-        String isOpenNow = mRootRestaurantInfo.getRestaurantDetails().getIsOpenNow();
+        if (null != mRootRestaurantInfo
+                && null != mRootRestaurantInfo.getRestaurantDetails()
+                && null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings()
+                && ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size()
+                && null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings()) {
 
-        if (ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size()) {
-            for (int row = ZERO; row < mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size(); row++) {
-                listTimings.add(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().get(row).getDay_of_week()
-                        + " - " +
-                        mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().get(row).getRestaurant_open_close_time());
-            }
-            Comparator<String> dateComparator = (s1, s2) -> {
-                try {
-                    @SuppressLint("SimpleDateFormat")
-                    SimpleDateFormat format = new SimpleDateFormat("EEE");
-                    Date d1 = format.parse(s1);
-                    Date d2 = format.parse(s2);
-                    if (d1.equals(d2)) {
-                        return s1.substring(s1.indexOf(" ") + ONE).compareTo(s2.substring(s2.indexOf(" ") + ONE));
+            String isOpenNow = mRootRestaurantInfo.getRestaurantDetails().getIsOpenNow();
+
+            mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (listTimings.get(ZERO).equalsIgnoreCase(getString(R.string.close_now))) {
+                        listTimings.remove(getString(R.string.close_now));
                     } else {
-                        Calendar cal1 = Calendar.getInstance();
-                        Calendar cal2 = Calendar.getInstance();
-                        cal1.setTime(d1);
-                        cal2.setTime(d2);
-                        return cal1.get(Calendar.DAY_OF_WEEK) - cal2.get(Calendar.DAY_OF_WEEK);
+                        listTimings.remove(getString(R.string.open_now));
                     }
-                } catch (ParseException pe) {
-                    throw new RuntimeException(pe);
                 }
-            };
-            Collections.sort(listTimings, dateComparator);
-            adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, listTimings);
-            adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-            mSpinner.setAdapter(adapter);
-            mTxtRestOpen.setVisibility(View.VISIBLE);
-        } else if (isOpenNow.equalsIgnoreCase("true")) {
-            mSpinner.setVisibility(View.GONE);
-            mTxtRestOpen.setVisibility(View.VISIBLE);
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+
+            if (ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size()) {
+
+                for (int row = ZERO; row < mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size(); row++) {
+                    listTimings.add(mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().get(row).getDay_of_week()
+                            + " - " +
+                            mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().get(row).getRestaurant_open_close_time());
+                }
+                Comparator<String> dateComparator = (s1, s2) -> {
+                    try {
+                        @SuppressLint("SimpleDateFormat")
+                        SimpleDateFormat format = new SimpleDateFormat("EEE");
+                        Date d1 = format.parse(s1);
+                        Date d2 = format.parse(s2);
+                        if (d1.equals(d2)) {
+                            return s1.substring(s1.indexOf(" ") + ONE).compareTo(s2.substring(s2.indexOf(" ") + ONE));
+                        } else {
+                            Calendar cal1 = Calendar.getInstance();
+                            Calendar cal2 = Calendar.getInstance();
+                            cal1.setTime(d1);
+                            cal2.setTime(d2);
+                            return cal1.get(Calendar.DAY_OF_WEEK) - cal2.get(Calendar.DAY_OF_WEEK);
+                        }
+                    } catch (ParseException pe) {
+                        throw new RuntimeException(pe);
+                    }
+                };
+                Collections.sort(listTimings, dateComparator);
+                if (isOpenNow.equalsIgnoreCase(getString(R.string.True))) {
+                    listTimings.add(ZERO, getString(R.string.open_now));
+                } else {
+                    listTimings.add(ZERO, getString(R.string.close_now));
+                }
+            }
         } else {
-            mSpinner.setVisibility(View.GONE);
-            mTxtRestClose.setVisibility(View.VISIBLE);
+            listTimings.add(ZERO, getString(R.string.close_now));
         }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, listTimings);
+        mSpinner.setAdapter(adapter);
     }
 
     @Override
