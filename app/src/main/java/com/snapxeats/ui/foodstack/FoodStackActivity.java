@@ -104,7 +104,7 @@ public class FoodStackActivity extends BaseActivity
 
     private List<FoodLikes> foodLikes;
 
-    private int dislikeCount = 0;
+    private int dislikeCount = ZERO;
 
     private LinkedList<FoodStackData> foodDataList;
 
@@ -227,7 +227,7 @@ public class FoodStackActivity extends BaseActivity
                 }
                 switch (direction) {
                     case Top: {
-                        dislikeCount = 0;
+                        dislikeCount = ZERO;
                         disableUndo();
                         saveFoodWishlistData(cardStackView.getTopIndex());
                         break;
@@ -237,7 +237,7 @@ public class FoodStackActivity extends BaseActivity
                         break;
                     }
                     case Left: {
-                        dislikeCount += 1;
+                        dislikeCount += ONE;
                         enableUndo();
                         saveFoodDislikeData(cardStackView.getTopIndex());
                         break;
@@ -248,7 +248,7 @@ public class FoodStackActivity extends BaseActivity
             @Override
             public void onCardReversed() {
                 if (dislikeCount > ZERO) {
-                    dislikeCount -= 1;
+                    dislikeCount -= ONE;
                 }
                 if (dislikeCount == ZERO) {
                     disableUndo();
@@ -394,7 +394,7 @@ public class FoodStackActivity extends BaseActivity
         intent.putExtra(getString(R.string.intent_restaurant_id), foodStackDataList.get(index).getId());
         startActivity(intent);
         cardStackView.reverse();
-        dislikeCount = 0;
+        dislikeCount = ZERO;
         disableUndo(); // button was not getting disable properly if it is done before swipeRight
         // method call because of   cardStackView.reverse();
     }
