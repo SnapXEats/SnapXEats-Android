@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -112,12 +113,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     private String restContactNo;
 
-    @BindView(R.id.txt_rest_details_open)
-    protected TextView mTxtRestOpen;
-
-    @BindView(R.id.txt_rest_details_close)
-    protected TextView mTxtRestClose;
-
     @BindView(R.id.restaurant_details_parent_layout)
     protected LinearLayout mParentLayout;
 
@@ -178,6 +173,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
             return true;
         } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
         }
         return false;
     }
@@ -190,11 +186,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
         showProgressDialog();
         mRestaurantPresenter.getRestDetails(restaurantId);
         utility.setImagesCorousal(mRestviewPager);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     private void setGoogleDir() {
@@ -241,11 +232,6 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
             Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts(REST_CALL, contact, null));
             startActivity(intent);
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
     }
 
     @Override
@@ -335,43 +321,66 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
 
     private void restaurantTimingsList() {
         List<String> listTimings = new ArrayList<>();
-        List<RestaurantTimings> restTimingList = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings();
-        String isOpenNow = mRootRestaurantInfo.getRestaurantDetails().getIsOpenNow();
-        if (ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size()) {
-            for (int row = ZERO; row < restTimingList.size(); row++) {
-                listTimings.add(restTimingList.get(row).getDay_of_week() + " " + restTimingList.get(row).getRestaurant_open_close_time());
-            }
-            Comparator<String> dateComparator = (s1, s2) -> {
-                try {
-                    @SuppressLint("SimpleDateFormat")
-                    SimpleDateFormat format = new SimpleDateFormat(getString(R.string.date_format_month));
-                    Date d1 = format.parse(s1);
-                    Date d2 = format.parse(s2);
-                    if (d1.equals(d2)) {
-                        return s1.substring(s1.indexOf(" ") + ONE).compareTo(s2.substring(s2.indexOf(" ") + ONE));
+
+        if (null != mRootRestaurantInfo
+                && null != mRootRestaurantInfo.getRestaurantDetails()
+                && null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings()
+                && ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size()
+                && null != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings()) {
+            List<RestaurantTimings> restTimingList = mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings();
+            String isOpenNow = mRootRestaurantInfo.getRestaurantDetails().getIsOpenNow();
+
+            mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (listTimings.get(ZERO).equalsIgnoreCase(getString(R.string.close_now))) {
+                        listTimings.remove(getString(R.string.close_now));
                     } else {
-                        Calendar cal1 = Calendar.getInstance();
-                        Calendar cal2 = Calendar.getInstance();
-                        cal1.setTime(d1);
-                        cal2.setTime(d2);
-                        return cal1.get(Calendar.DAY_OF_WEEK) - cal2.get(Calendar.DAY_OF_WEEK);
+                        listTimings.remove(getString(R.string.open_now));
                     }
-                } catch (ParseException pe) {
-                    throw new RuntimeException(pe);
                 }
-            };
-            Collections.sort(listTimings, dateComparator);
-            ArrayAdapter<String> adapter =
-                    new ArrayAdapter<>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, listTimings);
-            mSpinner.setAdapter(adapter);
-            mTxtRestOpen.setVisibility(View.VISIBLE);
-        } else if (isOpenNow.equalsIgnoreCase("true")) {
-            mSpinner.setVisibility(View.GONE);
-            mTxtRestOpen.setVisibility(View.VISIBLE);
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+
+            if (ZERO != mRootRestaurantInfo.getRestaurantDetails().getRestaurant_timings().size()) {
+                for (int row = ZERO; row < restTimingList.size(); row++) {
+                    listTimings.add(restTimingList.get(row).getDay_of_week() + " " + restTimingList.get(row).getRestaurant_open_close_time());
+                }
+                Comparator<String> dateComparator = (s1, s2) -> {
+                    try {
+                        @SuppressLint("SimpleDateFormat")
+                        SimpleDateFormat format = new SimpleDateFormat(getString(R.string.date_format_month));
+                        Date d1 = format.parse(s1);
+                        Date d2 = format.parse(s2);
+                        if (d1.equals(d2)) {
+                            return s1.substring(s1.indexOf(" ") + ONE).compareTo(s2.substring(s2.indexOf(" ") + ONE));
+                        } else {
+                            Calendar cal1 = Calendar.getInstance();
+                            Calendar cal2 = Calendar.getInstance();
+                            cal1.setTime(d1);
+                            cal2.setTime(d2);
+                            return cal1.get(Calendar.DAY_OF_WEEK) - cal2.get(Calendar.DAY_OF_WEEK);
+                        }
+                    } catch (ParseException pe) {
+                        throw new RuntimeException(pe);
+                    }
+                };
+                Collections.sort(listTimings, dateComparator);
+                if (isOpenNow.equalsIgnoreCase(getString(R.string.True))) {
+                    listTimings.add(ZERO, getString(R.string.open_now));
+                } else {
+                    listTimings.add(ZERO, getString(R.string.close_now));
+                }
+            }
         } else {
-            mSpinner.setVisibility(View.GONE);
-            mTxtRestClose.setVisibility(View.VISIBLE);
+            listTimings.add(ZERO, getString(R.string.close_now));
         }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, listTimings);
+        mSpinner.setAdapter(adapter);
     }
 
     @Override

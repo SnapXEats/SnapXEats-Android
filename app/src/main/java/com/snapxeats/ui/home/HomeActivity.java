@@ -8,6 +8,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -618,14 +619,11 @@ public class HomeActivity extends BaseActivity implements
     }
 
     private void showWishlistDialogNonLoggedInUser() {
-        Dialog mWishlistDialog = new Dialog(this);
-        mWishlistDialog.setContentView(R.layout.layout_wishlist_dialog);
-        Window window = mWishlistDialog.getWindow();
-        if (null != window) {
-            window.setLayout(UIConstants.CHECKIN_DIALOG_WIDTH, LinearLayout.LayoutParams.WRAP_CONTENT);
-        }
-        Button btnOk = mWishlistDialog.findViewById(R.id.btn_ok);
-        btnOk.setOnClickListener(v -> mWishlistDialog.dismiss());
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle(getString(R.string.wishlist));
+        alertDialog.setMessage(getString(R.string.wishlist_non_logged_in_user));
+        alertDialog.setPositiveButton(R.string.ok, (dialog, which) -> dialog.dismiss());
+        Dialog mWishlistDialog = alertDialog.create();
         mWishlistDialog.show();
     }
 
@@ -672,22 +670,19 @@ public class HomeActivity extends BaseActivity implements
      * Show logout dialog
      */
     private void showLogoutDialog() {
-        Dialog logoutDialog = new Dialog(this);
-        logoutDialog.setContentView(R.layout.layout_logout_dialog);
-        Button btnCancel = logoutDialog.findViewById(R.id.btn_cancel);
-        Button btnOk = logoutDialog.findViewById(R.id.btn_ok);
-        btnCancel.setOnClickListener(v -> logoutDialog.dismiss());
-        btnOk.setOnClickListener(v -> {
-            //Clear local db
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setCancelable(false);
+        alertDialog.setTitle(getString(R.string.log_out));
+        alertDialog.setMessage(getString(R.string.logout_message));
+        alertDialog.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss());
+
+        alertDialog.setPositiveButton(getString(R.string.ok), (dialog, which) -> {
             showProgressDialog();
-            logoutDialog.dismiss();
+            dialog.dismiss();
             mPresenter.sendUserGestures(wishlistDbHelper.getFoodGestures());
         });
-        Window window = logoutDialog.getWindow();
-        if (null != window) {
-            window.setLayout(UIConstants.CHECKIN_DIALOG_WIDTH, LOGOUT_DIALOG_HEIGHT);
-        }
-        logoutDialog.setCanceledOnTouchOutside(false);
+
+        Dialog logoutDialog = alertDialog.create();
         logoutDialog.show();
     }
 

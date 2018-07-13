@@ -61,45 +61,14 @@
             android:textSize="@dimen/text_size_12"
             android:textStyle="bold" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/common_dimens_20"
-            android:orientation="horizontal">
 
             <Spinner
-                android:background="@null"
                 android:id="@+id/spinner_rest_timings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:spinnerMode="dropdown" />
-
-            <TextView
-                android:id="@+id/txt_rest_details_open"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/common_dimens_10"
-                android:drawableEnd="@drawable/ic_rest_arrow"
-                android:drawablePadding="@dimen/common_dimens_10"
-                android:drawableStart="@drawable/ic_rest_clock"
-                android:text="@string/open_now"
-                android:textColor="@color/colorTextGrey"
-                android:textSize="@dimen/text_size_14"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/txt_rest_details_close"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/common_dimens_10"
-                android:drawableEnd="@drawable/ic_rest_arrow"
-                android:drawablePadding="@dimen/common_dimens_10"
-                android:drawableStart="@drawable/ic_rest_clock"
-                android:text="@string/close_now"
-                android:textColor="@color/colorTextGrey"
-                android:textSize="@dimen/text_size_14"
-                android:visibility="gone" />
-        </FrameLayout>
+                android:spinnerMode="dropdown"
+                android:layout_marginStart="@dimen/common_dimens_20"
+                />
 
         <LinearLayout
             android:layout_width="match_parent"
