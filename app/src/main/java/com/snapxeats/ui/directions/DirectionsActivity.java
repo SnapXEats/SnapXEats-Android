@@ -72,12 +72,9 @@ import com.snapxeats.ui.home.fragment.snapnshare.SnapNotificationReceiver;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -146,12 +143,6 @@ public class DirectionsActivity extends BaseActivity
 
     @BindView(R.id.spinner_directions)
     protected Spinner mDirSpinner;
-
-    @BindView(R.id.txt_dir_rest_open)
-    protected TextView mTxtDirRestOpen;
-
-    @BindView(R.id.txt_dir_rest_close)
-    protected TextView mTxtDirRestClose;
 
     @BindView(R.id.toolbar_directions)
     protected Toolbar mToolbar;
@@ -335,44 +326,22 @@ public class DirectionsActivity extends BaseActivity
 
     private void setRestTimings() {
         List<String> listTimings = new ArrayList<>();
-        String isOpenNow = mDetails.getRestaurantDetails().getIsOpenNow();
-        if (null != mDetails && ZERO != mDetails.getRestaurantDetails().getRestaurant_timings().size()) {
-            for (int row = ZERO; row < mDetails.getRestaurantDetails().getRestaurant_timings().size(); row++) {
-                listTimings.add(mDetails.getRestaurantDetails().getRestaurant_timings().get(row).getDay_of_week() +
-                        "         " +
-                        mDetails.getRestaurantDetails().getRestaurant_timings().get(row).getRestaurant_open_close_time());
+        if (null != mDetails
+                && null != mDetails.getRestaurantDetails()
+                && null != mDetails.getRestaurantDetails().getRestaurant_timings()
+                && ZERO != mDetails.getRestaurantDetails().getRestaurant_timings().size()
+                && null != mDetails.getRestaurantDetails().getRestaurant_timings()) {
+            String isOpenNow = mDetails.getRestaurantDetails().getIsOpenNow();
+            if (isOpenNow.equalsIgnoreCase(getString(R.string.True))) {
+                listTimings.add(ZERO, getString(R.string.open_now));
+            } else {
+                listTimings.add(ZERO, getString(R.string.close_now));
             }
-            Comparator<String> dateComparator = (s1, s2) -> {
-                try {
-                    @SuppressLint("SimpleDateFormat")
-                    SimpleDateFormat format = new SimpleDateFormat(getString(R.string.date_format_month));
-                    Date d1 = format.parse(s1);
-                    Date d2 = format.parse(s2);
-                    if (d1.equals(d2)) {
-                        return s1.substring(s1.indexOf(STRING_SPACE) + ONE).compareTo(s2.substring(s2.indexOf(STRING_SPACE) + ONE));
-                    } else {
-                        Calendar cal1 = Calendar.getInstance();
-                        Calendar cal2 = Calendar.getInstance();
-                        cal1.setTime(d1);
-                        cal2.setTime(d2);
-                        return cal1.get(Calendar.DAY_OF_WEEK) - cal2.get(Calendar.DAY_OF_WEEK);
-                    }
-                } catch (ParseException pe) {
-                    throw new RuntimeException(pe);
-                }
-            };
-            Collections.sort(listTimings, dateComparator);
-            ArrayAdapter<String> adapter =
-                    new ArrayAdapter<>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, listTimings);
-            mDirSpinner.setAdapter(adapter);
-            mTxtDirRestOpen.setVisibility(View.VISIBLE);
-        } else if (isOpenNow.equalsIgnoreCase("true")) {
-            mDirSpinner.setVisibility(View.GONE);
-            mTxtDirRestOpen.setVisibility(View.VISIBLE);
         } else {
-            mDirSpinner.setVisibility(View.GONE);
-            mTxtDirRestClose.setVisibility(View.VISIBLE);
+            listTimings.add(ZERO, getString(R.string.close_now));
         }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, listTimings);
+        mDirSpinner.setAdapter(adapter);
     }
 
     /**

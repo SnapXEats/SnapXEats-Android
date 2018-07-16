@@ -84,40 +84,15 @@
                             android:layout_width="@dimen/dimen_250"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginBottom="@dimen/common_dimens_10"
                             android:orientation="horizontal">
 
                             <Spinner
                                 android:id="@+id/spinner_directions"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:spinnerMode="dropdown"
-                                android:visibility="gone" />
-
-                            <TextView
-                                android:id="@+id/txt_dir_rest_open"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
-                                android:layout_marginTop="@dimen/common_dimens_10"
-                                android:drawableEnd="@drawable/ic_rest_arrow"
-                                android:drawablePadding="@dimen/common_dimens_10"
-                                android:text="@string/open_now"
-                                android:textColor="@color/text_color_secondary"
-                                android:textSize="@dimen/text_size_14"
-                                android:visibility="gone" />
+                                android:spinnerMode="dropdown" />
 
-                            <TextView
-                                android:id="@+id/txt_dir_rest_close"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:layout_marginTop="@dimen/common_dimens_10"
-                                android:drawablePadding="@dimen/common_dimens_10"
-                                android:text="@string/close_now"
-                                android:textColor="@color/text_color_secondary"
-                                android:textSize="@dimen/text_size_14"
-                                android:visibility="gone" />
                         </FrameLayout>
 
                         <View
