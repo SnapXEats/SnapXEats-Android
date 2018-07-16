@@ -67,7 +67,8 @@
                 android:id="@+id/spinner_rest_info_timings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:spinnerMode="dropdown" />
+                android:spinnerMode="dropdown"
+                android:layout_marginStart="@dimen/common_dimens_20"/>
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/common_dimens_1"

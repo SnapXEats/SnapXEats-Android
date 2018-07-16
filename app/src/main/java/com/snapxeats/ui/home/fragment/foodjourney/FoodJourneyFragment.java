@@ -1,8 +1,11 @@
 package com.snapxeats.ui.home.fragment.foodjourney;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,11 +25,13 @@ import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
 import com.snapxeats.common.DbHelper;
+import com.snapxeats.common.Router;
 import com.snapxeats.common.model.foodJourney.RootFoodJourney;
 import com.snapxeats.common.utilities.AppUtility;
 import com.snapxeats.common.utilities.NetworkUtility;
 import com.snapxeats.common.utilities.SnapXDialog;
 import com.snapxeats.dagger.AppContract;
+import com.snapxeats.ui.home.HomeActivity;
 
 import java.util.Objects;
 
@@ -155,9 +160,28 @@ public class FoodJourneyFragment extends BaseFragment implements
         dismissProgressDialog();
         if (value instanceof RootFoodJourney) {
             mRootFoodJourney = ((RootFoodJourney) value);
-            setCurrentJourney();
-            setOlderJourney();
+            if (ZERO == mRootFoodJourney.getUserCurrentWeekHistory().size()
+                    && ZERO == mRootFoodJourney.getUserPastHistory().size()) {
+                showFoodJourneyUnavailableDialog();
+            } else {
+                setCurrentJourney();
+                setOlderJourney();
+            }
         }
+    }
+
+    private void showFoodJourneyUnavailableDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(getString(R.string.foodjourney_error));
+        builder.setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+            dialog.dismiss();
+            Intent intent = new Intent(getActivity(), HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(getString(R.string.share_another), false);
+            startActivity(intent);
+        });
+        Dialog dialog = builder.create();
+        dialog.show();
     }
 
     private void setOlderJourney() {
