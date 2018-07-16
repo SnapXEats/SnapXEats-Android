@@ -262,6 +262,7 @@ public class HomeInteractor {
     }
 
     void getNearByRestaurantToCheckIn(double lat, double lng) {
+
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = Objects.requireNonNull(ApiClient.getClient(mContext, BASE_URL)).create(ApiHelper.class);
             Call<CheckInRestaurants> checkInRestaurantsCall = apiHelper.getRestaurantsForCheckIn(lat,lng);

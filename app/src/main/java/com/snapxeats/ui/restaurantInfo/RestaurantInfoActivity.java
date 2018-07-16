@@ -228,7 +228,7 @@ public class RestaurantInfoActivity extends BaseActivity implements RestaurantIn
             listTimings.add(ZERO, getString(R.string.close_now));
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, listTimings);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, listTimings);
         mSpinner.setAdapter(adapter);
     }
 

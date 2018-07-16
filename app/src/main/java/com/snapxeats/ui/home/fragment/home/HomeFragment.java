@@ -275,7 +275,7 @@ public class HomeFragment extends BaseFragment implements
         super.onResume();
         selectedList.clear();
 
-        if (null != locationErrorDialog && locationErrorDialog.isShowing())
+        if (null != locationErrorDialog)
             locationErrorDialog.dismiss();
 
         if (NetworkUtility.isNetworkAvailable(activity)) {
@@ -331,7 +331,7 @@ public class HomeFragment extends BaseFragment implements
             mRootCuisine = (RootCuisine) value;
             //Reloading list
             cuisinesList.clear();
-            if (null != adapter){
+            if (null != adapter) {
                 adapter.notifyDataSetChanged();
             }
             cuisinesList = mRootCuisine.getCuisineList();
@@ -492,6 +492,9 @@ public class HomeFragment extends BaseFragment implements
     }
 
     private com.snapxeats.common.model.location.Location detectCurrentLocation() {
+        if (locationErrorDialog != null)
+            locationErrorDialog.dismiss();
+
         if (LocationHelper.isGpsEnabled(activity)) {
             if (LocationHelper.checkPermission(activity)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -528,7 +531,7 @@ public class HomeFragment extends BaseFragment implements
 
     private void setLocation() {
         if (null != mSelectedLocation && !mSelectedLocation.getName().isEmpty()) {
-            if (null != locationErrorDialog && locationErrorDialog.isShowing())
+            if (null != locationErrorDialog)
                 locationErrorDialog.dismiss();
 
             //set latitude and longitude for selected cuisines
@@ -551,7 +554,10 @@ public class HomeFragment extends BaseFragment implements
 
         } else if (LocationHelper.isGpsEnabled(activity)) {
             dismissProgressDialog();
-            DialogInterface.OnClickListener click = (dialog, which) -> presenter.presentScreen(LOCATION);
+            DialogInterface.OnClickListener click = (dialog, which) -> {
+                dialog.dismiss();
+                presenter.presentScreen(LOCATION);
+            };
             locationErrorDialog = snapXDialog.showLocationErrorDialog(click);
         }
     }
