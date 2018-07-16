@@ -176,7 +176,7 @@ public class FoodJourneyFragment extends BaseFragment implements
         builder.setPositiveButton(getString(R.string.ok), (dialog, which) -> {
             dialog.dismiss();
             Intent intent = new Intent(getActivity(), HomeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra(getString(R.string.share_another), false);
             startActivity(intent);
         });
