@@ -262,8 +262,6 @@ public class HomeInteractor {
     }
 
     void getNearByRestaurantToCheckIn(double lat, double lng) {
-        lat = 40.7014;
-        lng = -74.0151;
 
         if (NetworkUtility.isNetworkAvailable(mContext)) {
             ApiHelper apiHelper = Objects.requireNonNull(ApiClient.getClient(mContext, BASE_URL)).create(ApiHelper.class);
