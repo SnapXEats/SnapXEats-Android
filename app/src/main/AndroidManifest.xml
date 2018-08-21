@@ -68,9 +68,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="18.216.193.78"
-                    android:port="3000"
-                    android:scheme="http" />
+                    android:host="app.snapxeats.com"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
         <activity

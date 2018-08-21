@@ -369,7 +369,7 @@ public class RestaurantDetailsActivity extends BaseActivity implements Restauran
                     }
                 };
                 Collections.sort(listTimings, dateComparator);
-                if (isOpenNow.equalsIgnoreCase(getString(R.string.True))) {
+                if (null != isOpenNow && isOpenNow.equalsIgnoreCase(getString(R.string.True))) {
                     listTimings.add(ZERO, getString(R.string.open_now));
                 } else {
                     listTimings.add(ZERO, getString(R.string.close_now));
