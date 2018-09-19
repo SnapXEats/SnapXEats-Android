@@ -37,7 +37,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
-
 import com.snapxeats.BaseActivity;
 import com.snapxeats.BaseFragment;
 import com.snapxeats.R;
@@ -61,6 +60,7 @@ import com.snapxeats.ui.foodstack.FoodStackActivity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -73,7 +73,6 @@ import static com.snapxeats.common.constants.UIConstants.ACCESS_FINE_LOCATION;
 import static com.snapxeats.common.constants.UIConstants.ACTION_LOCATION_GET;
 import static com.snapxeats.common.constants.UIConstants.CHANGE_LOCATION_PERMISSIONS;
 import static com.snapxeats.common.constants.UIConstants.DEVICE_LOCATION;
-import static com.snapxeats.common.constants.UIConstants.FIVE;
 import static com.snapxeats.common.constants.UIConstants.SPAN_COUNT;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 
@@ -102,13 +101,8 @@ public class HomeFragment extends BaseFragment implements
     @Inject
     AppUtility utility;
 
-    //Location provided by google
-    private Location mCurrentLocation;
-
     //Selected Location
     public com.snapxeats.common.model.location.Location mSelectedLocation;
-
-    private String mPlacename;
 
     @BindView(R.id.recycler_view)
     protected RecyclerView mRecyclerView;
@@ -117,6 +111,7 @@ public class HomeFragment extends BaseFragment implements
     protected TextView mTxtCuisineDone;
 
     private SelectedCuisineList selectedCuisineList;
+
     private Snackbar mSnackBar;
 
     private Activity activity;
@@ -129,7 +124,6 @@ public class HomeFragment extends BaseFragment implements
     private LocationCuisine mLocationCuisine;
 
     private ProgressDialog mDialog;
-    private Dialog changePermissionDilog;
     private Dialog locationErrorDialog;
     private Dialog cuisineErrorDialog;
 
@@ -183,7 +177,7 @@ public class HomeFragment extends BaseFragment implements
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = null;
@@ -213,8 +207,8 @@ public class HomeFragment extends BaseFragment implements
         toggle.syncState();
 
         ((BaseActivity) getActivity()).setSupportActionBar(toolbar);
-        ((BaseActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
-        ((BaseActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(((BaseActivity) getActivity()).getSupportActionBar()).setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(((BaseActivity) getActivity()).getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         toolbar.setNavigationOnClickListener(v -> mDrawerLayout.openDrawer(Gravity.START));
 
@@ -280,14 +274,13 @@ public class HomeFragment extends BaseFragment implements
 
         if (NetworkUtility.isNetworkAvailable(activity)) {
             setLocation();
-            if (mSnackBar != null) {
+            if (null != mSnackBar) {
                 mSnackBar.dismiss();
             }
         } else {
             showNetworkErrorDialog((dialog, which) -> {
                 if (!NetworkUtility.isNetworkAvailable(activity)) {
-                    AppContract.DialogListenerAction click = () ->
-                            setLocation();
+                    AppContract.DialogListenerAction click = this::setLocation; // used method reference
                     mSnackBar = showSnackBar(mParentLayout, setClickListener(click));
                 } else {
                     setLocation();
@@ -324,7 +317,7 @@ public class HomeFragment extends BaseFragment implements
     public void success(Object value) {
         dismissProgressDialog();
 
-        if (mDialog != null && null != getActivity()) {
+        if (null != mDialog && null != getActivity()) {
             mDialog.dismiss();
         }
         if (value instanceof RootCuisine) {
@@ -449,7 +442,7 @@ public class HomeFragment extends BaseFragment implements
         if (grantResults[ZERO] == PackageManager.PERMISSION_GRANTED) {
             mSelectedLocation = detectCurrentLocation();
         } else if (!shouldShowRequestPermissionRationale(permissions[ZERO])) {
-            changePermissionDilog = snapXDialog.showChangePermissionDialogForFragment(this, CHANGE_LOCATION_PERMISSIONS);
+            snapXDialog.showChangePermissionDialogForFragment(this, CHANGE_LOCATION_PERMISSIONS);
         } else {
             presenter.presentScreen(LOCATION);
         }
@@ -473,7 +466,7 @@ public class HomeFragment extends BaseFragment implements
 
         showNetworkErrorDialog((dialog, which) -> {
             if (!NetworkUtility.isNetworkAvailable(getActivity()) && null != mRootUserPreference) {
-                AppContract.DialogListenerAction click = () -> setLocation();
+                AppContract.DialogListenerAction click = this::setLocation;
                 mSnackBar = showSnackBar(mParentLayout, setClickListener(click));
             } else {
                 setLocation();
@@ -502,10 +495,10 @@ public class HomeFragment extends BaseFragment implements
                 }
             } else if (NetworkUtility.isNetworkAvailable(activity)) {
                 showProgressDialog();
-                mCurrentLocation = utility.getLocation();
+                Location mCurrentLocation = utility.getLocation();
                 if (null != mCurrentLocation) {
                     dismissProgressDialog();
-                    mPlacename = utility.getPlaceName(mCurrentLocation);
+                    String mPlacename = utility.getPlaceName(mCurrentLocation);
                     mSelectedLocation = new com.snapxeats.common.model.location.Location(
                             mCurrentLocation.getLatitude(),
                             mCurrentLocation.getLongitude(),
@@ -615,7 +608,7 @@ public class HomeFragment extends BaseFragment implements
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent != null) {
+            if (null != intent) {
                 HomeFragment.this.mSelectedLocation = intent.getParcelableExtra(context.getString(R.string.selected_location));
             }
         }

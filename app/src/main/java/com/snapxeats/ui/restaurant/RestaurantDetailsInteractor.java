@@ -10,6 +10,8 @@ import com.snapxeats.common.utilities.SnapXResult;
 import com.snapxeats.network.ApiClient;
 import com.snapxeats.network.ApiHelper;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 
 import retrofit2.Call;
@@ -71,7 +73,7 @@ public class RestaurantDetailsInteractor {
     //get google directions
     public void getGoogleDirections(LocationGoogleDir locationGoogleDir) {
         if (NetworkUtility.isNetworkAvailable(mContext)) {
-            ApiHelper apiHelper = ApiClient.getClient(mContext, GOOGLE_BASE_URL).create(ApiHelper.class);
+            ApiHelper apiHelper = Objects.requireNonNull(ApiClient.getClient(mContext, GOOGLE_BASE_URL)).create(ApiHelper.class);
             Call<RootGoogleDir> snapXUserCall =
                     apiHelper.getGoogleDir(locationGoogleDir.getGoogleDirOrigin().getOriginLat()
                                     + "," + locationGoogleDir.getGoogleDirOrigin().getOriginLng(),
