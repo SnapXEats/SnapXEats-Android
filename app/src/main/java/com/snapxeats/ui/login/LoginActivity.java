@@ -1,8 +1,6 @@
 package com.snapxeats.ui.login;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -17,6 +15,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.LoggingBehavior;
+import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -95,6 +94,11 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginVi
         mSnapXDialog.setContext(this);
         mCallbackManager = CallbackManager.Factory.create();
         loginUtility.getFbHashKey(this);
+
+        //initialize fb sdk
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
+
         loginWithFacebook();
         setVersionAndBuildLabel();
         initInstagram();

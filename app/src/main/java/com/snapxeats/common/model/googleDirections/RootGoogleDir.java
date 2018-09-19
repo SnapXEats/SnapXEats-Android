@@ -36,8 +36,8 @@ public class RootGoogleDir implements Parcelable {
     public RootGoogleDir() {
     }
 
-    protected RootGoogleDir(Parcel in) {
-        geocoded_waypoints = new ArrayList<GeocodedWaypoints>();
+    private RootGoogleDir(Parcel in) {
+        geocoded_waypoints = new ArrayList<>();
         in.readList(geocoded_waypoints, GeocodedWaypoints.class.getClassLoader());
         status = in.readString();
         routes = new ArrayList<Routes>();

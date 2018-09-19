@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">SnapXEats</string>
-    <string name="facebook_app_id">240700273135016</string>
-    <string name="fb_login_protocol_scheme">fb331735677253165</string>
+    <!--<string name="facebook_app_id">240700273135016</string>-->
+    <!--<string name="fb_login_protocol_scheme">fb331735677253165</string>-->
+    <string name="facebook_app_id">1899167340378268</string>
+    <string name="fb_login_protocol_scheme">fb1899167340378268</string>
+
     <string name="google_api_key">AIzaSyBE60eBPlcvijgNGHK3X-Odd8zHJ2WksNk</string>
     <string name="instagram_login">Login with Instagram</string>
     <string name="facebook_login">Login with Facebook</string>

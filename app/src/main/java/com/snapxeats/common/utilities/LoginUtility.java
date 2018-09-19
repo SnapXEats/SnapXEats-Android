@@ -79,7 +79,6 @@ public class LoginUtility {
         snapxDataDao = dbHelper.getSnapxDataDao();
         snapXData = new SnapXData();
     }
-
     /**
      * TODO- Relogin user
      * GET- Get user preferences
@@ -188,4 +187,16 @@ public class LoginUtility {
         } catch (Exception ignored) {
         }
     }
+    //
+@SuppressLint("PackageManagerGetSignatures")
+    public void getFbHashKey(Activity context){
+        PackageInfo packageInfo;
+        try{
+            String packageName=nContext.getApplicationContext().getPackageName();
+            packageInfo = mContext.getPAckageManager().getPackageInfo(packageName,
+        PackageManager.GET_SIGNATURES);
+            for(Signature signature : PackageInfo.din)
+        }
+}
+//
 }

@@ -38,8 +38,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.snapxeats.common.constants.UIConstants.LAT;
-import static com.snapxeats.common.constants.UIConstants.LNG;
 import static com.snapxeats.common.constants.UIConstants.ZERO;
 import static com.snapxeats.common.constants.WebConstants.BASE_URL;
 import static com.snapxeats.common.utilities.NoNetworkResults.CHECKIN;
