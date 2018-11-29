@@ -176,9 +176,9 @@ public class ShareReviewActivity extends BaseActivity implements ShareReviewCont
         if (ShareDialog.canShow(ShareLinkContent.class)) {
             ShareLinkContent linkContent = new ShareLinkContent.Builder()
                     .setQuote(mSnapResponse.getMessage())
-                    .setContentUrl(Uri.parse(mSnapResponse.getDish_image_url()))
+                    .setContentUrl(Uri.parse(mSnapResponse.getShared_dish_image_url()))
                     .build();
-            mShareDialog.show(linkContent);
+            mShareDialog.show(linkContent, ShareDialog.Mode.FEED);
         }
     }
 

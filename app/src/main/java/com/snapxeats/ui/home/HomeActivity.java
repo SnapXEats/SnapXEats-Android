@@ -442,7 +442,9 @@ public class HomeActivity extends BaseActivity implements
     private void setAppLink() {
         Intent appLinkIntent = getIntent();
         if (null != appLinkIntent && null != appLinkIntent.getData()) {
-            dishId = appLinkIntent.getData().getSchemeSpecificPart().split("id=")[ONE];
+//            dishId = appLinkIntent.getData().getSchemeSpecificPart().split("dishId=")[ONE];
+            dishId = appLinkIntent.getData().getSchemeSpecificPart().split("=")[2].split("&")[ZERO];
+            SnapXToast.debug("AppDishId:: "+dishId);
             showProgressDialog();
             mPresenter.getSmartPhotoInfo(dishId);
         }

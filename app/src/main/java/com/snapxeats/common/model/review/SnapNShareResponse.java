@@ -16,6 +16,7 @@ public class SnapNShareResponse implements Parcelable {
     private String restaurant_name;
     private String restaurant_dish_id;
     private String dish_image_url;
+    private String shared_dish_image_url;
     private String message;
 
     @Override
@@ -28,6 +29,7 @@ public class SnapNShareResponse implements Parcelable {
         dest.writeString(restaurant_name);
         dest.writeString(restaurant_dish_id);
         dest.writeString(dish_image_url);
+        dest.writeString(shared_dish_image_url);
         dest.writeString(message);
     }
 
@@ -35,6 +37,7 @@ public class SnapNShareResponse implements Parcelable {
         restaurant_name = in.readString();
         restaurant_dish_id = in.readString();
         dish_image_url = in.readString();
+        shared_dish_image_url = in.readString();
         message = in.readString();
     }
 
